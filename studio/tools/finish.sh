@@ -27,5 +27,6 @@ ffmpeg -y -loglevel error -i $R/$SLUG-1080p.mp4 -vf "scale=1280:720,subtitles=$R
 node studio/tools/vo.mjs $SLUG | tail -2
 node studio/tools/metadata.mjs $SLUG
 node studio/tools/thumbnail.mjs $SLUG
+studio/tools/web-copy.sh $SLUG
 st done "Ready: $R/$SLUG-1080p.mp4, voice/script.md, youtube/" "Delivered; generated files stay until the next batch's cleanup"
 ls -la $R/*.mp4

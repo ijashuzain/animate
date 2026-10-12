@@ -57,6 +57,22 @@ section { display: grid; gap: 12px; }
 @keyframes slide { from { background-position: 100% 0; } to { background-position: 0 0; } }
 .outs { display: flex; flex-wrap: wrap; gap: 6px; }
 .outs code { font: 0.76rem/1.6 var(--f-mono); background: var(--soft); padding: 2px 8px; border-radius: 6px; overflow-wrap: anywhere; }
+.outp { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 12px; }
+.outp > summary { cursor: pointer; font: 600 0.9rem/1.4 var(--f-body); color: var(--accent); list-style: none; display: flex; align-items: center; gap: 8px; }
+.outp > summary::-webkit-details-marker { display: none; }
+.outp > summary::before { content: "+"; font: 600 1rem/1 var(--f-mono); width: 1rem; }
+.outp[open] > summary::before { content: "\2212"; }
+.media { position: relative; border-radius: 10px; overflow: hidden; background: var(--soft); aspect-ratio: 16 / 9; max-width: 100%; }
+.media img, .media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media button.play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border-radius: 50%; border: 0; background: rgba(20,22,26,0.72); color: #fff; font-size: 1.4rem; cursor: pointer; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.acts button { font: 500 0.82rem/1 var(--f-body); padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.acts button.main { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.acts button:disabled { opacity: 0.55; cursor: default; }
+.doc { border: 1px solid var(--line); border-radius: 8px; }
+.doc > summary { cursor: pointer; padding: 10px 12px; font-size: 0.88rem; font-weight: 500; }
+.doc pre { margin: 0; padding: 12px; border-top: 1px solid var(--line); max-height: 320px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.8rem/1.55 var(--f-mono); }
+.ostat { font-size: 0.82rem; color: var(--muted); min-height: 1.2em; }
 .empty { border: 1px dashed var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 6px; color: var(--muted); }
 .empty strong { color: var(--fg); font-weight: 600; }
 .topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
@@ -150,7 +166,43 @@ const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const ago = (iso) => { if (!iso) return ''; const s = (Date.now() - new Date(iso).getTime()) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.round(s / 60) + ' min ago'; if (s < 86400) return Math.round(s / 3600) + ' h ago'; return new Date(iso).toLocaleDateString(); };
 const clock = (iso) => { try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch { return ''; } };
-let state = {}, videos = [], topics = { items: [], picked: [] }, db = null, canWrite = false;
+let state = {}, videos = [], topics = { items: [], picked: [] }, db = null, canWrite = false, outputs = {}, downloads = null;
+const outNodes = new Map();   // slug -> { sig, node }: keep an open panel (and a playing video) across re-renders
+const blobUrl = (a) => a && (a.id ? '/_blob/' + a.id : a.url);
+const plainLines = (md) => { const i = (md || '').indexOf('## Plain lines'); return i >= 0 ? md.slice(i).split('\n').slice(1).join('\n').trim() : (md || ''); };
+async function copyText(text, stat) { try { await navigator.clipboard.writeText(text); stat.textContent = 'Copied.'; } catch { stat.textContent = 'Copy is blocked here; select the text below instead.'; } }
+async function saveFile(name, getData, stat) {
+  if (!downloads) { stat.textContent = 'Downloads are not available in this view.'; return; }
+  try { stat.textContent = 'Preparing ' + name + '…'; const data = await getData(); const r = await downloads.save({ filename: name, data }); stat.textContent = r === 'saved' || (r && r.status === 'saved') ? 'Saved ' + name + '.' : 'Download ready: ' + name + '.'; }
+  catch (e) { stat.textContent = e && e.code === 'cancelled' ? 'Download cancelled.' : 'Could not save ' + name + ' (' + ((e && e.code) || 'error') + ').'; }
+}
+const fetchBlob = async (a) => { const r = await fetch(blobUrl(a)); if (!r.ok) throw { code: 'http_' + r.status }; return r.blob(); };
+function outputPanel(slug, o) {
+  const sig = JSON.stringify([o.video && o.video.id, o.thumb && o.thumb.id, (o.script || '').length, (o.metadata || '').length, o.updated]);
+  const prev = outNodes.get(slug); if (prev && prev.sig === sig) return prev.node;
+  const d = el('details', 'outp'); d.append(el('summary', null, 'Outputs: watch, download, copy'));
+  const stat = el('div', 'ostat');
+  if (o.video || o.thumb) {
+    const m = el('div', 'media');
+    if (o.thumb) { const img = el('img'); img.src = blobUrl(o.thumb); img.alt = (o.title || slug) + ' thumbnail'; img.loading = 'lazy'; m.append(img); }
+    if (o.video) { const p = el('button', 'play', '\u25B6'); p.type = 'button'; p.setAttribute('aria-label', 'Play the video'); p.addEventListener('click', () => { const v = el('video'); v.src = blobUrl(o.video); v.controls = true; v.autoplay = true; v.playsInline = true; m.replaceChildren(v); }); m.append(p); }
+    d.append(m);
+  }
+  const acts = el('div', 'acts'), btn = (label, fn, main) => { const b = el('button', main ? 'main' : '', label); b.type = 'button'; b.addEventListener('click', async () => { b.disabled = true; try { await fn(); } finally { b.disabled = false; } }); acts.append(b); return b; };
+  if (o.video) btn('Download video (720p)', () => saveFile(`${slug}-720p.mp4`, () => fetchBlob(o.video), stat), true);
+  if (o.thumb) btn('Download thumbnail', () => saveFile(`${slug}-thumbnail.png`, () => fetchBlob(o.thumb), stat));
+  if (o.script) btn('Download voice-over script', () => saveFile(`${slug}-voice-over.md`, async () => o.script, stat));
+  if (o.metadata) btn('Download YouTube metadata', () => saveFile(`${slug}-youtube.md`, async () => o.metadata, stat));
+  if (o.ytTitle) btn('Copy title', () => copyText(o.ytTitle, stat));
+  if (o.description) btn('Copy description', () => copyText(o.description, stat));
+  if (o.script) btn('Copy voice-over lines', () => copyText(plainLines(o.script), stat));
+  d.append(acts, stat);
+  if (o.script) { const x = el('details', 'doc'); x.append(el('summary', null, 'Voice-over script'), el('pre', null, o.script)); d.append(x); }
+  if (o.metadata) { const x = el('details', 'doc'); x.append(el('summary', null, 'YouTube metadata'), el('pre', null, o.metadata)); d.append(x); }
+  if (o.note) d.append(el('div', 'ostat', o.note));
+  outNodes.set(slug, { sig, node: d });
+  return d;
+}
 
 function renderHeader() {
   $('headline').textContent = state.headline || (videos.length ? 'Batch in progress' : 'Waiting for the next topic');
@@ -177,7 +229,8 @@ function renderVideos() {
     card.append(top, track);
     if (v.detail || v.why) { const w = el('div', 'what'); if (v.detail) w.append(el('p', null, v.detail)); if (v.why) w.append(el('p', 'why', 'Why: ' + v.why)); card.append(w); }
     if (v.stage !== 'done' && !failed) { const b = el('div', 'bar'), i = el('i', v.progress == null ? 'run' : ''); i.style.width = v.progress == null ? '100%' : Math.round(Math.max(0.03, Math.min(1, v.progress)) * 100) + '%'; b.append(i); card.append(b); }
-    if (Array.isArray(v.outputs) && v.outputs.length) { const o = el('div', 'outs'); v.outputs.forEach((f) => o.append(el('code', null, f))); card.append(o); }
+    if (outputs[v.id]) card.append(outputPanel(v.id, outputs[v.id]));
+    else if (Array.isArray(v.outputs) && v.outputs.length) { const o = el('div', 'outs'); v.outputs.forEach((f) => o.append(el('code', null, f))); card.append(o); }
     box.append(card);
   });
 }
@@ -222,6 +275,8 @@ function renderReqs(rows) {
   $('reqnote').textContent = canWrite ? 'Requests are saved for Claude; it reads them when you next ask for topics.' : 'You can watch progress; only editors can add requests.';
   db.doc('board/state').onSnapshot((s) => { state = s.exists ? s.data() : {}; renderHeader(); });
   db.collection('videos').onSnapshot((q) => { videos = q.docs.map((d) => ({ id: d.id, ...d.data() })); renderVideos(); renderHeader(); });
+  db.collection('outputs').onSnapshot((q) => { outputs = Object.fromEntries(q.docs.map((d) => [d.id, d.data()])); renderVideos(); });
+  c.use('downloads').then((dl) => { downloads = dl; });
   db.doc('board/topics').onSnapshot((s) => { topics = s.exists ? s.data() : { items: [], picked: [] }; renderTopics(); });
   db.collection('log').orderBy('t', 'desc').limit(40).onSnapshot((q) => renderLog(q.docs.map((d) => d.data())));
   db.collection('requests').orderBy('created', 'desc').limit(10).onSnapshot((q) => renderReqs(q.docs.map((d) => d.data())));

@@ -44,6 +44,9 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - Files over 30 MB can't be sent to the user: always make the 2-pass ~1.75 Mbps share copy.
 - Re-render audio only (`finish.sh --audio-only`) when just the mix changes: ~8 min instead of ~15.
 - The engine's build tool takes relative piece paths only.
+- Dashboard outputs: artifact asset uploads cap at 15 MB per file, so the page gets a 2-pass ~790 kbps 720p copy (~13 MB),
+  not the 1080p share copy. Test the page with a mocked `window.claude` served through `page.route` (addInitScript
+  doesn't run on `setContent`).
 
 ### Style notes
 - cut-paper: proven on all batch-1 videos. Its kit gives `cut`, `tag`, `face`, `person`, `mug`, `plant`, `clock`, `spark`.
