@@ -33,18 +33,18 @@
   pad(85, 92.0, ['D3', 'A3', 'E4', 'A4'], 0.03, { cut: 1300, att: 0.05, rel: 0.02, send: 0.08 });
   each(85, 92, E16, (t, k) => {
     const fig = FIG[Math.floor(k / 8) % 4], acc = k % 4 === 0 ? 1.3 : 0.9, dry = t >= 91.5 ? 0.02 : 0.1;
-    pluck(t, nz(fig[k % 8]), 0.044 * acc, Math.sin(k * 0.9) * 0.4, t >= 91.75 ? 0.18 : 0.28, 5600, dry);
+    pluck(t, nz(fig[k % 8]), 0.036 * acc, Math.sin(k * 0.9) * 0.4, t >= 91.75 ? 0.18 : 0.28, 5600, dry);
     if (k % 2 === 0) bass(t, nz(Math.floor(k / 8) % 2 ? 'A2' : 'D2'), 0.15);
-    if (k % 4 === 0) sub(t, 0.045);
+    if (k % 4 === 0) sub(t, 0.035);
     noiseHit(t, 0.016, 'highpass', 8500, 0.7, k % 2 ? 0.016 : 0.026, k % 2 ? 0.3 : -0.3);
   });
   riser(91.0, 91.95, 0.014);
   // enter: the stab on the hit, then a flat warm chord
   ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'].forEach((n, i) => pluck(HIT + i * 0.006, nz(n), 0.36, (i - 2.5) * 0.15, 0.7, 5200, 0.4));
   pad(HIT, HIT + 0.4, ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'], 0.5, { cut: 3600, att: 0.008, rel: 0.35, send: 0.3 });
-  pad(95, 103.1, ['D3', 'A3', 'D4', 'Fs4', 'A4'], 0.026, { cut: 1300, att: 0.25, rel: 0.4, send: 0.5 });
-  drone(95, 103.1, nz('D2'), 0.028, { att: 0.12, rel: 0.4 });
-  each(96, 103, BEAT, (t, k) => pluck(t, nz(['A4', 'D5', 'Fs5', 'E5', 'D5', 'A4'][k % 6]), 0.026, (k % 3 - 1) * 0.2, 0.6, 3000, 0.4));
+  pad(95, 103.1, ['D3', 'A3', 'D4', 'Fs4', 'A4'], 0.038, { cut: 1300, att: 0.25, rel: 0.4, send: 0.5 });
+  drone(95, 103.1, nz('D2'), 0.04, { att: 0.12, rel: 0.4 });
+  each(96, 103, BEAT, (t, k) => pluck(t, nz(['A4', 'D5', 'Fs5', 'E5', 'D5', 'A4'][k % 6]), 0.036, (k % 3 - 1) * 0.2, 0.6, 3000, 0.4));
   // 2025: warm and quieter; the end: the opening pad and the motif
   pad(103, 112.1, ['D3', 'A3', 'D4', 'Fs4'], 0.022, { cut: 1000, att: 0.3, rel: 0.3, send: 0.4 });
   each(103, 112, E8, (t, k) => { if (k % 2 === 0 || k % 8 === 5) pluck(t, nz(FIG[3][k % 8]), 0.022, Math.sin(k) * 0.3, 0.35, 2600, 0.25); if (k % 4 === 0) bass(t, nz(Math.floor(k / 8) % 2 ? 'A2' : 'D2'), 0.07); });
