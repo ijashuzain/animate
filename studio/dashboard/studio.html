@@ -62,6 +62,16 @@ section { display: grid; gap: 12px; }
 .topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 .topic { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 6px; text-align: left; font: inherit; color: inherit; cursor: pointer; min-width: 0; }
 .topic:hover { border-color: var(--accent); }
+.suggest { display: grid; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.suggest form { align-items: center; }
+.sstatus { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--muted); min-height: 1.4em; }
+.sstatus.busy { color: var(--accent); }
+.sstatus.err { color: var(--bad); }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 0.8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+button.ghost { font: 500 0.85rem/1 var(--f-body); padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+.topic .w { font-size: 0.82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 6px; }
 .topic:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .topic[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .topic .t { font-weight: 600; }
@@ -101,8 +111,16 @@ button.primary:disabled { opacity: 0.5; cursor: default; }
 
   <section aria-labelledby="h-topics">
     <div class="sechead"><h2 id="h-topics">Topic ideas</h2><span class="vmeta" id="picked"></span></div>
+    <div class="suggest" id="suggestbox" hidden>
+      <form id="sugform">
+        <input type="text" id="theme" maxlength="120" placeholder="Optional theme, e.g. ocean mysteries, everyday science, inventions" aria-label="Theme for the suggestions">
+        <button class="primary" id="sugbtn" type="submit">Suggest 6 topics</button>
+        <button class="ghost" id="sugcancel" type="button" hidden>Cancel</button>
+      </form>
+      <div class="sstatus" id="sugstatus"><span>Claude suggests six fresh topics that fit the channel and skips anything already made. Picked topics are kept.</span></div>
+    </div>
     <div class="topics" id="topics">
-      <div class="empty"><strong>No suggestions yet.</strong><span>Ask Claude for topics in chat. Six ideas will appear here; tap up to three to pick them for the next batch.</span></div>
+      <div class="empty"><strong>No suggestions yet.</strong><span>Use Suggest 6 topics above, or ask Claude in chat. Tap up to three ideas to pick them for the next batch.</span></div>
     </div>
   </section>
 
@@ -166,10 +184,11 @@ function renderVideos() {
 function renderTopics() {
   const box = $('topics'), items = topics.items || [], picked = new Set(topics.picked || []);
   box.replaceChildren();
-  if (!items.length) { const e = el('div', 'empty'); e.append(el('strong', null, 'No suggestions yet.'), el('span', null, 'Ask Claude for topics in chat. Six ideas will appear here; tap up to three to pick them for the next batch.')); box.append(e); $('picked').textContent = ''; return; }
+  if (!items.length) { const e = el('div', 'empty'); e.append(el('strong', null, 'No suggestions yet.'), el('span', null, 'Use Suggest 6 topics above, or ask Claude in chat. Tap up to three ideas to pick them for the next batch.')); box.append(e); $('picked').textContent = ''; return; }
   items.forEach((t) => {
     const b = el('button', 'topic'); b.type = 'button'; b.setAttribute('aria-pressed', picked.has(t.id) ? 'true' : 'false');
-    b.append(el('span', 't', t.title), el('span', 'h', t.hook || ''), el('span', 's', [t.style, t.format].filter(Boolean).join(' · ')));
+    b.append(el('span', 't', t.title), el('span', 'h', t.hook || ''), el('span', 's', [t.category, t.style, t.format].filter(Boolean).join(' · ')));
+    if (t.why) b.append(el('span', 'w', t.why));
     b.disabled = !canWrite;
     b.addEventListener('click', () => togglePick(t.id));
     box.append(b);
@@ -214,6 +233,47 @@ function renderReqs(rows) {
     try { await db.collection('requests').add({ text, created: new Date().toISOString(), status: 'new' }); $('reqtext').value = ''; $('reqnote').textContent = 'Saved. Ask Claude in chat to start, or it will see this next time.'; }
     catch (err) { $('reqnote').textContent = 'Could not save the request (' + (err.code || 'error') + '). Check that you are signed in with edit access.'; }
   });
+  // ---- suggestions: ask Claude from the page, write the six ideas to board/topics
+  const sample = await c.use('sample');
+  if (sample && canWrite) $('suggestbox').hidden = false;
+  let history = { made: [], suggested: [] }, ctl = null;
+  db.doc('board/history').onSnapshot((s) => { history = s.exists ? s.data() : history; });
+  const sstat = (msg, kind = '') => { const box = $('sugstatus'); box.className = 'sstatus ' + kind; box.replaceChildren(); if (kind === 'busy') box.append(el('i', 'spinner')); box.append(el('span', null, msg)); };
+  const STYLES = 'cut-paper (stories, histories, characters), crosshatch (mechanisms, how machines work), riso (soft editorial, money, culture), sketchbook (nature, the mind, gentle science), math (equations, graphs, numbers), pixel (computing and gaming history), isometric (products, devices, infrastructure)';
+  $('sugform').addEventListener('submit', async (e) => {
+    e.preventDefault(); if (!sample || ctl) return;
+    const theme = $('theme').value.trim();
+    const keep = (topics.items || []).filter((t) => (topics.picked || []).includes(t.id));
+    const avoid = [...(history.made || []), ...keep.map((t) => t.title)];
+    const prompt = [
+      'You suggest topics for a YouTube channel of 2-minute animated explainers (16:9, voice-over, explainer card beside the scene).',
+      'Good topics have a true process or timeline, one small hero that can carry the story, a twist or payoff near the end, and visuals that drawn shapes, diagrams and simple characters show well (not realistic people or real footage).',
+      'Mix categories: science why/how, space/what-if, history timeline, tech explained, money, nature, the human body.',
+      theme ? `The user wants topics around this theme: ${theme}` : 'No theme given: give a varied set.',
+      `Never suggest these (already made or picked): ${avoid.join('; ') || 'none'}.`,
+      `Pick each topic's best style from: ${STYLES}.`,
+      'Return JSON only: an array of exactly 6 objects with keys title (a catchy video title, max 60 chars), hook (one sentence a viewer would click for), category, style (one style name from the list), format (e.g. "why explainer", "timeline", "what if", "how it works"), why (one short sentence on why it fits the channel and the tools).',
+    ].join('\n');
+    ctl = new AbortController(); $('sugbtn').disabled = true; $('sugcancel').hidden = false;
+    sstat('Asking Claude for six topics' + (theme ? ` about "${theme}"` : '') + '…', 'busy');
+    try {
+      let seen = false;
+      const out = await sample.json(prompt, { signal: ctl.signal, cache: false, onText: ({ text }) => { if (!seen) { seen = true; } sstat(`Claude is writing the ideas (${text.length} characters so far)…`, 'busy'); } });
+      sstat('Checking the ideas…', 'busy');
+      const list = (Array.isArray(out) ? out : out && Array.isArray(out.topics) ? out.topics : []).filter((t) => t && t.title).slice(0, 6);
+      if (list.length < 3) throw { code: 'bad_answer', message: 'The answer had too few topics.' };
+      const stamp = Date.now().toString(36);
+      const fresh = list.map((t, i) => ({ id: `s${stamp}${i}`, title: String(t.title).slice(0, 80), hook: String(t.hook || '').slice(0, 220), category: String(t.category || '').slice(0, 40), style: String(t.style || '').slice(0, 30), format: String(t.format || '').slice(0, 40), why: String(t.why || '').slice(0, 200) }));
+      sstat('Saving the suggestions…', 'busy');
+      await db.doc('board/topics').set({ items: [...keep, ...fresh], picked: keep.map((t) => t.id), theme: theme || null, suggestedAt: new Date().toISOString(), source: 'dashboard' });
+      try { await db.collection('log').add({ t: new Date().toISOString(), slug: '', note: `Suggested ${fresh.length} topics from the dashboard${theme ? ' (theme: ' + theme + ')' : ''}` }); } catch {}
+      sstat(`Here are ${fresh.length} new ideas. Tap up to three, then tell Claude in chat to start.`);
+    } catch (err) {
+      const code = err && err.code;
+      sstat(code === 'cancelled' ? 'Cancelled. Nothing was changed.' : code === 'not_granted' ? 'Suggestions need your permission: allow Claude for this page in its Permissions menu.' : code === 'rate_limited' ? 'You have reached a usage limit for now. Try again later, or ask Claude in chat.' : 'Could not get suggestions this time (' + (code || 'error') + '). Try again, or ask Claude in chat.', code === 'cancelled' ? '' : 'err');
+    } finally { ctl = null; $('sugbtn').disabled = false; $('sugcancel').hidden = true; }
+  });
+  $('sugcancel').addEventListener('click', () => ctl && ctl.abort());
   setInterval(renderHeader, 30000);
 })();
 </script>

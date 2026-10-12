@@ -64,7 +64,11 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
 Live page: **https://claude.ai/artifact/N1dKeyKqmYkGV63YzWXZLw** (Artifact with a shared database; the user watches it).
 Write with the `ArtifactData` tool (pin `if_version` on existing docs; batch several writes). Use the real time (`date -u +%FT%TZ`).
 - `board/state`: { batch, phase, headline, updated }. Phase: topics | researching | scripting | styling | building | rendering | reviewing | packaging | done | failed
-- `board/topics`: { items: [{ id, title, hook, style, format }], picked: [ids] } (the user taps up to 3 to pick)
+- `board/topics`: { items: [{ id, title, hook, category, style, format, why }], picked: [ids], theme, suggestedAt, source }
+  The user can generate suggestions on the page itself ("Suggest 6 topics", optional theme; the page asks Claude via the `sample`
+  capability) and tap up to 3 to pick. When the user says "start" / "make the picked ones", read `board/topics` and use `picked`.
+- `board/history`: { made: [titles], suggested: [titles] }: the page avoids these when suggesting. **After every batch add the
+  made titles here** (and to topics/log.md).
 - `videos/<slug>`: { order, title, style, length, stage, detail (what is happening), why, progress 0..1 or null (indeterminate), outputs: [paths] }
 - `log/<sortable id>`: { t, slug, note } (one line per meaningful step)
 - `requests/*`: { text, created, status } written by the user from the page; set status 'picked' when used
