@@ -72,8 +72,8 @@ function sStudy(o = {}) {
   if (!o.end) { const [pdx, pdy] = penOff(); ctx.save(); ctx.translate(pdx, pdy); }
   if (!o.end) hand(900, 1360, 1.0, Math.PI * 1.12, PAL.skin1, PAL.tweed, { key: 'th', sleevePat: pat.stripes('rgba(40,30,20,0.25)', 3, 9, 0.8) });
   if (!o.end) { cut(capsulePts(810, 1310, 680, 1260, 18), '#1d1a22', { key: 'pen', sb: 5 }); cut([[684, 1252], [650, 1250], [682, 1270]], '#d8b24a', { key: 'nib', sb: 3 }); ctx.restore(); }
-  yearTag(o.end ? 'today' : '1950');
-  capStrip(o.end ? 'a short history of AI' : 'Turing asks: can machines think?');
+  yearTagL(o.end ? 'today' : '1950');
+  capStripL(o.end ? 'a short history of AI' : 'Turing asks: can machines think?');
 }
 // ---- 1974-1987: the winters; the lab is closed, the spark keeps a candle lit
 function sWinter() {
@@ -119,8 +119,8 @@ function sWinter() {
   // snow falling
   const S = RNG('flakes');
   for (let i = 0; i < 150; i++) { const x = S.r(-10, SW + 10) + Math.sin(TT * 1.3 + i) * 12, r = S.r(4, 13), y = 200 + mod(S.r(0, 1500) + TT * (40 + r * 6), 1500); ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
-  yearTag('1974');
-  capStrip('AI winter: the money runs out');
+  yearTagL('1974');
+  capStripL('AI winter: the money runs out');
 }
 // ---- November 30, 2022: everyone says hi at once
 function sHi() {
@@ -160,8 +160,8 @@ function sHi() {
     cut(ellipsePts(0, 80, 76, 58, 0, 22), skin, { key: 'pha' + i });
     ctx.restore();
   });
-  yearTag('Nov 30, 2022');
-  capStrip('ChatGPT: millions say hi');
+  yearTagL('Nov 30, 2022');
+  capStripL('ChatGPT: millions say hi');
 }
 // ---- 2025: the spark has a job; it helps a developer ship
 function sWork() {
@@ -195,8 +195,8 @@ function sWork() {
   spark(800, 732, 88, { rays: 12, mood: TT < 54.5 ? 'focus' : 'happy', key: 'sp25' });
   sparkle(910, 640, 16, '#ffffff'); sparkle(690, 650, 12, '#ffffff');
   cat(470, 1400, 0.95, PAL.charcoal, 'cat25');
-  yearTag('2025');
-  capStrip('Claude Code: AI that does the work');
+  yearTagL('2025');
+  capStripL('Claude Code: AI that does the work');
 }
 
 // =====================================================================
@@ -270,8 +270,8 @@ function sDartmouth() {
   personBack(170, 1330 + (Math.floor(TT * 2) % 2) * 6, 1.0, { key: 'p1', shirt: '#e9e2d2', hair: '#8a6a44' });
   personBack(470, 1370 + (Math.floor(TT * 2 + 1) % 2) * 6, 1.05, { key: 'p2', shirt: PAL.blue, hair: '#2f2622', pat: pat.stripes('rgba(255,255,255,0.18)', 6, 26) });
   personBack(790, 1330 + (Math.floor(TT * 2) % 2) * 5, 1.0, { key: 'p3', shirt: '#7a6650', hair: '#b9b3aa' });
-  yearTag('1956');
-  capStrip('Dartmouth: the field gets its name');
+  yearTagL('1956');
+  capStripL('Dartmouth: the field gets its name');
 }
 // ---- 1958: the Mark I perceptron; the spark turns the knobs (the weights) until the triangle reads "yes"
 function sPerceptron() {
@@ -297,8 +297,8 @@ function sPerceptron() {
   // lab details: a clipboard, a hanging bulb
   ink([[880, 160], [880, 250]], { w: 3, color: PAL.ink, key: 'cord' }); cut(ellipsePts(880, 270, 22, 26, 0, 18), '#fff3c4', { key: 'bulb' });
   ctx.save(); ctx.translate(150, 1330); ctx.rotate(0.1); cut(rect(-60, -80, 120, 160, 4), PAL.woodL, { key: 'clip' }); cut(rect(-48, -60, 96, 130, 2), PAL.paper, { key: 'clipp', shadow: false, pat: pat.lines('rgba(90,130,190,0.4)', 18, 10) }); ctx.restore();
-  yearTag('1958');
-  capStrip('the perceptron learns from examples');
+  yearTagL('1958');
+  capStripL('the perceptron learns from examples');
 }
 // ---- 1966: ELIZA (close-up): the teletype prints a reply; the spark peeks over the paper
 function sEliza() {
@@ -325,8 +325,8 @@ function sEliza() {
   const typing = (TT >= 12.25 && TT < 13.0) || (TT >= 14.0 && TT < 14.75);
   hand(80, 1500 + (typing ? (B % 2) * 12 : 0), 0.9, -0.7, PAL.skin1, '#d9a441', { key: 'eh1' });
   hand(760, 1520 + (typing ? ((B + 1) % 2) * 12 : 0), 0.9, Math.PI + 0.75, PAL.skin1, '#d9a441', { key: 'eh2' });
-  yearTag('1966');
-  capStrip('ELIZA talks back');
+  yearTagL('1966');
+  capStripL('ELIZA talks back');
 }
 // ---- 1986: still winter outside; inside, by candlelight, the spark learns from its mistakes
 function sBackprop() {
@@ -358,8 +358,8 @@ function sBackprop() {
   spark(400, 1060, 92, { rays: 8, mood: TT >= 24.25 ? 'happy' : 'focus', key: 'sp86' });
   drawPencil(470, 1120, -0.5, 170, 0.8, 'bpen');
   cut(rect(830, 1100, 80, 56, 6), '#e58f8c', { key: 'eraser2', sb: 4 });
-  yearTag('1986');
-  capStrip('neural nets learn from their mistakes');
+  yearTagL('1986');
+  capStripL('neural nets learn from their mistakes');
 }
 // ---- 1997: Deep Blue (close-up at the board): a big human hand tips over its king; the spark sits on the blue cabinet
 function sChess() {
@@ -380,8 +380,8 @@ function sChess() {
   chessPiece(840, 1180, 1.4, 'rook', '#f3ead6', 'wr');
   // the human hand, tipping its king
   hand(lerp(-170, 110, EZ.io(ev(25.5, 1.25))), 1150, 1.2, 0.35, PAL.skin1, '#3b3a44', { key: 'kh' });
-  yearTag('1997');
-  capStrip('Deep Blue beats Kasparov');
+  yearTagL('1997');
+  capStripL('Deep Blue beats Kasparov');
 }
 function chessPiece(x, y, s, kind, fill, key, r = 0) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.scale(s, s);
@@ -412,8 +412,8 @@ function sPhotos() {
   ctx.strokeStyle = PAL.ink; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(545, 996, 16, 0, TAU); ctx.moveTo(591, 996); ctx.arc(575, 996, 16, 0, TAU); ctx.stroke();
   cut(capsulePts(640, 960, 700, 880, 14), '#6e4a30', { key: 'maghd' }); ink(ellipsePts(720, 850, 40, 40, 0, 24), { closed: true, w: 8, color: '#5a5560', key: 'mag' });
   ctx.restore();
-  yearTag('2012');
-  capStrip('AlexNet: neural nets learn to see');
+  yearTagL('2012');
+  capStripL('AlexNet: neural nets learn to see');
 }
 // ---- 2016: AlphaGo (extreme close-up): the spark places move 37
 function sGo() {
@@ -429,8 +429,8 @@ function sGo() {
   // the opponent's hand hovers at the edge, a cup of tea
   hand(1120 + 60 * EZ.o3(ev(35.0, 0.3)), 1320 + Math.sin(TT * 1.6) * 14, 1.2, Math.PI + 0.35, PAL.skin1, '#2f3440', { key: 'goh' });
   mug(160, 560, 0.9, '#d6e8cf', 'gotea');
-  yearTag('2016');
-  capStrip('AlphaGo beats Lee Sedol');
+  yearTagL('2016');
+  capStripL('AlphaGo beats Lee Sedol');
 }
 // ---- 2017: the transformer; a detective wall, every word tied to every other, "it" tied hardest to "animal"
 function sAttention() {
@@ -450,8 +450,8 @@ function sAttention() {
   words.forEach(([w, x, y], i) => pin(x, y - 40));
   // desk details: a magnifier? a coffee
   mug(110, 1320, 0.9, '#f3ead6', 'amug');
-  yearTag('2017');
-  capStrip('the transformer: attention');
+  yearTagL('2017');
+  capStripL('the transformer: attention');
 }
 // ---- 2020: GPT-3; the spark reads a library and gets big
 function sScale() {
@@ -466,8 +466,8 @@ function sScale() {
   for (let i = 0; i < 26; i++) { const x0 = R.r(320, 640), y0 = R.r(560, 1200), rr = R.r(0, 3), ang = TT * 1.4, x = 470 + (x0 - 470) * Math.cos(ang) - (y0 - 880) * Math.sin(ang), y = 880 + (x0 - 470) * Math.sin(ang) + (y0 - 880) * Math.cos(ang); ctx.save(); ctx.translate(x, y); ctx.rotate(rr + TT * 4); ctx.fillStyle = '#fbf6ea'; ctx.fillRect(-14, -18, 28, 36); ctx.restore(); }
   spark(470, 880, lerp(150, 230, ev(41, 3)), { rays: 10, mood: 'wow', key: 'sp20' });
   tag('175 billion parameters', 470, 1260, 44, { rot: -0.03, s: popS(42.0) });
-  yearTag('2020');
-  capStrip('GPT-3: bigger models, more text');
+  yearTagL('2020');
+  capStripL('GPT-3: bigger models, more text');
 }
 // ---- November 30, 2022 (close-up): one empty box, a cursor, the spark peeking up from below
 function sHush() {
@@ -482,8 +482,8 @@ function sHush() {
   // the spark peeks over the bottom edge of the screen
   ctx.save(); ctx.beginPath(); ctx.rect(0, 1150, SW, 400); ctx.clip(); spark(470, 1330 + (1 - EZ.o3(ev(44.5, 0.75))) * 170, 120, { rays: 11, mood: TT >= 45.5 ? 'wow' : 'smile', key: 'sp22a' }); ctx.restore();
   cut(rect(60, 1196, 820, 30, 6), '#2a2a36', { key: 'bezel' });
-  yearTag('Nov 30, 2022');
-  capStrip('a new chat box appears');
+  yearTagL('Nov 30, 2022');
+  capStripL('a new chat box appears');
 }
 // ---- the end: back at Turing's desk; the spark answers in orange
 function sEnd() { sStudy({ end: true }); }

@@ -3,7 +3,12 @@
 //  CARDS — the 16:9 layout. tableau(e) draws the original 9:16 scene on the left (its time warped to the era);
 //  card(e) draws the explainer card on the right in screen space (camera pushes on the tableau leave it still).
 // =====================================================================
+// the year moves onto the card and the card explains, so the tableau keeps only the hush's date tag and no caption strip
+let CUR_E = 0;
+const yearTagL = (s) => { if (CUR_E === 11) yearTag(s); };
+const capStripL = () => {};
 function tableau(e) {
+  CUR_E = e;
   const T = TT, E = E0;
   TT = oldT(e, TT); E0 = OLD[e][0];
   ctx.save(); ctx.transform(TK, 0, 0, TK, TX, TY);
@@ -18,7 +23,9 @@ function cardBase(e, c = PAL.paper) {
   ctx.translate(CARD_X + CARD_W / 2, CARD_Y + CARD_H / 2); ctx.rotate(e % 2 ? 0.006 : -0.006); ctx.translate(-(CARD_X + CARD_W / 2), -(CARD_Y + CARD_H / 2));
   cut(rect(CARD_X, CARD_Y, CARD_W, CARD_H, 6), c, { key: 'card' + e, sb: 22, sy: 10, tear: 1.6, pat: pat.lines('rgba(90,130,190,0.16)', 56, 150) });
   cut(rect(CARD_X + CARD_W / 2 - 60, CARD_Y - 18, 120, 40, 2), 'rgba(240,230,190,0.8)', { key: 'cardtape' + e, shadow: false, grain: 0.3, shade: false });
+  const yr = YEARS[e]; if (yr) { const k = popS(NEW[e][0] + 0.3); if (k > 0) tag(yr, CL + (handW(yr, 60) + 54) / 2 - 10, CARD_Y + 8, 60, { s: k, rot: -0.03, fill: PAL.yellow, tape: false }); }
 }
+const YEARS = ['1950', '1956', '1958', '1966', '1974', '1986', '1997', '2012', '2016', '2017', '2020', '', 'Nov 30, 2022', '2025', 'today'];
 const cardEnd = () => ctx.restore();
 const write = (str, x, y, size, t, o = {}) => handText(str, x, y, size, o.color ?? PAL.ink, { key: o.key ?? str + x + y, frac: ev(t, o.d ?? Math.min(1.2, 0.04 * str.length + 0.3)), weight: o.weight });
 function popAt(t, x, y, fn) { const k = popS(t); if (k <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(k, k); fn(); ctx.restore(); }

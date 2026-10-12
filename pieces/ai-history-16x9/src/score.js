@@ -33,27 +33,27 @@
   pad(85, 92.0, ['D3', 'A3', 'E4', 'A4'], 0.03, { cut: 1300, att: 0.05, rel: 0.02, send: 0.08 });
   each(85, 92, E16, (t, k) => {
     const fig = FIG[Math.floor(k / 8) % 4], acc = k % 4 === 0 ? 1.3 : 0.9, dry = t >= 91.5 ? 0.02 : 0.1;
-    pluck(t, nz(fig[k % 8]), 0.055 * acc, Math.sin(k * 0.9) * 0.4, t >= 91.75 ? 0.18 : 0.28, 5600, dry);
+    pluck(t, nz(fig[k % 8]), 0.044 * acc, Math.sin(k * 0.9) * 0.4, t >= 91.75 ? 0.18 : 0.28, 5600, dry);
     if (k % 2 === 0) bass(t, nz(Math.floor(k / 8) % 2 ? 'A2' : 'D2'), 0.15);
-    if (k % 4 === 0) sub(t, 0.065);
+    if (k % 4 === 0) sub(t, 0.045);
     noiseHit(t, 0.016, 'highpass', 8500, 0.7, k % 2 ? 0.016 : 0.026, k % 2 ? 0.3 : -0.3);
   });
   riser(91.0, 91.95, 0.014);
   // enter: the stab on the hit, then a flat warm chord
   ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'].forEach((n, i) => pluck(HIT + i * 0.006, nz(n), 0.36, (i - 2.5) * 0.15, 0.7, 5200, 0.4));
   pad(HIT, HIT + 0.4, ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'], 0.5, { cut: 3600, att: 0.008, rel: 0.35, send: 0.3 });
-  pad(95, 103.1, ['D3', 'A3', 'D4', 'Fs4', 'A4'], 0.04, { cut: 1300, att: 0.25, rel: 0.4, send: 0.5 });
-  drone(95, 103.1, nz('D2'), 0.05, { att: 0.12, rel: 0.4 });
-  each(96, 103, BEAT, (t, k) => pluck(t, nz(['A4', 'D5', 'Fs5', 'E5', 'D5', 'A4'][k % 6]), 0.034, (k % 3 - 1) * 0.2, 0.6, 3000, 0.4));
+  pad(95, 103.1, ['D3', 'A3', 'D4', 'Fs4', 'A4'], 0.026, { cut: 1300, att: 0.25, rel: 0.4, send: 0.5 });
+  drone(95, 103.1, nz('D2'), 0.028, { att: 0.12, rel: 0.4 });
+  each(96, 103, BEAT, (t, k) => pluck(t, nz(['A4', 'D5', 'Fs5', 'E5', 'D5', 'A4'][k % 6]), 0.026, (k % 3 - 1) * 0.2, 0.6, 3000, 0.4));
   // 2025: warm and quieter; the end: the opening pad and the motif
-  pad(103, 112.1, ['D3', 'A3', 'D4', 'Fs4'], 0.035, { cut: 1000, att: 0.3, rel: 0.3, send: 0.4 });
-  each(103, 112, E8, (t, k) => { if (k % 2 === 0 || k % 8 === 5) pluck(t, nz(FIG[3][k % 8]), 0.034, Math.sin(k) * 0.3, 0.35, 2600, 0.25); if (k % 4 === 0) bass(t, nz(Math.floor(k / 8) % 2 ? 'A2' : 'D2'), 0.1); });
-  pad(112, 120, ['D3', 'A3', 'Fs4'], 0.024, { type: 'triangle', cut: 800, att: 0.3, rel: 1.5 });
+  pad(103, 112.1, ['D3', 'A3', 'D4', 'Fs4'], 0.022, { cut: 1000, att: 0.3, rel: 0.3, send: 0.4 });
+  each(103, 112, E8, (t, k) => { if (k % 2 === 0 || k % 8 === 5) pluck(t, nz(FIG[3][k % 8]), 0.022, Math.sin(k) * 0.3, 0.35, 2600, 0.25); if (k % 4 === 0) bass(t, nz(Math.floor(k / 8) % 2 ? 'A2' : 'D2'), 0.07); });
+  pad(112, 120, ['D3', 'A3', 'Fs4'], 0.016, { type: 'triangle', cut: 800, att: 0.3, rel: 1.5 });
   sparkMotif(116.5, 0.12, [['D4', 0], ['A4', E8], ['D5', BEAT]]);
 
   // ================= SFX =================
   to = 's';
-  const swish = (tc) => sweep(tc - 0.35, tc + 0.02, 0.008, 500, 2600, 0);
+  const swish = (tc) => sweep(tc - 0.35, tc + 0.02, 0.005, 500, 2600, 0);
   TIMELINE.morphs.forEach(swish);
   const scratch = (t0, t1, vel = 0.022) => { for (let t = t0; t < t1 - 1e-6; t += E16) noiseHit(t + 0.01, 0.09, 'bandpass', 2800 + R.n(500), 1.4, vel * (0.7 + R.f() * 0.5), 0.2); };
   const pop = (t, f = 900, v = 0.025) => blip(t, f, f * 1.5, 0.07, v, 0.4);
@@ -68,9 +68,9 @@
   chime(NT(7, 31.0), [nz('D6'), nz('A6')], 0.035);                    // "cat!"
   noiseHit(NT(8, 35.0), 0.06, 'bandpass', 1800, 4, 0.08); sub(NT(8, 35.0), 0.06);   // move 37
   [92.75 + 1.25, 92.75 + 1.5].forEach((t) => noiseHit(t, 0.03, 'highpass', 3000, 1, 0.03, -0.2));   // two soft key clicks in the hush
-  sub(HIT, 0.3); noiseHit(HIT, 0.2, 'lowpass', 1200, 0.8, 0.18);     // ENTER
-  [NT(13, 52.5), NT(13, 53.0), NT(13, 53.5)].forEach((t, i) => pop(t, 900 + i * 200));
-  chime(NT(13, 54.5), [nz('D5'), nz('A5'), nz('D6')], 0.04);          // tests pass
+  sub(HIT, 0.36); noiseHit(HIT, 0.2, 'lowpass', 1200, 0.8, 0.22);     // ENTER
+  [NT(13, 52.5), NT(13, 53.0), NT(13, 53.5)].forEach((t, i) => pop(t, 900 + i * 200, 0.015));
+  chime(NT(13, 54.5), [nz('D5'), nz('A5'), nz('D6')], 0.025);          // tests pass
   scratch(NT(14, 56.5), NT(14, 58.0), 0.018);                          // "good question."
   // the card's pops, soft
   NEW.forEach(([a], e) => { if (e !== 11) [1.6, 3.0, 4.4].forEach((d) => pop(a + d, 1200 + e * 30, 0.012)); });
