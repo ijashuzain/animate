@@ -1,0 +1,10 @@
+{
+  "name": "octopus-hearts",
+  "title": "Why Does an Octopus Need Three Hearts?",
+  "format": { "width": 1920, "height": 1080, "fps": 24, "bpm": 120, "duration": 81.0, "frames": 1944 },
+  "formats": ["16:9"],
+  "storyFormat": "morph chain, voice-led (10 worlds, 8 shape morphs, one hard cut on the payoff)",
+  "style": "cut-paper",
+  "scenes": ["src/props.js", "src/scenes.js"],
+  "review": { "safe": { "top": 60, "bottom": 110, "right": 60 }, "refs": {} }
+}

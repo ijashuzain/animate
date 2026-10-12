@@ -1,0 +1,6 @@
+# render outputs (large; regenerate with tools/export.mjs)
+pieces/*/frames*/
+pieces/*/renders/
+pieces/*/review/
+pieces/*/index.html
+*.wav
