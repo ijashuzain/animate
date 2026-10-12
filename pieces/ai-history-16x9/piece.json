@@ -1,0 +1,10 @@
+{
+  "name": "ai-history-16x9",
+  "title": "A Short History of AI (16:9, 2 min)",
+  "format": { "width": 1920, "height": 1080, "fps": 24, "bpm": 120, "duration": 120.0, "frames": 2880 },
+  "formats": ["16:9"],
+  "storyFormat": "morph chain, voice-led: the original's 15 eras on the left, an explainer card per era on the right",
+  "style": "cut-paper",
+  "build": ["src/head.html", "kit/core.js", "style", "src/tableau.js", "src/cards.js", "src/bridges.js", "kit/morph.js", "kit/board.js", "kit/score-head.js", "src/score.js", "kit/score-tail.js"],
+  "review": { "safe": { "top": 40, "bottom": 120, "right": 60 }, "refs": {}, "textIgnore": [[94.5, 103.0, "ChatGPT: a storm of chat bubbles flies past the edges and over the date tag on purpose"]] }
+}

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Short History of AI (16:9)</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1714; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { max-width: 100vw; max-height: 100vh; width: auto; height: auto; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  A SHORT HISTORY OF AI — 16:9 YouTube cut, 120s, 24fps, cut paper, voice-led.
+//  Left: the original example's 9:16 scenes (src/tableau.js), scaled to fill the height and slowed to the voice.
+//  Right: an explainer card per era (src/cards.js): a diagram and the key numbers, popping in as the voice explains.
+//  The one hard cut is the enter key at 94.5 (the loudest hit), after 2.5s of silence. Orange = the spark only.
+// =====================================================================
+const FPS = 24, W = 1920, H = 1080;
+const SW = 1080, SH = 1920;                         // the tableau's own (portrait) world
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const DURATION = 120.0;
+const NFRAMES = Math.round(DURATION * FPS);
+const LOOP_T = NFRAMES / FPS;
+const SAFE = { top: 40, bottom: 120, right: 60 };   // year tag at top-left, caption under the tableau
+const HAND = '"Ink Free", "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", "Comic Neue", cursive';
+const CX = 470;                                      // caption centre: under the tableau
+// the tableau: portrait world -> the left of the frame (world y 330..1530 fills the height)
+const TK = 0.9, TX = 0, TY = -330 * TK;
+const TM = (x, y) => [TX + x * TK, TY + y * TK];
+const TMP = (P) => P.map(([x, y]) => TM(x, y));
+
+// eras: the original's [a, b] played over the new [A, B]; its own times are warped into each era (see tableau())
+const OLD = [[0, 4], [4, 8], [8, 12], [12, 16], [16, 22], [22, 25], [25, 29], [29, 33], [33, 37], [37, 41], [41, 44], [44, 46], [46, 51], [51, 56], [56, 60]];
+const NEW = [[0, 9], [9, 17], [17, 26], [26, 34], [34, 44], [44, 52], [52, 60], [60, 68], [68, 77], [77, 85], [85, 92], [92, 94.5], [94.5, 103], [103, 112], [112, 120]];
+const KEYS = ['study', 'dartmouth', 'perceptron', 'eliza', 'winter', 'backprop', 'chess', 'photos', 'go', 'attention', 'library', 'hush', 'hi', 'work', 'end'];
+const SCENE = [() => sStudy(), () => sDartmouth(), () => sPerceptron(), () => sEliza(), () => sWinter(), () => sBackprop(), () => sChess(), () => sPhotos(),
+  () => sGo(), () => sAttention(), () => sScale(), () => sHush(), () => sHi(), () => sWork(), () => sStudy({ end: true })];
+const oldT = (e, t) => OLD[e][0] + (t - NEW[e][0]) * (OLD[e][1] - OLD[e][0]) / (NEW[e][1] - NEW[e][0]);   // new time -> the original's
+const newT = (e, t) => NEW[e][0] + (t - OLD[e][0]) * (NEW[e][1] - NEW[e][0]) / (OLD[e][1] - OLD[e][0]);   // the original's -> new
+const ERA_LIST = NEW.map(([a, b], e) => [a, b, () => { tableau(e); card(e); }]);
+const HIT = 94.5;
+
+// the narration: one line per era, inside its window (record each line to fit; the music ducks under it)
+const NARR = [
+  ['p1',  0.6,   8.4,   "Nineteen fifty. Alan Turing asks: can machines think? His test: if you can't tell its answers from a person's, maybe it does."],
+  ['p2',  9.6,   16.4,  'Nineteen fifty-six. At a summer workshop at Dartmouth, scientists give the field its name: artificial intelligence.'],
+  ['p3',  17.6,  25.4,  "Nineteen fifty-eight. Frank Rosenblatt's perceptron: a machine that learns. Each mistake turns its dials a little, until it gets it right."],
+  ['p4',  26.6,  33.4,  'Nineteen sixty-six. ELIZA, an early chatbot, just turns your words around. Yet people confided in it anyway.'],
+  ['p5',  34.6,  43.4,  'Nineteen seventy-four. The big promises outran the results. Funding dried up, and labs went quiet: the first AI winter.'],
+  ['p6',  44.6,  51.4,  'Nineteen eighty-six. Backpropagation: a network guesses, measures its error, and passes the blame backwards to improve.'],
+  ['p7',  52.6,  59.4,  "Nineteen ninety-seven. IBM's Deep Blue beats chess champion Garry Kasparov, searching two hundred million positions a second."],
+  ['p8',  60.6,  67.4,  'Twenty twelve. AlexNet, a deep network trained on gaming chips, recognises images far better than anything before.'],
+  ['p9',  68.6,  76.4,  'Twenty sixteen. AlphaGo beats Go champion Lee Sedol, with a move so unexpected that experts first thought it was a mistake.'],
+  ['p10', 77.6,  84.4,  'Twenty seventeen. The transformer: a design that lets every word pay attention to every other word.'],
+  ['p11', 85.6,  91.4,  'Twenty twenty. GPT-3 learns from a library of text, just by predicting the next word.'],
+  ['p12', 95.0,  102.4, 'November thirtieth, twenty twenty-two. ChatGPT launches. A million people sign up in five days.'],
+  ['p13', 103.6, 111.4, "Twenty twenty-five. AI agents like Claude Code don't just answer. They read the code, make the changes, and run the tests."],
+  ['p14', 112.6, 119.4, "Seventy-five years after Turing's question: can machines think? It's still a good question."],
+];
+
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE, aspect: '16:9',
+  format: 'morph-chain',
+  shots: NEW.map(([t0, t1], i) => ({ id: i + 1, key: KEYS[i], era: i, t0, t1, title: KEYS[i] })),
+  cuts: [HIT],
+  morphs: NEW.slice(1).map(([a]) => a).filter((t) => t !== HIT),
+  cues: { enter: HIT },
+  acts: [
+    { name: '1 Question', role: 'build',   t0: 0,    t1: 34 },
+    { name: '2 Winter',   role: 'winter',  t0: 34,   t1: 52 },
+    { name: '3 Comeback', role: 'journey', t0: 52,   t1: 85 },
+    { name: '4 Library',  role: 'peak',    t0: 85,   t1: 92 },
+    { name: '5 Hush',     role: 'silence', t0: 92,   t1: HIT },
+    { name: '6 Hi',       role: 'gift',    t0: HIT,  t1: 103 },
+    { name: '7 Work',     role: 'goodbye', t0: 103,  t1: 120 },
+  ],
+  board: [],
+  narration: NARR.map(([id, t0, t1, text]) => ({ id, t0, t1, text })),
+};
+window.TIMELINE = TIMELINE;
