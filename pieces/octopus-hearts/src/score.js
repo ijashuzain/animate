@@ -47,10 +47,10 @@
   // 9: the payoff: a stab on the landing, then a flat warm chord, and a playful crawl
   ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'].forEach((n, i) => pluck(c.hit + i * 0.006, nz(n), 0.36, (i - 2.5) * 0.15, 0.7, 5200, 0.4));
   pad(c.hit, c.hit + 0.4, ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'], 0.5, { cut: 3600, att: 0.008, rel: 0.35, send: 0.3 });
-  pad(66.6, 72.1, ['D3', 'A3', 'D4', 'Fs4'], 0.035, { cut: 1100, att: 0.3, rel: 0.3, send: 0.4 });
+  pad(66.6, 72.1, ['D3', 'A3', 'D4', 'Fs4'], 0.045, { cut: 1100, att: 0.3, rel: 0.3, send: 0.4 });
   each(67.0, 72.0, E8, (t, k) => { if (k % 3 !== 2) pluck(t, nz(['D5', 'A4', 'B4', 'Fs4', 'A4', 'E4'][k % 6]), 0.04, Math.sin(k) * 0.4, 0.18, 3800, 0.2); if (k % 4 === 0) bass(t, nz('D2'), 0.12); });
   // 10: home: the opening pad, Bloo's motif, the end
-  pad(72.0, 81.0, ['D3', 'A3', 'Fs4'], 0.018, { type: 'triangle', cut: 800, att: 0.4, rel: 1.2 });
+  pad(72.0, 81.0, ['D3', 'A3', 'Fs4'], 0.013, { type: 'triangle', cut: 800, att: 0.4, rel: 1.2 });
   each(73.0, 79.0, BEAT * 2, (t, k) => pluck(t, nz(['A4', 'Fs4', 'D5', 'E4'][k % 4]), 0.02, Math.sin(k) * 0.3, 0.8, 2000, 0.45));
   blooMotif(c.wave, 0.1);
   blooMotif(c.title, 0.11, [['D4', 0], ['A4', E8], ['D5', BEAT]]);
@@ -101,7 +101,7 @@
   sub(c.hit, 0.32); noiseHit(c.hit, 0.25, 'lowpass', 900, 0.8, 0.2);
   each(c.hit + 1.0, M[7], 1.0, (t) => blip(t, 1000, 1000, 0.08, 0.025, 0.4));
   // 10 three hearts together; Bloo pops and waves; the title is written
-  each(c.sync, 80.0, 1.0, (t) => heartbeat(t, 0.05));
+  each(c.sync, 80.0, 1.0, (t) => heartbeat(t, 0.035));
   [74.0, 74.5, 75.5].forEach((t) => pop(t, 1000));
   pop(c.wave, 1300);
   scribble(c.title + 0.1, c.title + 0.6, 0.02);
