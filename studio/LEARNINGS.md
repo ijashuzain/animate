@@ -45,7 +45,8 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - Re-render audio only (`finish.sh --audio-only`) when just the mix changes: ~8 min instead of ~15.
 - The engine's build tool takes relative piece paths only.
 - Dashboard outputs: artifact asset uploads cap at 15 MB per file, so the page gets a 2-pass ~790 kbps 720p copy (~13 MB),
-  not the 1080p share copy. Test the page with a mocked `window.claude` served through `page.route` (addInitScript
+  for playback; the 1080p share copy goes up byte-split (`split -b 14500000`) and the page joins the parts into one Blob
+  on download (verified byte-identical; downloads have no 15 MB limit). Test the page with a mocked `window.claude` served through `page.route` (addInitScript
   doesn't run on `setContent`).
 
 ### Style notes

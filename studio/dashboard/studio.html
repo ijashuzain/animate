@@ -177,8 +177,10 @@ async function saveFile(name, getData, stat) {
   catch (e) { stat.textContent = e && e.code === 'cancelled' ? 'Download cancelled.' : 'Could not save ' + name + ' (' + ((e && e.code) || 'error') + ').'; }
 }
 const fetchBlob = async (a) => { const r = await fetch(blobUrl(a)); if (!r.ok) throw { code: 'http_' + r.status }; return r.blob(); };
+// the 1080p master is stored in byte-split parts (each upload is capped at 15 MB); join them back into one mp4
+const fetchParts = async (parts, stat) => { const out = []; for (let i = 0; i < parts.length; i++) { stat.textContent = `Fetching 1080p part ${i + 1} of ${parts.length}…`; out.push(await fetchBlob(parts[i])); } return new Blob(out, { type: 'video/mp4' }); };
 function outputPanel(slug, o) {
-  const sig = JSON.stringify([o.video && o.video.id, o.thumb && o.thumb.id, (o.script || '').length, (o.metadata || '').length, o.updated]);
+  const sig = JSON.stringify([o.video && o.video.id, o.thumb && o.thumb.id, o.full && o.full.parts && o.full.parts.length, (o.script || '').length, (o.metadata || '').length, o.updated]);
   const prev = outNodes.get(slug); if (prev && prev.sig === sig) return prev.node;
   const d = el('details', 'outp'); d.append(el('summary', null, 'Outputs: watch, download, copy'));
   const stat = el('div', 'ostat');
@@ -189,7 +191,9 @@ function outputPanel(slug, o) {
     d.append(m);
   }
   const acts = el('div', 'acts'), btn = (label, fn, main) => { const b = el('button', main ? 'main' : '', label); b.type = 'button'; b.addEventListener('click', async () => { b.disabled = true; try { await fn(); } finally { b.disabled = false; } }); acts.append(b); return b; };
-  if (o.video) btn('Download video (720p)', () => saveFile(`${slug}-720p.mp4`, () => fetchBlob(o.video), stat), true);
+  const full = o.full && o.full.parts && o.full.parts.length ? o.full : null;
+  if (full) btn(`Download video (1080p, for YouTube${full.size ? ', ' + Math.round(full.size / 1048576) + ' MB' : ''})`, () => saveFile(`${slug}-1080p.mp4`, () => fetchParts(full.parts, stat), stat), true);
+  if (o.video) btn('Download video (720p' + (full ? ', smaller' : '') + ')', () => saveFile(`${slug}-720p.mp4`, () => fetchBlob(o.video), stat), !full);
   if (o.thumb) btn('Download thumbnail', () => saveFile(`${slug}-thumbnail.png`, () => fetchBlob(o.thumb), stat));
   if (o.script) btn('Download voice-over script', () => saveFile(`${slug}-voice-over.md`, async () => o.script, stat));
   if (o.metadata) btn('Download YouTube metadata', () => saveFile(`${slug}-youtube.md`, async () => o.metadata, stat));

@@ -59,8 +59,9 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
 9. **Deliver** (stage `done`): send each video's `-1080p.mp4`, `-script-preview-720p.mp4`, `voice/script.md`,
    `youtube/metadata.md` and `youtube/thumbnail.png` with SendUserFile, and summarise checks, weakest spot and what you couldn't verify.
    Put them on the dashboard too: upload `renders/<slug>-web-720p.mp4` (finish.sh makes it, ~13 MB; the upload cap is 15 MB)
-   and `youtube/thumbnail.png` with the Artifact tool (`url` = the dashboard, `asset: true`, `file_paths`), then
-   `node studio/tools/outputs.mjs <slug> <videoId> <thumbId>` and write `renders/outputs.json` to `outputs/<slug>`
+   `renders/<slug>-1080p.part0.mp4`, `part1.mp4` (the 1080p share copy split under 15 MB; the page joins them into one file on
+   download) and `youtube/thumbnail.png` with the Artifact tool (`url` = the dashboard, `asset: true`, `file_paths`), then
+   `node studio/tools/outputs.mjs <slug> <videoId> <thumbId> <part0Id> <part1Id>` and write `renders/outputs.json` to `outputs/<slug>`
    (ArtifactData batch, `file_path`). The page then plays the video and offers downloads and copy buttons.
 10. **Learn** (always): append what this batch taught to `studio/LEARNINGS.md` (new rules, mistakes, what the user liked/disliked),
     and improve the repo itself when a lesson is general: a library character, a channel helper, a tool, a score mood, a template.
@@ -76,8 +77,8 @@ Write with the `ArtifactData` tool (pin `if_version` on existing docs; batch sev
 - `board/history`: { made: [titles], suggested: [titles] }: the page avoids these when suggesting. **After every batch add the
   made titles here** (and to topics/log.md).
 - `videos/<slug>`: { order, title, style, length, stage, detail (what is happening), why, progress 0..1 or null (indeterminate), outputs: [paths] }
-- `outputs/<slug>`: { title, ytTitle, description, video: {id}, thumb: {id}, script, metadata, note?, updated } (written by
-  outputs.mjs; asset ids from the upload). The page shows a player, Download video/thumbnail/script/metadata, Copy title/description/lines.
+- `outputs/<slug>`: { title, ytTitle, description, video: {id}, thumb: {id}, full: { parts: [{id}], size }, script, metadata, note?, updated } (written by
+  outputs.mjs; asset ids from the upload). The page shows a player, Download video 1080p (joined parts) / 720p / thumbnail/script/metadata, Copy title/description/lines.
   The page declares `assets`, so it is org-internal (never public).
 - `log/<sortable id>`: { t, slug, note } (one line per meaningful step)
 - `requests/*`: { text, created, status } written by the user from the page; set status 'picked' when used
@@ -92,8 +93,8 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 | `node studio/tools/metadata.mjs <slug>` | `youtube/metadata.md` from META + chapters |
 | `node studio/tools/thumbnail.mjs <slug>` | `youtube/thumbnail.png` (1280×720) from THUMB |
 | `studio/tools/finish.sh <slug> [--audio-only\|--skip-export]` | export → review → share copy → preview → vo → metadata → thumbnail → web copy |
-| `studio/tools/web-copy.sh <slug>` | `renders/<slug>-web-720p.mp4` (~13 MB) for the dashboard |
-| `node studio/tools/outputs.mjs <slug> <videoId> <thumbId>` | `renders/outputs.json`, the dashboard's `outputs/<slug>` doc |
+| `studio/tools/web-copy.sh <slug>` | `renders/<slug>-web-720p.mp4` (~13 MB) and `<slug>-1080p.part<N>.mp4` (< 15 MB each) for the dashboard |
+| `node studio/tools/outputs.mjs <slug> <videoId> <thumbId> [partIds…]` | `renders/outputs.json`, the dashboard's `outputs/<slug>` doc |
 | `node studio/tools/status.mjs <slug> <stage> "<what>" "<why>"` | local status mirror |
 | `node studio/tools/cleanup.mjs [--dry-run]` | archive sources, delete generated files of finished videos |
 | `node engine/animate/tools/still.mjs videos/<slug> 3,40 out.png --scale 0.5` | look at specific frames |

@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 // The dashboard's outputs record for a finished video: renders/outputs.json, sent with ArtifactData to outputs/<slug>.
 // Upload renders/<slug>-web-720p.mp4 and youtube/thumbnail.png to the dashboard first (Artifact tool, asset: true)
-// and pass the two asset ids it returns.
-//   usage: node studio/tools/outputs.mjs <slug> <videoAssetId> <thumbAssetId>
+// and pass the two asset ids it returns. For the 1080p download, also upload renders/<slug>-1080p.part*.mp4 (web-copy.sh
+// splits the share copy into < 15 MB pieces; the page joins them) and pass their ids in order.
+//   usage: node studio/tools/outputs.mjs <slug> <videoAssetId> <thumbAssetId> [part0Id part1Id ...]
 import fs from 'node:fs';
 import path from 'node:path';
 import { vdir } from './lib.mjs';
-const [slug, vid, tid] = process.argv.slice(2);
+const [slug, vid, tid, ...parts] = process.argv.slice(2);
 if (!tid) { console.error('usage: node studio/tools/outputs.mjs <slug> <videoAssetId> <thumbAssetId>'); process.exit(2); }
 const V = vdir(slug), rd = (f) => fs.readFileSync(path.join(V, f), 'utf8');
 const piece = JSON.parse(rd('piece.json')), metadata = rd('youtube/metadata.md'), script = rd('voice/script.md');
 const sec = (name) => (metadata.split(`\n## ${name}\n`)[1] || '').split('\n## ')[0].trim();
 const doc = { title: piece.title, ytTitle: sec('Title').split('\n')[0], description: sec('Description'),
   video: { id: vid }, thumb: { id: tid }, script, metadata, updated: Date.now() };
+const share = path.join(V, 'renders', `${slug}-1080p.mp4`);
+if (parts.length) doc.full = { parts: parts.map((id) => ({ id })), size: fs.existsSync(share) ? fs.statSync(share).size : null };
 const out = path.join(V, 'renders', 'outputs.json');
 fs.writeFileSync(out, JSON.stringify(doc));
 console.log('wrote', path.relative(process.cwd(), out), `(${(fs.statSync(out).size / 1024).toFixed(1)} KB)`);
