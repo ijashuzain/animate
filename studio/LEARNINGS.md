@@ -5,6 +5,22 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## Batch 2 (Oct 2026): GPS (isometric), vaccines (cut-paper), honey bees (sketchbook)
+
+### What the user asked for
+- **No notepad/card.** "Directly write things, draw things, animate things in the main video; blend the explanation with it."
+  Done in code: channel.js layout 'open' (the default). The explanation is lettered straight onto the scene in the style's
+  own type (CHANNEL in each scenes.js); scene backgrounds and floors must span the full frame (W), not stop at x 990.
+  Busy backgrounds get a soft halo behind the lettering; dark scenes set `dark: true` for light ink.
+
+### Pipeline lessons
+- First real videos in isometric and sketchbook: both work with the channel kit. The sketchbook marker font fell back to a
+  serif on Linux; fixed in the kit (Comic Neue before the generic cursive).
+- Easing names in core are EZ.o2/o3/i2/i3/io/back (not EZ.out / EZ.in).
+- Isometric worlds need u ≈ 0.7 for big ground plates in a 990-wide area; satellites/objects read better large (s ≥ 0.7).
+
+---
+
 ## Batch 1 (Oct 2026): internet history, why the sky is blue, what if the Moon disappeared (+ AI history 16:9, octopus hearts)
 
 ### What the user liked

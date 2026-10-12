@@ -7,7 +7,7 @@ The rules here are the user's standing instructions; LEARNINGS.md is what past v
 ```
 engine/animate/        the animate engine (vendored from github.com/cth9191/animate, MIT): kit, renderer, styles, tools, grammar.
                        Improve it in place when a lesson calls for it; note upstream-worthy changes in LEARNINGS.md.
-studio/channel/        the channel layout (any style): head-top.html, channel.js (timeline, explainer card, bridges, camera),
+studio/channel/        the channel layout (any style): head-top.html, channel.js (timeline, the explanation lettering, bridges, camera),
                        score-channel.js (mood-based score, motif, kick, risers, payoff hit, sfx)
 studio/library/        reusable, style-agnostic characters and helpers (common.js: chFace, hero, personFull, squash)
 studio/templates/      explainer/ = the starting point for a new video (copied by new-video.mjs)
@@ -41,14 +41,17 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    isometric) or a new one via `engine/animate/new-style.md`. Match the subject: cut-paper for stories and histories, math for
    equations and graphs, pixel for computing/gaming history, isometric for products/infrastructure, riso/sketchbook for
    softer editorial topics, crosshatch for mechanisms. Read that style's STYLE.md and look at its sample.png first.
-   The channel card on the right keeps every video recognisable whatever the style.
+   **No notepad/card (the user's rule):** the explanation is written and drawn straight onto the scene, in the style's own
+   lettering (layout 'open'). Each video sets `CHANNEL` in src/scenes.js: font, ink colours, halo, and how its step tag looks
+   (isometric: sans + mono label; sketchbook: marker on tape; cut-paper: the paper tag). Keep the whole frame one world.
 6. **Write the script** (stage `scripting`): `node studio/tools/new-video.mjs <slug> "<Title>" <style>`, then fill
    `src/script.js`: SCN (9–10 scenes, 11–15 s each, ~2 min), the hook, one true step per scene, a 2.5 s `silence` scene,
    the payoff (`cut: true`, mood `full`), and an ending that calls back to the opening. Also META (YouTube title, alternatives,
    hook, about, chapters, sources, hashtags, tags), THUMB (frame, panel colour, 2–4 big hook lines) and SCORE (motif).
    **Voice lines fill their scene:** about 2.7 words per second of the window (d − 0.9 s). Check with `node studio/tools/vo.mjs <slug> --check`.
 7. **Draw** (stage `building`): `src/scenes.js`, one scene function and one card function per scene. Use the style's kit for
-   the left side, the channel helpers for the card (write, title, bigNum, arrow, bubble, check, cbox, popAt, chTag) and
+   the scene, the channel helpers to letter the explanation onto it (write, title, bigNum, arrow, bubble, check, cbox, popAt,
+   chTag; they draw in screen space on the right, x 1070..1810) and
    `studio/library` characters. Run `node studio/tools/smoke.mjs <slug>` and LOOK at `review/sheet.png` (and at 2–3 frames at
    0.5 scale with engine/animate/tools/still.mjs). Fix overlaps, clutter, still stretches, unreadable text.
 8. **Render and package** (stages `rendering` → `reviewing` → `packaging`): `studio/tools/finish.sh <slug>` with

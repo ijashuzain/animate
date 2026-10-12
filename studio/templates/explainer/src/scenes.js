@@ -1,6 +1,8 @@
 
 // =====================================================================
-//  SCENES + CARDS — left: the scene (x 0..~990) in the piece's style; right: the card (channel helpers).
+//  SCENES + LETTERING — the scene fills the frame in the piece's style; the explanation is written straight onto it on the
+//  right (x 1070..1810) with the channel helpers. No card or notepad (the user's rule). CHANNEL sets the lettering:
+const CHANNEL = { /* font: SANS, colors: { ink, accent, green, blue }, halo: 'rgba(255,255,255,0.72)' | false, tag: (str, k) => {...} */ };
 //  Style-agnostic placeholders: replace with the style's own kit (cut-paper: cut/tag/face; riso: risoPrint...; etc.)
 // =====================================================================
 function sHook() { wallC('#26315f'); starsC('hk', 90); glowC(500, 520, 160, '#fff2c8', 0.4); hero(500, 520, 110, { mood: TT > at(2) ? 'wow' : 'smile', key: 'h1' }); }

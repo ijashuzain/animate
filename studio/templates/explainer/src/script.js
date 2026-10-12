@@ -1,7 +1,7 @@
 
 // =====================================================================
 //  __TITLE__ — the scene list (see CLAUDE.md -> "Writing a video"). Each scene: duration d (s), the left scene, the
-//  right card, the voice line (fill the window: ~2.7 words per second of d - 0.9), the music mood and sound cues.
+//  explanation lettered on the right (no card), the voice line (fill the window: ~2.7 words per second of d - 0.9), the music mood and sound cues.
 //  The scene before the payoff is a 2.5 s 'silence'; the payoff scene has cut: true and mood 'full'.
 // =====================================================================
 const SCN = [
@@ -9,7 +9,7 @@ const SCN = [
     say: 'Replace me: the hook. One surprising question or image that the whole video answers, said in about twenty-eight words so the voice fills this scene.',
     sfx: [[2.0, 'chime']] },
   { key: 'step1', d: 13, tag: 'step 1', mood: 'groove', focus: [500, 540], bg: '#cfe2ee', scene: () => sStep1(), card: (at) => cStep1(at),
-    say: 'Replace me: the first true step of the process, acted out on the left and explained on the card, with one number or one diagram that sticks.',
+    say: 'Replace me: the first true step of the process, acted out on the left and lettered on the right, with one number or one diagram that sticks.',
     sfx: [[3.0, 'pop']] },
   { key: 'hush', d: 2.5, mood: 'silence', focus: [500, 540], bg: '#0c1124', scene: () => sHush(), card: null },
   { key: 'payoff', d: 12, tag: 'the twist', mood: 'full', cut: true, focus: [500, 540], bg: '#f3a3bf', scene: () => sPayoff(), card: (at) => cPayoff(at),

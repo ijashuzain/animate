@@ -2,7 +2,10 @@
 // =====================================================================
 //  CHANNEL KIT — the shared 16:9 explainer layout, for ANY engine style (it needs only engine/animate/kit/core.js).
 //    left  (x 0..~990): the scene, drawn with the piece's style kit (cut-paper, riso, math, pixel, isometric, ...)
-//    right (x 1010..1870): the explainer card: a paper sheet, the year/step tag on its top edge, diagrams and numbers
+//    right (x 1010..1870): the explanation, written and drawn straight onto the scene in the style's own lettering
+//                         (layout 'open', the default; the user asked for no notepad). Layout 'card' puts it on a paper sheet.
+//  A piece may set CHANNEL = { layout, font, ink, inkDark, accent, halo, haloDark, tag(str, k) } in src/scenes.js
+//  (scenes.js loads after the style kit, so it can use the style's palette). A scene with dark: true gets light ink.
 //  The piece's src/script.js defines, before this file:
 //    SCN  = [{ key, d, scene(), card(at) | null, tag, focus: [x, y], bg: '#hex', say, sayAt?, sayEnd?, mood, sfx, cut? }]
 //    HIT  = the payoff time (a hard cut after a 'silence' scene), ACTS = review acts, SCORE = { motif: [...] } (optional)
@@ -35,7 +38,11 @@ const TIMELINE = {
 window.TIMELINE = TIMELINE;
 
 // ---- the channel's own paper primitives (core.js only)
+const CHL = Object.assign({ layout: 'open', font: null, halo: 'rgba(255,255,255,0.72)', haloDark: 'rgba(10,14,30,0.6)', inkDark: '#fbf6ea' }, typeof CHANNEL !== 'undefined' ? CHANNEL : {});
+let CH_HALO = null;   // the halo behind lettering written on the scene (open layout), set per scene by drawCard
+const CHF = () => CHL.font ?? HAND;
 const CH = { paper: '#fbf6ea', ink: '#2a1d18', accent: '#c4542e', accentL: '#ec7a4f', tag: '#f6cf55', green: '#3d7c46', blue: '#2a58c8', line: 'rgba(90,130,190,0.16)', tape: 'rgba(240,230,190,0.85)' };
+Object.assign(CH, CHL.colors || {});   // a piece's lettering colours (e.g. isometric: grey ink, the dark accent)
 function chShape(P, fill, o = {}) {   // a paper shape: a slightly wobbly, torn edge, a soft shadow, a little grain
   const key = o.key ?? 'chs', Q0 = wobble(P, true, o.amt ?? 0.8, key, 6), R = RNG('chtorn', key), n = Q0.length, tear = o.tear ?? 1.2;
   const Q = Q0.map((p, i) => { const a = Q0[(i + 1) % n], b = Q0[(i - 1 + n) % n], nx = a[1] - b[1], ny = b[0] - a[0], l = Math.hypot(nx, ny) || 1, j = R.n(tear); return [p[0] + nx / l * j, p[1] + ny / l * j]; });
@@ -55,20 +62,24 @@ function chText(str, x, y, size, color = CH.ink, o = {}) {   // hand lettering, 
   ctx.save();
   const R = RNG('cht', o.key ?? str, B);
   ctx.translate(x + R.n(0.6), y + R.n(0.6)); ctx.rotate((o.rot ?? 0) + R.n(0.005));
-  ctx.font = `${o.weight ?? 400} ${size}px ${HAND}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+  ctx.font = `${o.weight ?? 400} ${size}px ${CHF()}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);
-  if (frac > 0) { if (frac < 1) { ctx.beginPath(); ctx.rect(-4, -size * 1.2, w * frac + 4, size * 1.7); ctx.clip(); } ctx.fillText(str, 0, 0); }
+  if (frac > 0) {
+    if (frac < 1) { ctx.beginPath(); ctx.rect(-4, -size * 1.2, w * frac + 4, size * 1.7); ctx.clip(); }
+    if (CH_HALO && o.halo !== false) { ctx.strokeStyle = CH_HALO; ctx.lineWidth = Math.max(4, size * 0.16); ctx.lineJoin = 'round'; ctx.strokeText(str, 0, 0); }
+    ctx.fillText(str, 0, 0);
+  }
   ctx.restore();
   return w;
 }
-function chTextW(str, size, weight = 400) { ctx.save(); ctx.font = `${weight} ${size}px ${HAND}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
+function chTextW(str, size, weight = 400) { ctx.save(); ctx.font = `${weight} ${size}px ${CHF()}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
 function chTag(str, x, y, size, o = {}) {   // a torn paper tag with lettering (and tape)
   const s = o.s ?? 1; if (s <= 0.01) return;
   const w = chTextW(str, size, o.weight ?? 400) + size * 0.9, h = size * 1.45;
   ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot ?? -0.03); ctx.scale(s, s);
   chShape(rrectPts(-w / 2, -h / 2, w, h, 3), o.fill ?? CH.paper, { key: 'chtag' + str, tear: 1.5, grain: false });
   if (o.tape) chShape(rrectPts(-34, -h / 2 - 16, 68, 30, 2), CH.tape, { key: 'chtape' + str, shadow: false, grain: false, tear: 0.6 });
-  chText(str, -w / 2 + size * 0.45, size * 0.36, size, o.color ?? CH.ink, { key: 'chtagt' + str, frac: o.frac, weight: o.weight });
+  chText(str, -w / 2 + size * 0.45, size * 0.36, size, o.color ?? '#2a1d18', { key: 'chtagt' + str, frac: o.frac, weight: o.weight, halo: false });
   ctx.restore();
 }
 const chDot = (x, y, r, c = CH.ink) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); };
@@ -77,6 +88,15 @@ const chDot = (x, y, r, c = CH.ink) => { ctx.fillStyle = c; ctx.beginPath(); ctx
 const CARD_X = 1010, CARD_Y = 60, CARD_W = 860, CARD_H = 960, CL = CARD_X + 60, CR = CARD_X + CARD_W - 60, CCX = CARD_X + CARD_W / 2;
 function drawCard(i) {
   const s = SCN[i]; if (!s.card) return;
+  if (CHL.layout !== 'card') {   // open: no sheet; the tag and the explanation are written straight onto the scene
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const keepInk = CH.ink; if (s.dark) CH.ink = CHL.inkDark;
+    CH_HALO = (s.dark ? CHL.haloDark : (s.halo ?? CHL.halo)) || null;
+    if (s.tag) { const k = popS(s.t0 + 0.3); if (k > 0) { if (CHL.tag) CHL.tag(s.tag, k); else chTag(s.tag, CL + (chTextW(s.tag, 56) + 50) / 2 - 10, CARD_Y + 30, 56, { s: k, rot: -0.03, fill: CH.tag }); } }
+    s.card(at);
+    CH.ink = keepInk; CH_HALO = null; ctx.restore();
+    return;
+  }
   ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.translate(CCX, CARD_Y + CARD_H / 2); ctx.rotate(i % 2 ? 0.006 : -0.006); ctx.translate(-CCX, -(CARD_Y + CARD_H / 2));
   chShape(rrectPts(CARD_X, CARD_Y, CARD_W, CARD_H, 6), s.cardFill ?? CH.paper, { key: 'card' + i, sb: 22, sy: 10, tear: 1.6, lines: CH.line });
@@ -97,7 +117,7 @@ function arrow(x1, y1, x2, y2, t, color = CH.ink, key = 'ar', w = 6) {
   if (f > 0.9) ink([[ex - Math.cos(a - 0.5) * 24, ey - Math.sin(a - 0.5) * 24], [ex, ey], [ex - Math.cos(a + 0.5) * 24, ey - Math.sin(a + 0.5) * 24]], { w, color, key: key + 'h' });
 }
 function bubble(str, x, y, size, t, fill = CH.paper, o = {}) {
-  popAt(t, x, y, () => { const w = chTextW(str, size) + size * 1.1, h = size * 1.7; chShape(rrectPts(-w / 2, -h / 2, w, h, h / 2), fill, { key: 'bb' + str, sb: 6, grain: false }); chShape([[o.left ? -w / 2 + 30 : w / 2 - 50, h / 2 - 6], [o.left ? -w / 2 + 10 : w / 2 - 20, h / 2 + 26], [o.left ? -w / 2 + 60 : w / 2 - 80, h / 2 - 6]], fill, { key: 'bt' + str, sb: 3, grain: false }); chText(str, -w / 2 + size * 0.55, size * 0.36, size, o.color ?? CH.ink, { key: 'bx' + str }); });
+  popAt(t, x, y, () => { const w = chTextW(str, size) + size * 1.1, h = size * 1.7; chShape(rrectPts(-w / 2, -h / 2, w, h, h / 2), fill, { key: 'bb' + str, sb: 6, grain: false }); chShape([[o.left ? -w / 2 + 30 : w / 2 - 50, h / 2 - 6], [o.left ? -w / 2 + 10 : w / 2 - 20, h / 2 + 26], [o.left ? -w / 2 + 60 : w / 2 - 80, h / 2 - 6]], fill, { key: 'bt' + str, sb: 3, grain: false }); chText(str, -w / 2 + size * 0.55, size * 0.36, size, o.color ?? '#2a1d18', { key: 'bx' + str, halo: false }); });
 }
 const check = (x, y, t, key) => { const f = ev(t, 0.3); if (f > 0) ink([[x, y], [x + 16, y + 18], [x + 44, y - 20]], { w: 8, color: CH.green, frac: f, key }); };
 function cbox(x, y, w, h, c, key, o = {}) { return chShape(rrectPts(x - w / 2, y - h / 2, w, h, o.r ?? 8), c, { key, sb: o.sb ?? 6, grain: false, line: o.line, lw: o.lw }); }

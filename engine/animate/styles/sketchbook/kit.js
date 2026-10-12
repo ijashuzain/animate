@@ -19,7 +19,7 @@ const SK = {
   pink: '#ef9aa6', glass: '#9cc6d8', tape: '#efe2b4', wood: '#ecc995', lead: '#3b3632', yellow: '#f1bf2c',
 };
 const SK_HAND = HAND;
-const SK_MARKER = '"Segoe Print", "Marker Felt", "Bradley Hand", "Comic Sans MS", cursive';
+const SK_MARKER = '"Segoe Print", "Marker Felt", "Bradley Hand", "Comic Sans MS", "Comic Neue", cursive';   // Comic Neue: the installed fallback (the generic cursive is a serif on Linux)
 
 // ---------------------------------------------------------------------
 //  THE HAND: polylines that boil
