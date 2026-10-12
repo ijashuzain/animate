@@ -26,7 +26,7 @@ const SCN = [
     say: "And there would be no more solar eclipses. Even the word 'month' comes from the Moon.",
     sfx: [[2.5, 'chime', ['F5', 'C6']], [7.0, 'scribble', 0.6]] },
   { key: 'hush', d: 2.5, mood: 'silence', focus: [700, 260], bg: '#0c1124', scene: () => sHush(), card: null },
-  { key: 'back', d: 14, tag: 'phew', mood: 'warm', cut: true, focus: [700, 260], bg: '#1d2448', scene: () => sBack(), card: (at) => cBack(at),
+  { key: 'back', d: 14, tag: 'phew', mood: 'full', cut: true, focus: [700, 260], bg: '#1d2448', scene: () => sBack(), card: (at) => cBack(at),
     say: 'Luckily, the Moon is still here. But it is slowly drifting away from us: about three point eight centimetres every year.',
     sfx: [] },
   { key: 'end', d: 12, tag: 'thanks, Moon', mood: 'warm', focus: [500, 540], bg: '#141a33', scene: () => sEnd(), card: (at) => cEnd(at),

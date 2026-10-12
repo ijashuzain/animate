@@ -1,10 +1,43 @@
 {
   "name": "internet-history",
   "title": "A Short History of the Internet",
-  "format": { "width": 1920, "height": 1080, "fps": 24, "bpm": 120 },
-  "formats": ["16:9"],
+  "format": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "bpm": 120
+  },
+  "formats": [
+    "16:9"
+  ],
   "storyFormat": "channel explainer: scene left, explainer card right, voice-led",
   "style": "cut-paper",
-  "build": ["../_channel/head-top.html", "src/script.js", "kit/core.js", "style", "src/scenes.js", "../_channel/channel.js", "kit/morph.js", "kit/board.js", "kit/score-head.js", "../_channel/score-channel.js", "kit/score-tail.js"],
-  "review": { "safe": { "top": 40, "bottom": 120, "right": 60 }, "refs": {} }
+  "build": [
+    "../_channel/head-top.html",
+    "src/script.js",
+    "kit/core.js",
+    "style",
+    "src/scenes.js",
+    "../_channel/channel.js",
+    "kit/morph.js",
+    "kit/board.js",
+    "kit/score-head.js",
+    "../_channel/score-channel.js",
+    "kit/score-tail.js"
+  ],
+  "review": {
+    "safe": {
+      "top": 40,
+      "bottom": 120,
+      "right": 60
+    },
+    "refs": {},
+    "textIgnore": [
+      [
+        27.0,
+        36.0,
+        "the four numbered packets burst out of Pip at one point on purpose"
+      ]
+    ]
+  }
 }
