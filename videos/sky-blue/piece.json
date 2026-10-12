@@ -1,0 +1,10 @@
+{
+  "name": "sky-blue",
+  "title": "Why Is the Sky Blue?",
+  "format": { "width": 1920, "height": 1080, "fps": 24, "bpm": 120 },
+  "formats": ["16:9"],
+  "storyFormat": "channel explainer: scene left, explainer card right, voice-led",
+  "style": "cut-paper",
+  "build": ["../../studio/channel/head-top.html", "src/script.js", "kit/core.js", "style", "src/scenes.js", "../../studio/channel/channel.js", "kit/morph.js", "kit/board.js", "kit/score-head.js", "../../studio/channel/score-channel.js", "kit/score-tail.js"],
+  "review": { "safe": { "top": 40, "bottom": 120, "right": 60 }, "refs": {} }
+}

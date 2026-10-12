@@ -1,0 +1,219 @@
+<title>Animate Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one calm column, summary first (the batch), then a row per video with its stage track, then topics and the log. */
+:root {
+  --bg: #f7f7f5; --surface: #ffffff; --fg: #1c1e22; --muted: #6a6e76; --line: #e4e4e0; --soft: #efefeb;
+  --accent: #1f7f77; --accent-soft: #e2f1ef; --ok: #3a7d4a; --ok-soft: #e6f2e8; --bad: #b8402c; --bad-soft: #f8e7e3;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141619; --surface: #1b1e22; --fg: #e9eaec; --muted: #9a9fa8; --line: #2b2f35; --soft: #22262b;
+  --accent: #5cc0b5; --accent-soft: #1d3634; --ok: #7cc28b; --ok-soft: #1e3324; --bad: #ec8a76; --bad-soft: #3a221d; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141619; --surface: #1b1e22; --fg: #e9eaec; --muted: #9a9fa8; --line: #2b2f35; --soft: #22262b;
+  --accent: #5cc0b5; --accent-soft: #1d3634; --ok: #7cc28b; --ok-soft: #1e3324; --bad: #ec8a76; --bad-soft: #3a221d; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--f-body); }
+.wrap { max-width: 920px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 56px; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--f-display); font-weight: 700; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.05rem; }
+.eyebrow { font: 500 0.72rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+header { display: grid; gap: 10px; }
+.batchline { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; padding: 3px 10px; border-radius: 999px; font: 500 0.78rem/1.6 var(--f-mono); background: var(--soft); color: var(--muted); white-space: nowrap; }
+.pill.live { background: var(--accent-soft); color: var(--accent); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.live .dot { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .live .dot, .bar i.run { animation: none; } }
+section { display: grid; gap: 12px; }
+.sechead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.videos { display: grid; gap: 12px; }
+.video { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
+.vtop { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+.vtitle { font: 600 1.02rem/1.35 var(--f-body); min-width: 0; }
+.vmeta { font: 0.78rem/1.4 var(--f-mono); color: var(--muted); }
+.track { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.step { display: grid; gap: 6px; min-width: 0; }
+.step b { height: 4px; border-radius: 2px; background: var(--line); }
+.step.done b { background: var(--ok); }
+.step.now b { background: var(--accent); }
+.step span { font: 0.68rem/1.2 var(--f-mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.step.now span { color: var(--accent); font-weight: 500; }
+.what { display: grid; gap: 4px; padding: 12px 14px; background: var(--soft); border-radius: 8px; }
+.what p { margin: 0; }
+.what .why { color: var(--muted); font-size: 0.88rem; }
+.bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.6s ease; }
+.bar i.run { background: linear-gradient(90deg, var(--accent) 40%, var(--accent-soft) 50%, var(--accent) 60%); background-size: 300% 100%; animation: slide 1.8s linear infinite; }
+@keyframes slide { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.outs { display: flex; flex-wrap: wrap; gap: 6px; }
+.outs code { font: 0.76rem/1.6 var(--f-mono); background: var(--soft); padding: 2px 8px; border-radius: 6px; overflow-wrap: anywhere; }
+.empty { border: 1px dashed var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 6px; color: var(--muted); }
+.empty strong { color: var(--fg); font-weight: 600; }
+.topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.topic { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 6px; text-align: left; font: inherit; color: inherit; cursor: pointer; min-width: 0; }
+.topic:hover { border-color: var(--accent); }
+.topic:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.topic[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.topic .t { font-weight: 600; }
+.topic .h { font-size: 0.88rem; color: var(--muted); }
+.topic .s { font: 0.72rem/1.4 var(--f-mono); color: var(--accent); }
+form { display: flex; gap: 8px; flex-wrap: wrap; }
+input[type=text] { flex: 1 1 260px; min-width: 0; font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+button.primary { font: 600 0.9rem/1 var(--f-body); padding: 10px 16px; border-radius: 8px; border: 0; background: var(--accent); color: var(--bg); cursor: pointer; }
+button.primary:disabled { opacity: 0.5; cursor: default; }
+.reqs { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.reqs li { display: flex; justify-content: space-between; gap: 10px; font-size: 0.9rem; border-bottom: 1px solid var(--line); padding-block: 6px; }
+.log { list-style: none; margin: 0; padding: 0; display: grid; }
+.log li { display: grid; grid-template-columns: 4.6rem 1fr; gap: 12px; padding-block: 7px; border-bottom: 1px solid var(--line); font-size: 0.88rem; min-width: 0; }
+.log time { font: 0.76rem/1.5 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.log span { min-width: 0; overflow-wrap: anywhere; }
+.note { font-size: 0.82rem; }
+@media (max-width: 560px) { .track { grid-template-columns: repeat(4, 1fr); row-gap: 10px; } h1 { font-size: 1.45rem; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Animate studio · cut-paper explainers and more</div>
+    <h1 id="headline">Waiting for the next topic</h1>
+    <div class="batchline">
+      <span class="pill" id="phase"><i class="dot"></i><span>idle</span></span>
+      <span class="vmeta" id="batch">No batch running</span>
+      <span class="vmeta" id="updated"></span>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-videos">
+    <div class="sechead"><h2 id="h-videos">Videos in this batch</h2><span class="vmeta" id="count"></span></div>
+    <div class="videos" id="videos">
+      <div class="empty"><strong>No videos yet.</strong><span>When a batch starts, each video appears here with its stage, what is happening right now and why.</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-topics">
+    <div class="sechead"><h2 id="h-topics">Topic ideas</h2><span class="vmeta" id="picked"></span></div>
+    <div class="topics" id="topics">
+      <div class="empty"><strong>No suggestions yet.</strong><span>Ask Claude for topics in chat. Six ideas will appear here; tap up to three to pick them for the next batch.</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-req">
+    <div class="sechead"><h2 id="h-req">Request a topic</h2><span class="vmeta">Claude reads these at the start of the next chat</span></div>
+    <form id="reqform">
+      <input type="text" id="reqtext" maxlength="200" placeholder="e.g. why do cats purr, or a theme like space mysteries" aria-label="Topic or theme">
+      <button class="primary" id="reqbtn" type="submit" disabled>Add request</button>
+    </form>
+    <p class="note muted" id="reqnote">Connecting to the studio…</p>
+    <ul class="reqs" id="reqs"></ul>
+  </section>
+
+  <section aria-labelledby="h-log">
+    <div class="sechead"><h2 id="h-log">Activity</h2></div>
+    <ul class="log" id="log"><li><time></time><span class="muted">Nothing logged yet.</span></li></ul>
+  </section>
+</div>
+
+<script>
+const STAGES = [
+  ['researching', 'Research'], ['scripting', 'Script'], ['styling', 'Style'], ['building', 'Scenes'],
+  ['rendering', 'Render'], ['reviewing', 'Checks'], ['packaging', 'Package'], ['done', 'Ready'],
+];
+const PHASE = { idle: 'idle', topics: 'suggesting topics', researching: 'researching', scripting: 'writing scripts', styling: 'choosing styles', building: 'drawing scenes', rendering: 'rendering', reviewing: 'checking', packaging: 'packaging', done: 'ready', failed: 'needs attention' };
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const ago = (iso) => { if (!iso) return ''; const s = (Date.now() - new Date(iso).getTime()) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.round(s / 60) + ' min ago'; if (s < 86400) return Math.round(s / 3600) + ' h ago'; return new Date(iso).toLocaleDateString(); };
+const clock = (iso) => { try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch { return ''; } };
+let state = {}, videos = [], topics = { items: [], picked: [] }, db = null, canWrite = false;
+
+function renderHeader() {
+  $('headline').textContent = state.headline || (videos.length ? 'Batch in progress' : 'Waiting for the next topic');
+  const ph = state.phase || (videos.length ? 'building' : 'idle');
+  const p = $('phase'); p.className = 'pill ' + (ph === 'done' ? 'ok' : ph === 'failed' ? 'bad' : ph === 'idle' ? '' : 'live');
+  p.querySelector('span').textContent = PHASE[ph] || ph;
+  $('batch').textContent = state.batch ? state.batch : 'No batch running';
+  $('updated').textContent = state.updated ? 'updated ' + ago(state.updated) : '';
+  const done = videos.filter((v) => v.stage === 'done').length;
+  $('count').textContent = videos.length ? `${done} of ${videos.length} ready` : '';
+}
+function renderVideos() {
+  const box = $('videos'); box.replaceChildren();
+  if (!videos.length) { const e = el('div', 'empty'); e.append(el('strong', null, 'No videos yet.'), el('span', null, 'When a batch starts, each video appears here with its stage, what is happening right now and why.')); box.append(e); return; }
+  videos.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).forEach((v) => {
+    const card = el('article', 'video'), top = el('div', 'vtop'), left = el('div');
+    left.append(el('div', 'vtitle', v.title || v.id), el('div', 'vmeta', [v.style && `style: ${v.style}`, v.length, v.updated && ago(v.updated)].filter(Boolean).join(' · ')));
+    const idx = STAGES.findIndex(([k]) => k === v.stage), failed = v.stage === 'failed';
+    const pill = el('span', 'pill ' + (v.stage === 'done' ? 'ok' : failed ? 'bad' : 'live'));
+    pill.append(el('i', 'dot'), el('span', null, PHASE[v.stage] || v.stage || 'queued'));
+    top.append(left, pill);
+    const track = el('div', 'track');
+    STAGES.forEach(([k, label], i) => { const s = el('div', 'step' + (i < idx || v.stage === 'done' ? ' done' : i === idx ? ' now' : '')); s.append(el('b'), el('span', null, label)); track.append(s); });
+    card.append(top, track);
+    if (v.detail || v.why) { const w = el('div', 'what'); if (v.detail) w.append(el('p', null, v.detail)); if (v.why) w.append(el('p', 'why', 'Why: ' + v.why)); card.append(w); }
+    if (v.stage !== 'done' && !failed) { const b = el('div', 'bar'), i = el('i', v.progress == null ? 'run' : ''); i.style.width = v.progress == null ? '100%' : Math.round(Math.max(0.03, Math.min(1, v.progress)) * 100) + '%'; b.append(i); card.append(b); }
+    if (Array.isArray(v.outputs) && v.outputs.length) { const o = el('div', 'outs'); v.outputs.forEach((f) => o.append(el('code', null, f))); card.append(o); }
+    box.append(card);
+  });
+}
+function renderTopics() {
+  const box = $('topics'), items = topics.items || [], picked = new Set(topics.picked || []);
+  box.replaceChildren();
+  if (!items.length) { const e = el('div', 'empty'); e.append(el('strong', null, 'No suggestions yet.'), el('span', null, 'Ask Claude for topics in chat. Six ideas will appear here; tap up to three to pick them for the next batch.')); box.append(e); $('picked').textContent = ''; return; }
+  items.forEach((t) => {
+    const b = el('button', 'topic'); b.type = 'button'; b.setAttribute('aria-pressed', picked.has(t.id) ? 'true' : 'false');
+    b.append(el('span', 't', t.title), el('span', 'h', t.hook || ''), el('span', 's', [t.style, t.format].filter(Boolean).join(' · ')));
+    b.disabled = !canWrite;
+    b.addEventListener('click', () => togglePick(t.id));
+    box.append(b);
+  });
+  $('picked').textContent = `${picked.size} of 3 picked` + (canWrite ? '' : ' (view only)');
+}
+async function togglePick(id) {
+  if (!db || !canWrite) return;
+  const picked = new Set(topics.picked || []);
+  if (picked.has(id)) picked.delete(id); else { if (picked.size >= 3) return; picked.add(id); }
+  try { await db.doc('board/topics').update({ picked: [...picked], pickedAt: new Date().toISOString() }); } catch (e) { $('picked').textContent = 'Could not save the pick: ' + (e.code || 'try again'); }
+}
+function renderLog(rows) {
+  const ul = $('log'); ul.replaceChildren();
+  if (!rows.length) { const li = el('li'); li.append(el('time'), el('span', 'muted', 'Nothing logged yet.')); ul.append(li); return; }
+  rows.forEach((r) => { const li = el('li'), t = el('time', null, clock(r.t)); t.dateTime = r.t || ''; li.append(t, el('span', null, (r.slug ? r.slug + ': ' : '') + (r.note || ''))); ul.append(li); });
+}
+function renderReqs(rows) {
+  const ul = $('reqs'); ul.replaceChildren();
+  rows.forEach((r) => { const li = el('li'); li.append(el('span', null, r.text), el('span', 'vmeta', r.status === 'picked' ? 'picked up' : 'waiting')); ul.append(li); });
+}
+
+(async () => {
+  renderHeader();
+  const c = window.claude && window.claude.use ? window.claude : null;
+  db = c ? await c.use('db') : null;
+  if (!db) { $('reqnote').textContent = 'Live updates are unavailable in this view. Open the artifact signed in to see the studio.'; return; }
+  const user = await c.use('user');
+  canWrite = user ? (await user.can('data.write')) !== false : false;
+  $('reqbtn').disabled = !canWrite;
+  $('reqnote').textContent = canWrite ? 'Requests are saved for Claude; it reads them when you next ask for topics.' : 'You can watch progress; only editors can add requests.';
+  db.doc('board/state').onSnapshot((s) => { state = s.exists ? s.data() : {}; renderHeader(); });
+  db.collection('videos').onSnapshot((q) => { videos = q.docs.map((d) => ({ id: d.id, ...d.data() })); renderVideos(); renderHeader(); });
+  db.doc('board/topics').onSnapshot((s) => { topics = s.exists ? s.data() : { items: [], picked: [] }; renderTopics(); });
+  db.collection('log').orderBy('t', 'desc').limit(40).onSnapshot((q) => renderLog(q.docs.map((d) => d.data())));
+  db.collection('requests').orderBy('created', 'desc').limit(10).onSnapshot((q) => renderReqs(q.docs.map((d) => d.data())));
+  $('reqtext').addEventListener('input', () => { $('reqbtn').disabled = !canWrite || !$('reqtext').value.trim(); });
+  $('reqbtn').disabled = true;
+  $('reqform').addEventListener('submit', async (e) => {
+    e.preventDefault(); const text = $('reqtext').value.trim(); if (!text) return;
+    $('reqbtn').disabled = true;
+    try { await db.collection('requests').add({ text, created: new Date().toISOString(), status: 'new' }); $('reqtext').value = ''; $('reqnote').textContent = 'Saved. Ask Claude in chat to start, or it will see this next time.'; }
+    catch (err) { $('reqnote').textContent = 'Could not save the request (' + (err.code || 'error') + '). Check that you are signed in with edit access.'; }
+  });
+  setInterval(renderHeader, 30000);
+})();
+</script>

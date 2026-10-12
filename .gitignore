@@ -1,5 +1,10 @@
-pieces/*/frames*/
-pieces/*/renders/
-pieces/*/review/
-pieces/*/index.html
+# generated per video (removed by studio/tools/cleanup.mjs before the next batch)
+videos/*/frames*/
+videos/*/renders/
+videos/*/review/
+videos/*/index.html
+videos/*/youtube/thumbnail-1920.png
+archive/*/index.html
 *.wav
+node_modules/
+videos/*/youtube/*.png
