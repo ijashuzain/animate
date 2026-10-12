@@ -16,13 +16,15 @@
   };
   SCN.forEach((s, i) => {
     const m = MOOD[s.mood ?? 'warm']; if (!m) return;
+    // the arc: the payoff ('full') sits ~2 dB above everything, the goodbye decays ~7 dB below it (review: gift loudest, goodbye decays)
+    const gv = i === SCN.length - 1 && s.mood !== 'full' ? 0.42 : s.mood === 'full' ? 1.3 : 1;
     const nextSilent = SCN[i + 1] && SCN[i + 1].mood === 'silence';
     const t0 = s.t0, t1 = nextSilent ? s.t1 - 0.02 : Math.min(s.t1 + 0.05, DURATION), rel = nextSilent ? 0.05 : 0.3;
-    each(t0, t1, 4.0, (t, k) => { const c = m.ch[(k + i) % m.ch.length]; pad(t, Math.min(t + 4.1, t1), c, m.pk, { type: s.mood === 'cold' || s.mood === 'warm' ? 'triangle' : 'sawtooth', cut: s.mood === 'full' ? 1300 : 900, att: k ? 0.05 : 0.3, rel, send: nextSilent ? 0.02 : 0.35 }); });
+    each(t0, t1, 4.0, (t, k) => { const c = m.ch[(k + i) % m.ch.length]; pad(t, Math.min(t + 4.1, t1), c, m.pk * gv, { type: s.mood === 'cold' || s.mood === 'warm' ? 'triangle' : 'sawtooth', cut: s.mood === 'full' ? 1300 : 900, att: k ? 0.05 : 0.3, rel, send: nextSilent ? 0.02 : 0.35 }); });
     each(t0 + (s.mood === 'warm' || s.mood === 'cold' ? 0.5 : 0), t1 - (nextSilent ? 0.3 : 0), m.step, (t, k) => {
       const acc = k % 4 === 0 ? 1.2 : k % 2 === 0 ? 1 : 0.75;
-      pluck(t, nz(m.fig[k % m.fig.length]), m.pl * acc, Math.sin(k * 0.9) * 0.35, m.step >= BEAT ? 0.8 : 0.3, s.mood === 'full' ? 5000 : 3000, nextSilent && t > t1 - 0.6 ? 0.02 : 0.25);
-      if (m.bass && k % (m.step === E16 ? 4 : 2) === 0) bass(t, nz(Math.floor(t / 2) % 2 ? 'A2' : 'D2'), 0.13);
+      pluck(t, nz(m.fig[k % m.fig.length]), m.pl * acc * gv, Math.sin(k * 0.9) * 0.35, m.step >= BEAT ? 0.8 : 0.3, s.mood === 'full' ? 5000 : 3000, nextSilent && t > t1 - 0.6 ? 0.02 : 0.25);
+      if (m.bass && k % (m.step === E16 ? 4 : 2) === 0) bass(t, nz(Math.floor(t / 2) % 2 ? 'A2' : 'D2'), 0.13 * gv);
       if (m.hats && k % 2 === 1) noiseHit(t, 0.016, 'highpass', 8500, 0.7, 0.016, k % 4 === 1 ? 0.3 : -0.3);
     });
     if (s.mood === 'cold') drone(t0, t1, nz('D2'), 0.03, { att: 0.6, rel });
@@ -31,7 +33,7 @@
   const MOTIF = (typeof SCORE !== 'undefined' && SCORE.motif) || ['D4', 'A4', 'Fs4'];
   const motif = (t, vel, step = E8) => MOTIF.forEach((n, k) => pluck(t + k * step, nz(n), vel * (k === MOTIF.length - 1 ? 1.15 : 1), 0.15 - k * 0.12, 0.7, 2800, 0.4));
   SCN.forEach((s, i) => { if (s.tag && s.mood !== 'silence' && i % 2 === 0) motif(s.t0 + 0.75, 0.05); });
-  motif(Math.max(0, DURATION - 4.2), 0.08, BEAT);
+  motif(Math.max(0, DURATION - 4.2), 0.045, BEAT);
   // a soft kick under the groove and the full moods (on the beat, under the voice's duck)
   SCN.forEach((s, i) => { if (s.mood !== 'groove' && s.mood !== 'full') return; const nextSilent = SCN[i + 1] && SCN[i + 1].mood === 'silence'; each(s.t0, s.t1 - (nextSilent ? 0.4 : 0), BEAT, (t, k) => { const o = osc('sine', 110, t, t + 0.3); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); const g = ac.createGain(); env(g, t, 0.003, s.mood === 'full' ? 0.16 : 0.11, 0.22); o.connect(g); out(g); }); });
   // a gentle riser into every scene change (not into the silence), a downlifter after the payoff

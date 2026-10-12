@@ -130,6 +130,8 @@ function sVaccine() {
   cut([[-40, 900], [1960, 880], [1960, 1120], [-40, 1120]], '#a9c8dc', { key: 'vfl', sy: -4 });
   const push = sm(TT, at(1.4), at(3.6));
   syringe(560, 170 + Math.sin(TT * 1.2) * 6, 0, 1.0, push);
+  for (let n = 0; n < 8; n++) { const t0 = at(1.6) + n * 0.5, u = (TT - t0) / 0.9; if (u > 0 && u < 1) cut(ellipsePts(560 + (n % 3 - 1) * 18 * u, lerp(365, 860, u * u), 10, 14, 0, 10), '#6fb7d9', { key: 'vd' + n, sb: 3, grain: false }); }
+  for (let n = 0; n < 5; n++) { const R = RNG('vbub', n); cut(ellipsePts(mod(R.r(0, 1000) + TT * R.r(30, 60), 1100) - 50, R.r(320, 820) + Math.sin(TT + n) * 30, R.r(16, 30), R.r(16, 30), 0, 14), 'rgba(255,255,255,0.55)', { key: 'vbb' + n, shadow: false, grain: false }); }
   const items = [[at(6.2), 420, (k) => germ(0, 0, 54, { key: 'vw', pale: true, mood: 'sad', spin: 0.02 })], [at(8.0), 600, () => { cut(capsulePts(0, 30, 0, -10, 18), KNOB, { key: 'vp1', sb: 4, grain: false }); cut(ellipsePts(0, -24, 30, 30, 0, 16), PAL.yellow, { key: 'vp2', sb: 5, grain: false }); }],
     [at(10.0), 790, () => { cut(rect(-60, -44, 120, 88, 10), '#fbf6ea', { key: 'vr1', sb: 6 }); cut(ellipsePts(-60, 0, 14, 44, 0, 12), '#e8dcc0', { key: 'vr2', sb: 3, grain: false }); for (let l = 0; l < 3; l++) ink([[-34, -20 + l * 20], [40 - l * 10, -20 + l * 20]], { w: 4, color: '#9a8a7a', key: 'vrl' + l }); }]];
   items.forEach(([t, x, fn], i) => { if (TT < t - 0.6) return; const u = clamp((TT - (t - 0.6)) / 0.6), y = u < 1 ? lerp(300, 820, EZ.i2(u)) : 820, q = squash(t); ctx.save(); ctx.translate(x, y); ctx.scale(q.sx, q.sy); fn(); ctx.restore(); });
@@ -150,7 +152,7 @@ function sPoster() {
   const match = TT > at(10.6);
   for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) { const k = j * 3 + i, x = 625 + i * 100, y = 410 + j * 150 + bob(k, 4), m = match && k === 4; (k % 2 ? bcell : tcell)(x, y, m ? 42 : 28, { key: 'ln' + k, mood: m ? 'wow' : TT > at(6.0) ? (k % 3 ? 'focus' : 'smile') : 'smile', pop: m ? at(10.6) : null }); if (m && TT < at(12.6)) sparkle(x + 40, y - 50, 18 * popS(at(10.7))); }
   // the sentinel (dendritic) cell carries the poster in
-  const x = TT < at(5.6) ? lerp(-120, 330, EZ.io(clamp((TT - at(0.6)) / 4.6))) : 330, wk = Math.sin(TT * 6) * 6;
+  const x = TT < at(5.6) ? lerp(110, 330, EZ.io(clamp((TT - at(0.6)) / 4.6))) : 330, wk = Math.sin(TT * 6) * 6;
   for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + 0.3 + Math.sin(TT * 2 + i) * 0.15; cut(capsulePts(x, 720 + wk, x + Math.cos(a) * 90, 720 + wk + Math.sin(a) * 80, 30), '#e5683f', { key: 'dc' + i, sb: 5, grain: false }); }
   cut(ellipsePts(x, 720 + wk, 70, 66, 0, 28), PAL.orange, { key: 'dcb' }); chFace(x, 726 + wk, 1.0, TT > at(10.6) ? 'happy' : 'smile', 'dc');
   if (TT < at(5.6)) poster(x, 470 + wk, 0.7, { k: popS(at(0.3)) });

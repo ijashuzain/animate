@@ -6,6 +6,9 @@
 // and the step as a mono label with a hairline (like the style's own isoTag)
 const CHANNEL = { font: SANS, halo: false, colors: { ink: '#4a4a52', accent: PAL.accent, blue: '#6a6a74', green: PAL.accent },
   tag: (str, k) => { ctx.save(); ctx.globalAlpha = clamp(k); polyPath([[CL, 104], [CL + 60 * clamp(k), 104]], false); hair(PAL.edge); ctx.stroke(); ctx.font = `400 32px ${ISOMONO}`; ctx.fillStyle = PAL.text; ctx.textBaseline = 'alphabetic'; ctx.fillText(str, CL + 80, 114); ctx.restore(); } };
+// a slow, steady push on every scene: hairlines on white change too few pixels to read as motion otherwise
+// (the review flagged 11 dead beats); z stays within the style's limit of a few percent
+SCN.forEach((s) => { if (!s.cam) s.cam = (t) => { const u = clamp((t - s.t0) / Math.max(1, s.t1 - s.t0)), f = s.focus; return camOf({ z: 1.0 + 0.065 * EZ.io(u), p: f, to: f }); }; });
 const dropZ = (z0, t0, h = 220, k = 170, damp = 0.6) => z0 + (1 - spring(TT, t0, { k, damp })) * h;   // drop in on a spring
 function circ2(x, y, r, c = PAL.edge, fill) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); if (fill) { ctx.fillStyle = fill; ctx.fill(); } hair(c); ctx.stroke(); }
 function ell2(x, y, rx, ry, rot = 0, c = PAL.inner, a0 = 0, a1 = TAU) { ctx.beginPath(); ctx.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), rot, a0, a1); hair(c); ctx.stroke(); }

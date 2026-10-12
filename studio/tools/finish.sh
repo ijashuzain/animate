@@ -19,9 +19,12 @@ fi
 st reviewing "Measured checks: cuts on the beat, story arc loudness, text overlaps, dead beats" "Done means measured, not eyeballed"
 node $E/review.mjs $V > $V/review.txt 2>&1
 grep -E "story arc|FAIL|WARN|loudest|LUFS|silence before|text:|dead beats|all cuts|MORPHS|narration:" $V/review.txt | grep -v "^ *[0-9]"
+# the share copy's bitrate: 1750k, or less so a longer video still lands under ~28.5 MB (files over 30 MB can't be sent)
+DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 $R/final.mp4)
+SB=$(python3 -c "print(min(1750, int(28.5e6*8/float('$DUR')/1000) - 170))")
 st packaging "Share copy (< 30 MB), subtitle preview, voice-over script, metadata, thumbnail" "Everything needed to upload, in one folder"
-ffmpeg -y -loglevel error -i $R/final.mp4 -c:v libx264 -preset slow -b:v 1750k -pass 1 -passlogfile $R/p2 -an -f mp4 /dev/null && \
-ffmpeg -y -loglevel error -i $R/final.mp4 -c:v libx264 -preset slow -b:v 1750k -pass 2 -passlogfile $R/p2 -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart $R/$SLUG-1080p.mp4
+ffmpeg -y -loglevel error -i $R/final.mp4 -c:v libx264 -preset slow -b:v ${SB}k -pass 1 -passlogfile $R/p2 -an -f mp4 /dev/null && \
+ffmpeg -y -loglevel error -i $R/final.mp4 -c:v libx264 -preset slow -b:v ${SB}k -pass 2 -passlogfile $R/p2 -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart $R/$SLUG-1080p.mp4
 rm -f $R/p2* $R/final-captions.mp4
 ffmpeg -y -loglevel error -i $R/$SLUG-1080p.mp4 -vf "scale=1280:720,subtitles=$R/narration.srt:force_style='Fontname=DejaVu Sans,Fontsize=13,PrimaryColour=&H00FFFFFF,BackColour=&H99000000,BorderStyle=3,Outline=5,Shadow=0,Alignment=2,MarginV=14'" -c:v libx264 -preset medium -crf 27 -c:a aac -b:a 128k -movflags +faststart $R/$SLUG-script-preview-720p.mp4
 node studio/tools/vo.mjs $SLUG | tail -2
