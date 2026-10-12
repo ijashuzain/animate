@@ -21,7 +21,7 @@ const SCN = [
     sfx: [[7.0, 'drone', 4, 'A1']] },
   { key: 'day', d: 13, tag: 'change 5', mood: 'groove', focus: [500, 540], bg: '#a9d9c6', scene: () => sDay(), card: (at) => cDay(at),
     say: "The Moon has been slowly braking Earth's spin. When the last dinosaurs lived, a day lasted about twenty-three and a half hours. Without the Moon, that slowdown would mostly stop.",
-    sfx: [[3.0, 'click'], [3.5, 'click'], [4.0, 'click'], [6.5, 'thud']] },
+    sfx: [[3.0, 'click'], [3.5, 'click'], [4.0, 'click'], [6.5, 'click']] },
   { key: 'eclipse', d: 12, tag: 'change 6', mood: 'awe', focus: [500, 480], bg: '#26315f', scene: () => sEclipse(), card: (at) => cEclipse(at),
     say: "And there would be no more solar eclipses. Even the word 'month' comes from the Moon.",
     sfx: [[2.5, 'chime', ['F5', 'C6']], [7.0, 'scribble', 0.6]] },

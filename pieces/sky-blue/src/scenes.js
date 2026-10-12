@@ -17,7 +17,7 @@ function ray(x, y, r, o = {}) {
   SPARK_AT = toScreen(x, y);
 }
 // a colour sibling: a little light dot with a face
-function kid(x, y, r, c, key, mood = 'smile') { glowC(x, y, r, c, 0.3); cut(ellipsePts(x, y, r, r, 0, 22), c, { key, sb: 5, grain: 0.4 }); face(x, y + r * 0.08, r / 40, mood); }
+function kid(x, y, r, c, key, mood = 'smile') { y += Math.sin(TT * 2.6 + key.length * 1.7) * r * 0.25; x += Math.cos(TT * 1.9 + key.length) * r * 0.12; glowC(x, y, r, c, 0.3); cut(ellipsePts(x, y, r, r, 0, 22), c, { key, sb: 5, grain: 0.4 }); face(x, y + r * 0.08, r / 40, mood); }
 function skyBands(cols, key) { cols.forEach((c, i) => cut(rect(-30, -30 + i * (1140 / cols.length), W + 60, 1140 / cols.length + 40, 0), c, { key: key + i, shadow: false, tear: 2, shade: false, grain: 0.5 })); }
 function meadow(key, c = '#5aa05a') {
   cut([[-40, 800], [300, 760], [650, 790], [1050, 750], [W + 40, 790], [W + 40, H + 40], [-40, H + 40]], c, { key: key + 'g', sy: -4, pat: pat.stripes('rgba(255,255,255,0.1)', 4, 22, 0.3) });
@@ -41,9 +41,11 @@ function sHook(o = {}) {
   skyBands([mixHex('#7fb3e6', '#3a3a6a', u), mixHex('#9cc6ee', '#c86a5a', u), mixHex('#bcdaf3', '#f08a4b', u), mixHex('#d8eaf8', '#f6cf55', u)], 'hk');
   const sx = 760, sy = lerp(200, 700, u);
   glowC(sx, sy, 60, u > 0.5 ? '#ffb070' : '#fff2c8', 0.6); cut(ellipsePts(sx, sy, 56, 56, 0, 24), u > 0.5 ? '#ffb070' : '#fff6dc', { key: 'hkSun', shadow: false });
-  cloud(240 + TT * 4, 230, 1, 'hkc1'); cloud(600 + TT * 3, 140, 0.7, 'hkc2'); bird(420, 320, 'hkb1'); bird(470, 300, 'hkb2');
+  cloud(mod(240 + TT * 22, 1200) - 100, 230, 1, 'hkc1'); cloud(mod(600 + TT * 15, 1200) - 100, 140, 0.7, 'hkc2');
+  for (let i = 0; i < 4; i++) bird(mod(TT * 60 + i * 50, 1300) - 150, 320 - i * 18 + Math.sin(TT + i) * 10, 'hkb' + i);
+  const bf = [mod(TT * 40, 1100) - 50, 640 + Math.sin(TT * 3) * 40]; cut(ellipsePts(bf[0] - 10, bf[1], 16, 10 * Math.abs(Math.sin(TT * 9)) + 3, 0.4, 10), PAL.yellow, { key: 'bfl', shadow: false }); cut(ellipsePts(bf[0] + 10, bf[1], 16, 10 * Math.abs(Math.sin(TT * 9)) + 3, -0.4, 10), PAL.yellow, { key: 'bfr', shadow: false });
   meadow('hk', mixHex('#5aa05a', '#3a5a3a', u));
-  lyingKid(330, 860, 'hkk', u > 0.3 && u < 1 ? 'wow' : 'smile');
+  lyingKid(330, 860 + Math.sin(TT * 1.2) * 4, 'hkk', u > 0.3 && u < 1 ? 'wow' : (B % 50 < 3 ? 'focus' : 'smile'));
 }
 function cHook(at) {
   title('Why is the sky blue?', at(0.8));
@@ -138,6 +140,7 @@ function sViolet() {
   // violet: fewer of them; the eye: less sensitive
   if (TT >= at(6.5)) { for (let i = 0; i < 2; i++) kid(240 + i * 120, 700, 26, '#8c5ad8', 'fv' + i, 'focus'); for (let i = 0; i < 5; i++) kid(560 + (i % 3) * 90, 680 + Math.floor(i / 3) * 80, 26, BLUE, 'fb' + i, 'happy'); }
   floorC(860, '#9a88b8', 'flV');
+  for (let i = 0; i < 5; i++) { const k = mod(TT * 0.4 + i / 5, 1); sparkle(100 + i * 180, 860 - k * 700, 12 * (1 - k) + 4, 'rgba(255,255,255,0.8)'); }
 }
 function cViolet(at) {
   title('Why not violet?', at(0.8));
@@ -157,6 +160,7 @@ function sSunset() {
   if (TT >= at(6.0)) [['#e0503a', 0], ['#f08a4b', 1]].forEach(([c, i]) => kid(lerp(760, 380, clamp((TT - at(6.0) - i * 0.4) / 3)), lerp(720, 800, clamp((TT - at(6.0) - i * 0.4) / 3)), 18, c, 'arr' + i, 'happy'));
   cut([[-40, 860], [300, 820], [700, 870], [W + 40, 840], [W + 40, H + 40], [-40, H + 40]], '#2a2a40', { key: 'ssHill', sy: -4 });
   lyingKid(330, 900, 'ssk', 'wow');
+  for (let i = 0; i < 3; i++) bird(mod(TT * 50 + i * 60, 1300) - 150, 420 - i * 20, 'ssb' + i);
 }
 function cSunset(at) {
   title('Sunset: the long way', at(0.8));

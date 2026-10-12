@@ -105,7 +105,9 @@ function sShore() {
   cut([[-40, 600], [300, 580], [700, 610], [W + 40, 590], [W + 40, H + 40], [-40, H + 40]], '#e9cf98', { key: 'sand2', sy: -4, pat: pat.dots('rgba(150,110,50,0.25)', 3, 26) });
   const dry = sm(TT, at(6.0), at(10.0));
   [[220, 760, 140], [620, 820, 170]].forEach(([x, y, r], i) => { cut(ellipsePts(x, y, r, r * 0.4, 0, 30), '#7a6a5a', { key: 'pr' + i, sb: 0, sy: -2 }); cut(ellipsePts(x, y, r * (0.9 - dry * 0.6), r * 0.34 * (1 - dry * 0.6), 0, 30), '#4aa0c8', { key: 'pw' + i, shadow: false, pat: pat.lines('rgba(255,255,255,0.2)', 14) }); });
-  starfish(200, 770, 0.9, 'sf'); crab(640, 800, 0.9, dry > 0.5 ? 'sad' : 'smile');
+  for (let i = 0; i < 3; i++) { const P = []; const lap = Math.sin(TT * 1.4 + i) * 20; for (let x = -40; x <= 1000; x += 40) P.push([x, 600 + i * 14 + lap + Math.sin(x * 0.03 + TT * 2 + i) * 6]); ink(P, { w: 5, color: 'rgba(255,255,255,0.7)', key: 'foam' + i }); }
+  starfish(200, 770, 0.9, 'sf'); crab(560 + Math.sin(TT * 0.8) * 160, 800, 0.9, dry > 0.5 ? 'sad' : 'smile');
+  for (let i = 0; i < 4; i++) { const k = mod(TT * 0.5 + i / 4, 1); ctx.strokeStyle = `rgba(255,255,255,${0.6 * (1 - k)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(620, 820, 40 + k * 100, (40 + k * 100) * 0.35, 0, 0, TAU); ctx.stroke(); }
   const gx = 820 + Math.sin(TT * 1.2) * 40; cut(ellipsePts(gx, 640, 40, 26, 0, 16), '#f4f6fa', { key: 'gull' }); dot(gx + 30, 632, 5); cut([[gx + 36, 636], [gx + 56, 640], [gx + 36, 644]], PAL.yellow, { key: 'gbk', shadow: false });
 }
 function starfish(x, y, s, key) { cut(starPts(x, y, 46 * s, 5, -Math.PI / 2, 60), PAL.mustard, { key, sb: 4, pat: pat.dots('rgba(255,255,255,0.4)', 3, 12) }); face(x, y + 4, 0.5 * s, 'smile'); }
