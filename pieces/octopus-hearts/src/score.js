@@ -34,7 +34,7 @@
   pad(49.0, 60.1, ['D3', 'A3', 'D4', 'Fs4'], 0.034, { cut: 1300, att: 0.4, swellTo: 0.042, swellAt: 59.8, rel: 0.1, send: 0.3 });
   each(50.0, 60.0, E16, (t, k) => {
     const fig = ARP[(k >> 1) % 8], acc = k % 4 === 0 ? 1.2 : k % 2 === 0 ? 0.95 : 0.65;
-    if (k % 2 === 0 || t > 55) pluck(t, nz(fig), 0.04 * acc, Math.sin(k * 0.9) * 0.35, 0.28, 3600, 0.16);
+    if (k % 2 === 0 || t > 55) pluck(t, nz(fig), 0.034 * acc, Math.sin(k * 0.9) * 0.35, 0.28, 3600, 0.16);
     if (k % 4 === 0) bass(t, nz(Math.floor(k / 16) % 2 ? 'A2' : 'D2'), 0.15);
   });
   // 8: the swim, busiest; everything stops dry before the silence at 64.25
@@ -50,10 +50,10 @@
   pad(66.6, 72.1, ['D3', 'A3', 'D4', 'Fs4'], 0.035, { cut: 1100, att: 0.3, rel: 0.3, send: 0.4 });
   each(67.0, 72.0, E8, (t, k) => { if (k % 3 !== 2) pluck(t, nz(['D5', 'A4', 'B4', 'Fs4', 'A4', 'E4'][k % 6]), 0.04, Math.sin(k) * 0.4, 0.18, 3800, 0.2); if (k % 4 === 0) bass(t, nz('D2'), 0.12); });
   // 10: home: the opening pad, Bloo's motif, the end
-  pad(72.0, 81.0, ['D3', 'A3', 'Fs4'], 0.03, { type: 'triangle', cut: 800, att: 0.4, rel: 1.2 });
-  each(73.0, 79.0, BEAT * 2, (t, k) => pluck(t, nz(['A4', 'Fs4', 'D5', 'E4'][k % 4]), 0.032, Math.sin(k) * 0.3, 0.8, 2000, 0.45));
-  blooMotif(c.wave, 0.18);
-  blooMotif(c.title, 0.2, [['D4', 0], ['A4', E8], ['D5', BEAT]]);
+  pad(72.0, 81.0, ['D3', 'A3', 'Fs4'], 0.018, { type: 'triangle', cut: 800, att: 0.4, rel: 1.2 });
+  each(73.0, 79.0, BEAT * 2, (t, k) => pluck(t, nz(['A4', 'Fs4', 'D5', 'E4'][k % 4]), 0.02, Math.sin(k) * 0.3, 0.8, 2000, 0.45));
+  blooMotif(c.wave, 0.1);
+  blooMotif(c.title, 0.11, [['D4', 0], ['A4', E8], ['D5', BEAT]]);
 
   // ================= SFX =================
   to = 's';
@@ -83,11 +83,11 @@
   each(c.squeeze, c.stuck, 0.25, (t, k) => blip(t, 1400 + k * 120, 1700 + k * 120, 0.1, 0.03, -0.1));
   noiseHit(c.stuck, 0.08, 'bandpass', 2400, 3, 0.07); blip(c.stuck, 900, 600, 0.25, 0.05);
   // 6 the gill hearts pump; Bloo is shoved through and fills with oxygen
-  each(c.pumpA, M[5] - 0.6, 1.0, (t) => heartbeat(t, 0.1));
+  each(c.pumpA, M[5] - 0.6, 1.0, (t) => heartbeat(t, 0.08));
   sweep(c.shove - 0.1, c.shove + 1.0, 0.02, 400, 3000, -0.3);
   each(c.fill + 0.5, c.fill + 2.5, 0.5, (t, k) => blip(t, 700 + k * 180, 1300 + k * 180, 0.09, 0.05, -0.4));
   // 7 the body heart: big pumps; the ride; arms pop; the brain chime
-  each(c.bigPump, 59.5, 1.0, (t) => heartbeat(t, 0.15));
+  each(c.bigPump, 59.5, 1.0, (t) => heartbeat(t, 0.1));
   sweep(c.ride - 0.1, c.ride + 1.6, 0.025, 300, 4000, 0.3);
   for (let i = 0; i < 8; i++) pop(c.arms + i * 0.12, 700 + i * 90, 0.04);
   chime(c.brain, [nz('A5'), nz('D6')], 0.045, -0.4);
@@ -101,7 +101,7 @@
   sub(c.hit, 0.32); noiseHit(c.hit, 0.25, 'lowpass', 900, 0.8, 0.2);
   each(c.hit + 1.0, M[7], 1.0, (t) => blip(t, 1000, 1000, 0.08, 0.025, 0.4));
   // 10 three hearts together; Bloo pops and waves; the title is written
-  each(c.sync, 80.0, 1.0, (t) => heartbeat(t, 0.1));
+  each(c.sync, 80.0, 1.0, (t) => heartbeat(t, 0.05));
   [74.0, 74.5, 75.5].forEach((t) => pop(t, 1000));
   pop(c.wave, 1300);
   scribble(c.title + 0.1, c.title + 0.6, 0.02);

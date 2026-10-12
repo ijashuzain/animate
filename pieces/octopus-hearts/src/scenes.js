@@ -96,7 +96,7 @@ function sceneRace() {
   const bx = TT < cu.goo ? lerp(300, 520, EZ.io(seg(TT, M[2], cu.goo))) : 520 + (TT - cu.goo) * 45;
   const wade = TT >= cu.goo ? Math.sin(TT * 5) * 0.06 : 0;
   bloo(bx, 760, 80, { bub: 2, key: 'hero4', mood: TT < cu.count ? 'smile' : TT < cu.sweat ? 'wow' : TT < cu.pant ? 'sad' : 'focus', sweat: TT >= cu.sweat, sx: 1 + wade, sy: 1 - wade, rot: wade });
-  note('blue blood: copper', 330, 620, 44, cu.count, { rot: 0.02 });
+  note('blue blood: copper', 330, 990, 44, cu.count, { rot: 0.02 });
   note('thicker!', 1160, 520, 52, cu.goo + 0.6, { rot: 0.05 });
 }
 
