@@ -221,7 +221,7 @@ function sEinstein() {
   setIso({ ox: 300, oy: 900, u: 1.1 });
   isoPlates(-90, -90, 0, 180, 180, [{ h: 12, r: 30 }]);
   deskClock(-20, -20, 12, 40, tick(TT));
-  monoT('ground clock', 300, 1050, 28, PAL.textD);
+  monoT('ground clock', 300, 985, 28, PAL.textD);
   const sx = 640 + Math.sin(TT * 0.6) * 20, sy = 330;
   if (TT > at(3.6)) for (let i = 0; i < 4; i++) { const L = 60 + 40 * ((i * 37) % 3); polyPath([[sx - 140 - i * 6, sy - 40 + i * 26], [sx - 140 - L - i * 6, sy - 40 + i * 26]], false); hair(PAL.inner); ctx.stroke(); }
   satG(sx, sy, 1.6, { clock: tick(TT * (TT > at(9.4) ? 1.0 : 1.0)), lit: true });

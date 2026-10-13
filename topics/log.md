@@ -14,15 +14,15 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-12 | The history of flight | history | cut-paper | suggested |
 | 2026-10-12 | From cave paintings to emoji | history | cut-paper | suggested |
 | 2026-10-12 | What happens to the food you eat? | science how | cut-paper | suggested |
-| 2026-10-12 | How do vaccines train your body? | science how | cut-paper | suggested (batch 2) |
+| 2026-10-12 | How do vaccines train your body? | science how | cut-paper | made (batch 2, 2:15) |
 | 2026-10-12 | Why do we dream? | science why | sketchbook | suggested |
 | 2026-10-12 | How does a seed become a tree? | nature | cut-paper | suggested |
 | 2026-10-12 | The life of a star, from cloud to white dwarf | space | riso | suggested (batch 2) |
 | 2026-10-12 | How far is a light-year, really? | space | math | suggested |
 | 2026-10-12 | What happens when you press Enter in a browser? | tech | isometric | suggested |
-| 2026-10-12 | How does GPS know where you are? | tech | isometric | suggested (batch 2) |
+| 2026-10-12 | How does GPS know where you are? | tech | isometric | made (batch 2, 2:00) |
 | 2026-10-12 | How does a password stay secret? | tech | crosshatch | suggested |
 | 2026-10-12 | How compound interest works | money | math | suggested (batch 2) |
 | 2026-10-12 | What is inflation? | money | riso | suggested |
 | 2026-10-12 | Your last human alive, as the Sun dies (user script, 28 min) | story | cut-paper | started, cancelled by user |
-| 2026-10-12 | How do bees make honey? | nature | sketchbook | suggested (batch 2) |
+| 2026-10-12 | How do bees make honey? | nature | sketchbook | made (batch 2, 2:00) |

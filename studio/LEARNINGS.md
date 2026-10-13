@@ -14,6 +14,15 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   Busy backgrounds get a soft halo behind the lettering; dark scenes set `dark: true` for light ink.
 
 ### Pipeline lessons
+- Thumbnails: no paper panel either (same rule as the video). thumbnail.mjs hides the on-scene lettering (NO_LETTERING)
+  and writes the hook lines big with a thick cream outline and a soft shadow straight onto the frame.
+- The score's arc is now built in: the payoff ('full') plays ~2 dB up and the last scene ~7 dB down. All three videos
+  passed the story-arc check 6/6 after this (before: the goodbye never decayed 6 dB below the gift).
+- A 2:15 video at 1.75 Mbps was 32 MB (too big to send): finish.sh now picks the share-copy bitrate from the duration.
+- The dead-beat check works on tiny downscaled frames: hairline styles (isometric) read as "still" even when things move.
+  A slow camera push did not change that. For isometric, judge motion by eye, or add bigger moving shapes (filled slabs,
+  wide rings) on purpose; don't chase the number with fake motion.
+- A container restart kills background renders: re-run finish.sh; sources were safe because they were committed first.
 - First real videos in isometric and sketchbook: both work with the channel kit. The sketchbook marker font fell back to a
   serif on Linux; fixed in the kit (Comic Neue before the generic cursive).
 - Easing names in core are EZ.o2/o3/i2/i3/io/back (not EZ.out / EZ.in).

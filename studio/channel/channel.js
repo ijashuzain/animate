@@ -87,7 +87,7 @@ const chDot = (x, y, r, c = CH.ink) => { ctx.fillStyle = c; ctx.beginPath(); ctx
 // ---- the card
 const CARD_X = 1010, CARD_Y = 60, CARD_W = 860, CARD_H = 960, CL = CARD_X + 60, CR = CARD_X + CARD_W - 60, CCX = CARD_X + CARD_W / 2;
 function drawCard(i) {
-  const s = SCN[i]; if (!s.card) return;
+  const s = SCN[i]; if (!s.card || window.NO_LETTERING) return;   // NO_LETTERING: the thumbnail tool letters its own hook
   if (CHL.layout !== 'card') {   // open: no sheet; the tag and the explanation are written straight onto the scene
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
     const keepInk = CH.ink; if (s.dark) CH.ink = CHL.inkDark;

@@ -38,16 +38,16 @@ STORY ARC (loudness in dBFS over 100ms windows: median / 90th percentile; music 
  2 The hive   journey    38.00-77.00s      0    0.00     0.4    -19.2    -13.5   -19.3
  3 Why        peak       77.00-91.00s      0    0.00     0.4    -19.1    -13.8   -19.1
  4 Hush       silence    91.00-93.50s      0    0.00     0.3   -120.0    -75.8  -120.0
- 5 One life   gift       93.50-107.50s      1    0.07     0.3    -17.4    -13.0   -17.5
- 6 End        goodbye    107.50-119.50s      0    0.00     0.4    -17.9    -15.4   -18.0
+ 5 One life   gift       93.50-107.50s      1    0.07     0.3    -15.3    -12.2   -15.4
+ 6 End        goodbye    107.50-119.50s      0    0.00     0.4    -25.5    -22.6   -25.5
   info  no cut-rate rule (no hard cuts, or eras joined by morphs): peak motion 0.4 vs max other 0.4 (pixel motion includes noise/boil, so it is not a rule here)
-  PASS  gift is the loudest act (p90 -13.0 vs next -13.5)
-  FAIL  gift p90 >= peak p90 + 1 dB (-13.0 vs -13.8): the busiest moment is not the loudest
+  PASS  gift is the loudest act (p90 -12.2 vs next -13.5)
+  PASS  gift p90 >= peak p90 + 1 dB (-12.2 vs -13.8): the busiest moment is not the loudest
   PASS  silence median <= peak median - 15 dB (-120.0 vs -19.1)
-  PASS  journey music stays present under the voice: median >= gift - 8 dB (-19.3 vs -17.5)
+  PASS  journey music stays present under the voice: median >= gift - 8 dB (-19.3 vs -15.4)
   PASS  gift is held: <= 0.5 cuts/s (0.07)
-  FAIL  goodbye decays: median <= gift median - 6 dB (-17.9 vs -17.4)
-story arc: FAIL (4/6 rules)
+  PASS  goodbye decays: median <= gift median - 6 dB (-25.5 vs -15.3)
+story arc: PASS (6/6 rules)
 
 TEXT (every string drawn, traced to screen; 440 frames sampled, morph windows skipped)
   FAIL  overlaps other text: "g" × "l"  at 37.25s (1 frames)
@@ -57,7 +57,7 @@ text: FAIL (2 cut-off/overlap, 0 in the safe zone)
 SOUND (mix: renders/audio.wav)
   loudest 100ms window: 93.5s (-9.9 dBFS) - in the payoff act 93.5-107.5s
   silence before it: 2.0s at <= -40 dBFS ending 93.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
-  loudness: -15.6 LUFS integrated, range 1.9 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
+  loudness: -15.6 LUFS integrated, range 4.9 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
 DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.25, "still" below 0.80; silence acts are exempt)
 dead beats: PASS (0 stretches over 3s)

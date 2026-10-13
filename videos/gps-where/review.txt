@@ -17,7 +17,7 @@ MORPHS: 8 shape-morph bridges at 12, 25, 38, 51, 65, 78, 92, 108.5s, all centred
 
 PACING: 1 hard cuts (0 in the last 5s), mean segment 60.25s, shortest 26.00s, plus 0 on-2s montage steps
 FLAT FRAMES (contrast < 6/255): 284, 285, 286, 287, 288, 289, 290, 291, 292, 596, 597, 598, 599, 600, 601, 602, 603, 604, 908, 909, 910, 911, 912, 913, 914, 915, 916, 1220, 1221, 1222, 1223, 1224, 1225, 1226, 1227, 1228, 1556, 1557, 1558, 1559, 1560, 1561, 1562, 1563, 1564, 1868, 1869, 1870, 1871, 1872, 1873, 1874, 1875, 1876, 2204, 2205, 2206, 2207, 2208, 2209, 2210, 2211, 2212, 2600, 2601, 2602, 2603, 2604, 2605, 2606, 2607, 2608
-LOOP: diff(last=2891, first=0) = 4.08; typical consecutive diff in the first 40 frames = 0.33 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
+LOOP: diff(last=2891, first=0) = 4.12; typical consecutive diff in the first 40 frames = 0.32 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
 
 NARRATION (voice-over added outside; checks density and word hits)
  #   t0-t1          words  wps   shot  line
@@ -34,42 +34,44 @@ narration: 315 words, density PASS (<= 3.5 words/s, no overlaps), word hits PASS
 
 STORY ARC (loudness in dBFS over 100ms windows: median / 90th percentile; music = music stem median)
  act          role       t0-t1         cuts  cuts/s  motion   mix med  mix p90  music
- 1 Question   build      0.00-38.00s      0    0.00     0.2    -18.9    -15.0   -18.9
- 2 Timing     journey    38.00-78.00s      0    0.00     0.2    -19.2    -13.8   -19.2
- 3 Einstein   peak       78.00-92.00s      0    0.00     0.1    -19.0    -13.2   -19.0
+ 1 Question   build      0.00-38.00s      0    0.00     0.2    -18.9    -15.1   -19.0
+ 2 Timing     journey    38.00-78.00s      0    0.00     0.2    -19.2    -13.9   -19.3
+ 3 Einstein   peak       78.00-92.00s      0    0.00     0.1    -19.1    -13.2   -19.1
  4 Hush       silence    92.00-94.50s      0    0.00     0.0   -120.0    -75.8  -120.0
- 5 Drift      gift       94.50-108.50s      1    0.07     0.2    -17.4    -12.9   -17.4
- 6 End        goodbye    108.50-120.50s      0    0.00     0.1    -18.0    -15.2   -18.0
+ 5 Drift      gift       94.50-108.50s      1    0.07     0.2    -15.3    -12.0   -15.3
+ 6 End        goodbye    108.50-120.50s      0    0.00     0.1    -25.5    -22.6   -25.5
   info  no cut-rate rule (no hard cuts, or eras joined by morphs): peak motion 0.1 vs max other 0.2 (pixel motion includes noise/boil, so it is not a rule here)
-  PASS  gift is the loudest act (p90 -12.9 vs next -13.2)
-  FAIL  gift p90 >= peak p90 + 1 dB (-12.9 vs -13.2): the busiest moment is not the loudest
-  PASS  silence median <= peak median - 15 dB (-120.0 vs -19.0)
-  PASS  journey music stays present under the voice: median >= gift - 8 dB (-19.2 vs -17.4)
+  PASS  gift is the loudest act (p90 -12.0 vs next -13.2)
+  PASS  gift p90 >= peak p90 + 1 dB (-12.0 vs -13.2): the busiest moment is not the loudest
+  PASS  silence median <= peak median - 15 dB (-120.0 vs -19.1)
+  PASS  journey music stays present under the voice: median >= gift - 8 dB (-19.3 vs -15.3)
   PASS  gift is held: <= 0.5 cuts/s (0.07)
-  FAIL  goodbye decays: median <= gift median - 6 dB (-18.0 vs -17.4)
-story arc: FAIL (4/6 rules)
+  PASS  goodbye decays: median <= gift median - 6 dB (-25.5 vs -15.3)
+story arc: PASS (6/6 rules)
 
 TEXT (every string drawn, traced to screen; 444 frames sampled, morph windows skipped)
-text: PASS (0 cut-off/overlap, 0 in the safe zone)
+  FAIL  cut off by the frame edge: ground clock  at 86.50–91.25s (20 frames)
+text: FAIL (1 cut-off/overlap, 0 in the safe zone)
 
 SOUND (mix: renders/audio.wav)
   loudest 100ms window: 94.5s (-9.8 dBFS) - in the payoff act 94.5-108.5s
   silence before it: 2.0s at <= -40 dBFS ending 94.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
-  loudness: -15.6 LUFS integrated, range 1.9 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
+  loudness: -15.6 LUFS integrated, range 4.8 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
-DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 0.43, "still" below 0.80; silence acts are exempt)
+DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 0.44, "still" below 0.80; silence acts are exempt)
   WARN  2.00-10.25s: 8.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  15.75-19.75s: 4.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  27.00-32.75s: 5.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  39.75-46.25s: 6.5s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
+  WARN  38.50-46.25s: 7.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
+  WARN  47.00-50.75s: 3.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  53.00-64.75s: 11.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  66.75-70.25s: 3.5s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
+  WARN  66.00-70.25s: 4.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  79.75-91.75s: 12.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  95.50-102.25s: 6.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  103.00-108.25s: 5.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  109.25-115.25s: 6.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  116.00-120.50s: 4.5s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-dead beats: WARN (11 stretches over 3s)
+dead beats: WARN (12 stretches over 3s)
 PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
 
 video: 1920x1080, 2892 frames decoded
