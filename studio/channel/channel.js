@@ -4,7 +4,7 @@
 //    left  (x 0..~990): the scene, drawn with the piece's style kit (cut-paper, riso, math, pixel, isometric, ...)
 //    right (x 1010..1870): the explanation, written and drawn straight onto the scene in the style's own lettering
 //                         (layout 'open', the default; the user asked for no notepad). Layout 'card' puts it on a paper sheet.
-//  A piece may set CHANNEL = { layout, font, ink, inkDark, accent, halo, haloDark, tag(str, k) } in src/scenes.js
+//  A piece may set CHANNEL = { layout, font, weight, colors, inkDark, halo, haloDark, tag(str, k), tr } in src/scenes.js
 //  (scenes.js loads after the style kit, so it can use the style's palette). A scene with dark: true gets light ink.
 //  The piece's src/script.js defines, before this file:
 //    SCN  = [{ key, d, scene(), card(at) | null, tag, focus: [x, y], bg: '#hex', say, sayAt?, sayEnd?, mood, sfx, cut? }]
@@ -62,7 +62,7 @@ function chText(str, x, y, size, color = CH.ink, o = {}) {   // hand lettering, 
   ctx.save();
   const R = RNG('cht', o.key ?? str, B);
   ctx.translate(x + R.n(0.6), y + R.n(0.6)); ctx.rotate((o.rot ?? 0) + R.n(0.005));
-  ctx.font = `${o.weight ?? 400} ${size}px ${CHF()}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+  ctx.font = `${o.weight ?? CHL.weight ?? 400} ${size}px ${CHF()}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);
   if (frac > 0) {
     if (frac < 1) { ctx.beginPath(); ctx.rect(-4, -size * 1.2, w * frac + 4, size * 1.7); ctx.clip(); }
@@ -72,7 +72,7 @@ function chText(str, x, y, size, color = CH.ink, o = {}) {   // hand lettering, 
   ctx.restore();
   return w;
 }
-function chTextW(str, size, weight = 400) { ctx.save(); ctx.font = `${weight} ${size}px ${CHF()}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
+function chTextW(str, size, weight = CHL.weight ?? 400) { ctx.save(); ctx.font = `${weight} ${size}px ${CHF()}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
 function chTag(str, x, y, size, o = {}) {   // a torn paper tag with lettering (and tape)
   const s = o.s ?? 1; if (s <= 0.01) return;
   const w = chTextW(str, size, o.weight ?? 400) + size * 0.9, h = size * 1.45;

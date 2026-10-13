@@ -5,6 +5,20 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## Batch 3 (Oct 2026): Earth stops spinning (riso, what-if, ambient), why we dream (sketchbook, question chain, lofi),
+## who killed the dinosaurs (crosshatch, mystery, mystery)
+
+### Pipeline lessons
+- `engine/animate/tools/still.mjs` does NOT rebuild index.html: after editing sources run smoke.mjs or build.mjs first,
+  or you debug a stale page (cost an hour on a "bug" in the riso day scene that was already fixed).
+- Riso: plates ignore ctx transforms (rotate points yourself); bold print lettering reads over halftone only at weight 700,
+  so CHANNEL.weight sets a default weight for the whole video.
+- Crosshatch: put the clue-card tag above the title (y ~82, size 44) or it overlaps.
+- package.mjs now scores the opening up to ~9+ words (a short first sentence plus its follow-up), not just sentence one.
+  Spoken hooks score higher with: "you" early, a stake word (die, never, lost), a number, under 24 words.
+
+---
+
 ## Viewer data (Jist of Stories, via Windsor.ai)
 - 2026-10-13: connected. Channel snapshot: 25 subscribers, 3 public videos, 0 views reported; no per-video analytics
   rows yet in the last 2 years (new channel or a reporting delay). Re-check after the next uploads.

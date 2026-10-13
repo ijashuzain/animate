@@ -1,0 +1,10 @@
+{
+  "name": "dino-mystery",
+  "title": "Who Killed the Dinosaurs?",
+  "format": { "width": 1920, "height": 1080, "fps": 24, "bpm": 120 },
+  "formats": ["16:9"],
+  "storyFormat": "channel explainer: scene left, explainer card right, voice-led",
+  "style": "crosshatch",
+  "build": ["../../studio/channel/head-top.html", "src/script.js", "kit/core.js", "style", "../../studio/library/common.js", "src/scenes.js", "../../studio/channel/transitions.js", "../../studio/channel/channel.js", "kit/morph.js", "kit/board.js", "kit/score-head.js", "../../studio/channel/score-channel.js", "kit/score-tail.js"],
+  "review": { "safe": { "top": 40, "bottom": 120, "right": 60 }, "refs": {} }
+}
