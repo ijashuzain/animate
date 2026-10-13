@@ -17,6 +17,18 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - package.mjs now scores the opening up to ~9+ words (a short first sentence plus its follow-up), not just sentence one.
   Spoken hooks score higher with: "you" early, a stake word (die, never, lost), a number, under 24 words.
 
+### New tool: machines (from wheresryan22/anatomy, MIT)
+- The user asked for a way to draw complex things. We vendored anatomy's geometry kit (iso-kit, lathe, tube) into
+  studio/vendor/anatomy and wrote studio/library/machines.js. Its solids come back as SVG path strings, which we paint
+  with Path2D in the piece's palette (`anPal(paper, ink)`), so machines match the style.
+  Demo: studio/demos/machine (a pump with a flywheel, piston, gauge, pipe and spring, all moving from TT).
+- Animate by recomputing parts from TT: `spokesOf`/`ribsOf` take `phase`, a piston is a cylinder whose height
+  changes, a needle is a line to `pointOf(frame, s, r, angle)`. Order the parts with `anDraw` (anchor = a corner nearest the viewer).
+- `coil` only runs along x or y (not z). `ringBand` fills its hole; draw spokes on top for a wheel.
+- The build forbids URLs, so the bundle drops iso-kit's SVG/HTML writers. Regenerate it with anatomy-bundle.mjs.
+- Best fit: isometric (as is) and crosshatch (`anPaint(..., { tex })` hatches inside a solid). Next "how it works"
+  topics this opens up: engines, locks, toilets, pumps, clocks, cameras.
+
 ---
 
 ## Viewer data (Jist of Stories, via Windsor.ai)

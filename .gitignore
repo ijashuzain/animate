@@ -8,3 +8,4 @@ archive/*/index.html
 *.wav
 node_modules/
 videos/*/youtube/*.png
+studio/demos/*/index.html

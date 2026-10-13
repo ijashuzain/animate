@@ -9,13 +9,15 @@ engine/animate/        the animate engine (vendored from github.com/cth9191/anim
                        Improve it in place when a lesson calls for it; note upstream-worthy changes in LEARNINGS.md.
 studio/channel/        the channel layout (any style): head-top.html, channel.js (timeline, the explanation lettering, bridges, camera),
                        score-channel.js (mood-based score, motif, kick, risers, payoff hit, sfx)
-studio/library/        reusable, style-agnostic characters and helpers (common.js: chFace, hero, personFull, squash)
+studio/library/        reusable, style-agnostic characters and helpers (common.js: chFace, hero, personFull, squash;
+                       machines.js: detailed machines from the anatomy kit, see studio/demos/machine)
 studio/templates/      explainer/ = the starting point for a new video (copied by new-video.mjs)
 studio/tools/          new-video, smoke, vo, metadata, thumbnail, finish.sh, status, cleanup (see "Tools")
 studio/dashboard/      the live status page (Artifact) and its notes
 studio/status.json     the local mirror of the dashboard's state
 studio/LEARNINGS.md    lessons learned, newest first: read before building, append after every batch
-studio/voice.md        the channel's narration voice (read before writing); studio/vendor/: youtube-agent-skill scorers (MIT)
+studio/voice.md        the channel's narration voice (read before writing); studio/vendor/: youtube-agent-skill scorers (MIT),
+                       anatomy/ (isometric machine geometry, MIT)
 studio/formats.md      narrative formats; studio/sound.md: genres + sfx kits; studio/transitions.md: scene changes
 topics/log.md          every topic suggested, picked and made (never repeat a made topic)
 videos/<slug>/         one folder per video of the CURRENT batch (sources tracked; generated files ignored)
@@ -85,7 +87,9 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
 7. **Draw** (stage `building`): `src/scenes.js`, one scene function and one card function per scene. Use the style's kit for
    the scene, the channel helpers to letter the explanation onto it (write, title, bigNum, arrow, bubble, check, cbox, popAt,
    chTag; they draw in screen space on the right, x 1070..1810) and
-   `studio/library` characters. Run `node studio/tools/smoke.mjs <slug>` and LOOK at `review/sheet.png` (and at 2–3 frames at
+   `studio/library` characters. For machines and mechanisms (engines, pumps, locks, gauges, pipes, gears) use
+   `studio/library/machines.js` (add `../../studio/vendor/anatomy/anatomy.js` and `../../studio/library/machines.js` to piece.json
+   `build` after `style`; the demo `studio/demos/machine` shows every part). Run `node studio/tools/smoke.mjs <slug>` and LOOK at `review/sheet.png` (and at 2–3 frames at
    0.5 scale with engine/animate/tools/still.mjs). Fix overlaps, clutter, still stretches, unreadable text.
 8. **Render and package** (stages `rendering` → `reviewing` → `packaging`): `studio/tools/finish.sh <slug>` with
    `run_in_background`. It exports, runs the review, makes a < 30 MB share copy, a 720p subtitle preview, `voice/script.md`,
@@ -145,6 +149,7 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 | `node studio/tools/status.mjs <slug> <stage> "<what>" "<why>"` | local status mirror |
 | `node studio/tools/cleanup.mjs [--dry-run]` | archive sources, delete generated files of finished videos |
 | `node engine/animate/tools/still.mjs videos/<slug> 3,40 out.png --scale 0.5` | look at specific frames |
+| `node studio/tools/anatomy-bundle.mjs` | rebuilds `studio/vendor/anatomy/anatomy.js` from the vendored anatomy sources |
 
 ## Rules that always hold
 - Requirements: Node 18+, Playwright Chromium (`/opt/pw-browsers` in cloud sessions), ffmpeg. For the hand lettering install
