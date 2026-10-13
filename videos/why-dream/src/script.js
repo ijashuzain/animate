@@ -5,7 +5,7 @@
 // =====================================================================
 const SCN = [
   { key: 'hook', d: 12, tag: 'why?', mood: 'warm', focus: [480, 560], bg: '#f2ead8', scene: () => sHook(), card: (at) => cHook(at),
-    say: "Last night you probably spent about two hours dreaming, and you've already forgotten most of it. So why does your brain bother making dreams at all? Scientists still argue about the answer.",
+    say: "Why does your brain spend about two hours every night making movies you'll never remember? You forget most of them by breakfast, and scientists still argue about the answer.",
     sfx: [[1.0, 'scribble', 0.8], [8.6, 'ding']], pops: [2.4, 5.0, 8.6] },
   { key: 'rem', d: 13, tag: 'when?', mood: 'groove', focus: [480, 560], bg: '#f2ead8', tr: { kind: 'shape', shape: 'cloud', p: [700, 300], spin: 0 }, scene: () => sRem(), card: (at) => cRem(at),
     say: "Most vivid dreams happen in REM sleep. Your eyes dart under closed lids, your brain lights up almost as if you were awake, and your body is kept still, so you don't act your dreams out.",

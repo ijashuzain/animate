@@ -72,6 +72,8 @@ export async function textCheck(page, o = {}) {
       for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
         const a = boxes[i], b = boxes[j];
         if (a.s === b.s || a.s.includes(b.s) || b.s.includes(a.s)) continue;
+        // two single glyphs = hand lettering drawn letter by letter (sketchbook handLetter); neighbours touch by design
+        if (a.s.trim().length <= 1 && b.s.trim().length <= 1) continue;
         if (Math.min(a.x1, b.x1) <= Math.max(a.x0, b.x0) || Math.min(a.y1, b.y1) <= Math.max(a.y0, b.y0)) continue;
         // the real (possibly rotated / skewed) text boxes, not their screen-aligned bounds
         const small = Math.min(area(a.q), area(b.q));

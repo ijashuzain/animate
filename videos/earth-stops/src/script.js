@@ -5,7 +5,7 @@
 // =====================================================================
 const SCN = [
   { key: 'hook', d: 12, tag: 'right now', mood: 'warm', focus: [480, 540], bg: '#141a2e', dark: true, scene: () => sHook(), card: (at) => cHook(at),
-    say: "Right now, the ground under the equator is racing east at about one thousand six hundred and seventy kilometres an hour. You don't feel a thing. So what if Earth simply stopped?",
+    say: "Earth is spinning you east at more than one thousand kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen?",
     sfx: [[1.0, 'whoosh', 1.6], [9.6, 'drone', 2.0]], pops: [3.0, 7.2, 9.8] },
   { key: 'second', d: 13, tag: '1 second later', mood: 'tense', focus: [480, 600], bg: '#e9b06a', tr: { kind: 'flash', d: 0.3 }, scene: () => sSecond(), card: (at) => cSecond(at),
     say: 'One second later, everything not bolted to the bedrock keeps moving east at full speed. Air, oceans, rocks, cities, and you, all flung sideways faster than a jet airliner. Only the poles stay calm.',
@@ -47,14 +47,14 @@ const META = {
   title: 'What If Earth Stopped Spinning? 1,670 km/h to Zero',
   alt: ['What If Earth Stopped Spinning, Minute by Minute', 'A Day That Lasts a Year: If Earth Stopped Spinning'],
   hooks: [
-    "Right now, the ground under the equator is racing east at about one thousand six hundred and seventy kilometres an hour.",
+    "Earth is spinning you east at more than one thousand kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen?",
     "If Earth stopped spinning for one second, you would fly east faster than a jet airliner.",
     "Stop Earth's spin and a single day would last a whole year: six months of light, six of night.",
     "Earth is slowing down right now, by about two thousandths of a second every century. What if it stopped?",
     "You are spinning at hundreds of kilometres an hour, and you never feel it. So what happens if it stops?",
   ],
   queries: ['what if earth stopped spinning', 'what happens if earth stops rotating', 'earth rotation slowing down'],
-  hook: 'What happens if Earth stops rotating? Second by second: the winds, the oceans, a day that lasts a year, and why Earth slowing down is nothing to worry about.',
+  hook: 'What happens if Earth stops rotating? Second by second: the winds, the oceans, a day that lasts a year, and why Earth\'s rotation slowing down is nothing to worry about.',
   about: "Earth's equator spins east at about 1,670 km/h. If it stopped suddenly, everything would keep moving: winds and tsunamis would scour the planet. If it slowed gently, a day would last a year, the oceans would drain toward the poles and leave one giant continent around the middle, and the magnetic field might fade. And the good news: Earth really is slowing, but only by about 2 milliseconds per century.",
   chapters: [[0, 'Right now'], [12, 'One second later'], [25, 'One minute later'], [38, 'A day that lasts a year'], [52, 'The oceans move'], [65, 'The new map'], [78, 'The magnetic field'], [94.5, 'The good news'], [108.5, 'Summary']],
   sources: [

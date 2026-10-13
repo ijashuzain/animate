@@ -145,7 +145,7 @@ function sMap() {
   beginSheet(); spaceField();
   printed(PITCH.world, { shapes: true }, () => {
     stars('mp', 40); const x = 470, y = 560, R = 300;
-    globe(x, y, R, 0, { key: 'mp', noLand: true, ocean: SAND, inner: () => { fill(hand(ellipsePts(x, y - R * 0.95, R * 1.1, R * 0.55, 0, 40), 'po1', 3), OCEAN); fill(hand(ellipsePts(x, y + R * 0.95, R * 1.1, R * 0.55, 0, 40), 'po2', 3), OCEAN); for (let i = 0; i < 5; i++) fill(hand(ellipsePts(x - 220 + i * 110 + Math.sin(TT * 0.4) * 10, y + (i % 2 ? 30 : -40), 50, 30, 0, 16), 'gr' + i, 2), LAND); } });
+    globe(x, y, R, 0, { key: 'mp', noLand: true, ocean: SAND, inner: () => { const sw = 0.62 + 0.38 * sm(TT, at(1.6), at(9.0)); fill(hand(ellipsePts(x, y - R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po1', 3), OCEAN); fill(hand(ellipsePts(x, y + R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po2', 3), OCEAN); for (let i = 0; i < 5; i++) fill(hand(ellipsePts(x - 220 + i * 110 + Math.sin(TT * 0.4) * 10, y + (i % 2 ? 30 : -40), 50, 30, 0, 16), 'gr' + i, 2), LAND); } });
     if (TT > at(9.0)) { const k = popS(at(9.0)); type('CANADA', x - 120, y - 300, 30 * k, {}, { align: 'center', key: 'can' }); type('GREENLAND', x + 60, y - 360, 30 * k, {}, { align: 'center', key: 'grl' }); }
     risoHero(x + 40, y - 30 + Math.sin(TT * 3) * 4, 34, { key: 'maph', mood: 'smile', arms: [1.2, 0.2] });
   });

@@ -5,13 +5,13 @@ _Scorers from youtube-agent-skill (MIT). A low score is a reason to look again, 
 ## Hooks (the first 15 seconds)
 | verdict | band | formula | hook | weakest |
 |---|---|---|---|---|
+| 68 | WORKABLE | The Question | **(in the script)** Earth is spinning you east at more than one thousand kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen? | curiosity 59 |
 | 55 | WORKABLE | The Question | You are spinning at hundreds of kilometres an hour, and you never feel it. So what happens if it stops? | specificity 35 |
 | 45 | WEAK | The Mistake | Stop Earth's spin and a single day would last a whole year: six months of light, six of night. | curiosity 24 |
-| 44 | WEAK | Unclassified | **(in the script)** Right now, the ground under the equator is racing east at about one thousand six hundred and seventy kilometres an hour. | curiosity 24 |
 | 44 | WEAK | The Question | Earth is slowing down right now, by about two thousandths of a second every century. What if it stopped? | address 26 |
 | 42 | WEAK | Unclassified | If Earth stopped spinning for one second, you would fly east faster than a jet airliner. | curiosity 24 |
 
-> The script opens weaker (44) than the best candidate (55): consider opening with it.
+> The script opens with its best hook.
 
 ## Titles (thumbnail says: "6 MONTHS OF NIGHT")
 | score | chars | title | issues |
@@ -23,4 +23,4 @@ _Scorers from youtube-agent-skill (MIT). A low score is a reason to look again, 
 ## Search (the 3 queries this video should win)
 - "what if earth stopped spinning": covered
 - "what happens if earth stops rotating": covered
-- "earth rotation slowing down": missing from title/first lines: rotation
+- "earth rotation slowing down": covered

@@ -20,9 +20,8 @@ const tmp = path.join(vdir(slug), 'review'); fs.mkdirSync(tmp, { recursive: true
 const o = [`# Packaging check: ${M.title ?? slug}\n`, '_Scorers from youtube-agent-skill (MIT). A low score is a reason to look again, never a verdict._\n'];
 
 // hooks
-// the opening the viewer hears: sentences until it reaches about 9 words (a short first sentence and its follow-up)
-const first = (T.narration[0]?.text ?? '').trim(), sents = first.match(/[^.?!]+[.?!]+/g) ?? [first];
-let firstSentence = ''; for (const s of sents) { firstSentence = (firstSentence + ' ' + s).trim(); if (firstSentence.split(/\s+/).length >= 9) break; }
+// the opening the viewer hears: the whole first voice line (the hook scene, ~12 s), scored like the candidates
+const firstSentence = (T.narration[0]?.text ?? '').trim();
 const hooks = [...(M.hooks ?? []), firstSentence].filter(Boolean);
 // voice lines spell numbers out for the narrator; the scorer counts digits, so score a digit version
 const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, twenty: 20, thirty: 30, forty: 40, fifty: 50, hundred: 100, thousand: 1000, million: 1000000, billion: 1000000000, twelfth: '12th', half: '50%' };

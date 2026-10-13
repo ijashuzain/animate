@@ -16,6 +16,15 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - Crosshatch: put the clue-card tag above the title (y ~82, size 44) or it overlaps.
 - package.mjs now scores the opening up to ~9+ words (a short first sentence plus its follow-up), not just sentence one.
   Spoken hooks score higher with: "you" early, a stake word (die, never, lost), a number, under 24 words.
+- package.mjs now scores the WHOLE first voice line (the hook scene), exactly like the candidates. Scoring only the first
+  sentence gave 44-47 for lines whose full text scored 68. Write the first line as one of the META.hooks candidates.
+- Openings that score: question formula + "you" + stakes ("Earth is spinning you east at more than one thousand
+  kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen?" = 68).
+  Keep the facts exact anyway: "more than 1,000 km/h" is true for anyone below ~50 degrees latitude; 1,670 is only the equator.
+- textcheck flagged ~30 "overlaps" in the sketchbook video: hand lettering draws one glyph at a time and neighbours touch.
+  The checker now ignores pairs of single glyphs.
+- Earth map scene: 3.5 s with nothing new between two lettering beats. When a scene's lettering pauses for > 3 s, give the
+  picture a slow change (here the polar oceans swell over the scene).
 
 ### New tool: machines (from wheresryan22/anatomy, MIT)
 - The user asked for a way to draw complex things. We vendored anatomy's geometry kit (iso-kit, lathe, tube) into
