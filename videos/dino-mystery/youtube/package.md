@@ -6,7 +6,7 @@ _Scorers from youtube-agent-skill (MIT). A low score is a reason to look again, 
 | verdict | band | formula | hook | weakest |
 |---|---|---|---|---|
 | 60 | WORKABLE | Unclassified | Nobody saw the dinosaurs die. But sixty-six million years later, you can still touch the clues the killer left. | address 46 |
-| 60 | WORKABLE | Unclassified | **(in the script)** Nobody saw the dinosaurs die.  But sixty-six million years later, you can still touch the clues the killer left. | address 46 |
+| 58 | WORKABLE | The Insider | **(in the script)** Nobody saw the dinosaurs die. But sixty-six million years later, you can still touch the clues the killer left. They're hidden in a thin layer of clay. | address 46 |
 | 47 | WEAK | The Question | Three quarters of all species died at once, sixty-six million years ago. Who did it? | address 26 |
 | 45 | WEAK | Unclassified | Not every dinosaur died. You probably saw one this morning. | curiosity 24 |
 | 45 | WEAK | The Impossible Claim | There were no witnesses when the dinosaurs died, but the evidence never left. Here are the four clues. | address 26 |
