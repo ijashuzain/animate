@@ -23,6 +23,13 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   Keep the facts exact anyway: "more than 1,000 km/h" is true for anyone below ~50 degrees latitude; 1,670 is only the equator.
 - textcheck flagged ~30 "overlaps" in the sketchbook video: hand lettering draws one glyph at a time and neighbours touch.
   The checker now ignores pairs of single glyphs.
+- Score bug (all genres): each scene's note loops ran 0.05 s past the cut, so on scenes starting on an even second the old
+  scene's timpani/kick and the new scene's first one landed together (+6 dB): the loudest moment of the dinosaur video
+  was a scene change, not the payoff. Note loops now stop at the scene boundary.
+- Score bug: the genre texture (the mystery drone) ran under the whole video, so the 2.5 s hush sat at -21 dB instead of
+  near silence. The texture now stops for silence scenes.
+- The default camera was a sine swell (1 -> 1.035 -> 1), which stands still mid-scene, exactly where crosshatch got
+  6 dead beats. It is now a steady push (CHANNEL.push, default 0.06 per scene).
 - Earth map scene: 3.5 s with nothing new between two lettering beats. When a scene's lettering pauses for > 3 s, give the
   picture a slow change (here the polar oceans swell over the scene).
 

@@ -4,7 +4,7 @@
 //    left  (x 0..~990): the scene, drawn with the piece's style kit (cut-paper, riso, math, pixel, isometric, ...)
 //    right (x 1010..1870): the explanation, written and drawn straight onto the scene in the style's own lettering
 //                         (layout 'open', the default; the user asked for no notepad). Layout 'card' puts it on a paper sheet.
-//  A piece may set CHANNEL = { layout, font, weight, colors, inkDark, halo, haloDark, tag(str, k), tr } in src/scenes.js
+//  A piece may set CHANNEL = { layout, font, weight, colors, inkDark, halo, haloDark, tag(str, k), tr, push (camera push per scene, 0.06) } in src/scenes.js
 //  (scenes.js loads after the style kit, so it can use the style's palette). A scene with dark: true gets light ink.
 //  The piece's src/script.js defines, before this file:
 //    SCN  = [{ key, d, scene(), card(at) | null, tag, focus: [x, y], bg: '#hex', say, sayAt?, sayEnd?, mood, sfx, cut? }]
@@ -157,7 +157,8 @@ const typed = (str, t, cps = 14) => Math.floor(clamp((TT - t) * cps / str.length
 const ERA_BG = SCN.map((s) => s.bg);
 function pieceCam(era, t) {
   const s = SCN[era]; if (s.cam) { const c = s.cam(t); if (c) return c; }
-  const u = clamp((t - s.t0) / Math.max(1, s.t1 - s.t0)), z = 1 + 0.035 * Math.sin(u * Math.PI), f = s.focus ?? [500, 540];
+  // a steady push (constant speed): a sine swell stood still mid-scene, exactly where the review found dead beats
+  const u = clamp((t - s.t0) / Math.max(1, s.t1 - s.t0)), z = 1 + (CHL.push ?? 0.06) * u, f = s.focus ?? [500, 540];
   return camOf({ z, p: f, to: f });
 }
 // a scene's tr (or CHANNEL.tr, an object or (i) => object) picks a compositing transition from transitions.js;

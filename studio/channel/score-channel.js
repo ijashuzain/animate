@@ -92,20 +92,22 @@
     const nextSilent = SCN[i + 1] && SCN[i + 1].mood === 'silence';
     const t0 = s.t0, t1 = nextSilent ? s.t1 - 0.02 : Math.min(s.t1 + 0.05, DURATION), rel = nextSilent ? 0.05 : 0.3;
     const chordAt = (t) => chs[Math.floor(t / 2) % chs.length];
+    const te = Math.min(t1, s.t1 - 0.01);   // note loops stop before the next scene's first beat (no doubled hits on the cut)
     if (G.padType && G.pk) each(t0, t1, 4.0, (t, k) => pad(t, Math.min(t + 4.1, t1), chordAt(t), G.pk * gv, { type: G.padType, cut: e === 3 ? G.padCut * 1.5 : G.padCut, att: k ? 0.05 : (G.padAtt ?? 0.3), rel, send: nextSilent ? 0.02 : 0.4 }));
-    if (G.texture && i === 0) G.texture(0, DURATION - 1);
+    // the genre's bed (a drone, vinyl crackle...) runs scene by scene and stops dead for a silence scene
+    if (G.texture) { const prevSilent = i > 0 && SCN[i - 1].mood === 'silence'; if (i === 0 || prevSilent) { let j = i; while (SCN[j + 1] && SCN[j + 1].mood !== 'silence') j++; G.texture(t0, SCN[j + 1] ? SCN[j].t1 - 0.45 : DURATION - 1); } }
     const step = G.step[e - 1], L = leadOf(G.lead), Ld = G.double ? leadOf(G.double) : null;
-    each(t0 + (e === 1 ? 0.5 : 0), t1 - (nextSilent ? 0.3 : 0), step, (t, k) => {
+    each(t0 + (e === 1 ? 0.5 : 0), te - (nextSilent ? 0.3 : 0), step, (t, k) => {
       const ch = chordAt(t), n = G.fig(k, ch, e); if (!n) return;
       const acc = k % 4 === 0 ? 1.15 : k % 2 === 0 ? 1 : 0.8, tt = swingT(t, k), v = G.lv * acc * gv;
       if (G.strum && k % 4 === 0) ch.forEach((cn, j) => L(tt + j * 0.018, nz(cn), v * 0.55, -0.2 + j * 0.13));
       else L(tt, nz(n), v, Math.sin(k * 0.9) * 0.35);
       if (Ld && e >= 2 && k % 2 === 0) Ld(tt, nz(n), v * 0.5, -Math.sin(k * 0.9) * 0.3);
     });
-    if (G.chordHits) each(t0, t1 - 0.3, BEAT * 2, (t, k) => chordAt(t).forEach((cn, j) => I.epiano(swingT(t, 1) + j * 0.012, nz(cn), G.lv * 0.38 * gv, -0.3 + j * 0.2, 1.4)));
-    if (e >= 2) each(t0, t1 - (nextSilent ? 0.3 : 0), G.bassStep ?? BEAT, (t, k) => { if (G.bassStep || k % 2 === 0) bassNote(t, nz(G.roots[Math.floor(t / 2) % 4]) * (G.bassStep && k % 2 ? 2 : 1), 0.12 * gv); });
+    if (G.chordHits) each(t0, te - 0.3, BEAT * 2, (t, k) => chordAt(t).forEach((cn, j) => I.epiano(swingT(t, 1) + j * 0.012, nz(cn), G.lv * 0.38 * gv, -0.3 + j * 0.2, 1.4)));
+    if (e >= 2) each(t0, te - (nextSilent ? 0.3 : 0), G.bassStep ?? BEAT, (t, k) => { if (G.bassStep || k % 2 === 0) bassNote(t, nz(G.roots[Math.floor(t / 2) % 4]) * (G.bassStep && k % 2 ? 2 : 1), 0.12 * gv); });
     if (s.mood === 'cold' || s.mood === 'tense') drone(t0, t1, nz(G.roots[0]), 0.025, { att: 0.6, rel });
-    each(t0, t1 - (nextSilent ? 0.4 : 0), E16, (t, k) => G.drums(swingT(t, k >> 1), k, e));
+    each(t0, te - (nextSilent ? 0.4 : 0), E16, (t, k) => G.drums(swingT(t, k >> 1), k, e));
   });
   // the hero's motif (SCORE.motif, else the genre's) on every other tagged scene, and quietly at the very end
   const MOTIF = SC.motif ?? G.motif, ML = leadOf(G.lead);
