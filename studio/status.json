@@ -3,7 +3,7 @@
     "name": "Batch 1 · 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-13T13:25:47.953Z",
+  "updated": "2026-10-13T13:26:18.106Z",
   "videos": {
     "gps-where": {
       "title": "How Does GPS Know Where You Are?",
@@ -49,9 +49,23 @@
       "why": "Frames are drawn in a headless browser; the score is synthesized offline",
       "progress": 0.625,
       "updated": "2026-10-13T13:25:47.953Z"
+    },
+    "zz-t": {
+      "title": "T",
+      "style": "sketchbook",
+      "stage": "researching",
+      "detail": "Folder created from the explainer template",
+      "why": "Every fact on screen gets checked before any drawing",
+      "progress": 0,
+      "updated": "2026-10-13T13:26:18.106Z"
     }
   },
   "log": [
+    {
+      "t": "2026-10-13T13:26:18.106Z",
+      "slug": "zz-t",
+      "note": "created videos/zz-t (sketchbook)"
+    },
     {
       "t": "2026-10-13T13:25:47.953Z",
       "slug": "lab-reel",
