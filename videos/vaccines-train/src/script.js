@@ -48,9 +48,11 @@ const ACTS = [
 ];
 const SCORE = { motif: ['D5', 'Fs5', 'A5', 'Fs5'] };
 const META = {
-  title: 'How Do Vaccines Train Your Body? (The Wanted Poster Trick) | Explained in 2 Minutes',
-  alt: ['How Vaccines Work, Explained Simply', 'Your Body Learns to Fight a Germ It Has Never Met'],
-  hook: "Your body has never met this germ. After one small shot, it knows its face and how to beat it.",
+  title: "How 1 Shot Trains Your Body for Years",
+  alt: ["How Vaccines Work, Explained Simply", "Smallpox Is Gone. Here's the Trick Your Body Learned"],
+  hooks: ["Your body has never met this germ, but after one shot it can stop it before you ever get sick.", "Smallpox killed people for three thousand years, then it was gone. One small shot taught your body how.", "A vaccine is a wanted poster for a germ your body has never met.", "Without vaccines, about 154 million more people would have died in the last fifty years.", "How do you train for a fight with an enemy you've never seen?"],
+  queries: ["how do vaccines work", "how vaccines train the immune system", "vaccine memory cells"],
+  hook: "How do vaccines work? One shot shows your immune system a germ's face, and its memory cells can stop that germ for years.",
   about: "Follow Wes, a white blood cell, as a vaccine shows him a germ's \"wanted poster\" before the real germ ever arrives. Germs carry unique shapes called antigens; messenger cells carry them to the lymph nodes; the matching cells build an army of antibodies and killer T cells; and memory cells keep the poster up for years. Then the rematch, and the numbers: smallpox eradicated, and at least 154 million lives saved in 50 years.",
   chapters: [[0, 'The question'], [13, 'Every germ has a face'], [26, 'The first meeting is slow'], [39, 'What a vaccine is'], [53, 'The wanted poster'], [66, 'Building an army'], [79, 'Memory cells'], [92, 'The rematch'], [108.5, 'Smallpox and 154 million lives'], [123, 'Summary']],
   sources: [
@@ -61,4 +63,4 @@ const META = {
   hashtags: ['#vaccines', '#immunology', '#science', '#explained', '#animation'],
   tags: ['how do vaccines work', 'vaccines explained', 'immune system explained', 'antibodies', 'memory cells', 'antigens', 'smallpox eradication', 'white blood cells', 'science explained', 'animated explainer'],
 };
-const THUMB = { t: 6.0, panel: '#fbf6ea', lines: [['A vaccine is a', 64, '#2a1d18'], ['WANTED', 170, '#c4542e'], ['POSTER', 170, '#2a1d18'], ['for your body', 64, '#2a1d18']] };
+const THUMB = { t: 6.0, panel: '#fbf6ea', lines: [['WANTED', 190, '#c4542e'], ['POSTER', 190, '#2a1d18']] };

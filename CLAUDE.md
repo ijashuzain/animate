@@ -15,6 +15,7 @@ studio/tools/          new-video, smoke, vo, metadata, thumbnail, finish.sh, sta
 studio/dashboard/      the live status page (Artifact) and its notes
 studio/status.json     the local mirror of the dashboard's state
 studio/LEARNINGS.md    lessons learned, newest first: read before building, append after every batch
+studio/voice.md        the channel's narration voice (read before writing); studio/vendor/: youtube-agent-skill scorers (MIT)
 studio/formats.md      narrative formats; studio/sound.md: genres + sfx kits; studio/transitions.md: scene changes
 topics/log.md          every topic suggested, picked and made (never repeat a made topic)
 videos/<slug>/         one folder per video of the CURRENT batch (sources tracked; generated files ignored)
@@ -59,6 +60,12 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    `src/script.js`: SCN (9–10 scenes, 11–15 s each, ~2 min), the hook, one true step per scene, a 2.5 s `silence` scene,
    the payoff (`cut: true`, mood `full`), and an ending that calls back to the opening. Also META (YouTube title, alternatives,
    hook, about, chapters, sources, hashtags, tags), THUMB (frame, panel colour, 2–4 big hook lines) and SCORE (motif).
+   **Package while writing (studio/voice.md; rules and scorers from youtube-agent-skill):** META.hooks = 5 candidate
+   opening lines from different hook formulas (studio/vendor/yt-agent/hooks.json); the first voice line opens with the
+   best one (aim for STRONG >= 72, never below WORKABLE 55). META.title <= 60 characters with the subject in the first
+   40 and a number, name or date; 2 alternatives. THUMB.lines = at most 3 words that do NOT repeat the title (same promise,
+   different words). META.queries = the 3 searches the video should win; their words must appear in the title or the first
+   two description lines (META.hook, the first sentence of META.about). Check with `node studio/tools/package.mjs <slug>`.
    **Voice lines fill their scene:** about 2.7 words per second of the window (d − 0.9 s). Check with `node studio/tools/vo.mjs <slug> --check`.
 7. **Draw** (stage `building`): `src/scenes.js`, one scene function and one card function per scene. Use the style's kit for
    the scene, the channel helpers to letter the explanation onto it (write, title, bigNum, arrow, bubble, check, cbox, popAt,
@@ -71,13 +78,20 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    dead beats over 3 s) and re-run (`--audio-only` when only the mix changed). Under 1 dB misses on arc rules are acceptable.
    Run videos one after another, not in parallel (4 CPU workers each).
 9. **Deliver** (stage `done`): send each video's `-1080p.mp4`, `-script-preview-720p.mp4`, `voice/script.md`,
-   `youtube/metadata.md` and `youtube/thumbnail.png` with SendUserFile, and summarise checks, weakest spot and what you couldn't verify.
+   `youtube/metadata.md` and `youtube/thumbnail.png` with SendUserFile, and summarise checks (incl. youtube/package.md:
+   hook score, title score, searches), weakest spot and what you couldn't verify. Also suggest one **Short** per video in
+   chat: a 20-55 s span that stands alone (opens on a complete thought, has a turn, ends on a line), a new first line
+   scored with hookscore, on-screen text for its first 2 s, and a loop point.
    Put them on the dashboard too: upload `renders/<slug>-web-720p.mp4` (finish.sh makes it, ~13 MB; the upload cap is 15 MB)
    `renders/<slug>-1080p.part0.mp4`, `part1.mp4` (the 1080p share copy split under 15 MB; the page joins them into one file on
    download) and `youtube/thumbnail.png` with the Artifact tool (`url` = the dashboard, `asset: true`, `file_paths`), then
    `node studio/tools/outputs.mjs <slug> <videoId> <thumbId> <part0Id> <part1Id>` and write `renders/outputs.json` to `outputs/<slug>`
    (ArtifactData batch, `file_path`). The page then plays the video and offers downloads and copy buttons.
-10. **Learn** (always): append what this batch taught to `studio/LEARNINGS.md` (new rules, mistakes, what the user liked/disliked),
+10. **Learn from viewers** (whenever the user shares a YouTube Studio audience-retention export, CSV): run
+    `node studio/tools/retention.mjs <slug> <file.csv>` (works on archived videos: cleanup keeps voice/narration.srt).
+    Name the single biggest leak (hook leak > 25%? a cliff at a line? a steep slide?) and turn it into a rule in
+    LEARNINGS.md and, if it's general, into the template, voice.md or a tool.
+11. **Learn** (always): append what this batch taught to `studio/LEARNINGS.md` (new rules, mistakes, what the user liked/disliked),
     and improve the repo itself when a lesson is general: a library character, a channel helper, a tool, a score mood, a template.
     Update `topics/log.md`. Commit and push everything except generated files.
 
@@ -109,6 +123,8 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 | `studio/tools/finish.sh <slug> [--audio-only\|--skip-export]` | export → review → share copy → preview → vo → metadata → thumbnail → web copy |
 | `studio/tools/web-copy.sh <slug>` | `renders/<slug>-web-720p.mp4` (~13 MB) and `<slug>-1080p.part<N>.mp4` (< 15 MB each) for the dashboard |
 | `node studio/tools/outputs.mjs <slug> <videoId> <thumbId> [partIds…]` | `renders/outputs.json`, the dashboard's `outputs/<slug>` doc |
+| `node studio/tools/package.mjs <slug>` | hooks scored, title + thumbnail linted, searches checked: `youtube/package.md` (finish.sh runs it) |
+| `node studio/tools/retention.mjs <slug> <csv>` | reads a YouTube retention export: hook leak, cliffs with the line said there, slide |
 | `node studio/tools/sampler.mjs <slug> [sec] [genres]` | renders the piece's score in every genre: `renders/genres.mp3` + one mp3 per genre |
 | `node studio/tools/status.mjs <slug> <stage> "<what>" "<why>"` | local status mirror |
 | `node studio/tools/cleanup.mjs [--dry-run]` | archive sources, delete generated files of finished videos |

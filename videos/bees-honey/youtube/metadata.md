@@ -1,13 +1,13 @@
-# How Do Bees Make Honey? (One Bee Makes 1/12 of a Teaspoon) | Explained in 2 Minutes
+# 1 Bee, 6 Weeks, 1/12 Teaspoon: How Honey Is Made
 
 ## Title
-How Do Bees Make Honey? (One Bee Makes 1/12 of a Teaspoon) | Explained in 2 Minutes
+1 Bee, 6 Weeks, 1/12 Teaspoon: How Honey Is Made
 
-*Alternatives:* "How Bees Make Honey, Step by Step" · "One Bee, One Life, One Tiny Drop of Honey"
+*Alternatives:* "How Do Bees Make Honey? Step by Step" · "A Bee's Whole Life Makes a Tiny Drop of Honey"
 
 ## Description
 
-Flowers don't make honey. Bees do. Here's how, and how little one bee makes in her whole life.
+How do bees make honey? Follow one bee: nectar, enzymes, wings that fan it dry, and a wax lid. How much honey does one bee make? About 1/12 of a teaspoon in her whole life.
 
 Follow Bea, a forager bee, from flower to hive. Nectar goes into her honey stomach, house bees pass it mouth to mouth and add enzymes, spread it into wax cells, fan the water out until it is about 17-18% water, and seal each cell with beeswax. Honey is the colony's winter food, and a strong hive makes extra. The twist: in her five or six weeks of life, one worker makes only about a twelfth of a teaspoon.
 

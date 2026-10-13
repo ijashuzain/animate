@@ -44,9 +44,11 @@ const ACTS = [
 ];
 const SCORE = { motif: ['G4', 'B4', 'D5', 'B4'] };
 const META = {
-  title: 'How Do Bees Make Honey? (One Bee Makes 1/12 of a Teaspoon) | Explained in 2 Minutes',
-  alt: ['How Bees Make Honey, Step by Step', 'One Bee, One Life, One Tiny Drop of Honey'],
-  hook: "Flowers don't make honey. Bees do. Here's how, and how little one bee makes in her whole life.",
+  title: "1 Bee, 6 Weeks, 1/12 Teaspoon: How Honey Is Made",
+  alt: ["How Do Bees Make Honey? Step by Step", "A Bee's Whole Life Makes a Tiny Drop of Honey"],
+  hooks: ["Your jar of honey cost about two million flowers and hundreds of bees' whole lives. How do they make it?", "Flowers never make honey. Your jar took two million of them and hundreds of bees' whole lives. Here's how.", "A bee works until she dies, about six weeks, for one twelfth of a teaspoon of honey.", "Nectar is mostly water. Honey isn't. What do bees do to it before it reaches your toast?", "This jar of honey took a lot of work. But flowers don't make honey. Bees do. So how?"],
+  queries: ["how do bees make honey", "how is honey made", "how much honey does one bee make"],
+  hook: "How do bees make honey? Follow one bee: nectar, enzymes, wings that fan it dry, and a wax lid. How much honey does one bee make? About 1/12 of a teaspoon in her whole life.",
   about: "Follow Bea, a forager bee, from flower to hive. Nectar goes into her honey stomach, house bees pass it mouth to mouth and add enzymes, spread it into wax cells, fan the water out until it is about 17-18% water, and seal each cell with beeswax. Honey is the colony's winter food, and a strong hive makes extra. The twist: in her five or six weeks of life, one worker makes only about a twelfth of a teaspoon.",
   chapters: [[0, 'The question'], [12, 'Sipping nectar'], [25, 'Enzymes'], [38, 'Too much water'], [51, 'Fanning it dry'], [64, 'Sealing with wax'], [77, 'Why bees make honey'], [93.5, 'One bee, one life'], [107.5, 'Summary']],
   sources: [
@@ -58,4 +60,4 @@ const META = {
   hashtags: ['#bees', '#honey', '#nature', '#explained', '#animation'],
   tags: ['how do bees make honey', 'how honey is made', 'honey bees', 'bees explained', 'beehive', 'beeswax', 'nature explained', 'science for kids', 'animated explainer'],
 };
-const THUMB = { t: 103.0, panel: '#fbf6ea', lines: [['One bee\'s', 80, '#2a1d18'], ['WHOLE LIFE', 120, '#2a1d18'], ['= 1/12', 170, '#c4542e'], ['teaspoon of honey', 58, '#2a1d18']] };
+const THUMB = { t: 103.0, panel: '#fbf6ea', lines: [['ONE TINY', 150, '#2a1d18'], ['DROP', 220, '#c4542e']] };

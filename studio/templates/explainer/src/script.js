@@ -22,7 +22,8 @@ const HIT = SCN.slice(0, SCN.findIndex((s) => s.cut)).reduce((a, s) => a + s.d, 
 const ACTS = [];
 const SCORE = { genre: 'paper' };   // studio/sound.md: paper|lofi|synth|pizzicato|ambient|chiptune|folk|mystery; motif: [...] optional
 const META = {                                           // YouTube metadata (studio/tools/metadata.mjs adds the chapters)
-  title: '__TITLE__', alt: [], hook: 'One or two sentences that make people click.', about: 'What the video covers, in plain words.',
+  title: '__TITLE__', alt: [], hooks: [/* 5 candidate opening lines (package.mjs scores them) */], queries: [/* 3 searches to win */],
+  hook: 'One or two sentences that make people click.', about: 'What the video covers, in plain words.',
   sources: [], hashtags: ['#explained', '#animation'], tags: ['__TITLE__'],
 };
 const THUMB = { t: 4.0, panel: '#26315f', lines: [['__TITLE__', 90, '#fbf6ea']] };   // the frame time and the hook lines

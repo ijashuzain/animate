@@ -1,13 +1,13 @@
-# How Do Vaccines Train Your Body? (The Wanted Poster Trick) | Explained in 2 Minutes
+# How 1 Shot Trains Your Body for Years
 
 ## Title
-How Do Vaccines Train Your Body? (The Wanted Poster Trick) | Explained in 2 Minutes
+How 1 Shot Trains Your Body for Years
 
-*Alternatives:* "How Vaccines Work, Explained Simply" · "Your Body Learns to Fight a Germ It Has Never Met"
+*Alternatives:* "How Vaccines Work, Explained Simply" · "Smallpox Is Gone. Here's the Trick Your Body Learned"
 
 ## Description
 
-Your body has never met this germ. After one small shot, it knows its face and how to beat it.
+How do vaccines work? One shot shows your immune system a germ's face, and its memory cells can stop that germ for years.
 
 Follow Wes, a white blood cell, as a vaccine shows him a germ's "wanted poster" before the real germ ever arrives. Germs carry unique shapes called antigens; messenger cells carry them to the lymph nodes; the matching cells build an army of antibodies and killer T cells; and memory cells keep the poster up for years. Then the rematch, and the numbers: smallpox eradicated, and at least 154 million lives saved in 50 years.
 

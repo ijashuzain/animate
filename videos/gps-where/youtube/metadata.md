@@ -1,13 +1,13 @@
-# How Does GPS Know Where You Are? (It Needs Einstein) | Explained in 2 Minutes
+# GPS Is 10 km Wrong Without Einstein. Here's Why
 
 ## Title
-How Does GPS Know Where You Are? (It Needs Einstein) | Explained in 2 Minutes
+GPS Is 10 km Wrong Without Einstein. Here's Why
 
-*Alternatives:* "How GPS Works, Explained Simply" · "Your Phone Finds You by Listening to Clocks in Space"
+*Alternatives:* "How GPS Works, Explained Simply" · "How Your Phone Finds You (With Einstein's Help)"
 
 ## Description
 
-Your phone can't see the street and nobody told it your address. So how does the dot land exactly where you are?
+How GPS works: your phone can't see the street, yet it finds your location within about 5 metres, and only because of Einstein's relativity.
 
 Satellites 20,200 km up carry atomic clocks and keep broadcasting the time and their position. Your phone only listens: the delay of each signal is a distance, three distances meet in one point, and a fourth satellite fixes the phone's own clock. Then the strange part: speed and weaker gravity change the satellite clocks, exactly as Einstein predicted, by 38 millionths of a second a day.
 

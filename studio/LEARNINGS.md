@@ -17,6 +17,11 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   object, hex/square/triangle tiles, wipe with torn/wave edges, push, whip, slideOver, pageTurn, clock, doors, blinds,
   pixel, ink bleed, shutter, scatter, spin, fade, dip, flash) + the old morph, each with its own sound. Engine hook:
   morph.js renders both scenes and calls the bridge's fx. Rule: the transition comes out of something on screen.
+- **youtube-agent-skill (MIT) brought in** (studio/vendor/yt-agent): hook scoring + 21 hook formulas, the title/thumbnail
+  linter, the retention reader. First run on batch 2 found real problems: titles 77-83 chars (YouTube cuts at ~60),
+  thumbnails repeating title words, every opening line WEAK (34-42: no stakes, numbers spelled out), no target searches.
+  Fixed batch 2's packaging (titles 37-48 chars, 3-word thumbnails, hooks to 69-72, 3/3 searches). The scorer counts
+  digits, so package.mjs converts spoken numbers first. Rules now in CLAUDE.md step 6 and studio/voice.md.
 - Lab reel (videos/lab-reel) shows every transition; its genre samples are in renders/genres.mp3.
 
 ---

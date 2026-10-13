@@ -45,9 +45,11 @@ const ACTS = [
 ];
 const SCORE = { motif: ['E5', 'B4', 'E5', 'Fs5'] };   // a little "ping" pattern, like a signal
 const META = {
-  title: 'How Does GPS Know Where You Are? (It Needs Einstein) | Explained in 2 Minutes',
-  alt: ['How GPS Works, Explained Simply', 'Your Phone Finds You by Listening to Clocks in Space'],
-  hook: "Your phone can't see the street and nobody told it your address. So how does the dot land exactly where you are?",
+  title: "GPS Is 10 km Wrong Without Einstein. Here's Why",
+  alt: ["How GPS Works, Explained Simply", "How Your Phone Finds You (With Einstein's Help)"],
+  hooks: ["Without Einstein, your phone's map would be ten kilometres wrong by tomorrow. Here's why it never is.", "Your phone can't see the street, yet it never loses you by more than five metres. How?", "Every day, clocks in space gain thirty-eight millionths of a second. Your map would drift ten kilometres.", "Your phone finds you by listening to clocks in space, and it only works because Einstein was right.", "Open a map and a dot appears exactly where you stand. Your phone never asked where you are."],
+  queries: ["how does gps work", "gps relativity einstein", "how phones find your location"],
+  hook: "How GPS works: your phone can't see the street, yet it finds your location within about 5 metres, and only because of Einstein's relativity.",
   about: 'Satellites 20,200 km up carry atomic clocks and keep broadcasting the time and their position. Your phone only listens: the delay of each signal is a distance, three distances meet in one point, and a fourth satellite fixes the phone\'s own clock. Then the strange part: speed and weaker gravity change the satellite clocks, exactly as Einstein predicted, by 38 millionths of a second a day.',
   chapters: [[0, 'The question'], [12, 'Satellites overhead'], [25, 'Clocks that broadcast'], [38, 'A delay is a distance'], [51, 'Three distances, one point'], [65, 'The fourth satellite'], [78, "Einstein's problem"], [92, '38 microseconds a day'], [106, 'Summary']],
   sources: [
@@ -59,4 +61,4 @@ const META = {
   hashtags: ['#GPS', '#physics', '#Einstein', '#explained', '#animation'],
   tags: ['how does GPS work', 'GPS explained', 'GPS relativity', 'Einstein GPS', 'trilateration', 'GPS satellites', 'atomic clocks', 'how GPS knows where you are', 'science explained', 'animated explainer'],
 };
-const THUMB = { t: 21.0, panel: '#fbf6ea', lines: [['Your phone', 70, '#2a1d18'], ['NEEDS', 170, '#2a1d18'], ['EINSTEIN', 150, '#c4542e'], ['to find you', 62, '#2a1d18']] };
+const THUMB = { t: 21.0, panel: '#fbf6ea', lines: [['CLOCKS', 180, '#2a1d18'], ['IN SPACE', 150, '#c4542e']] };
