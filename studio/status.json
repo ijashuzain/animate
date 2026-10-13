@@ -3,64 +3,14 @@
     "name": "Batch 1 · 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-13T13:46:46.610Z",
-  "videos": {
-    "gps-where": {
-      "title": "How Does GPS Know Where You Are?",
-      "style": "isometric",
-      "stage": "done",
-      "detail": "Ready: videos/gps-where/renders/gps-where-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-13T00:54:24.026Z"
-    },
-    "vaccines-train": {
-      "title": "How Do Vaccines Train Your Body?",
-      "style": "cut-paper",
-      "stage": "done",
-      "detail": "Ready: videos/vaccines-train/renders/vaccines-train-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-13T00:26:52.016Z"
-    },
-    "bees-honey": {
-      "title": "How Do Bees Make Honey?",
-      "style": "sketchbook",
-      "stage": "done",
-      "detail": "Ready: videos/bees-honey/renders/bees-honey-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-13T00:41:15.736Z"
-    },
-    "zz-template-test": {
-      "title": "Template Test",
-      "style": "riso",
-      "stage": "researching",
-      "detail": "Folder created from the explainer template",
-      "why": "Every fact on screen gets checked before any drawing",
-      "progress": 0,
-      "updated": "2026-10-12T22:49:18.912Z"
-    },
-    "lab-reel": {
-      "title": "Studio Lab: Transitions",
-      "style": "cut-paper",
-      "stage": "done",
-      "detail": "Ready: videos/lab-reel/renders/lab-reel-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-13T13:46:46.610Z"
-    },
-    "zz-t": {
-      "title": "T",
-      "style": "cut-paper",
-      "stage": "researching",
-      "detail": "Folder created from the explainer template",
-      "why": "Every fact on screen gets checked before any drawing",
-      "progress": 0,
-      "updated": "2026-10-13T13:42:57.613Z"
-    }
-  },
+  "updated": "2026-10-13T14:10:50.627Z",
+  "videos": {},
   "log": [
+    {
+      "t": "2026-10-13T14:10:50.627Z",
+      "slug": null,
+      "note": "cleanup: freed 9525 MB"
+    },
     {
       "t": "2026-10-13T13:46:46.610Z",
       "slug": "lab-reel",

@@ -1,0 +1,35 @@
+1
+00:00:00,400 --> 00:00:11,500
+Open a map on your phone, and a little dot appears exactly where you're standing. But your phone can't see the street, and nobody told it your address. So how does it know?
+
+2
+00:00:12,400 --> 00:00:24,500
+Twenty thousand kilometres above you, about thirty GPS satellites circle the Earth, each one going all the way around twice a day. Wherever you are, several of them are always above your horizon.
+
+3
+00:00:25,400 --> 00:00:37,500
+Each satellite carries atomic clocks, astonishingly precise ones. And it keeps broadcasting the same simple message, again and again: this is exactly what time it is, and this is exactly where I am.
+
+4
+00:00:38,400 --> 00:00:50,500
+Your phone doesn't send anything back. It just listens. The message races at the speed of light, yet still arrives about seven hundredths of a second late. That tiny delay tells your phone the distance.
+
+5
+00:00:51,400 --> 00:01:04,500
+One distance means you're somewhere on a sphere around that satellite. Add a second, and the spheres cross in a circle. A third cuts that circle to just two points, and only one of them is on Earth.
+
+6
+00:01:05,400 --> 00:01:17,500
+There's a catch. Your phone's clock is cheap, and timing is everything: one millionth of a second wrong puts you three hundred metres off. So it listens to a fourth satellite to correct its own clock.
+
+7
+00:01:18,400 --> 00:01:31,500
+And there's a stranger problem, up in space. The satellites move fast, and moving clocks tick slower. But they also sit in weaker gravity, and that makes them tick faster, by even more. Einstein predicted both.
+
+8
+00:01:34,900 --> 00:01:48,000
+Add it up, and the satellite clocks gain thirty-eight millionths of a second every single day. Left uncorrected, your little dot would drift about ten kilometres a day. So engineers make those clocks tick slightly slow before launch.
+
+9
+00:01:48,900 --> 00:02:00,000
+So that little dot is a conversation with clocks in space, corrected by Einstein. Under open sky, it finds you to within about five metres. Not bad for a phone that just listens.
