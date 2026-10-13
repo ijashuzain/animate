@@ -18,3 +18,31 @@ shot 17 (l15): 12 frames [1176,1182,1188,1194,1200,1206,1212,1218,1224,1230,1236
 shot 18 (l16): 12 frames [1248,1254,1260,1266,1272,1278,1284,1290,1296,1302,1308,1314] -> review/shot18-sheet.jpg
 shot 19 (l17): 12 frames [1320,1326,1332,1338,1344,1350,1356,1362,1368,1374,1380,1386] -> review/shot19-sheet.jpg
 shot 20 (l18): 12 frames [1392,1398,1404,1410,1416,1422,1428,1434,1440,1446,1452,1458] -> review/shot20-sheet.jpg
+shot 21 (l19): 12 frames [1464,1470,1476,1482,1488,1494,1500,1506,1512,1518,1524,1530] -> review/shot21-sheet.jpg
+shot 22 (l20): 12 frames [1536,1542,1548,1554,1560,1566,1572,1578,1584,1590,1596,1602] -> review/shot22-sheet.jpg
+shot 23 (hush): 6 frames [1608,1614,1620,1626,1632,1638] -> review/shot23-sheet.jpg
+shot 24 (cut): 12 frames [1644,1650,1656,1662,1668,1674,1680,1686,1692,1698,1704,1710] -> review/shot24-sheet.jpg
+
+CUTS vs beat grid @ 120 BPM, 24fps (8ths = 0.25s)
+ #   cut t     grid  grid#   nominal f  cut f   cut f t     err(f)  Δ@cut  peak(±2f)          shot change           result
+ 1   68.500s   8th   274     1644.0   1644   68.5000s  +0.0   161.0  f1644 ok           shot 23 -> 24         PASS
+all cuts on grid within 1 frame: PASS
+MORPHS: 22 shape-morph bridges at 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61, 64, 67s, all centred on the 8th grid: PASS
+
+PACING: 1 hard cuts (1 in the last 5s), mean segment 35.75s, shortest 3.00s, plus 0 on-2s montage steps
+FLAT FRAMES (contrast < 6/255): 1176, 1177, 1320, 1321, 1464, 1465, 1536, 1537, 1622, 1623, 1624, 1625, 1626, 1627, 1628, 1629, 1630, 1631, 1632, 1633, 1634, 1635, 1636, 1637, 1638, 1639, 1640, 1641, 1642, 1643
+LOOP: diff(last=1715, first=0) = 137.06; typical consecutive diff in the first 40 frames = 0.20 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
+
+TEXT (every string drawn, traced to screen; 180 frames sampled, morph windows skipped)
+text: PASS (0 cut-off/overlap, 0 in the safe zone)
+
+SOUND (mix: renders/audio.wav)
+  loudest 100ms window: 68.5s (-9.3 dBFS)
+  silence before it: 0.3s at <= -40 dBFS ending 67.3s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
+  loudness: -15.4 LUFS integrated, range 3.8 LU, true peak -0.9 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
+
+DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.12, "still" below 0.80; silence acts are exempt)
+dead beats: PASS (0 stretches over 3s)
+PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
+
+video: 1920x1080, 1716 frames decoded

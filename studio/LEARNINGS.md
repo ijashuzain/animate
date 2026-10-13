@@ -5,6 +5,12 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## Viewer data (Jist of Stories, via Windsor.ai)
+- 2026-10-13: connected. Channel snapshot: 25 subscribers, 3 public videos, 0 views reported; no per-video analytics
+  rows yet in the last 2 years (new channel or a reporting delay). Re-check after the next uploads.
+
+---
+
 ## Before batch 3: the user's suggestions, built in
 - **Vary the music and sfx by topic and style.** score-channel.js now has 8 genres (SCORE.genre) with their own key,
   chords, instruments (e-piano, pizzicato, marimba, bells, square, saw, guitar), drums, swing and texture (vinyl, air,

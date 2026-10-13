@@ -22,6 +22,20 @@ videos/<slug>/         one folder per video of the CURRENT batch (sources tracke
 archive/<slug>/        finished videos' sources only (scripts, voice-over, metadata), kept small for learning
 ```
 
+## The channel
+The videos are for the user's YouTube channel **Jist of Stories** (channel id `UCTj28GioLXloLYDY9V49arQ`; 25 subscribers
+and 3 public videos on 2026-10-13). Its analytics are connected through the **Windsor.ai** connector (MCP tools
+`mcp__Windsor_ai__*`, connector slug `youtube`, account `56502`). Read-only use: never run Windsor write actions.
+- Per video (table "Video"): `video`, `video_title`, `views`, `average_view_duration`, `average_view_percentage`,
+  `estimated_minutes_watched`, `likes`, `comments`, `shares`, `subscribers_gained`, by `date`; with `traffic_source`
+  (YT_SEARCH, RELATED_VIDEO, SUBSCRIBER...) for how people found it; `creator_content_type` splits Shorts from videos.
+- Channel: `channel_title`, `subscriber_count`, `video_count`, `view_count`; audience: `viewer_age_group`,
+  `viewer_gender` + `viewer_percentage`; `country`.
+- Not available there: the second-by-second retention curve. For that, ask for the Studio export and use retention.mjs.
+Use it in the flow: before suggesting topics, pull the last 90 days per video (what got views, from where, how much was
+watched) and lean toward what works; after a batch is uploaded, compare average view percentage per video and per
+format/genre/style, and write what it teaches into LEARNINGS.md ("Viewer data" section). Log numbers with their dates.
+
 ## The flow (the user asks for a topic, or for topics)
 Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say *what* is happening and *why*.
 
@@ -29,7 +43,8 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    their generated files (videos, frames, audio, thumbnails). The user has downloaded them. Do this before anything new.
    Also clear the dashboard's outputs: list its assets (Artifact `action: "list", scope: "assets"`), delete each one
    (`action: "delete"` with `path` = the asset id) and delete the `outputs/*` docs, so storage stays small.
-2. **Suggest 6 topics.** Read `topics/log.md` (no repeats) and the dashboard's `requests` collection (the user's ideas).
+2. **Suggest 6 topics.** Read `topics/log.md` (no repeats), the dashboard's `requests` collection (the user's ideas) and
+   the channel's recent numbers from Windsor (see "The channel": what was watched, found by search, watched longest).
    Each topic: a title, a one-line hook, the best-fitting style, **narrative format** (studio/formats.md) and genre, and why
    it fits the channel and the tools.
    Mix categories (science why/how, space/what-if, history timeline, tech explained, money, nature). Prefer topics with a
@@ -87,7 +102,8 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    download) and `youtube/thumbnail.png` with the Artifact tool (`url` = the dashboard, `asset: true`, `file_paths`), then
    `node studio/tools/outputs.mjs <slug> <videoId> <thumbId> <part0Id> <part1Id>` and write `renders/outputs.json` to `outputs/<slug>`
    (ArtifactData batch, `file_path`). The page then plays the video and offers downloads and copy buttons.
-10. **Learn from viewers** (whenever the user shares a YouTube Studio audience-retention export, CSV): run
+10. **Learn from viewers**: once videos are up, pull their numbers from Windsor (views, average view %, traffic source,
+    subscribers gained) and compare by format, genre, style and title. When the user shares a Studio retention export (CSV), run
     `node studio/tools/retention.mjs <slug> <file.csv>` (works on archived videos: cleanup keeps voice/narration.srt).
     Name the single biggest leak (hook leak > 25%? a cliff at a line? a steep slide?) and turn it into a rule in
     LEARNINGS.md and, if it's general, into the template, voice.md or a tool.
