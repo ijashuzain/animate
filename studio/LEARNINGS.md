@@ -5,6 +5,22 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## Before batch 3: the user's suggestions, built in
+- **Vary the music and sfx by topic and style.** score-channel.js now has 8 genres (SCORE.genre) with their own key,
+  chords, instruments (e-piano, pizzicato, marimba, bells, square, saw, guitar), drums, swing and texture (vinyl, air,
+  drone); moods set the energy inside a genre. SFX kits follow the style (paper taps, pencil, digital, 8-bit) plus topic
+  cues (buzz, drip, coin, tick, flip, shutter). Hear them: `sampler.mjs`. Research: keep music under the voice, no busy
+  lead; genre by topic (lo-fi/electronic for tech, ambient for wonder, acoustic for stories, dark for mysteries).
+- **Not always "step 1, step 2".** studio/formats.md lists 11 narrative formats with their tags, lettering helpers
+  (stamp, rank, timeline, versus, meter, clue in channel.js), genres and transitions. A batch uses three formats.
+- **Transitions that match the topic.** studio/channel/transitions.js: 20 kinds (shape with topic shapes, zoom into an
+  object, hex/square/triangle tiles, wipe with torn/wave edges, push, whip, slideOver, pageTurn, clock, doors, blinds,
+  pixel, ink bleed, shutter, scatter, spin, fade, dip, flash) + the old morph, each with its own sound. Engine hook:
+  morph.js renders both scenes and calls the bridge's fx. Rule: the transition comes out of something on screen.
+- Lab reel (videos/lab-reel) shows every transition; its genre samples are in renders/genres.mp3.
+
+---
+
 ## Batch 2 (Oct 2026): GPS (isometric), vaccines (cut-paper), honey bees (sketchbook)
 
 ### What the user asked for

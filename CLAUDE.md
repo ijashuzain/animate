@@ -15,6 +15,7 @@ studio/tools/          new-video, smoke, vo, metadata, thumbnail, finish.sh, sta
 studio/dashboard/      the live status page (Artifact) and its notes
 studio/status.json     the local mirror of the dashboard's state
 studio/LEARNINGS.md    lessons learned, newest first: read before building, append after every batch
+studio/formats.md      narrative formats; studio/sound.md: genres + sfx kits; studio/transitions.md: scene changes
 topics/log.md          every topic suggested, picked and made (never repeat a made topic)
 videos/<slug>/         one folder per video of the CURRENT batch (sources tracked; generated files ignored)
 archive/<slug>/        finished videos' sources only (scripts, voice-over, metadata), kept small for learning
@@ -28,7 +29,8 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    Also clear the dashboard's outputs: list its assets (Artifact `action: "list", scope: "assets"`), delete each one
    (`action: "delete"` with `path` = the asset id) and delete the `outputs/*` docs, so storage stays small.
 2. **Suggest 6 topics.** Read `topics/log.md` (no repeats) and the dashboard's `requests` collection (the user's ideas).
-   Each topic: a title, a one-line hook, the best-fitting style and format, and why it fits the channel and the tools.
+   Each topic: a title, a one-line hook, the best-fitting style, **narrative format** (studio/formats.md) and genre, and why
+   it fits the channel and the tools.
    Mix categories (science why/how, space/what-if, history timeline, tech explained, money, nature). Prefer topics with a
    true process or timeline, one hero that can carry it, a twist or payoff, and visuals the styles draw well (shapes, diagrams,
    characters; not realistic people or footage). Write them to the dashboard (`board/topics`) and list them in chat.
@@ -41,6 +43,15 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    isometric) or a new one via `engine/animate/new-style.md`. Match the subject: cut-paper for stories and histories, math for
    equations and graphs, pixel for computing/gaming history, isometric for products/infrastructure, riso/sketchbook for
    softer editorial topics, crosshatch for mechanisms. Read that style's STYLE.md and look at its sample.png first.
+   Also pick, per video (the user's rule: vary them by topic, never the same recipe every time; a batch of three uses three
+   different formats, genres and transition sets):
+   - the **narrative format** from `studio/formats.md` (process, journey, timeline, countdown, myth vs fact, what if,
+     mystery, versus, scale journey, question chain, day in the life); the scene tags follow it (years, #ranks, clues...);
+   - the **music genre** from `studio/sound.md` (`SCORE.genre`: paper, lofi, synth, pizzicato, ambient, chiptune, folk,
+     mystery); SFX follow the style automatically, scene cues add topic sounds (buzz, drip, coin, tick, flip...);
+   - **2–4 transitions** from `studio/transitions.md` that come out of the topic and the objects on screen (`tr` per scene:
+     hex tiles for bees, a drop for water, a zoom into the cell, a page turn for history...).
+   Write all three choices and why into research.md.
    **No notepad/card (the user's rule):** the explanation is written and drawn straight onto the scene, in the style's own
    lettering (layout 'open'). Each video sets `CHANNEL` in src/scenes.js: font, ink colours, halo, and how its step tag looks
    (isometric: sans + mono label; sketchbook: marker on tape; cut-paper: the paper tag). Keep the whole frame one world.
@@ -98,6 +109,7 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 | `studio/tools/finish.sh <slug> [--audio-only\|--skip-export]` | export → review → share copy → preview → vo → metadata → thumbnail → web copy |
 | `studio/tools/web-copy.sh <slug>` | `renders/<slug>-web-720p.mp4` (~13 MB) and `<slug>-1080p.part<N>.mp4` (< 15 MB each) for the dashboard |
 | `node studio/tools/outputs.mjs <slug> <videoId> <thumbId> [partIds…]` | `renders/outputs.json`, the dashboard's `outputs/<slug>` doc |
+| `node studio/tools/sampler.mjs <slug> [sec] [genres]` | renders the piece's score in every genre: `renders/genres.mp3` + one mp3 per genre |
 | `node studio/tools/status.mjs <slug> <stage> "<what>" "<why>"` | local status mirror |
 | `node studio/tools/cleanup.mjs [--dry-run]` | archive sources, delete generated files of finished videos |
 | `node engine/animate/tools/still.mjs videos/<slug> 3,40 out.png --scale 0.5` | look at specific frames |

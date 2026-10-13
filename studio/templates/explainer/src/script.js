@@ -8,7 +8,8 @@ const SCN = [
   { key: 'hook', d: 12, tag: 'a question', mood: 'warm', focus: [500, 540], bg: '#26315f', scene: () => sHook(), card: (at) => cHook(at),
     say: 'Replace me: the hook. One surprising question or image that the whole video answers, said in about twenty-eight words so the voice fills this scene.',
     sfx: [[2.0, 'chime']] },
-  { key: 'step1', d: 13, tag: 'step 1', mood: 'groove', focus: [500, 540], bg: '#cfe2ee', scene: () => sStep1(), card: (at) => cStep1(at),
+  // tag follows the format (studio/formats.md); tr = the transition INTO this scene (studio/transitions.md)
+  { key: 'step1', d: 13, tag: 'step 1', mood: 'groove', focus: [500, 540], bg: '#cfe2ee', tr: { kind: 'shape', shape: 'circle', p: [500, 540] }, scene: () => sStep1(), card: (at) => cStep1(at),
     say: 'Replace me: the first true step of the process, acted out on the left and lettered on the right, with one number or one diagram that sticks.',
     sfx: [[3.0, 'pop']] },
   { key: 'hush', d: 2.5, mood: 'silence', focus: [500, 540], bg: '#0c1124', scene: () => sHush(), card: null },
@@ -19,7 +20,7 @@ const SCN = [
 ];
 const HIT = SCN.slice(0, SCN.findIndex((s) => s.cut)).reduce((a, s) => a + s.d, 0);
 const ACTS = [];
-const SCORE = { motif: ['D4', 'A4', 'Fs4'] };            // the hero's little tune (score-channel plays it on tag scenes)
+const SCORE = { genre: 'paper' };   // studio/sound.md: paper|lofi|synth|pizzicato|ambient|chiptune|folk|mystery; motif: [...] optional
 const META = {                                           // YouTube metadata (studio/tools/metadata.mjs adds the chapters)
   title: '__TITLE__', alt: [], hook: 'One or two sentences that make people click.', about: 'What the video covers, in plain words.',
   sources: [], hashtags: ['#explained', '#animation'], tags: ['__TITLE__'],

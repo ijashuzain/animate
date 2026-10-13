@@ -16,7 +16,8 @@
 //  The piece defines (in its head / src):
 //    ERA_LIST = [[t0, t1, () => drawScene()], ...]      scenes draw in world coords, call yearTag()/capStrip()
 //    ERA_BG   = ['#hex', ...]                          each era's dominant colour (for the fade to paper)
-//    BRIDGES  = [{ tc, A: () => shape, B: () => shape, d?, m? }]   shape = { P: points, c: '#hex' } or SP(x, y, r, rays)
+//    BRIDGES  = [{ tc, A: () => shape, B: () => shape, d?, m?, fx? }]   shape = { P: points, c: '#hex' } or SP(x, y, r, rays)
+//               fx(u, layerA, layerB, o): a compositing transition instead of the morph (u 0..1 over [tc-d, tc+d])
 //    function pieceCam(era, t) { return null | CAM }   optional; use push() / bump() below
 //  Shapes are in each era's world coords; the bridge object must be in frame at tc (pull push-ins back first).
 //  The look comes from the style kit's STYLE hooks (paper, backdrop, window, blob, hero, post, ones):
@@ -92,6 +93,14 @@ function renderFrame(t, canvas, sub) {
   const tr = BRIDGES.find((r) => TT >= r.tc - bd(r) - 1e-6 && TT < r.tc + bd(r) - 1e-6);
   if (!tr) {
     const q = renderEra(e, layer(0)); ctx.drawImage(layer(0), 0, 0); flush(q, e);
+  } else if (tr.fx) {
+    // a compositing transition (studio/channel/transitions.js): both eras are drawn whole, then tr.fx blends them.
+    // The incoming era is drawn at least at its own start time, so its opening state is what the transition reveals.
+    const ea = eraAt(tr.tc - 0.01), eb = eraAt(tr.tc + 0.01), D = bd(tr), u = seg(TT, tr.tc - D, tr.tc + D), keep = TT;
+    const qa = renderEra(ea, layer(0)); TT = Math.max(keep, ERA_LIST[eb][0]); const qb = renderEra(eb, layer(1)); TT = keep;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); tr.fx(u, layer(0), layer(1), { eraA: ea, eraB: eb, tc: tr.tc });
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    if (u < 0.5) flush(qa, ea); else flush(qb, eb);
   } else {
     const ea = eraAt(tr.tc - 0.01), eb = eraAt(tr.tc + 0.01);
     const sa = shapeOf(tr.A()), sb = shapeOf(tr.B());

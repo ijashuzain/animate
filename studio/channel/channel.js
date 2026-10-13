@@ -121,6 +121,30 @@ function bubble(str, x, y, size, t, fill = CH.paper, o = {}) {
 }
 const check = (x, y, t, key) => { const f = ev(t, 0.3); if (f > 0) ink([[x, y], [x + 16, y + 18], [x + 44, y - 20]], { w: 8, color: CH.green, frac: f, key }); };
 function cbox(x, y, w, h, c, key, o = {}) { return chShape(rrectPts(x - w / 2, y - h / 2, w, h, o.r ?? 8), c, { key, sb: o.sb ?? 6, grain: false, line: o.line, lw: o.lw }); }
+// ---- format helpers (studio/formats.md): lettering for the different ways a video can be told
+// a rubber stamp (MYTH / FACT / TRUE / CASE CLOSED / DAY 3), popped on with a little overshoot
+function stamp(str, x, y, t, color = CH.accent, o = {}) {
+  const k = popS(t); if (k <= 0) return; const size = o.size ?? 64, w = chTextW(str, size, 700) + size * 0.8, h = size * 1.35;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot ?? -0.12); ctx.scale(k * (1 + 0.6 * Math.max(0, 1 - (TT - t) * 6)), k * (1 + 0.6 * Math.max(0, 1 - (TT - t) * 6)));
+  ctx.strokeStyle = color; ctx.lineWidth = size * 0.09; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.rect(-w / 2, -h / 2, w, h); ctx.stroke();
+  chText(str, -w / 2 + size * 0.4, size * 0.36, size, color, { key: 'stp' + str, weight: 700, halo: false }); ctx.restore();
+}
+// a rank badge for countdowns (#5 ... #1)
+function rank(n, x, y, t, color = CH.accent, size = 120) { popAt(t, x, y, () => { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, size * 0.62, 0, TAU); ctx.fill(); chText('#' + n, -chTextW('#' + n, size * 0.7, 700) / 2, size * 0.25, size * 0.7, '#fffaf0', { key: 'rk' + n, weight: 700, halo: false }); }); }
+// a timeline ribbon across the lettering area: years with ticks, the current one marked (history, life stories)
+function timeline(items, cur, y, t, o = {}) {
+  const x0 = o.x0 ?? CL, x1 = o.x1 ?? CR, f = ev(t, 0.6); if (f <= 0) return;
+  ink([[x0, y], [lerp(x0, x1, f), y]], { w: 5, color: CH.ink, key: 'tl' + y });
+  items.forEach((s, i) => { const x = lerp(x0, x1, items.length > 1 ? i / (items.length - 1) : 0.5); if (f < i / Math.max(1, items.length - 1)) return; const on = i === cur;
+    chDot(x, y, on ? 14 : 8, on ? CH.accent : CH.ink); chText(String(s), x - chTextW(String(s), on ? 40 : 30, on ? 700 : 400) / 2, y + (on ? 60 : 48), on ? 40 : 30, on ? CH.accent : CH.ink, { key: 'tli' + s, weight: on ? 700 : 400 }); });
+}
+// versus: two sides with a "vs" between (comparisons, A or B, then vs now)
+function versus(a, b, y, t, o = {}) { write(a, CL, y, o.size ?? 54, t, { weight: 700, color: o.ca ?? CH.blue }); popAt(t + 0.5, CCX, y - 14, () => chText('vs', -chTextW('vs', 44, 700) / 2, 14, 44, CH.ink, { key: 'vs', weight: 700 })); write(b, CR - chTextW(b, o.size ?? 54, 700), y, o.size ?? 54, t + 0.8, { weight: 700, color: o.cb ?? CH.accent }); }
+// a scale meter (scale journeys, how big / how far / how hot): a bar with a moving marker and its label
+function meter(label, frac, y, t, o = {}) { const x0 = o.x0 ?? CL, x1 = o.x1 ?? CR, f = ev(t, 0.5); if (f <= 0) return; cbox((x0 + x1) / 2, y, (x1 - x0) * f, 18, o.track ?? 'rgba(42,29,24,0.18)', 'mtr' + y, { r: 9, sb: 0 }); const x = lerp(x0, x1, clamp(frac) * f); chDot(x, y, 16, o.color ?? CH.accent); chText(label, Math.min(x - chTextW(label, 40, 700) / 2, x1 - chTextW(label, 40, 700)), y - 30, 40, o.color ?? CH.accent, { key: 'mtl' + label, weight: 700 }); }
+// a clue card (mysteries): "clue 2" in small caps over the clue itself
+function clue(n, str, y, t) { write('clue ' + n, CL, y - 46, 32, t, { color: CH.accent, weight: 700 }); write(str, CL, y, 48, t + 0.3); }
+
 // ---- scene helpers that work in any style (styles may of course use their own kit instead)
 function wallC(c, p, key = 'wall') { ctx.save(); ctx.setTransform(ctx.getTransform()); ctx.fillStyle = c; ctx.fillRect(-60, -60, W + 120, H + 120); if (p) p({ x0: -30, y0: -30, x1: W + 30, y1: H + 30 }); ctx.restore(); }
 function floorC(y0, c, key = 'floor', p) { chShape([[-40, y0], [W + 40, y0], [W + 40, H + 40], [-40, H + 40]], c, { key, sy: -5, tear: 1.2 }); if (p) { ctx.save(); ctx.beginPath(); ctx.rect(-40, y0, W + 80, H - y0 + 40); ctx.clip(); p({ x0: -40, y0, x1: W + 40, y1: H + 40 }); ctx.restore(); } }
@@ -136,8 +160,18 @@ function pieceCam(era, t) {
   const u = clamp((t - s.t0) / Math.max(1, s.t1 - s.t0)), z = 1 + 0.035 * Math.sin(u * Math.PI), f = s.focus ?? [500, 540];
   return camOf({ z, p: f, to: f });
 }
+// a scene's tr (or CHANNEL.tr, an object or (i) => object) picks a compositing transition from transitions.js;
+// none (or kind 'morph') keeps the classic morph through paper
+const trOf = (s, i) => s.tr ?? (typeof CHL.tr === 'function' ? CHL.tr(i) : CHL.tr) ?? null;
 const BRIDGES = SCN.slice(1).map((s, k) => {
   if (s.cut) return null;
-  const A = SCN[k], r = 200;
+  const A = SCN[k], r = 200, tr = trOf(s, k + 1);
+  if (tr && tr.kind !== 'morph') {
+    const fx = typeof TRANSITIONS !== 'undefined' ? TRANSITIONS[tr.kind] : null;
+    if (!fx) throw new Error(`unknown transition "${tr.kind}" (scene ${s.key}); add studio/channel/transitions.js to the build`);
+    s.trKind = tr.kind;
+    return { tc: s.t0, d: tr.d ?? 0.55, fx: (u, LA, LB, o) => fx(u, LA, LB, { ...tr, ...o }), A: () => ({ P: ellipsePts(A.focus[0], A.focus[1], r, r, 0, 64), c: A.bg }), B: () => ({ P: ellipsePts(s.focus[0], s.focus[1], r, r, 0, 64), c: s.bg }) };
+  }
+  s.trKind = 'morph';
   return { tc: s.t0, A: () => (A.bridgeA ? A.bridgeA() : { P: ellipsePts(A.focus[0], A.focus[1], r, r, 0, 64), c: A.bg }), B: () => (s.bridgeB ? s.bridgeB() : { P: ellipsePts(s.focus[0], s.focus[1], r, r, 0, 64), c: s.bg }) };
 }).filter(Boolean);
