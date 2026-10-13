@@ -50,8 +50,7 @@ STORY ARC (loudness in dBFS over 100ms windows: median / 90th percentile; music 
 story arc: PASS (6/6 rules)
 
 TEXT (every string drawn, traced to screen; 444 frames sampled, morph windows skipped)
-  FAIL  cut off by the frame edge: ground clock  at 86.50–91.25s (20 frames)
-text: FAIL (1 cut-off/overlap, 0 in the safe zone)
+text: PASS (0 cut-off/overlap, 0 in the safe zone)
 
 SOUND (mix: renders/audio.wav)
   loudest 100ms window: 94.5s (-9.8 dBFS) - in the payoff act 94.5-108.5s

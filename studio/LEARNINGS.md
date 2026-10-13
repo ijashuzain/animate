@@ -22,6 +22,8 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - The dead-beat check works on tiny downscaled frames: hairline styles (isometric) read as "still" even when things move.
   A slow camera push did not change that. For isometric, judge motion by eye, or add bigger moving shapes (filled slabs,
   wide rings) on purpose; don't chase the number with fake motion.
+  Checked by eye on GPS (t 54/58/63): circles, satellites and the bot all arrive while the check said "still".
+- Thumbnail frames: pick the most graphic moment (Earth + satellites), not a sparse diagram; a plain grid read as empty.
 - A container restart kills background renders: re-run finish.sh; sources were safe because they were committed first.
 - First real videos in isometric and sketchbook: both work with the channel kit. The sketchbook marker font fell back to a
   serif on Linux; fixed in the kit (Comic Neue before the generic cursive).

@@ -59,4 +59,4 @@ const META = {
   hashtags: ['#GPS', '#physics', '#Einstein', '#explained', '#animation'],
   tags: ['how does GPS work', 'GPS explained', 'GPS relativity', 'Einstein GPS', 'trilateration', 'GPS satellites', 'atomic clocks', 'how GPS knows where you are', 'science explained', 'animated explainer'],
 };
-const THUMB = { t: 98.0, panel: '#fbf6ea', lines: [['Your phone', 70, '#2a1d18'], ['NEEDS', 170, '#2a1d18'], ['EINSTEIN', 150, '#c4542e'], ['to find you', 62, '#2a1d18']] };
+const THUMB = { t: 21.0, panel: '#fbf6ea', lines: [['Your phone', 70, '#2a1d18'], ['NEEDS', 170, '#2a1d18'], ['EINSTEIN', 150, '#c4542e'], ['to find you', 62, '#2a1d18']] };
