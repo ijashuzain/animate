@@ -152,11 +152,11 @@ function sMap() {
   beginSheet(); spaceField();
   printed(PITCH.world, { shapes: true }, () => {
     stars('mp', 40); const x = 470, y = 560, R = 300;
-    globe(x, y, R, 0, { key: 'mp', noLand: true, ocean: SAND, inner: () => { const sw = 0.62 + 0.38 * sm(TT, at(1.6), at(9.0)); fill(hand(ellipsePts(x, y - R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po1', 3), OCEAN); fill(hand(ellipsePts(x, y + R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po2', 3), OCEAN); for (let i = 0; i < 5; i++) fill(hand(ellipsePts(x - 220 + i * 110 + Math.sin(TT * 0.4) * 10, y + (i % 2 ? 30 : -40), 50, 30, 0, 16), 'gr' + i, 2), LAND); } });
+    globe(x, y, R, 0, { key: 'mp', noLand: true, ocean: SAND, inner: () => { const sw = 0.62 + 0.38 * sm(TT, at(1.6), at(9.0)); fill(hand(ellipsePts(x, y - R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po1', 3), OCEAN); fill(hand(ellipsePts(x, y + R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po2', 3), OCEAN); for (let i = 0; i < 5; i++) { const g = 0.15 + 0.85 * sm(TT, at(0.8 + i * 1.7), at(2.8 + i * 1.7)); fill(hand(ellipsePts(x - 220 + i * 110 + Math.sin(TT * 0.4) * 10, y + (i % 2 ? 30 : -40), 50 * g + 6, 30 * g + 4, 0, 16), 'gr' + i, 2), LAND); } } });
     if (TT > at(9.0)) { const k = popS(at(9.0)); type('CANADA', x - 120, y - 300, 30 * k, {}, { align: 'center', key: 'can' }); type('GREENLAND', x + 60, y - 360, 30 * k, {}, { align: 'center', key: 'grl' }); }
     for (let i = 0; i < 8; i++) for (const sgn of [-1, 1]) {   // the water keeps flowing poleward
       const u = mod((TT - at(0)) * 0.35 + i / 8, 1), cx = x - 210 + (i % 4) * 140, cy = y + sgn * (40 + u * 190);
-      line([[cx - 18, cy - sgn * 12], [cx, cy], [cx + 18, cy - sgn * 12]], { teal: 1 }, { w: 6, key: 'chev' + i + sgn, knock: true });
+      line([[cx - 26, cy - sgn * 18], [cx, cy], [cx + 26, cy - sgn * 18]], { teal: 1 }, { w: 9, key: 'chev' + i + sgn, knock: true });
     }
     risoHero(x + 40, y - 30 + Math.sin(TT * 3) * 4, 34, { key: 'maph', mood: 'smile', arms: [1.2, 0.2] });
   });
