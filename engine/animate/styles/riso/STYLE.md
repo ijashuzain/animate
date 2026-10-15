@@ -59,6 +59,8 @@ Check every key frame (and the sample) against these, on top of `grammar/FRAME.m
 7. **The paper is flat:** no vignette, no mottle over ~1 level, no grain filter on top.
 8. **Type is printed:** solid tone 1, misregistered with the rest; captions go through `DEFER` (`risoTag`, `risoCaption`) so they print at screen size after the camera.
 9. **Full-bleed:** a field layer covers the whole frame (`full: true`) before the world layer prints over it.
+   **Under lettering (channel videos), use `calmField(top, bottom)` instead:** flat ink colour on the paper, no dot screen.
+   A full-frame halftone behind text is hard to read and tiring to watch (the user's note on the Earth video).
 10. **Content in the safe area** (x 60–940, y 250–1500 at 1080x1920); fields and backgrounds run to the edges.
 
 ## Kit API (`styles/riso/kit.js`, on top of `kit/core.js`)

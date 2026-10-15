@@ -11,7 +11,7 @@ const NIGHT = { teal: 0.85, pink: 0.6, yellow: 0.42 }, DUSK = { teal: 0.55, pink
 const OCEAN = { teal: 0.85, yellow: 0.12 }, LAND = MIX.green, SAND = { pink: 0.4, yellow: 0.75 };
 // continents as blobs on a strip that wraps round the globe (x in radians of longitude, y as -1..1 of the radius)
 const CONT = [[-2.6, -0.35, 0.55, 0.35], [-1.6, 0.25, 0.4, 0.45], [-0.2, -0.4, 0.6, 0.3], [0.3, 0.2, 0.35, 0.5], [1.4, -0.3, 0.7, 0.35], [2.3, 0.45, 0.3, 0.2]];
-function spaceField(tones = NIGHT) { printed(PITCH.field, { full: true }, () => fill(rect(-80, -80, W + 160, H + 160), tones)); }
+function spaceField(tones = NIGHT) { calmField(tones); }   // flat inks, no dot screen: the lettering sits on it (user: halftone behind text strains the eyes)
 function stars(key, n = 60) { const R = RNG('st', key); for (let i = 0; i < n; i++) { const x = R.r(0, 990), y = R.r(0, 1080), s = R.r(1.5, 4) * (0.6 + 0.4 * Math.sin(TT * R.r(1, 3) + i)); fill(circ(x, y, s), {}); } }
 function globe(x, y, r, rot, o = {}) {
   fill(circ(x, y, r), o.ocean ?? OCEAN);
@@ -47,7 +47,7 @@ function cHook(at) {
 // ---- 2. one second later: everything keeps going east
 function sSecond() {
   beginSheet();
-  printed(PITCH.field, { full: true }, () => fill(rect(-80, -80, W + 160, H + 160), { yellow: lin(0, 0, 0, 900, [[0, 0.5], [1, 0.85]]), pink: lin(0, 0, 0, 900, [[0, 0.15], [1, 0.4]]) }));
+  calmField({ yellow: 0.5, pink: 0.15 }, { yellow: 0.85, pink: 0.4 });
   printed(PITCH.world, { shapes: true }, () => {
     const u = Math.max(0, TT - at(0.2));
     for (let i = 0; i < 14; i++) { const R = RNG('sl', i), y = R.r(80, 760), x = mod(R.r(0, 1100) + u * R.r(900, 1500), 1300) - 200; line([[x, y], [x + R.r(80, 200), y]], { pink: 0.7 }, { w: 5, key: 'sl' + i, knock: true }); }
@@ -72,7 +72,7 @@ function cSecond(at) {
 // ---- 3. one minute later: winds and a wall of water
 function sMinute() {
   beginSheet();
-  printed(PITCH.field, { full: true }, () => fill(rect(-80, -80, W + 160, H + 160), { teal: lin(0, 0, 0, 1000, [[0, 0.7], [1, 0.45]]), pink: 0.18, yellow: 0.12 }));
+  calmField({ teal: 0.7, pink: 0.18, yellow: 0.12 }, { teal: 0.45, pink: 0.18, yellow: 0.12 });
   printed(PITCH.world, { shapes: true }, () => {
     for (let i = 0; i < 18; i++) { const R = RNG('wd', i), y = R.r(60, 600), x = mod(R.r(0, 1100) + TT * R.r(700, 1100), 1300) - 200; line([[x, y], [x + 60, y - 6], [x + 160, y + 4]], {}, { w: 4, key: 'wd' + i, knock: true }); }
     fill(rect(-80, 860, W + 160, 300), MIX.dark);
@@ -96,7 +96,7 @@ function cMinute(at) {
 function sDay() {
   beginSheet();
   const split = sm(TT, at(7.4), at(9.0));
-  printed(PITCH.field, { full: true }, () => { fill(rect(-80, -80, W + 160, H + 160), { yellow: lin(0, 0, 0, 900, [[0, 0.35], [1, 0.75]]), pink: lin(0, 0, 0, 900, [[0, 0.1], [1, 0.4]]) }); });
+  calmField({ yellow: 0.35, pink: 0.1 }, { yellow: 0.75, pink: 0.4 });
   printed(PITCH.world, { shapes: true }, () => {
     if (split > 0) fill(poly([[495 + (1 - split) * 500, -80], [990, -80], [990, 1200], [495 + (1 - split) * 500, 1200]]), NIGHT);
     if (split > 0.3) { const R = RNG('ns'); for (let i = 0; i < 30; i++) { const x = R.r(520, 990), y = R.r(40, 700); fill(circ(x, y, R.r(1.5, 3.5)), {}); } }
@@ -186,7 +186,7 @@ function sHush() { beginSheet(); spaceField({ teal: 0.95, pink: 0.75, yellow: 0.
 // ---- 9. the payoff: it IS slowing, very slowly
 function sPayoff() {
   beginSheet();
-  printed(PITCH.field, { full: true }, () => fill(rect(-80, -80, W + 160, H + 160), { yellow: 0.6, pink: 0.3 }));
+  calmField({ yellow: 0.6, pink: 0.3 });
   printed(PITCH.world, { shapes: true }, () => {
     for (let i = 0; i < 24; i++) { const R = RNG('cf', i), x = R.r(0, 980), y = mod(R.r(0, 1080) + (TT - HIT) * R.r(90, 170), 1120) - 20; fill(rect(x, y, 16, 9), [{ teal: 1 }, { pink: 1 }, MIX.green, {}][i % 4]); }
     globe(330, 560, 220, TT * 0.6, { key: 'po' });

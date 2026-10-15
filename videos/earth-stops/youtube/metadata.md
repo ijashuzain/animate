@@ -7,7 +7,7 @@ What If Earth Stopped Spinning? 1,670 km/h to Zero
 
 ## Description
 
-What happens if Earth stops rotating? Second by second: the winds, the oceans, a day that lasts a year, and why Earth slowing down is nothing to worry about.
+What happens if Earth stops rotating? Second by second: the winds, the oceans, a day that lasts a year, and why Earth's rotation slowing down is nothing to worry about.
 
 Earth's equator spins east at about 1,670 km/h. If it stopped suddenly, everything would keep moving: winds and tsunamis would scour the planet. If it slowed gently, a day would last a year, the oceans would drain toward the poles and leave one giant continent around the middle, and the magnetic field might fade. And the good news: Earth really is slowing, but only by about 2 milliseconds per century.
 

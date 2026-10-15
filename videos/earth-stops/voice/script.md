@@ -6,7 +6,7 @@
 
 | # | Start | End | Window | Words | Scene | Line |
 |---|---:|---:|---:|---:|---|---|
-| 1 | 0:00.4 | 0:11.5 | 11.1s | 32 | right now | Right now, the ground under the equator is racing east at about one thousand six hundred and seventy kilometres an hour. You don't feel a thing. So what if Earth simply stopped? |
+| 1 | 0:00.4 | 0:11.5 | 11.1s | 29 | right now | Earth is spinning you east at more than one thousand kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen? |
 | 2 | 0:12.4 | 0:24.5 | 12.1s | 34 | 1 second later | One second later, everything not bolted to the bedrock keeps moving east at full speed. Air, oceans, rocks, cities, and you, all flung sideways faster than a jet airliner. Only the poles stay calm. |
 | 3 | 0:25.4 | 0:37.5 | 12.1s | 33 | 1 minute later | A minute later, winds far stronger than any hurricane scour the land, and the oceans keep surging east as giant tsunamis, crashing over the continents. That's the sudden version. Now let's be kinder. |
 | 4 | 0:38.4 | 0:51.5 | 13.1s | 34 | day 1 | Imagine the spin fades slowly instead, over many years. Now one day lasts a whole year: about six months of daylight, then six months of night, as the Sun slowly crawls across the sky. |
@@ -18,7 +18,7 @@
 
 ## Plain lines (paste into ElevenLabs, one file each)
 
-1. Right now, the ground under the equator is racing east at about one thousand six hundred and seventy kilometres an hour. You don't feel a thing. So what if Earth simply stopped?
+1. Earth is spinning you east at more than one thousand kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen?
 2. One second later, everything not bolted to the bedrock keeps moving east at full speed. Air, oceans, rocks, cities, and you, all flung sideways faster than a jet airliner. Only the poles stay calm.
 3. A minute later, winds far stronger than any hurricane scour the land, and the oceans keep surging east as giant tsunamis, crashing over the continents. That's the sudden version. Now let's be kinder.
 4. Imagine the spin fades slowly instead, over many years. Now one day lasts a whole year: about six months of daylight, then six months of night, as the Sun slowly crawls across the sky.

@@ -124,6 +124,17 @@ function beginSheet(box) {
   for (let y = b[1]; y < b[3]; y++) OUT.data.set(src.subarray((y - b[1]) * w4, (y - b[1] + 1) * w4), (y * W + b[0]) * 4);
   ctx.restore(); ctx.setTransform(m);
 }
+// a calm full-frame field: the inks' printed colour laid flat on the paper (grain kept, no dot screen), a vertical blend
+// from `top` to `bottom` tones. Use it under lettering: a full-frame halftone field behind text strains the eyes
+// (the user's note on the Earth video). Call right after beginSheet(); objects printed after it keep their screens.
+function calmField(top, bottom = top) {
+  if (!OUT) OUT = new ImageData(W, H);
+  const a = inkRGB(top), b = inkRGB(bottom), d = OUT.data;
+  for (let y = 0; y < H; y++) {
+    const u = y / (H - 1), m = [0, 1, 2].map((c) => (a[c] + (b[c] - a[c]) * u) / PAPER[c]);
+    for (let x = 0, i = y * W * 4; x < W; x++, i += 4) { d[i] *= m[0]; d[i + 1] *= m[1]; d[i + 2] *= m[2]; }
+  }
+}
 function endSheet() {
   const m = ctx.getTransform(); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
   if (!SHEET_BOX) ctx.putImageData(OUT, 0, 0);

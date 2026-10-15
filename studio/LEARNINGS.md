@@ -9,6 +9,10 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 ## who killed the dinosaurs (crosshatch, mystery, mystery)
 
 ### Pipeline lessons
+- **User feedback (Earth, riso): "not readable and visually bad for eyes because you see the background".** The full-frame
+  halftone field sat behind the lettering. Fix: riso `calmField(top, bottom)` lays the inks flat on the paper (grain, no
+  dots); dots stay on the globe, sun and hero. Now a rule in CLAUDE.md: calm, flat backgrounds wherever text sits.
+- The subtitle preview of a riso video came out 38 MB (halftone compresses badly); finish.sh now caps it at 1.5 Mbps.
 - `engine/animate/tools/still.mjs` does NOT rebuild index.html: after editing sources run smoke.mjs or build.mjs first,
   or you debug a stale page (cost an hour on a "bug" in the riso day scene that was already fixed).
 - Riso: plates ignore ctx transforms (rotate points yourself); bold print lettering reads over halftone only at weight 700,

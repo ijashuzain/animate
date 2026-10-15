@@ -13,6 +13,13 @@ function detective(x, y, r, o = {}) {
   paint(hat, { fill: '#8a6a4a', key: 'dethat', w: 3, tex: [{ k: 'cross', c: 'rgba(58,36,23,0.5)', al: 0.6, gap: 6 }] });
   if (o.glass !== false) { const gx = x + r * 1.5, gy = y + r * 0.1 + Math.sin(TT * 2) * 6; ink([[x + r * 0.9, y + r * 0.5], [gx - r * 0.3, gy + r * 0.35]], { w: 8, color: '#6b4a2e', key: 'gh' }); ink(ellipsePts(gx, gy, r * 0.45, r * 0.45, 0, 24), { closed: true, w: 6, key: 'gl' }); }
 }
+// ash drifting down (the extinction's sky); deterministic, keeps sparse ink scenes moving between beats
+function ash(key, n, x0 = 40, x1 = 960, alpha = 0.55) {
+  ctx.save(); ctx.fillStyle = `rgba(58,46,40,${alpha})`;
+  for (let i = 0; i < n; i++) { const R = RNG(key, i), sp = R.r(40, 90), x = R.r(x0, x1) + Math.sin(TT * R.r(0.6, 1.4) + i) * 18, y = mod(R.r(0, 1100) + TT * sp, 1120) - 20, r = R.r(3, 7);
+    ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.7, R.r(0, 3), 0, TAU); ctx.fill(); }
+  ctx.restore();
+}
 function trex(x, y, s, key, o = {}) {
   const U = [[0, 0.45], [0.15, 0.38], [0.3, 0.35], [0.45, 0.3], [0.55, 0.18], [0.62, 0.08], [0.78, 0.05], [0.92, 0.1], [0.95, 0.2], [0.85, 0.24], [0.9, 0.3], [0.75, 0.3], [0.66, 0.35], [0.7, 0.45], [0.66, 0.48], [0.6, 0.42], [0.56, 0.55], [0.6, 0.9], [0.68, 0.98], [0.52, 0.98], [0.48, 0.7], [0.38, 0.68], [0.4, 0.95], [0.46, 1.0], [0.3, 1.0], [0.28, 0.62], [0.15, 0.55]];
   const P = U.map(([u, v]) => [x + (o.flip ? -1 : 1) * (u - 0.5) * 300 * s, y + (v - 1) * 260 * s + Math.sin(TT * 2 + key.length) * 3]);
@@ -66,6 +73,7 @@ function sVictims() {
   trex(240, 620, 0.9, 'vt', { fill: '#a8b896' }); trike(520, 640, 0.55, 'vtr');
   for (let i = 0; i < 4; i++) { const x = 170 + i * 220, y = 860, k = popS(at(5.0) + i * 0.8); if (k <= 0) continue; ctx.save(); ctx.translate(x, y); ctx.scale(k, k); paint(rrectPts(-95, -70, 190, 140, 8), { fill: C.paper, key: 'sus' + i, w: 3, tex: [{ k: 'pencil', c: '#e8d6b0', al: 0.5, per: 80 }] }); handText(['disease', 'climate', 'volcanoes', 'space rock'][i], -80, 10, 34, C.ink, { key: 'sust' + i }); ctx.restore(); }
   ink([[60, 400], [960, 400]], { w: 4, color: C.red, key: 'tape1', frac: ev(at(1.4), 0.8) }); handText('~75% of species', 380, 380, 40, C.red, { key: 'vpct', frac: ev(at(1.6), 0.6) });
+  ash('vash', 46);
 }
 function cVictims(at) {
   title('The victims', at(0.6));
@@ -100,7 +108,7 @@ function sIridium() {
   ink([[bx - 20, by], [bx + 360, by]], { w: 4, key: 'ax' }); ink([[bx - 20, by], [bx - 20, by - 600]], { w: 4, key: 'ay' });
   paint(rrectPts(bx + 30, by - 30, 110, 30, 4), { fill: ROCK[1], key: 'b1', w: 3, tex: tex() }); handText('normal rock', bx + 10, by + 44, 28, C.ink, { key: 'b1l' });
   if (f > 0) { const h = 580 * f; paint(rrectPts(bx + 200, by - h, 110, h, 4), { fill: C.red, key: 'b2', w: 3, tex: tex('rgba(60,10,5,0.5)', 'cross') }); handText('the clay', bx + 200, by + 44, 28, C.red, { key: 'b2l' }); }
-  detective(200, 790, 52, { mood: TT > at(8.4) ? 'wow' : 'smile', glass: false });
+  detective(200 + 110 * Math.sin((TT - at(0)) * 0.9), 790 - Math.abs(Math.sin((TT - at(0)) * 3.6)) * 10, 52, { mood: TT > at(8.4) ? 'wow' : 'smile', glass: false });   // paces while thinking
   if (TT > at(10.4)) { const ax = 760, ay = 200, u = clamp((TT - at(10.4)) / 1.6); paint(ellipsePts(lerp(980, ax, u), lerp(60, ay, u), 46, 40, 0.3, 18), { fill: '#8a7a6a', key: 'ast', w: 4, tex: tex(null, 'stipple', { c: C.ink, n: 60 }) }); }
 }
 function cIridium(at) {
@@ -120,7 +128,7 @@ function sQuartz() {
   handText('shocked quartz', cx - 120, cy + 300, 36, C.ink, { key: 'qzl' });
   for (let i = 0; i < 7; i++) { const t0 = at(6.4) + i * 0.25, u = clamp((TT - t0) / 0.8); if (u <= 0) continue; const x = 620 + (i % 4) * 90, y = lerp(150, 520 + Math.floor(i / 4) * 90, EZ.i2(u)); paint(ellipsePts(x, y, 30, 30, 0, 18), { fill: '#7fb0a8', key: 'bead' + i, w: 3, tex: [{ k: 'pencil', c: '#ffffff', al: 0.5, per: 30 }] }); ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(x - 9, y - 10, 7, 0, TAU); ctx.fill(); }
   if (TT > at(6.4)) handText('glass beads', 640, 720, 36, C.ink, { key: 'bdl' });
-  detective(820, 880, 46, { mood: TT > at(10.0) ? 'wow' : 'smile' });
+  detective(820 + 100 * Math.sin((TT - at(0)) * 0.9), 880 - Math.abs(Math.sin((TT - at(0)) * 3.6)) * 10, 46, { mood: TT > at(10.0) ? 'wow' : 'smile' });   // paces while thinking
 }
 function cQuartz(at) {
   title('Shocked quartz', at(0.6));
@@ -139,7 +147,7 @@ function sCrater() {
   const cx = 470, cy = 340, f = ev(at(4.4), 1.2);
   for (let r = 1; r <= 3; r++) if (f > r / 4) { ctx.save(); ctx.setLineDash([16, 12]); ink(ellipsePts(cx, cy, 90 * r, 60 * r, 0, 48), { closed: true, w: 5, color: C.red, key: 'ring' + r }); ctx.restore(); }
   if (TT > at(8.4)) { ink([[cx - 270, cy + 210], [cx + 270, cy + 210]], { w: 4, color: C.red, key: 'scale' }); handText('~180 km', cx - 70, cy + 255, 40, C.red, { key: 'scl', weight: 700 }); }
-  if (TT < at(10.8)) { const u = clamp((TT - at(1.0)) / 9.8), ax = lerp(1000, cx, EZ.i3(u)), ay = lerp(-80, cy, EZ.i3(u)); for (let k = 0; k < 5; k++) ink([[ax + k * 22, ay - k * 26], [ax + 60 + k * 30, ay - 70 - k * 30]], { w: 10 - k, color: k % 2 ? C.orange : C.yellow, key: 'trail' + k }); paint(ellipsePts(ax, ay, 40, 34, 0.4, 18), { fill: '#7a6a5a', key: 'ast2', w: 4, tex: tex(null, 'stipple', { c: C.ink, n: 60 }) }); }
+  if (TT < at(10.8)) { const u = clamp((TT - at(1.0)) / 9.8), ax = lerp(1000, cx, EZ.i2(u)), ay = lerp(-80, cy, EZ.i2(u)); for (let k = 0; k < 5; k++) ink([[ax + k * 22, ay - k * 26], [ax + 60 + k * 30, ay - 70 - k * 30]], { w: 10 - k, color: k % 2 ? C.orange : C.yellow, key: 'trail' + k }); paint(ellipsePts(ax, ay, 40, 34, 0.4, 18), { fill: '#7a6a5a', key: 'ast2', w: 4, tex: tex(null, 'stipple', { c: C.ink, n: 60 }) }); }
   else { const k = ev(at(10.8), 0.6); for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; ink([[cx + Math.cos(a) * 60, cy + Math.sin(a) * 40], [cx + Math.cos(a) * (60 + 260 * k), cy + Math.sin(a) * (40 + 170 * k)]], { w: 8, color: i % 2 ? C.orange : C.yellow, key: 'blast' + i }); } }
 }
 function cCrater(at) {

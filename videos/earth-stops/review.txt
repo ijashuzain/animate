@@ -21,7 +21,7 @@ LOOP: diff(last=2891, first=0) = 13.89; typical consecutive diff in the first 40
 
 NARRATION (voice-over added outside; checks density and word hits)
  #   t0-t1          words  wps   shot  line
- 1  0.40-11.50s     32  2.88     1  "Right now, the ground under the equator is racing east at about one thousand six hundred and seventy kilometres an hour. You don't feel a thing. So what if Earth simply stopped?"
+ 1  0.40-11.50s     29  2.61     1  "Earth is spinning you east at more than one thousand kilometres an hour. If it stopped suddenly, you'd be flung sideways and die in seconds. What would really happen?"
  2  12.40-24.50s     34  2.81     2  "One second later, everything not bolted to the bedrock keeps moving east at full speed. Air, oceans, rocks, cities, and you, all flung sideways faster than a jet airliner. Only the poles stay calm."
  3  25.40-37.50s     33  2.73     3  "A minute later, winds far stronger than any hurricane scour the land, and the oceans keep surging east as giant tsunamis, crashing over the continents. That's the sudden version. Now let's be kinder."
  4  38.40-51.50s     34  2.60     4  "Imagine the spin fades slowly instead, over many years. Now one day lasts a whole year: about six months of daylight, then six months of night, as the Sun slowly crawls across the sky."
@@ -30,36 +30,35 @@ NARRATION (voice-over added outside; checks density and word hits)
  7  78.40-91.50s     37  2.82     7  "And there's a quieter danger. Earth's magnetic field is made by molten iron swirling inside, and that swirling depends partly on the spin. Some scientists think the field could fade, leaving us exposed to the Sun's radiation."
  8  94.90-108.00s     38  2.90     9  "The good news? Earth is slowing down, but only by about two thousandths of a second every century. Four hundred million years ago, a day lasted about twenty-two hours. At that pace, you have nothing to worry about."
  9  108.90-120.00s     32  2.88    10  "So tonight, as the Sun sets right on time, remember: you're riding a planet whose middle spins at more than sixteen hundred kilometres an hour. And that's exactly how we like it."
-narration: 304 words, density PASS (<= 3.5 words/s, no overlaps), word hits PASS (<= 2 frames from a cut)
+narration: 301 words, density PASS (<= 3.5 words/s, no overlaps), word hits PASS (<= 2 frames from a cut)
 
 STORY ARC (loudness in dBFS over 100ms windows: median / 90th percentile; music = music stem median)
  act          role       t0-t1         cuts  cuts/s  motion   mix med  mix p90  music
- 1 Right now  build      0.00-38.00s      0    0.00     1.2    -16.6    -14.9   -16.6
- 2 Slow stop  journey    38.00-78.00s      0    0.00     1.0    -17.0    -14.9   -17.0
- 3 Danger     peak       78.00-92.00s      0    0.00     1.2    -16.4    -14.7   -16.4
- 4 Hush       silence    92.00-94.50s      0    0.00     3.1    -64.3    -55.1   -64.3
- 5 Good news  gift       94.50-108.50s      1    0.07     1.2    -14.5    -12.6   -14.5
+ 1 Right now  build      0.00-38.00s      0    0.00     1.2    -16.7    -14.9   -16.7
+ 2 Slow stop  journey    38.00-78.00s      0    0.00     1.0    -17.0    -15.0   -17.0
+ 3 Danger     peak       78.00-92.00s      0    0.00     1.2    -16.3    -14.6   -16.4
+ 4 Hush       silence    92.00-94.50s      0    0.00     3.1    -68.6    -45.3   -68.6
+ 5 Good news  gift       94.50-108.50s      1    0.07     1.2    -14.6    -12.6   -14.6
  6 End        goodbye    108.50-120.50s      0    0.00     0.9    -24.5    -22.3   -24.5
   info  no cut-rate rule (no hard cuts, or eras joined by morphs): peak motion 1.2 vs max other 3.1 (pixel motion includes noise/boil, so it is not a rule here)
-  PASS  gift is the loudest act (p90 -12.6 vs next -14.7)
-  PASS  gift p90 >= peak p90 + 1 dB (-12.6 vs -14.7): the busiest moment is not the loudest
-  PASS  silence median <= peak median - 15 dB (-64.3 vs -16.4)
-  PASS  journey music stays present under the voice: median >= gift - 8 dB (-17.0 vs -14.5)
+  PASS  gift is the loudest act (p90 -12.6 vs next -14.6)
+  PASS  gift p90 >= peak p90 + 1 dB (-12.6 vs -14.6): the busiest moment is not the loudest
+  PASS  silence median <= peak median - 15 dB (-68.6 vs -16.3)
+  PASS  journey music stays present under the voice: median >= gift - 8 dB (-17.0 vs -14.6)
   PASS  gift is held: <= 0.5 cuts/s (0.07)
-  PASS  goodbye decays: median <= gift median - 6 dB (-24.5 vs -14.5)
+  PASS  goodbye decays: median <= gift median - 6 dB (-24.5 vs -14.6)
 story arc: PASS (6/6 rules)
 
 TEXT (every string drawn, traced to screen; 446 frames sampled, morph windows skipped)
 text: PASS (0 cut-off/overlap, 0 in the safe zone)
 
 SOUND (mix: renders/audio.wav)
-  loudest 100ms window: 94.5s (-10.9 dBFS) - in the payoff act 94.5-108.5s
+  loudest 100ms window: 94.5s (-10.8 dBFS) - in the payoff act 94.5-108.5s
   silence before it: 2.0s at <= -40 dBFS ending 94.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
   loudness: -14.8 LUFS integrated, range 5.3 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
 DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.59, "still" below 0.80; silence acts are exempt)
-  WARN  70.75-74.25s: 3.5s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-dead beats: WARN (1 stretch over 3s)
+dead beats: PASS (0 stretches over 3s)
 PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
 
 video: 1920x1080, 2892 frames decoded

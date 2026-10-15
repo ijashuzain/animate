@@ -154,6 +154,8 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 ## Rules that always hold
 - Requirements: Node 18+, Playwright Chromium (`/opt/pw-browsers` in cloud sessions), ffmpeg. For the hand lettering install
   Comic Neue if missing (`apt-get install -y fonts-comic-neue`); without it captions fall back to a serif.
+- **Calm behind words (the user's rule):** never put busy texture (halftone dots, hatching, heavy grain) under the lettering.
+  Backgrounds where text sits are flat or near-flat; texture lives on the objects. Riso: `calmField()`, not a printed field.
 - Deterministic drawing: `RNG(...)` and `B`/`TT`, never `Math.random()` or the clock. Don't fade kit textures with globalAlpha.
 - Facts are checked; claims are hedged where science is uncertain ("could", "about").
 - Never wait on a background job with `pgrep -f <pattern>` loops: the loop matches its own command line. Use `run_in_background`

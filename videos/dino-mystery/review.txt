@@ -11,13 +11,13 @@ shot 10 (end): 48 frames [2580,2586,2592,2598,2604,2610,2616,2622,2628,2634,2640
 
 CUTS vs beat grid @ 120 BPM, 24fps (8ths = 0.25s)
  #   cut t     grid  grid#   nominal f  cut f   cut f t     err(f)  Δ@cut  peak(±2f)          shot change           result
- 1   93.500s   8th   374     2244.0   2244   93.5000s  +0.0   211.1  f2244 ok           shot 8 -> 9           PASS
+ 1   93.500s   8th   374     2244.0   2244   93.5000s  +0.0   210.9  f2244 ok           shot 8 -> 9           PASS
 all cuts on grid within 1 frame: PASS
 MORPHS: 8 shape-morph bridges at 12, 25, 38, 51, 64, 78, 91, 107.5s, all centred on the 8th grid: PASS
 
 PACING: 1 hard cuts (0 in the last 5s), mean segment 59.75s, shortest 26.00s, plus 0 on-2s montage steps
 FLAT FRAMES (contrast < 6/255): 288, 289, 912, 913, 1224, 1225, 1536, 1537, 2580, 2581
-LOOP: diff(last=2867, first=0) = 17.14; typical consecutive diff in the first 40 frames = 0.29 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
+LOOP: diff(last=2867, first=0) = 17.72; typical consecutive diff in the first 40 frames = 0.28 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
 
 NARRATION (voice-over added outside; checks density and word hits)
  #   t0-t1          words  wps   shot  line
@@ -34,33 +34,33 @@ narration: 299 words, density PASS (<= 3.5 words/s, no overlaps), word hits PASS
 
 STORY ARC (loudness in dBFS over 100ms windows: median / 90th percentile; music = music stem median)
  act          role       t0-t1         cuts  cuts/s  motion   mix med  mix p90  music
- 1 The case   build      0.00-38.00s      0    0.00     1.0    -17.9    -15.5   -18.3
- 2 Clues      journey    38.00-78.00s      0    0.00     1.3    -18.7    -15.9   -18.8
- 3 Suspect 2  peak       78.00-91.00s      0    0.00     1.6    -19.2    -15.6   -19.9
- 4 Hush       silence    91.00-93.50s      0    0.00     3.6    -21.5    -21.4   -21.5
- 5 Twist      gift       93.50-107.50s      1    0.07     0.8    -16.8    -13.7   -16.8
- 6 End        goodbye    107.50-119.50s      0    0.00     1.0    -22.9    -21.8   -22.9
+ 1 The case   build      0.00-38.00s      0    0.00     1.0    -17.8    -15.4   -18.1
+ 2 Clues      journey    38.00-78.00s      0    0.00     1.3    -18.6    -15.7   -18.6
+ 3 Suspect 2  peak       78.00-91.00s      0    0.00     1.6    -18.9    -15.1   -19.7
+ 4 Hush       silence    91.00-93.50s      0    0.00     3.6   -120.0    -70.0  -120.0
+ 5 Twist      gift       93.50-107.50s      1    0.07     0.8    -16.6    -13.5   -16.6
+ 6 End        goodbye    107.50-119.50s      0    0.00     1.0    -22.7    -21.5   -22.8
   info  no cut-rate rule (no hard cuts, or eras joined by morphs): peak motion 1.6 vs max other 3.6 (pixel motion includes noise/boil, so it is not a rule here)
-  PASS  gift is the loudest act (p90 -13.7 vs next -15.5)
-  PASS  gift p90 >= peak p90 + 1 dB (-13.7 vs -15.6): the busiest moment is not the loudest
-  FAIL  silence median <= peak median - 15 dB (-21.5 vs -19.2)
-  PASS  journey music stays present under the voice: median >= gift - 8 dB (-18.8 vs -16.8)
+  PASS  gift is the loudest act (p90 -13.5 vs next -15.1)
+  PASS  gift p90 >= peak p90 + 1 dB (-13.5 vs -15.1): the busiest moment is not the loudest
+  PASS  silence median <= peak median - 15 dB (-120.0 vs -18.9)
+  PASS  journey music stays present under the voice: median >= gift - 8 dB (-18.6 vs -16.6)
   PASS  gift is held: <= 0.5 cuts/s (0.07)
-  PASS  goodbye decays: median <= gift median - 6 dB (-22.9 vs -16.8)
-story arc: FAIL (5/6 rules)
+  PASS  goodbye decays: median <= gift median - 6 dB (-22.7 vs -16.6)
+story arc: PASS (6/6 rules)
 
 TEXT (every string drawn, traced to screen; 440 frames sampled, morph windows skipped)
 text: PASS (0 cut-off/overlap, 0 in the safe zone)
 
 SOUND (mix: renders/audio.wav)
-  loudest 100ms window: 78.0s (-7.7 dBFS) - NOT in the payoff act 93.5-107.5s
-  silence before it: 0.0s at <= -40 dBFS in the 2s before (craft.md wants 0.5-4s when the story has a turn)
-  loudness: -16.1 LUFS integrated, range 3.5 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
+  loudest 100ms window: 93.5s (-7.9 dBFS) - in the payoff act 93.5-107.5s
+  silence before it: 2.0s at <= -40 dBFS ending 93.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
+  loudness: -16.0 LUFS integrated, range 4.0 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
-DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 0.85, "still" below 0.80; silence acts are exempt)
+DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 0.86, "still" below 0.80; silence acts are exempt)
   WARN  14.00-17.50s: 3.5s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  20.00-24.75s: 4.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  44.00-47.25s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
+  WARN  44.25-47.50s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  52.00-57.75s: 5.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  60.25-63.50s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
   WARN  65.25-68.50s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
