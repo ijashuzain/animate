@@ -12,6 +12,10 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - **User feedback (Earth, riso): "not readable and visually bad for eyes because you see the background".** The full-frame
   halftone field sat behind the lettering. Fix: riso `calmField(top, bottom)` lays the inks flat on the paper (grain, no
   dots); dots stay on the globe, sun and hero. Now a rule in CLAUDE.md: calm, flat backgrounds wherever text sits.
+- Side effect: the halftone field had been "moving" (the dots shimmer as the camera pushes), which hid 4 still stretches.
+  With calm fields, motion has to come from the story: turning sun rays and drifting clouds, meridians that sweep while
+  Earth spins and stop as the spin fades, water chevrons flowing to the poles. `calmField(top, bottom, box)` also takes a
+  box (the night half of the frame).
 - The subtitle preview of a riso video came out 38 MB (halftone compresses badly); finish.sh now caps it at 1.5 Mbps.
 - `engine/animate/tools/still.mjs` does NOT rebuild index.html: after editing sources run smoke.mjs or build.mjs first,
   or you debug a stale page (cost an hour on a "bug" in the riso day scene that was already fixed).

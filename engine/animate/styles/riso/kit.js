@@ -127,12 +127,15 @@ function beginSheet(box) {
 // a calm full-frame field: the inks' printed colour laid flat on the paper (grain kept, no dot screen), a vertical blend
 // from `top` to `bottom` tones. Use it under lettering: a full-frame halftone field behind text strains the eyes
 // (the user's note on the Earth video). Call right after beginSheet(); objects printed after it keep their screens.
-function calmField(top, bottom = top) {
+// box = [x0, y0, x1, y1] in screen px limits it (e.g. the night half of a frame); call it again with plain paper first
+// (beginSheet) underneath, since tones multiply.
+function calmField(top, bottom = top, box = null) {
   if (!OUT) OUT = new ImageData(W, H);
-  const a = inkRGB(top), b = inkRGB(bottom), d = OUT.data;
-  for (let y = 0; y < H; y++) {
+  const a = inkRGB(top), b = inkRGB(bottom), d = OUT.data, P = paperPixels();
+  const [x0, y0, x1, y1] = box ? [Math.max(0, Math.round(box[0])), Math.max(0, Math.round(box[1])), Math.min(W, Math.round(box[2])), Math.min(H, Math.round(box[3]))] : [0, 0, W, H];
+  for (let y = y0; y < y1; y++) {
     const u = y / (H - 1), m = [0, 1, 2].map((c) => (a[c] + (b[c] - a[c]) * u) / PAPER[c]);
-    for (let x = 0, i = y * W * 4; x < W; x++, i += 4) { d[i] *= m[0]; d[i + 1] *= m[1]; d[i + 2] *= m[2]; }
+    for (let x = x0, i = (y * W + x0) * 4; x < x1; x++, i += 4) { if (box) { d[i] = P[i]; d[i + 1] = P[i + 1]; d[i + 2] = P[i + 2]; } d[i] *= m[0]; d[i + 1] *= m[1]; d[i + 2] *= m[2]; }
   }
 }
 function endSheet() {

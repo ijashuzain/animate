@@ -97,10 +97,13 @@ function sDay() {
   beginSheet();
   const split = sm(TT, at(7.4), at(9.0));
   calmField({ yellow: 0.35, pink: 0.1 }, { yellow: 0.75, pink: 0.4 });
+  const nx = 495 + (1 - split) * 500;   // the night half, flat like the sky (no dots next to the lettering)
+  if (split > 0) { const c = ctx.getTransform(), sx0 = c.a * nx + c.e; calmField(NIGHT, NIGHT, [sx0, 0, c.a * 990 + c.e, H]); }
   printed(PITCH.world, { shapes: true }, () => {
-    if (split > 0) fill(poly([[495 + (1 - split) * 500, -80], [990, -80], [990, 1200], [495 + (1 - split) * 500, 1200]]), NIGHT);
     if (split > 0.3) { const R = RNG('ns'); for (let i = 0; i < 30; i++) { const x = R.r(520, 990), y = R.r(40, 700); fill(circ(x, y, R.r(1.5, 3.5)), {}); } }
-    const sx = lerp(130, 330, clamp((TT - S0()) / 14)), sy = 420 - Math.sin(clamp((TT - S0()) / 14) * 0.8) * 120;
+    const sx = lerp(110, 340, clamp((TT - S0()) / 14)), sy = 430 - Math.sin(clamp((TT - S0()) / 14) * 1.2) * 150;
+    for (let i = 0; i < 12; i++) { const a = i / 12 * TAU + TT * 0.35; line([[sx + Math.cos(a) * 92, sy + Math.sin(a) * 92], [sx + Math.cos(a) * 128, sy + Math.sin(a) * 128]], MIX.orange, { w: 7, key: 'ray' + i, knock: true }); }
+    for (let i = 0; i < 3; i++) { const cx = mod(140 + i * 330 + (TT - S0()) * 26, 1180) - 120, cy = 150 + i * 70; if (split > 0 && cx + 90 > nx) continue; fill(hand(ellipsePts(cx, cy, 90, 26, 0, 18), 'cl' + i, 2), {}); }
     fill(circ(sx, sy, 140), { yellow: rad(sx, sy, 0, 140, [[0, 0.8], [1, 0]]) }, { over: true }); fill(circ(sx, sy, 70), { yellow: 1, pink: 0.25 }); rim(sx, sy, 70, 'sun', { tones: MIX.coral, w: 6 });
     fill(hand([[-80, 800], [300, 770], [700, 800], [1100, 780], [1100, 1100], [-80, 1100]], 'hill', 2), LAND);
     risoHero(330, 760 + Math.sin(TT * 2) * 3, 56, { key: 'dayh', mood: TT > at(5.0) ? 'wow' : 'smile', look: [-0.6, -0.6] });
@@ -127,6 +130,10 @@ function sBulge() {
     clipTo(ell(x, y, rx, R));
     fill(ell(x, y, rx + 20, R * 0.42 * (1 - k) + 6), OCEAN);
     for (const s of [-1, 1]) fill(ell(x, y + s * R, rx, R * 0.62 * k + 4), OCEAN);
+    for (let i = 0; i < 6; i++) {   // meridians: they sweep while Earth spins and stop as the spin fades
+      const th = mod(i / 6 * Math.PI + (TT - at(0)) * 0.5 * (1 - k * 0.9), Math.PI) - Math.PI / 2, sx = Math.sin(th);   // visible longitudes -90..90
+      line(ellipsePts(0, y, rx * Math.abs(sx), R, 0, 32, -Math.PI / 2, Math.PI / 2).map(([px, py]) => [x + px * Math.sign(sx || 1), py]), MIX.blue, { w: 4, key: 'mer' + i, knock: true });
+    }
     unclip();
     rimLine(ellipsePts(x, y, rx, R, 0, 96), 'bulge', { tones: MIX.blue, w: 8 });
     if (TT > at(8.4)) for (const s of [-1, 1]) { const f = ev(at(8.4), 0.6); line([[x, y + s * 30], [x, y + s * (30 + 150 * f)]], { pink: 1 }, { w: 12, key: 'pa' + s, knock: true }); if (f > 0.9) line([[x - 24, y + s * 150], [x, y + s * 182], [x + 24, y + s * 150]], { pink: 1 }, { w: 12, key: 'ph' + s, knock: true }); }
@@ -147,6 +154,10 @@ function sMap() {
     stars('mp', 40); const x = 470, y = 560, R = 300;
     globe(x, y, R, 0, { key: 'mp', noLand: true, ocean: SAND, inner: () => { const sw = 0.62 + 0.38 * sm(TT, at(1.6), at(9.0)); fill(hand(ellipsePts(x, y - R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po1', 3), OCEAN); fill(hand(ellipsePts(x, y + R * 0.95, R * 1.1, R * 0.55 * sw, 0, 40), 'po2', 3), OCEAN); for (let i = 0; i < 5; i++) fill(hand(ellipsePts(x - 220 + i * 110 + Math.sin(TT * 0.4) * 10, y + (i % 2 ? 30 : -40), 50, 30, 0, 16), 'gr' + i, 2), LAND); } });
     if (TT > at(9.0)) { const k = popS(at(9.0)); type('CANADA', x - 120, y - 300, 30 * k, {}, { align: 'center', key: 'can' }); type('GREENLAND', x + 60, y - 360, 30 * k, {}, { align: 'center', key: 'grl' }); }
+    for (let i = 0; i < 8; i++) for (const sgn of [-1, 1]) {   // the water keeps flowing poleward
+      const u = mod((TT - at(0)) * 0.35 + i / 8, 1), cx = x - 210 + (i % 4) * 140, cy = y + sgn * (40 + u * 190);
+      line([[cx - 18, cy - sgn * 12], [cx, cy], [cx + 18, cy - sgn * 12]], { teal: 1 }, { w: 6, key: 'chev' + i + sgn, knock: true });
+    }
     risoHero(x + 40, y - 30 + Math.sin(TT * 3) * 4, 34, { key: 'maph', mood: 'smile', arms: [1.2, 0.2] });
   });
   endSheet();
