@@ -58,9 +58,7 @@ SOUND (mix: renders/audio.wav)
   loudness: -14.7 LUFS integrated, range 5.5 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
 DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.31, "still" below 0.80; silence acts are exempt)
-  WARN  66.00-70.25s: 4.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  71.00-74.25s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-dead beats: WARN (2 stretches over 3s)
+dead beats: PASS (0 stretches over 3s)
 PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
 
 video: 1920x1080, 2892 frames decoded

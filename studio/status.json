@@ -3,16 +3,16 @@
     "name": "Batch 1 · 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-15T18:42:21.991Z",
+  "updated": "2026-10-15T18:56:52.536Z",
   "videos": {
     "earth-stops": {
       "title": "What If Earth Stopped Spinning?",
       "style": "riso",
-      "stage": "rendering",
-      "detail": "Rendering frames, the score and its stems (4 workers)",
-      "why": "Frames are drawn in a headless browser; the score is synthesized offline",
-      "progress": 0.625,
-      "updated": "2026-10-15T18:42:21.991Z"
+      "stage": "done",
+      "detail": "Ready: videos/earth-stops/renders/earth-stops-1080p.mp4, voice/script.md, youtube/",
+      "why": "Delivered; generated files stay until the next batch's cleanup",
+      "progress": 1,
+      "updated": "2026-10-15T18:56:52.536Z"
     },
     "why-dream": {
       "title": "Why Do We Dream?",
@@ -34,6 +34,21 @@
     }
   },
   "log": [
+    {
+      "t": "2026-10-15T18:56:52.536Z",
+      "slug": "earth-stops",
+      "note": "earth-stops: done (Ready: videos/earth-stops/renders/earth-stops-1080p.mp4, voice/script.md, youtube/)"
+    },
+    {
+      "t": "2026-10-15T18:53:55.211Z",
+      "slug": "earth-stops",
+      "note": "earth-stops: packaging (Share copy (< 30 MB), subtitle preview, voice-over script, metadata, thumbnail)"
+    },
+    {
+      "t": "2026-10-15T18:50:35.926Z",
+      "slug": "earth-stops",
+      "note": "earth-stops: reviewing (Measured checks: cuts on the beat, story arc loudness, text overlaps, dead beats)"
+    },
     {
       "t": "2026-10-15T18:42:21.991Z",
       "slug": "earth-stops",

@@ -30,9 +30,9 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-13 | 5 animal myths you still believe (myth vs fact) | nature | sketchbook | suggested (batch 3) |
 | 2026-10-13 | The 5 fastest animals on Earth (countdown) | nature | pixel | suggested (batch 3) |
 | 2026-10-13 | How small is an atom, really? (scale journey) | science scale | math | suggested (batch 3) |
-| 2026-10-13 | What if Earth stopped spinning? (what if) | space / what if | riso | suggested (batch 3, set 2) |
-| 2026-10-13 | Why do we dream? (question chain) | science why | sketchbook | suggested (batch 3, set 2) |
+| 2026-10-13 | What if Earth stopped spinning? (what if) | space / what if | riso | **made** (batch 3, earth-stops) |
+| 2026-10-13 | Why do we dream? (question chain) | science why | sketchbook | **made** (batch 3, why-dream) |
 | 2026-10-13 | Cats vs dogs: who's smarter? (versus) | animals | cut-paper | suggested (batch 3, set 2) |
 | 2026-10-13 | What happens when you press Enter? (journey) | tech | isometric | suggested (batch 3, set 2) |
-| 2026-10-13 | Who killed the dinosaurs? (mystery) | history / science | crosshatch | suggested (batch 3, set 2) |
+| 2026-10-13 | Who killed the dinosaurs? (mystery) | history / science | crosshatch | **made** (batch 3, dino-mystery) |
 | 2026-10-13 | The 5 biggest things in the universe (countdown) | space | pixel | suggested (batch 3, set 2) |
