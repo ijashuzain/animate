@@ -36,3 +36,9 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-13 | What happens when you press Enter? (journey) | tech | isometric | suggested (batch 3, set 2) |
 | 2026-10-13 | Who killed the dinosaurs? (mystery) | history / science | crosshatch | **made** (batch 3, dino-mystery) |
 | 2026-10-13 | The 5 biggest things in the universe (countdown) | space | pixel | suggested (batch 3, set 2) |
+| 2026-10-18 | How a car engine works: 4 strokes (process) | tech explained | isometric + machines | suggested (batch 4) |
+| 2026-10-18 | The real bug: the moth in the computer, 1947 (timeline) | history | pixel | suggested (batch 4) |
+| 2026-10-18 | How a key opens a lock (journey) | tech / everyday | crosshatch + machines | suggested (batch 4) |
+| 2026-10-18 | How big is a black hole? (scale journey) | space | math | suggested (batch 4) |
+| 2026-10-18 | Why do cats purr? (myth vs fact) | nature | sketchbook | suggested (batch 4) |
+| 2026-10-18 | $100 a month for 30 years: saving vs investing (versus) | money | riso | suggested (batch 4) |

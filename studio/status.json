@@ -3,37 +3,14 @@
     "name": "Batch 1 · 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-15T18:56:52.536Z",
-  "videos": {
-    "earth-stops": {
-      "title": "What If Earth Stopped Spinning?",
-      "style": "riso",
-      "stage": "done",
-      "detail": "Ready: videos/earth-stops/renders/earth-stops-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-15T18:56:52.536Z"
-    },
-    "why-dream": {
-      "title": "Why Do We Dream?",
-      "style": "sketchbook",
-      "stage": "done",
-      "detail": "Ready: videos/why-dream/renders/why-dream-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-13T15:53:21.298Z"
-    },
-    "dino-mystery": {
-      "title": "Who Killed the Dinosaurs?",
-      "style": "crosshatch",
-      "stage": "done",
-      "detail": "Ready: videos/dino-mystery/renders/dino-mystery-1080p.mp4, voice/script.md, youtube/",
-      "why": "Delivered; generated files stay until the next batch's cleanup",
-      "progress": 1,
-      "updated": "2026-10-15T18:09:15.349Z"
-    }
-  },
+  "updated": "2026-10-18T07:47:08.225Z",
+  "videos": {},
   "log": [
+    {
+      "t": "2026-10-18T07:47:08.225Z",
+      "slug": null,
+      "note": "cleanup: freed 11463 MB"
+    },
     {
       "t": "2026-10-15T18:56:52.536Z",
       "slug": "earth-stops",

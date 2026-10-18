@@ -56,6 +56,21 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 ---
 
 ## Viewer data (Jist of Stories, via Windsor.ai)
+- **2026-10-18 (last 90 days; 29 subscribers, 6 public videos, 197 views):**
+  | video | views | avg view % | avg s | subs |
+  |---|---|---|---|---|
+  | The Internet's First Word Was "LO", Then It Crashed (cut-paper, timeline) | 102 | 16% | 18 | +2 |
+  | What If the Moon Disappeared Tonight? (what if) | 34 | 20% | 19 | +1 |
+  | 1 Bee, 6 Weeks, 1/12 Teaspoon: How Honey Is Made (sketchbook) | 23 | 18% | 12 | 0 |
+  | Why Is the Sky Blue? | 22 | 14% | 12 | 0 |
+  | How 1 Shot Trains Your Body for Years (cut-paper) | 5 | 46% | 60 | 0 |
+  | GPS Is 10 km Wrong Without Einstein (isometric) | 2 | 5% | 0 | 0 |
+  Traffic: subscribers 115, channel page 50, related videos 8, other 6, search 5. Almost everything comes from the
+  existing audience; search and suggested barely work yet.
+  **Biggest leak: the hook.** People watch 12-19 s of a 2-minute video, so most leave during the first scene.
+  Rules from this: the first 5 s must show the payoff image and say the strangest true fact (the "LO" title won);
+  titles with one concrete odd detail beat "explained" titles; make the Shorts (they reach non-subscribers) and ask the
+  user for a Studio retention export of the internet video to find the exact second people leave.
 - 2026-10-13: connected. Channel snapshot: 25 subscribers, 3 public videos, 0 views reported; no per-video analytics
   rows yet in the last 2 years (new channel or a reporting delay). Re-check after the next uploads.
 
