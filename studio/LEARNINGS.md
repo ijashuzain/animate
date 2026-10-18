@@ -55,6 +55,13 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## User requests (2026-10-18)
+- Suggest **10** topics, not 6 (CLAUDE.md step 2, the dashboard button and its prompt).
+- **Background music 70% quieter.** score-head: the music bus runs at `MUSIC_LEVEL` (0.25, measured -9.7 dB on the
+  machine demo after the master compressor; SCORE.musicLevel overrides). The loudness stage now normalises with the gain
+  of a full-music reference render, otherwise the -17 dBFS RMS normalise would push the quieter mix back up.
+- Study **Peekaboo Kidz** (Dr. Binocs) for animation technique, not narration: studio/references/peekaboo.md.
+
 ## Viewer data (Jist of Stories, via Windsor.ai)
 - **2026-10-18 (last 90 days; 29 subscribers, 6 public videos, 197 views):**
   | video | views | avg view % | avg s | subs |

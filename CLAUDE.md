@@ -45,13 +45,14 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    their generated files (videos, frames, audio, thumbnails). The user has downloaded them. Do this before anything new.
    Also clear the dashboard's outputs: list its assets (Artifact `action: "list", scope: "assets"`), delete each one
    (`action: "delete"` with `path` = the asset id) and delete the `outputs/*` docs, so storage stays small.
-2. **Suggest 6 topics.** Read `topics/log.md` (no repeats), the dashboard's `requests` collection (the user's ideas) and
+2. **Suggest 10 topics** (the user's rule). Read `topics/log.md` (no repeats), the dashboard's `requests` collection (the user's ideas) and
    the channel's recent numbers from Windsor (see "The channel": what was watched, found by search, watched longest).
    Each topic: a title, a one-line hook, the best-fitting style, **narrative format** (studio/formats.md) and genre, and why
    it fits the channel and the tools.
    Mix categories (science why/how, space/what-if, history timeline, tech explained, money, nature). Prefer topics with a
    true process or timeline, one hero that can carry it, a twist or payoff, and visuals the styles draw well (shapes, diagrams,
    characters; not realistic people or footage). Write them to the dashboard (`board/topics`) and list them in chat.
+   Animation reference: `studio/references/peekaboo.md` (zoom-ins, cutaways, flat bright shapes, pointing labels, a sound per action).
 3. **The user picks up to 3** (in chat, or by tapping on the dashboard: read `board/topics.picked`). Don't ask anything else;
    use defaults: 16:9, about 2 minutes, voice-over by the user (ElevenLabs), music and sfx composed in code.
 4. **Research each video** (stage `researching`). Web-check every claim that will be on screen or said; write
@@ -66,7 +67,8 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    - the **narrative format** from `studio/formats.md` (process, journey, timeline, countdown, myth vs fact, what if,
      mystery, versus, scale journey, question chain, day in the life); the scene tags follow it (years, #ranks, clues...);
    - the **music genre** from `studio/sound.md` (`SCORE.genre`: paper, lofi, synth, pizzicato, ambient, chiptune, folk,
-     mystery); SFX follow the style automatically, scene cues add topic sounds (buzz, drip, coin, tick, flip...);
+     mystery); SFX follow the style automatically, scene cues add topic sounds (buzz, drip, coin, tick, flip...).
+     The music sits about 70% quieter than composed (the user's rule; `SCORE.musicLevel`, default 0.25 = -10 dB);
    - **2–4 transitions** from `studio/transitions.md` that come out of the topic and the objects on screen (`tr` per scene:
      hex tiles for bees, a drop for water, a zoom into the cell, a page turn for history...).
    Write all three choices and why into research.md.
@@ -121,7 +123,7 @@ Write with the `ArtifactData` tool (pin `if_version` on existing docs; batch sev
 - `board/state`: { batch, phase, headline, updated }. Phase: topics | researching | scripting | styling | building | rendering | reviewing | packaging | done | failed
 - `board/topics`: { items: [{ id, title, hook, category, style, format, why }], picked: [ids], theme, suggestedAt, source }
   The user can generate suggestions on the page itself ("Suggest 6 topics", optional theme; the page asks Claude via the `sample`
-  capability) and tap up to 3 to pick. When the user says "start" / "make the picked ones", read `board/topics` and use `picked`.
+  capability; it asks for 10) and tap up to 3 to pick. When the user says "start" / "make the picked ones", read `board/topics` and use `picked`.
 - `board/history`: { made: [titles], suggested: [titles] }: the page avoids these when suggesting. **After every batch add the
   made titles here** (and to topics/log.md).
 - `videos/<slug>`: { order, title, style, length, stage, detail (what is happening), why, progress 0..1 or null (indeterminate), outputs: [paths] }

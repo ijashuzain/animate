@@ -130,13 +130,13 @@ button.primary:disabled { opacity: 0.5; cursor: default; }
     <div class="suggest" id="suggestbox" hidden>
       <form id="sugform">
         <input type="text" id="theme" maxlength="120" placeholder="Optional theme, e.g. ocean mysteries, everyday science, inventions" aria-label="Theme for the suggestions">
-        <button class="primary" id="sugbtn" type="submit">Suggest 6 topics</button>
+        <button class="primary" id="sugbtn" type="submit">Suggest 10 topics</button>
         <button class="ghost" id="sugcancel" type="button" hidden>Cancel</button>
       </form>
-      <div class="sstatus" id="sugstatus"><span>Claude suggests six fresh topics that fit the channel and skips anything already made. Picked topics are kept.</span></div>
+      <div class="sstatus" id="sugstatus"><span>Claude suggests ten fresh topics that fit the channel and skips anything already made. Picked topics are kept.</span></div>
     </div>
     <div class="topics" id="topics">
-      <div class="empty"><strong>No suggestions yet.</strong><span>Use Suggest 6 topics above, or ask Claude in chat. Tap up to three ideas to pick them for the next batch.</span></div>
+      <div class="empty"><strong>No suggestions yet.</strong><span>Use Suggest 10 topics above, or ask Claude in chat. Tap up to three ideas to pick them for the next batch.</span></div>
     </div>
   </section>
 
@@ -241,7 +241,7 @@ function renderVideos() {
 function renderTopics() {
   const box = $('topics'), items = topics.items || [], picked = new Set(topics.picked || []);
   box.replaceChildren();
-  if (!items.length) { const e = el('div', 'empty'); e.append(el('strong', null, 'No suggestions yet.'), el('span', null, 'Use Suggest 6 topics above, or ask Claude in chat. Tap up to three ideas to pick them for the next batch.')); box.append(e); $('picked').textContent = ''; return; }
+  if (!items.length) { const e = el('div', 'empty'); e.append(el('strong', null, 'No suggestions yet.'), el('span', null, 'Use Suggest 10 topics above, or ask Claude in chat. Tap up to three ideas to pick them for the next batch.')); box.append(e); $('picked').textContent = ''; return; }
   items.forEach((t) => {
     const b = el('button', 'topic'); b.type = 'button'; b.setAttribute('aria-pressed', picked.has(t.id) ? 'true' : 'false');
     b.append(el('span', 't', t.title), el('span', 'h', t.hook || ''), el('span', 's', [t.category, t.style, t.format].filter(Boolean).join(' · ')));
@@ -292,7 +292,7 @@ function renderReqs(rows) {
     try { await db.collection('requests').add({ text, created: new Date().toISOString(), status: 'new' }); $('reqtext').value = ''; $('reqnote').textContent = 'Saved. Ask Claude in chat to start, or it will see this next time.'; }
     catch (err) { $('reqnote').textContent = 'Could not save the request (' + (err.code || 'error') + '). Check that you are signed in with edit access.'; }
   });
-  // ---- suggestions: ask Claude from the page, write the six ideas to board/topics
+  // ---- suggestions: ask Claude from the page, write the ten ideas to board/topics
   const sample = await c.use('sample');
   if (sample && canWrite) $('suggestbox').hidden = false;
   let history = { made: [], suggested: [] }, ctl = null;
@@ -305,21 +305,21 @@ function renderReqs(rows) {
     const keep = (topics.items || []).filter((t) => (topics.picked || []).includes(t.id));
     const avoid = [...(history.made || []), ...keep.map((t) => t.title)];
     const prompt = [
-      'You suggest topics for a YouTube channel of 2-minute animated explainers (16:9, voice-over, explainer card beside the scene).',
+      'You suggest topics for a YouTube channel of 2-minute animated explainers (16:9, voice-over, the explanation lettered straight onto the scene, calm backgrounds behind words).',
       'Good topics have a true process or timeline, one small hero that can carry the story, a twist or payoff near the end, and visuals that drawn shapes, diagrams and simple characters show well (not realistic people or real footage).',
       'Mix categories: science why/how, space/what-if, history timeline, tech explained, money, nature, the human body.',
       theme ? `The user wants topics around this theme: ${theme}` : 'No theme given: give a varied set.',
       `Never suggest these (already made or picked): ${avoid.join('; ') || 'none'}.`,
       `Pick each topic's best style from: ${STYLES}.`,
-      'Return JSON only: an array of exactly 6 objects with keys title (a catchy video title, max 60 chars), hook (one sentence a viewer would click for), category, style (one style name from the list), format (e.g. "why explainer", "timeline", "what if", "how it works"), why (one short sentence on why it fits the channel and the tools).',
+      'Return JSON only: an array of exactly 10 objects with keys title (a catchy video title, max 60 chars), hook (one sentence a viewer would click for), category, style (one style name from the list), format (e.g. "why explainer", "timeline", "what if", "how it works"), why (one short sentence on why it fits the channel and the tools).',
     ].join('\n');
     ctl = new AbortController(); $('sugbtn').disabled = true; $('sugcancel').hidden = false;
-    sstat('Asking Claude for six topics' + (theme ? ` about "${theme}"` : '') + '…', 'busy');
+    sstat('Asking Claude for ten topics' + (theme ? ` about "${theme}"` : '') + '…', 'busy');
     try {
       let seen = false;
       const out = await sample.json(prompt, { signal: ctl.signal, cache: false, onText: ({ text }) => { if (!seen) { seen = true; } sstat(`Claude is writing the ideas (${text.length} characters so far)…`, 'busy'); } });
       sstat('Checking the ideas…', 'busy');
-      const list = (Array.isArray(out) ? out : out && Array.isArray(out.topics) ? out.topics : []).filter((t) => t && t.title).slice(0, 6);
+      const list = (Array.isArray(out) ? out : out && Array.isArray(out.topics) ? out.topics : []).filter((t) => t && t.title).slice(0, 10);
       if (list.length < 3) throw { code: 'bad_answer', message: 'The answer had too few topics.' };
       const stamp = Date.now().toString(36);
       const fresh = list.map((t, i) => ({ id: `s${stamp}${i}`, title: String(t.title).slice(0, 80), hook: String(t.hook || '').slice(0, 220), category: String(t.category || '').slice(0, 40), style: String(t.style || '').slice(0, 30), format: String(t.format || '').slice(0, 40), why: String(t.why || '').slice(0, 200) }));

@@ -73,7 +73,10 @@ async function buildScore(sampleRate = 48000, part = 'mix', normIn = null) {
   comp.threshold.value = -16; comp.knee.value = 10; comp.ratio.value = 3.5; comp.attack.value = 0.004; comp.release.value = 0.2;
   master.connect(comp); comp.connect(ac.destination);
   const musicBus = ac.createGain(), sfxBus = ac.createGain();
-  musicBus.gain.value = part === 'sfx' ? 0 : 1; sfxBus.gain.value = part === 'music' ? 0 : 1;
+  // the music sits at MUSIC_LEVEL of its composed level (the user's rule: background music 70% quieter, SCORE.musicLevel
+  // overrides); part 'ref' renders it at full level only to measure the loudness the real mix is normalised by
+  const MUSIC_LEVEL = (typeof SCORE !== 'undefined' && SCORE.musicLevel != null) ? SCORE.musicLevel : 0.25;   // measured: -10 dB (~70% quieter) after the master compressor
+  musicBus.gain.value = part === 'sfx' ? 0 : part === 'ref' ? 1 : MUSIC_LEVEL; sfxBus.gain.value = part === 'music' ? 0 : 1;
   musicBus.connect(master); sfxBus.connect(master);
   // ducking + presence dip, driven by the narration (lines closer than 0.29s are merged)
   const duck = ac.createGain(), dip = ac.createBiquadFilter();

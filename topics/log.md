@@ -42,3 +42,7 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-18 | How big is a black hole? (scale journey) | space | math | suggested (batch 4) |
 | 2026-10-18 | Why do cats purr? (myth vs fact) | nature | sketchbook | suggested (batch 4) |
 | 2026-10-18 | $100 a month for 30 years: saving vs investing (versus) | money | riso | suggested (batch 4) |
+| 2026-10-18 | A day in the life of your heart (day in the life) | human body | cut-paper | suggested (batch 4) |
+| 2026-10-18 | Where does your food go? (journey) | human body | sketchbook | suggested (batch 4) |
+| 2026-10-18 | Why is the sea salty? (mystery) | science why | riso | suggested (batch 4) |
+| 2026-10-18 | The 5 fastest animals on Earth (countdown) | nature | pixel | suggested (batch 4) |

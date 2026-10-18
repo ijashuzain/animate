@@ -9,10 +9,11 @@
   for (let i = 0; i < N; i++) { L[i] = c0[i] + (i + N < len ? c0[i + N] : 0); Rr[i] = c1[i] + (i + N < len ? c1[i + N] : 0); }
   // loudness for a phone (subagents-short): RMS-normalise to -17 dBFS, then a look-ahead limiter at -1 dBFS.
   // Stems reuse the mix's gain and gain curve, so they sum back to the mix.
+  // normIn.k alone (from the 'ref' render, music at full level) keeps the loudness of the full mix, so a quieter music bed
+  // stays quieter instead of being normalised back up; the limiter curve is then computed on this render.
   let k = normIn?.k, g = normIn?.g;
+  if (!k) { let sum = 0; for (let i = 0; i < N; i++) sum += (L[i] * L[i] + Rr[i] * Rr[i]) / 2; k = 10 ** (-17 / 20) / Math.sqrt(sum / N || 1e-12); }
   if (!g) {
-    let sum = 0; for (let i = 0; i < N; i++) sum += (L[i] * L[i] + Rr[i] * Rr[i]) / 2;
-    k = 10 ** (-17 / 20) / Math.sqrt(sum / N || 1e-12);
     const ceil = 0.89; g = new Float32Array(N);
     for (let i = 0; i < N; i++) { const p = Math.max(Math.abs(L[i]), Math.abs(Rr[i])) * k; g[i] = p > ceil ? ceil / p : 1; }
     const att = Math.exp(-1 / (0.0015 * sampleRate)), rel = Math.exp(-1 / (0.09 * sampleRate));
@@ -28,9 +29,10 @@ function wavB64(s) {
   for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
   return btoa(bin);
 }
-async function renderAudioWav() { return wavB64(await buildScore(48000, 'mix')); }
+async function mixScore() { const ref = await buildScore(48000, 'ref'); return buildScore(48000, 'mix', { k: ref.norm.k }); }
+async function renderAudioWav() { return wavB64(await mixScore()); }
 async function renderAudioStems() {
-  const mix = await buildScore(48000, 'mix');
+  const mix = await mixScore();
   const music = await buildScore(48000, 'music', mix.norm), sfx = await buildScore(48000, 'sfx', mix.norm);
   return { music: wavB64(music), sfx: wavB64(sfx) };
 }
