@@ -56,7 +56,8 @@ function sWake() {
   fShape([[330, 960], [380 + Math.sin(TT * 1.2) * 8, 520], [470, 470], [430, 560], [390, 960]], '#5e4688', { line: false });
   bug(lerp(220, 400, climb), lerp(940, 560, climb), 0.9, { walk: climb < 1 ? 1 : 0, lit: 0.25 + 0.75 * sm(TT, at(6.0), at(7.0)), key: 'wake', mood: TT > at(6.0) ? 'happy' : 'smile' });
   grassSoft(940, DUSK.grass);
-  fLens(760, 430, 160, popS(at(6.4)), () => { fSky('#2a2660'); bug(800, 560, 1.6, { lit: 1, key: 'lens', mood: 'happy' }); }, { glass: '#2a2660', handle: '#ffcf5a', rim: '#f4f1ff' });
+  for (let i = 0; i < 3; i++) { const u = sm(TT, at(7.5) + i * 1.2, at(11.5) + i * 1.2); if (u > 0 && u < 1) bug(lerp(-80, 1000, u), 300 + i * 110 + Math.sin(u * 9) * 40, 0.42, { fly: true, lit: mod(TT * 1.3 + i, 1) < 0.4 ? 1 : 0.2, key: 'pass' + i, mood: 'happy' }); }
+  fLens(760, 430, 160, popS(at(6.4)), () => { fSky('#2a2660'); bug(800, 560, 1.6, { lit: mod(TT, 1.4) < 0.6 ? 1 : 0.15, key: 'lens', mood: 'happy', pose: TT > at(8) ? 'wave' : 'stand' }); }, { glass: '#2a2660', handle: '#ffcf5a', rim: '#f4f1ff' });
   fLabel('a beetle!', 760, 220, 470, 520, at(2.6), { color: '#e2553b', fill: '#f4f1ff' });
 }
 // ---- 3. 9:00 pm: inside the lantern: luciferin + luciferase + oxygen + energy = light
@@ -130,7 +131,10 @@ function sTwist() {
   meadow({ ...NIGHT, sky0: '#24164a', sky1: '#4a2f78' }, { swarm: false });
   const t = TT - HIT, fake = mod(t, 2) < 0.3 ? 1 : 0, down = sm(TT, HIT + 4.0, HIT + 8.0);
   fShape([[300, 960], [360 + Math.sin(TT * 1.2) * 8, 700], [460, 660], [400, 740], [380, 960]], '#2f2d68', { line: false });
-  bug(400, 740, 0.85, { lit: fake, key: 'ff2', c: '#8a3e7a', mood: 'focus', hair: 'curl', dir: 1 });
+  const full = TT > HIT + 9.0, hopT = full ? HIT + 9.0 + Math.floor((TT - HIT - 9.0) / 1.4) * 1.4 : undefined;
+  bug(400, 740, 0.85, { lit: full ? 0.5 + 0.5 * Math.sin(TT * 5) : fake, key: 'ff2', c: '#8a3e7a', mood: full ? 'happy' : 'focus', hair: 'curl', dir: 1, hop: hopT, pose: full ? 'cheer' : undefined });
+  // she takes his bitter chemicals: green drops drift from the gulp to her
+  if (full) for (let i = 0; i < 5; i++) { const u = mod((TT - HIT - 9.0) * 0.45 + i / 5, 1); fCirc(lerp(520, 410, u) + Math.sin(u * 6 + i) * 30, lerp(540, 640, u) - Math.sin(u * Math.PI) * 80, 16 * (1 - u * 0.5), '#8be37a', { line: false, alpha: 1 - u * 0.6 }); }
   if (down < 1) bug(lerp(860, 540, down), lerp(260, 560, down), 0.55, { fly: true, lit: mod(t, 1.2) < 0.25 ? 1 : 0, key: 'male', mood: 'happy', dir: -1 });
   else fPop(HIT + 8.0, 520, 560, () => { for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; fNoodle([520 + Math.cos(a) * 30, 560 + Math.sin(a) * 30], [520 + Math.cos(a) * 74, 560 + Math.sin(a) * 74], 10, '#ff7aa8'); } fText('GULP', 520, 470, 70, '#ff7aa8', { align: 'center', outline: false, font: '"Baloo 2", sans-serif' }); });
   grassSoft(960);
