@@ -5,7 +5,7 @@
 //  The scene before the payoff is a 2.5 s 'silence'; the payoff scene has cut: true and mood 'full'.
 // =====================================================================
 const SCN = [
-  { key: 'hook', d: 12, tag: 'a question', mood: 'warm', focus: [500, 540], bg: '#26315f', scene: () => sHook(), card: (at) => cHook(at),
+  { key: 'hook', d: 12, tag: 'a question', mood: 'warm', focus: [500, 540], bg: '#26315f', dark: true, scene: () => sHook(), card: (at) => cHook(at),
     say: 'Replace me: the hook. One surprising question or image that the whole video answers, said in about twenty-eight words so the voice fills this scene.',
     sfx: [[2.0, 'chime']] },
   // tag follows the format (studio/formats.md); tr = the transition INTO this scene (studio/transitions.md)
@@ -15,7 +15,7 @@ const SCN = [
   { key: 'hush', d: 2.5, mood: 'silence', focus: [500, 540], bg: '#0c1124', scene: () => sHush(), card: null },
   { key: 'payoff', d: 12, tag: 'the twist', mood: 'full', cut: true, focus: [500, 540], bg: '#f3a3bf', scene: () => sPayoff(), card: (at) => cPayoff(at),
     say: 'Replace me: the payoff, the twist or the big number, landing right after the silence, with the loudest hit of the whole video under it.' },
-  { key: 'end', d: 10, tag: 'so...', mood: 'warm', focus: [500, 540], bg: '#26315f', scene: () => sHook(), card: (at) => cEnd(at),
+  { key: 'end', d: 10, tag: 'so...', mood: 'warm', focus: [500, 540], bg: '#26315f', dark: true, scene: () => sHook(), card: (at) => cEnd(at),
     say: 'Replace me: the ending, a callback to the opening image, changed by everything we learned.' },
 ];
 const HIT = SCN.slice(0, SCN.findIndex((s) => s.cut)).reduce((a, s) => a + s.d, 0);

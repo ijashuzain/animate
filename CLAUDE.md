@@ -139,7 +139,7 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 ## Tools
 | command | does |
 |---|---|
-| `node studio/tools/new-video.mjs <slug> "<Title>" <style>` | creates videos/<slug>/ from the explainer template |
+| `node studio/tools/new-video.mjs <slug> "<Title>" [style=flat]` | creates videos/<slug>/ from the explainer template (flat: soft look) |
 | `node studio/tools/smoke.mjs <slug>` | build + one frame per scene (`review/sheet.png`) + score check; exit 1 on page or audio errors |
 | `node studio/tools/vo.mjs <slug> [--check]` | voice-over: words vs window per line (SPARSE/DENSE), writes `voice/script.md` |
 | `node studio/tools/metadata.mjs <slug>` | `youtube/metadata.md` from META + chapters |
@@ -152,7 +152,7 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 | `node studio/tools/sampler.mjs <slug> [sec] [genres]` | renders the piece's score in every genre: `renders/genres.mp3` + one mp3 per genre |
 | `node studio/tools/status.mjs <slug> <stage> "<what>" "<why>"` | local status mirror |
 | `node studio/tools/cleanup.mjs [--dry-run]` | archive sources, delete generated files of finished videos |
-| `node engine/animate/tools/still.mjs videos/<slug> 3,40 out.png --scale 0.5` | look at specific frames |
+| `node engine/animate/tools/still.mjs videos/<slug> 3,40 out.png --scale 0.5` | look at specific frames (rebuilds first) |
 | `node studio/tools/anatomy-bundle.mjs` | rebuilds `studio/vendor/anatomy/anatomy.js` from the vendored anatomy sources |
 
 ## Rules that always hold
@@ -166,6 +166,12 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 - **Soft look (the user's references):** prefer `CHANNEL.look = 'soft'` with the flat style: no outlines, tone-on-tone
   palettes, Headspace-like `fBlob` characters with noodle limbs, round trees/cones/layered hills; the hero in a warm colour
   that contrasts with the scene's hue family. videos/firefly-glow (archive later) is the reference build.
+  `new-video.mjs` defaults to flat and starts flat videos from the soft template (templates/explainer/src/scenes-soft.js).
+- **Show a new look before rendering it:** when the look changes (new style, palette or the user's references), send
+  `review/sheet.png` or 2-3 frames first. A full render costs ~25 minutes.
+- **Thumbnails must read on a phone:** heavy title font, thick dark outline, dark wash behind the words (thumbnail.mjs
+  does this); THUMB.t at a moment when the hero does the hook's action; LOOK at youtube/thumbnail.png before delivering.
+- `studio/LEARNINGS.md` opens with **the user's taste**: read it first and update it after every reaction.
 - Deterministic drawing: `RNG(...)` and `B`/`TT`, never `Math.random()` or the clock. Don't fade kit textures with globalAlpha.
 - Facts are checked; claims are hedged where science is uncertain ("could", "about").
 - Never wait on a background job with `pgrep -f <pattern>` loops: the loop matches its own command line. Use `run_in_background`

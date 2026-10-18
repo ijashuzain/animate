@@ -5,6 +5,27 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## The user's taste, in one place (from every conversation so far; update it whenever they react)
+What they asked for or liked:
+- **Soft, friendly flat vector** (their references: Headspace-style blobs, tone-on-tone rooms, a flat autumn landscape):
+  no outlines, one hue family per scene, round shapes, a warm hero colour. `CHANNEL.look = 'soft'` is the default start
+  (new-video.mjs gives flat videos the soft template).
+- **Alive but calm:** parallax depth, gently animated detailed assets (trees sway, clouds drift, fish swim, smoke rises).
+- **Fonts chosen per topic** from Google Fonts, matched to the scene's colours.
+- **Peekaboo-style technique:** zoom-in lenses, cutaways, pointing labels, a sound per action.
+- **Variety:** a different format, genre and transition set per video; 10 topic ideas to pick from.
+- **Quiet music** (about 70% lower than composed); the voice leads.
+What they disliked (each one came back as a complaint):
+- **Busy texture behind words** ("not readable... you see the background"): halftone, hatching, grain.
+- **Wobble/boil** on every line, and **grainy** colour (halftone dots, pencil fills) "used a lot".
+- **The notepad/card** for the explanation: letter straight onto the scene.
+- **The first flat visuals** ("not satisfied"): hard outlines and generic shapes read as clip art. The soft look replaced them.
+- **An unreadable thumbnail:** light-outlined thin letters on a mid-tone scene.
+How they give feedback: short notes plus screenshots/reference images. YouTube links can't be opened here, so ask for
+screenshots. They don't answer every question (e.g. storybook grain): keep going on the safe default (their rules).
+Working rule from this: **when the look changes, show a contact sheet or a 2-3 frame preview before the full render**
+(one render costs ~25 minutes; a sheet costs one).
+
 ## Soft look (Oct 2026): the user's visual references
 - **User feedback: "I am not satisfied with the visuals"**, with references: Headspace-style blob characters with noodle
   limbs, tone-on-tone flat vector rooms, a flat autumn landscape (round trees, cones, layered hills), a TV cartoon.
@@ -32,8 +53,8 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   Earth spins and stop as the spin fades, water chevrons flowing to the poles. `calmField(top, bottom, box)` also takes a
   box (the night half of the frame).
 - The subtitle preview of a riso video came out 38 MB (halftone compresses badly); finish.sh now caps it at 1.5 Mbps.
-- `engine/animate/tools/still.mjs` does NOT rebuild index.html: after editing sources run smoke.mjs or build.mjs first,
-  or you debug a stale page (cost an hour on a "bug" in the riso day scene that was already fixed).
+- `engine/animate/tools/still.mjs` used to read a stale index.html (cost an hour in batch 3 and again on the firefly
+  colour). Fixed: it now rebuilds a piece dir before rendering (`--no-build` to skip).
 - Riso: plates ignore ctx transforms (rotate points yourself); bold print lettering reads over halftone only at weight 700,
   so CHANNEL.weight sets a default weight for the whole video.
 - Crosshatch: put the clue-card tag above the title (y ~82, size 44) or it overlaps.

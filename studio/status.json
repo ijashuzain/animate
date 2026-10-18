@@ -1,9 +1,9 @@
 {
   "batch": {
-    "name": "Batch 1 · 3 explainers",
+    "name": "Batch 1 \u00b7 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-18T19:11:46.855Z",
+  "updated": "2026-10-18T22:24:59.639Z",
   "videos": {
     "sea-salty": {
       "title": "Why Is the Sea Salty but Rivers Aren't?",
@@ -682,7 +682,7 @@
     {
       "t": "2026-10-12T21:58:43.894Z",
       "slug": null,
-      "note": "batch started: Batch 1 · 3 explainers"
+      "note": "batch started: Batch 1 \u00b7 3 explainers"
     }
   ]
 }

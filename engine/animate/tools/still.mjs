@@ -15,6 +15,11 @@ const fi = args.indexOf('--format'), format = fi >= 0 ? args.splice(fi, 2)[1] : 
 const [src, sec, out] = args;
 if (!src || sec == null || !out) { console.error('usage: node tools/still.mjs <piece dir | index.html> <seconds> <out.png> [--scale 0.5]'); process.exit(2); }
 const file = src.endsWith('.html') ? src : path.join(src, 'index.html');
+// a piece dir is rebuilt first, so the frame always shows the current sources (a stale index.html cost hours twice)
+if (!src.endsWith('.html') && fs.existsSync(path.join(src, 'piece.json')) && !args.includes('--no-build')) {
+  try { execSync(`"${process.execPath}" "${path.join(path.dirname(new URL(import.meta.url).pathname), 'build.mjs')}" "${src}"`, { stdio: 'pipe' }); }
+  catch (e) { console.error('build failed:', String(e.stderr || e.message)); process.exit(1); }
+}
 const browser = await chromium.launch(), page = await browser.newPage();
 page.on('pageerror', (e) => { console.error('PAGE ERROR:', e.message); process.exitCode = 1; });
 await page.goto(pathToFileURL(path.resolve(file)).href + '?export=1' + (format ? `&format=${encodeURIComponent(format)}` : ''));
