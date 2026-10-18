@@ -122,7 +122,7 @@ Live page: **https://claude.ai/artifact/N1dKeyKqmYkGV63YzWXZLw** (Artifact with 
 Write with the `ArtifactData` tool (pin `if_version` on existing docs; batch several writes). Use the real time (`date -u +%FT%TZ`).
 - `board/state`: { batch, phase, headline, updated }. Phase: topics | researching | scripting | styling | building | rendering | reviewing | packaging | done | failed
 - `board/topics`: { items: [{ id, title, hook, category, style, format, why }], picked: [ids], theme, suggestedAt, source }
-  The user can generate suggestions on the page itself ("Suggest 6 topics", optional theme; the page asks Claude via the `sample`
+  The user can generate suggestions on the page itself ("Suggest 10 topics", optional theme; the page asks Claude via the `sample`
   capability; it asks for 10) and tap up to 3 to pick. When the user says "start" / "make the picked ones", read `board/topics` and use `picked`.
 - `board/history`: { made: [titles], suggested: [titles] }: the page avoids these when suggesting. **After every batch add the
   made titles here** (and to topics/log.md).
