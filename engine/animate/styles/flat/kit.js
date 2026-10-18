@@ -86,6 +86,7 @@ function fLens(x, y, r, k, inner, o = {}) {
 }
 // a pointing label (Peekaboo): a rounded pill with a word, a leader line and a dot on the thing it names; pops at t
 function fLabel(str, x, y, tx, ty, t, o = {}) {
+  if (typeof window !== 'undefined' && window.NO_LETTERING) return;   // the thumbnail letters its own hook
   const k = popS(t); if (k <= 0) return; const size = o.size ?? 34, w = fTextW(str, size) + size * 1.1, h = size * 1.6;
   fLine([[x, y], [lerp(x, tx, Math.min(1, k)), lerp(y, ty, Math.min(1, k))]], FL.ink, 4); fCirc(tx, ty, 8 * k, o.color ?? FL.pink, { lw: 3 });
   ctx.save(); ctx.translate(x, y); ctx.scale(k, k); fRect(-w / 2, -h / 2, w, h, h / 2, o.fill ?? FL.white, { lw: 4, drop: [0, 5] }); fText(str, 0, size * 0.36, size, o.color ?? FL.ink, { align: 'center', outline: false }); ctx.restore();

@@ -14,6 +14,10 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - Palette rule for soft night scenes: everything in one hue family (purples), and the hero in a warm complementary
   colour (orange #ff8f5e). The first try had a purple hero on a purple night: it vanished.
 - Keep moving characters out of the lettering column (x < 1000): a flying bug drifted into the text at 1100.
+- **User feedback: the thumbnail was "not readable".** Cream-outlined white Comic lettering on a mid-purple scene had no
+  contrast. thumbnail.mjs now uses the video's title font (CHTF) at weight 800 with a thick dark outline (THUMB.ink) and
+  a soft dark wash behind the words (THUMB.shade). Zoom covers the whole frame (no seam at x 1000), and scene labels
+  (fLabel) hide in thumbnails. Pick THUMB.t at a moment when the hero is lit and doing the hook's action.
 - Not done yet (asked, unanswered): the textured storybook grain. Default stays grain-free (the user's rule).
 
 ## Batch 3 (Oct 2026): Earth stops spinning (riso, what-if, ambient), why we dream (sketchbook, question chain, lofi),

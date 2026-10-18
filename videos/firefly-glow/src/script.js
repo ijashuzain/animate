@@ -67,4 +67,4 @@ const META = {
   hashtags: ['#fireflies', '#nature', '#science', '#insects', '#animation'],
   tags: ['how do fireflies glow', 'fireflies', 'bioluminescence', 'luciferin', 'luciferase', 'flash code', 'femme fatale firefly', 'animated explainer'],
 };
-const THUMB = { t: 100.0, panel: '#1b2140', lines: [['A FAKE', 150, '#ffffff'], ['SIGNAL', 170, '#ffe066']] };
+const THUMB = { t: 99.6, panel: '#1b2140', zoom: 1.5, focus: [360, 640], lines: [['A FAKE', 190, '#ffffff'], ['SIGNAL', 210, '#ffe066']] };
