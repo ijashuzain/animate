@@ -72,6 +72,8 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
    - **2–4 transitions** from `studio/transitions.md` that come out of the topic and the objects on screen (`tr` per scene:
      hex tiles for bees, a drop for water, a zoom into the cell, a page turn for history...).
    Write all three choices and why into research.md.
+   **Fonts per video (the user's rule):** pick a heading font and a body font (Google Fonts in `studio/fonts`, README there)
+   that match the topic and the scene's colours (`CHANNEL.font`, `titleFont`, `labelFont`); vary them between videos.
    **No notepad/card (the user's rule):** the explanation is written and drawn straight onto the scene, in the style's own
    lettering (layout 'open'). Each video sets `CHANNEL` in src/scenes.js: font, ink colours, halo, and how its step tag looks
    (isometric: sans + mono label; sketchbook: marker on tape; cut-paper: the paper tag). Keep the whole frame one world.

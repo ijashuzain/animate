@@ -66,6 +66,9 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   fPine (sway), fCloud2 (drifts), fBirds (flap), fSea2 (two swells, crests, sparkles, depth), fFish (tail wag, fin,
   bubbles), fVolcano (smoke puffs, glowing lava), fTufts. Keep drifting things on the scene side (x < ~1000): clouds
   wrap within 1350 px in channel videos so nothing passes under the lettering.
+- **Fonts per topic** (the user's note): Google Fonts in studio/fonts (from raw.githubusercontent.com/google/fonts),
+  installed for the renderer by studio/tools/fonts.sh; channel lettering takes `CHANNEL.font` / `titleFont` / `labelFont`.
+  Sea video: Fredoka (headings, labels) + Nunito (reading lines).
 - The two LoopyLuci animation skills the user suggested were empty boilerplate (generic package/test advice, no
   animation content); removed.
 - Suggest **10** topics, not 6 (CLAUDE.md step 2, the dashboard button and its prompt).

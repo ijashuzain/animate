@@ -13,6 +13,8 @@ const FL = {
   red: '#ee4b4b', purple: '#8a6cf0', purpleD: '#6a4fd0', blue: '#3f7cf0', mint: '#7fe0c4', yellow: '#ffe066', night: '#1b2140', nightL: '#2c3560',
 };
 const FLAT_FONT = '"Inter Display", Inter, "Liberation Sans", Arial, sans-serif';
+// the scene's own lettering (labels, signs): o.font, else CHANNEL.labelFont (the video's pick), else the default
+const fFont = (o = {}) => o.font ?? ((typeof CHANNEL !== 'undefined' && CHANNEL.labelFont) || FLAT_FONT);
 // straight-edged path (core trace() rounds every corner); dense point lists (ellipses) still read as curves
 function fPath(P, closed = true) { ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]); for (let i = 1; i < P.length; i++) ctx.lineTo(P[i][0], P[i][1]); if (closed) ctx.closePath(); }
 const fSh = (c, k = 0.82) => { const h = c.replace('#', ''), n = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); return '#' + n.map((v) => Math.round(v * k).toString(16).padStart(2, '0')).join(''); };   // a darker tone of c for cel shading
@@ -37,13 +39,13 @@ function fLine(P, c = FL.ink, w = 5, o = {}) { ctx.save(); if (o.alpha != null) 
 function fArrow(x0, y0, x1, y1, c = FL.ink, w = 7) { const a = Math.atan2(y1 - y0, x1 - x0), h = w * 3.4; fLine([[x0, y0], [x1, y1]], c, w); fLine([[x1 - h * Math.cos(a - 0.55), y1 - h * Math.sin(a - 0.55)], [x1, y1], [x1 - h * Math.cos(a + 0.55), y1 - h * Math.sin(a + 0.55)]], c, w); }
 // text in the style's type; o: align, weight, frac (write-on), outline (white edge so it reads on anything)
 function fText(str, x, y, size, color = FL.ink, o = {}) {
-  ctx.save(); ctx.font = `${o.weight ?? 800} ${size}px ${FLAT_FONT}`; ctx.textAlign = o.align ?? 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.save(); ctx.font = `${o.weight ?? 800} ${size}px ${fFont(o)}`; ctx.textAlign = o.align ?? 'left'; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);
   if (frac < 1) { ctx.beginPath(); ctx.rect(x - (o.align === 'center' ? w / 2 : o.align === 'right' ? w : 0) - 6, y - size * 1.2, w * frac + 6, size * 1.8); ctx.clip(); }
   if (o.outline !== false) { ctx.lineWidth = size * 0.16; ctx.strokeStyle = o.outline ?? FL.white; ctx.lineJoin = 'round'; ctx.strokeText(str, x, y); }
   ctx.fillStyle = color; ctx.fillText(str, x, y); ctx.restore(); return w;
 }
-const fTextW = (str, size, weight = 800) => { ctx.save(); ctx.font = `${weight} ${size}px ${FLAT_FONT}`; const w = ctx.measureText(str).width; ctx.restore(); return w; };
+const fTextW = (str, size, weight = 800, o = {}) => { ctx.save(); ctx.font = `${weight} ${size}px ${fFont(o)}`; const w = ctx.measureText(str).width; ctx.restore(); return w; };
 // a face for anything (Peekaboo: things have faces). s = scale (1 = for a ~60 px wide thing). mood: smile, happy, wow, sad, focus, sleep, ouch
 function fFace(x, y, s = 1, mood = 'smile', key = 'f', o = {}) {
   const blink = mood !== 'sleep' && (B + key.length * 7) % 47 < 2, ex = 13 * s, ey = -4 * s, lx = (o.look ?? [0, 0])[0] * 3 * s, ly = (o.look ?? [0, 0])[1] * 3 * s;

@@ -41,6 +41,8 @@ window.TIMELINE = TIMELINE;
 const CHL = Object.assign({ layout: 'open', font: null, halo: 'rgba(255,255,255,0.72)', haloDark: 'rgba(10,14,30,0.6)', inkDark: '#fbf6ea' }, typeof CHANNEL !== 'undefined' ? CHANNEL : {});
 let CH_HALO = null;   // the halo behind lettering written on the scene (open layout), set per scene by drawCard
 const CHF = () => CHL.font ?? HAND;
+// a second family for headings (title, big numbers, stamps): CHANNEL.titleFont (+ titleWeight); falls back to the body font
+const CHTF = () => CHL.titleFont ?? CHF(), CHTW = () => CHL.titleWeight ?? 700;
 const CH = { paper: '#fbf6ea', ink: '#2a1d18', accent: '#c4542e', accentL: '#ec7a4f', tag: '#f6cf55', green: '#3d7c46', blue: '#2a58c8', line: 'rgba(90,130,190,0.16)', tape: 'rgba(240,230,190,0.85)' };
 Object.assign(CH, CHL.colors || {});   // a piece's lettering colours (e.g. isometric: grey ink, the dark accent)
 function chShape(P, fill, o = {}) {   // a paper shape: a slightly wobbly, torn edge, a soft shadow, a little grain
@@ -62,7 +64,7 @@ function chText(str, x, y, size, color = CH.ink, o = {}) {   // hand lettering, 
   ctx.save();
   const R = RNG('cht', o.key ?? str, BW);
   ctx.translate(x + R.n(0.6), y + R.n(0.6)); ctx.rotate((o.rot ?? 0) + R.n(0.005));
-  ctx.font = `${o.weight ?? CHL.weight ?? 400} ${size}px ${CHF()}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+  ctx.font = `${o.weight ?? CHL.weight ?? 400} ${size}px ${o.font ?? CHF()}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);
   if (frac > 0) {
     if (frac < 1) { ctx.beginPath(); ctx.rect(-4, -size * 1.2, w * frac + 4, size * 1.7); ctx.clip(); }
@@ -72,7 +74,7 @@ function chText(str, x, y, size, color = CH.ink, o = {}) {   // hand lettering, 
   ctx.restore();
   return w;
 }
-function chTextW(str, size, weight = CHL.weight ?? 400) { ctx.save(); ctx.font = `${weight} ${size}px ${CHF()}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
+function chTextW(str, size, weight = CHL.weight ?? 400, font) { ctx.save(); ctx.font = `${weight} ${size}px ${font ?? CHF()}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
 function chTag(str, x, y, size, o = {}) {   // a torn paper tag with lettering (and tape)
   const s = o.s ?? 1; if (s <= 0.01) return;
   const w = chTextW(str, size, o.weight ?? 400) + size * 0.9, h = size * 1.45;
@@ -106,10 +108,10 @@ function drawCard(i) {
   ctx.restore();
 }
 // ---- card helpers (screen coords)
-const write = (str, x, y, size, t, o = {}) => chText(str, x, y, size, o.color ?? CH.ink, { key: o.key ?? str + x + y, frac: ev(t, o.d ?? Math.min(1.2, 0.04 * str.length + 0.3)), weight: o.weight });
+const write = (str, x, y, size, t, o = {}) => chText(str, x, y, size, o.color ?? CH.ink, { key: o.key ?? str + x + y, frac: ev(t, o.d ?? Math.min(1.2, 0.04 * str.length + 0.3)), weight: o.weight, font: o.font });
 function popAt(t, x, y, fn, sc = 1) { const k = popS(t); if (k <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(k * sc, k * sc); fn(); ctx.restore(); }
-function title(str, t) { write(str, CL, CARD_Y + 130, 62, t, { weight: 700 }); ink([[CL, CARD_Y + 158], [CL + Math.min(740, chTextW(str, 62, 700)), CARD_Y + 154]], { w: 5, color: CH.accent, frac: ev(t + 0.4, 0.5), key: 'ul' + str }); }
-function bigNum(str, sub, x, y, t, color = CH.accent, size = 96) { popAt(t, x, y, () => { chText(str, -chTextW(str, size, 700) / 2, 0, size, color, { key: 'bn' + str, weight: 700 }); if (sub) chText(sub, -chTextW(sub, 40) / 2, 58, 40, CH.ink, { key: 'bs' + sub }); }); }
+function title(str, t) { write(str, CL, CARD_Y + 130, 62, t, { weight: CHTW(), font: CHTF() }); ink([[CL, CARD_Y + 158], [CL + Math.min(740, chTextW(str, 62, CHTW(), CHTF())), CARD_Y + 154]], { w: 5, color: CH.accent, frac: ev(t + 0.4, 0.5), key: 'ul' + str }); }
+function bigNum(str, sub, x, y, t, color = CH.accent, size = 96) { popAt(t, x, y, () => { chText(str, -chTextW(str, size, CHTW(), CHTF()) / 2, 0, size, color, { key: 'bn' + str, weight: CHTW(), font: CHTF() }); if (sub) chText(sub, -chTextW(sub, 40) / 2, 58, 40, CH.ink, { key: 'bs' + sub }); }); }
 function arrow(x1, y1, x2, y2, t, color = CH.ink, key = 'ar', w = 6) {
   const f = ev(t, 0.5); if (f <= 0) return;
   const ex = lerp(x1, x2, f), ey = lerp(y1, y2, f), a = Math.atan2(y2 - y1, x2 - x1);
@@ -124,10 +126,10 @@ function cbox(x, y, w, h, c, key, o = {}) { return chShape(rrectPts(x - w / 2, y
 // ---- format helpers (studio/formats.md): lettering for the different ways a video can be told
 // a rubber stamp (MYTH / FACT / TRUE / CASE CLOSED / DAY 3), popped on with a little overshoot
 function stamp(str, x, y, t, color = CH.accent, o = {}) {
-  const k = popS(t); if (k <= 0) return; const size = o.size ?? 64, w = chTextW(str, size, 700) + size * 0.8, h = size * 1.35;
+  const k = popS(t); if (k <= 0) return; const size = o.size ?? 64, w = chTextW(str, size, CHTW(), CHTF()) + size * 0.8, h = size * 1.35;
   ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot ?? -0.12); ctx.scale(k * (1 + 0.6 * Math.max(0, 1 - (TT - t) * 6)), k * (1 + 0.6 * Math.max(0, 1 - (TT - t) * 6)));
   ctx.strokeStyle = color; ctx.lineWidth = size * 0.09; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.rect(-w / 2, -h / 2, w, h); ctx.stroke();
-  chText(str, -w / 2 + size * 0.4, size * 0.36, size, color, { key: 'stp' + str, weight: 700, halo: false }); ctx.restore();
+  chText(str, -w / 2 + size * 0.4, size * 0.36, size, color, { key: 'stp' + str, weight: CHTW(), font: CHTF(), halo: false }); ctx.restore();
 }
 // a rank badge for countdowns (#5 ... #1)
 function rank(n, x, y, t, color = CH.accent, size = 120) { popAt(t, x, y, () => { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, size * 0.62, 0, TAU); ctx.fill(); chText('#' + n, -chTextW('#' + n, size * 0.7, 700) / 2, size * 0.25, size * 0.7, '#fffaf0', { key: 'rk' + n, weight: 700, halo: false }); }); }

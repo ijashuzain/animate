@@ -4,7 +4,8 @@
 //  with faces, a lens into the river water, labels that point, a pop (and a sound) for each new thing.
 //  Colour means one thing: blue = water, white cubes with faces = salt, yellow = the Sun, pink = the clue / the answer.
 // =====================================================================
-const CHANNEL = { font: FLAT_FONT, weight: 800, halo: 'rgba(255,255,255,0.75)', haloDark: 'rgba(15,49,87,0.65)', inkDark: '#ffffff',
+// fonts (studio/fonts): Fredoka for headings and the scene's labels (round, bubbly, like water), Nunito for the reading lines
+const CHANNEL = { font: '"Nunito", sans-serif', weight: 700, titleFont: '"Fredoka", sans-serif', titleWeight: 600, labelFont: '"Fredoka", sans-serif', halo: 'rgba(255,255,255,0.75)', haloDark: 'rgba(15,49,87,0.65)', inkDark: '#ffffff',
   colors: { ink: '#232634', accent: '#e8427a', green: '#3c9a52', blue: '#1d78ad' },
   tag: (str, k) => { const w = fTextW(str, 40) + 48; ctx.save(); ctx.translate(CL + w / 2, 104); ctx.scale(k, k); fRect(-w / 2, -30, w, 60, 30, FL.sun, { lw: 4, drop: [0, 5] }); fText(str, 0, 14, 40, FL.ink, { align: 'center', outline: false }); ctx.restore(); } };
 // a salt grain: a little white cube with a face. Grains stay still unless something carries them (no idle jitter)

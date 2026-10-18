@@ -5,6 +5,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { build, withPage, vdir } from './lib.mjs';
+import { spawnSync } from 'node:child_process';
+spawnSync('bash', [new URL('./fonts.sh', import.meta.url).pathname]);   // the studio fonts for the renderer
 const [slug, frac = '0.6'] = process.argv.slice(2);
 if (!slug) { console.error('usage: node studio/tools/smoke.mjs <slug> [frac]'); process.exit(2); }
 if (!build(slug)) process.exit(1);

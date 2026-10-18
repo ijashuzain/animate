@@ -6,6 +6,7 @@
 set -u
 SLUG=$1; MODE=${2:-}
 ROOT=$(cd "$(dirname "$0")/../.." && pwd); cd "$ROOT"
+bash studio/tools/fonts.sh   # the studio Google Fonts for the renderer (fresh containers)
 E=engine/animate/tools; V=videos/$SLUG; R=$V/renders
 st() { node studio/tools/status.mjs "$SLUG" "$1" "$2" "$3" >/dev/null; }
 node $E/build.mjs $V | tail -1 || exit 1
