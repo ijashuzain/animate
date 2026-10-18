@@ -3,25 +3,25 @@
     "name": "Batch 1 · 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-18T08:43:04.071Z",
+  "updated": "2026-10-18T09:01:43.049Z",
   "videos": {
     "sea-salty": {
       "title": "Why Is the Sea Salty but Rivers Aren't?",
       "style": "riso",
-      "stage": "rendering",
-      "detail": "Rendering frames, the score and its stems (4 workers)",
-      "why": "Frames are drawn in a headless browser; the score is synthesized offline",
-      "progress": 0.625,
-      "updated": "2026-10-18T08:43:04.071Z"
+      "stage": "done",
+      "detail": "Ready: videos/sea-salty/renders/sea-salty-1080p.mp4, voice/script.md, youtube/",
+      "why": "Delivered; generated files stay until the next batch's cleanup",
+      "progress": 1,
+      "updated": "2026-10-18T09:01:42.892Z"
     },
     "onion-tears": {
       "title": "Why Do Onions Make You Cry?",
       "style": "cut-paper",
-      "stage": "researching",
-      "detail": "Folder created from the explainer template",
-      "why": "Every fact on screen gets checked before any drawing",
-      "progress": 0,
-      "updated": "2026-10-18T08:07:01.799Z"
+      "stage": "rendering",
+      "detail": "Rendering frames, the score and its stems (4 workers)",
+      "why": "Frames are drawn in a headless browser; the score is synthesized offline",
+      "progress": 0.625,
+      "updated": "2026-10-18T09:01:43.049Z"
     },
     "firefly-glow": {
       "title": "How Do Fireflies Glow Without Getting Hot?",
@@ -34,6 +34,26 @@
     }
   },
   "log": [
+    {
+      "t": "2026-10-18T09:01:43.049Z",
+      "slug": "onion-tears",
+      "note": "onion-tears: rendering (Rendering frames, the score and its stems (4 workers))"
+    },
+    {
+      "t": "2026-10-18T09:01:42.892Z",
+      "slug": "sea-salty",
+      "note": "sea-salty: done (Ready: videos/sea-salty/renders/sea-salty-1080p.mp4, voice/script.md, youtube/)"
+    },
+    {
+      "t": "2026-10-18T08:58:54.535Z",
+      "slug": "sea-salty",
+      "note": "sea-salty: packaging (Share copy (< 30 MB), subtitle preview, voice-over script, metadata, thumbnail)"
+    },
+    {
+      "t": "2026-10-18T08:57:20.130Z",
+      "slug": "sea-salty",
+      "note": "sea-salty: reviewing (Measured checks: cuts on the beat, story arc loudness, text overlaps, dead beats)"
+    },
     {
       "t": "2026-10-18T08:43:04.071Z",
       "slug": "sea-salty",
