@@ -141,8 +141,11 @@ function cCode(at) {
 // ---- 6. 10:00 pm: how efficient? 4 in 10 (2008, not "almost all"); still far cooler than a bulb
 function sCold() {
   night({ swarm: false, moon: true });
-  for (let i = 0; i < 10; i++) { const lit = i < 4 && TT > at(4.4) + i * 0.25, x = 120 + (i % 5) * 150, y = 420 + Math.floor(i / 5) * 160; fPop(at(1.4) + i * 0.08, x, y, () => { if (lit) glow(x, y, 80, 1); fCirc(x, y, 40, lit ? GLOW : '#3b4570', { lw: 4 }); if (lit) fFace(x, y, 0.55, 'happy', 'ph' + i, { blush: false }); }); }
+  for (let i = 0; i < 10; i++) { const lit = i < 4 && TT > at(4.4) + i * 0.25 && (TT < at(6.0) || Math.floor((TT - at(6.0)) * 2) % 4 === i || Math.floor((TT - at(6.0)) * 2) % 8 >= 4), x = 120 + (i % 5) * 150, y = 420 + Math.floor(i / 5) * 160; fPop(at(1.4) + i * 0.08, x, y, () => { if (lit) glow(x, y, 80, 1); fCirc(x, y, 40, lit ? GLOW : '#3b4570', { lw: 4 }); if (lit) fFace(x, y, 0.55, 'happy', 'ph' + i, { blush: false }); }); }
   fPop(at(8.6), 780, 860, () => { thermo(260, 900, 0.15, O2); thermo(780, 900, 0.9); });
+  fPop(at(10.4), 640, 760, () => bulb(640, 760, 0.7));
+  { const u = mod((TT - at(0)) * 0.09, 1); firefly(lerp(-100, 1050, u), 260 + Math.sin(TT * 1.4) * 40, 0.7, { fly: true, lit: Math.sin(TT * 3) > 0 ? 1 : 0.2, key: 'cx' }); }
+  if (TT > at(2.4)) fPop(at(2.4), 840, 420, () => { fText('88%?', 840, 440, 64, '#c9c3e6', { align: 'center' }); if (TT > at(4.4)) fLine([[760, 420], [920, 400]], HEAT, 10); });
   fLabel('4 in 10 make a flash', 500, 240, 270, 380, at(4.8), { color: GLOWD });
 }
 function cCold(at) {
@@ -155,11 +158,11 @@ function cCold(at) {
 // ---- 7. 10:30 pm: danger: bats, frogs, spiders; many fireflies taste bitter
 function sDanger() {
   night({ swarm: false });
-  const bx = lerp(1100, -200, mod((TT - at(0)) * 0.12, 1)), by = 260 + Math.sin(TT * 2) * 40, w = Math.sin(TT * 10) * 30;
+  const bx = lerp(1150, -250, mod((TT - at(0)) * 0.22, 1)), by = 260 + Math.sin(TT * 2) * 60, w = Math.sin(TT * 10) * 30;
+  { const d = sm(TT, at(4.0), at(5.6)) * 260 - sm(TT, at(10.0), at(11.4)) * 220; fLine([[820, 90], [820, 300 + d]], 'rgba(230,235,255,0.7)', 2.5); fCirc(820, 300 + d, 28, '#2a1f3a', { lw: 3 }); for (const k of [-1, 1]) for (let j = 0; j < 3; j++) fLine([[820 + k * 20, 300 + d - 8 + j * 10], [820 + k * 46, 300 + d - 20 + j * 16]], '#2a1f3a', 4); fFace(820, 302 + d, 0.42, 'focus', 'spider', { blush: false }); }
   fShape([[bx, by], [bx - 70, by - 30 - w], [bx - 120, by + 10 - w * 0.5], [bx - 80, by + 10], [bx - 40, by + 30], [bx, by + 20], [bx + 40, by + 30], [bx + 80, by + 10], [bx + 120, by + 10 - w * 0.5], [bx + 70, by - 30 - w]], '#2a1f3a', { lw: 4, line: '#110b1c' }); fFace(bx, by + 8, 0.6, 'focus', 'bat', { blush: false });
   for (let k = 0; k < 6; k++) fLine([[960, 80], [960 - 260 * Math.cos(k * 0.3), 80 + 260 * Math.sin(k * 0.3)]], 'rgba(230,235,255,0.6)', 2.5);
   for (let r = 1; r <= 4; r++) fLine(arcPts(960, 80, r * 60, Math.PI * 0.5, Math.PI, 10), 'rgba(230,235,255,0.6)', 2.5);
-  fCirc(820, 300, 24, '#2a1f3a', { lw: 3 }); fFace(820, 300, 0.4, 'focus', 'spider', { blush: false });
   fCirc(330, 860, 140, '#3f8a5c', { ry: 40, lw: 4 });
   const spit = TT > at(9.0); fCirc(330, 790, 80, '#6cc56a', { ry: 60, lw: 5, shade: [-10, -10] }); for (const k of [-1, 1]) fCirc(330 + k * 40, 740, 24, '#6cc56a', { lw: 4 }); fFace(330, 770, 1.1, spit ? 'ouch' : 'focus', 'frog');
   const fx = spit ? 420 + sm(TT, at(9.0), at(10.0)) * 200 : 460, fy = spit ? 700 - sm(TT, at(9.0), at(10.0)) * 200 : 700;
@@ -201,12 +204,13 @@ function cTwist(at) {
 // ---- 10. 6:00 am: dawn; the lanterns go dark
 function sEnd() {
   fSky('#ffb88a', '#ffe7c2');
-  fLayer(0.05, () => { fSun(480, 720, 110, { mood: 'happy' }); });
+  fLayer(0.05, () => { fSun(480, 760 - sm(TT, at(0.5), at(11.5)) * 200, 110, { mood: 'happy' }); });
+  for (let i = 0; i < 6; i++) { const R = RNG('dg', i), x = R.r(80, 920), y = R.r(560, 820), f = 1 - sm(TT, at(1.0) + i * 1.3, at(2.0) + i * 1.3); glow(x, y, 40, f * 0.9); }
   fLayer(0.12, () => fShape([[-200, 700], [150, 560], [420, 640], [700, 540], [1000, 640], [2200, 620], [2200, 1100], [-200, 1100]], '#9a8fc4', { lw: 4 }));
   fLayer(0.3, () => { for (const [x, sc] of [[70, 1.4], [200, 1.1], [760, 1.3], [900, 1.0]]) fPine(x, 760, sc); fShape([[-200, 760], [400, 730], [1000, 760], [2200, 750], [2200, 1100], [-200, 1100]], '#6cb07a', { lw: 4 }); });
   fShape([[540, 960], [610 + Math.sin(TT * 1.2) * 8, 640], [640, 960]], '#4ba552', { lw: 4 });
   firefly(615, 690, 1.2, { lit: 0.15, key: 'end', mood: 'sleep', rot: -1.3, face: false });
-  fBirds(150, 260, 3, { speed: 40 });
+  fBirds(150, 260, 3, { speed: 40 }); if (TT > at(5.0)) fBirds(-200 + (TT - at(5.0)) * 70, 340, 4, { speed: 0 });
   grass(960, '#4ba552');
 }
 function cEnd(at) {

@@ -61,8 +61,10 @@ function sEvidence() {
   fShape([[gx - 104, gy - 150], [gx + 104, gy - 150], [gx + 91, gy + 194], [gx - 91, gy + 194]], FL.sea, { line: false, shade: [14, 0], shc: FL.seaD });
   for (let i = 0; i < 7; i++) { const R = RNG('ev', i), x = gx - 60 + R.r(0, 120), y = lerp(gy - 120, gy + 160 - (i % 3) * 30, EZ.o3(f)); grain(x, y, 0.55, 'eg' + i); }
   fLabel('3.5% salt', gx, gy - 260, gx, gy - 160, at(1.6), { color: FL.pink });
-  const lx0 = 430, base = 900, k = ev(at(8.6), 2.2), hgt = 380 * k, bx = 790;
-  fRect(bx, base - 400, 130, 400, 6, FL.blue, { shade: [16, 0], lw: 6 }); for (let r = 0; r < 12; r++) for (let c = 0; c < 3; c++) fRect(bx + 16 + c * 38, base - 382 + r * 32, 22, 18, 3, FL.yellow, { lw: 2.5 });
+  const lx0 = 430, base = 900, k = ev(at(7.0), 2.6), hgt = 380 * k, bx = 790;
+  fHero(lerp(-80, 120, sm(TT, at(3.0), at(5.0))), 830, 44, { mood: TT > at(9.0) ? 'wow' : 'smile', look: [1, -0.4], hop: at(9.0) });
+  fPop(at(5.0), bx + 65, base, () => { fRect(bx, base - 400, 130, 400, 6, FL.blue, { shade: [16, 0], lw: 6 }); for (let r = 0; r < 12; r++) for (let c = 0; c < 3; c++) fRect(bx + 16 + c * 38, base - 382 + r * 32, 22, 18, 3, FL.yellow, { lw: 2.5 }); });
+  fLabel('40 storeys', 860, 400, 855, 520, at(6.0), { color: FL.blue });
   if (k > 0) { fShape([[lx0, base - hgt + 10], [lx0 + 300, base - hgt - 6], [lx0 + 540, base - hgt + 8], [lx0 + 540, base], [lx0, base]], FL.white, { lw: 6, shade: [0, -14], shc: '#dfe6ee' }); for (let i = 0; i < 4; i++) grain(lx0 + 70 + i * 120, base - hgt * 0.5, 0.75, 'lg' + i); }
   if (k > 0.6) fLabel('166 m of salt', 600, base - hgt - 70, 600, base - hgt + 10, at(10.4), { color: FL.pink });
 }
@@ -101,10 +103,12 @@ function sRivers() {
   const P = [[-60, 820], [160, 850], [320, 800], [500, 870], [700, 830], [1000, 880], [1300, 860], [2000, 900]];
   river(P, 70); for (const [x, y, sc] of [[80, 760, 0.8], [600, 780, 0.9], [900, 770, 0.7]]) fTree(x, y, sc, { fruit: x === 600 ? FL.red : null }); fTufts(200, 520, 760, 5);
   for (let i = 0; i < 5; i++) { const [x, y] = along(P.slice(0, 6), mod(TT * 0.06 + i / 5, 1)); grain(x, y - 6, 0.5, 'rvg' + i); }
-  fLens(420, 400, 175, popS(at(1.6)), () => {
-    fRect(240, 220, 360, 360, 0, FL.sea, { line: false });
-    [['Na', 0], ['Cl', 1], ['Ca', 2], ['Cl', 3]].forEach(([sym, i]) => { const x = 330 + (i % 2) * 170 + Math.sin(TT * 0.9 + i) * 10, y = 330 + Math.floor(i / 2) * 150 + Math.cos(TT * 0.8 + i) * 8; grain(x, y, 1.1, 'ion' + i, { c: i % 2 ? FL.pinkL : FL.white }); fText(sym, x, y + 52, 28, FL.ink, { align: 'center' }); });
+  const lxx = lerp(330, 620, sm(TT, at(3.0), at(12.0)));
+  fLens(lxx, 400, 175, popS(at(1.6)), () => {
+    fRect(lxx - 180, 220, 360, 360, 0, FL.sea, { line: false });
+    [['Na', 0], ['Cl', 1], ['Ca', 2], ['Cl', 3]].forEach(([sym, i]) => { const k = popS(at(2.6) + i * 1.6); if (k <= 0) return; const x = lxx - 90 + (i % 2) * 170 + Math.sin(TT * 0.9 + i) * 10, y = 330 + Math.floor(i / 2) * 150 + Math.cos(TT * 0.8 + i) * 8; ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y); grain(x, y, 1.1, 'ion' + i, { c: i % 2 ? FL.pinkL : FL.white }); fText(sym, x, y + 52, 28, FL.ink, { align: 'center' }); ctx.restore(); });
   }, { glass: FL.sea });
+  { const u = clamp((TT - at(10.2)) / 1.4); if (u > 0 && u < 1) fFish(200 + u * 160, 830 - Math.sin(u * Math.PI) * 160, 0.5, { c: FL.orange, bubbles: false }); }
   fLabel('a pinch of salt', 760, 600, 640, 830, at(8.0), { color: FL.pink });
 }
 function cRivers(at) {

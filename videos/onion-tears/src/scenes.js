@@ -62,8 +62,8 @@ function sHook(o = {}) {
   kitchen({ pot: true }); board(300, 760);
   const chop = Math.max(0, Math.sin(TT * 7)) * (o.end ? 0 : 1);
   if (o.end) onion(240, 690, 0.8, { mood: 'happy', key: 'onE' }); else { halfOnion(220, 735, 0.75); onion(330, 680, 0.75, { mood: TT > at(4.6) ? 'focus' : 'smile', key: 'onH' }); knife(390, 740 - 34, -0.25 - chop * 0.2, chop); }
-  cook(560, 600, 80, { mood: o.end ? 'happy' : TT > at(2.4) ? 'sad' : 'smile', tears: o.end ? 0 : sm(TT, at(2.0), at(3.4)), arms: o.end ? [0.8, 2.6] : [2.4, 0.8] });
-  if (o.end) { fRect(640, 690, 120, 70, 10, '#8ec5ff', { lw: 5 }); fShape([[680, 690], [700, 650], [720, 690]], FL.white, { lw: 4 }); }
+  cook(560, 600, 80, { mood: o.end ? 'happy' : TT > at(2.4) ? 'sad' : 'smile', tears: o.end ? 0 : sm(TT, at(2.0), at(3.4)), arms: o.end ? (mod(TT - at(0), 3) < 1.5 ? 'wave' : [0.8, 2.6]) : [2.4, 0.8], hop: o.end ? at(0) + Math.floor((TT - at(0)) / 3) * 3 + 1 : null });
+  if (o.end) { fRect(640, 690, 120, 70, 10, '#8ec5ff', { lw: 5 }); fShape([[680, 690], [700, 650], [720, 690]], FL.white, { lw: 4 }); for (const t of [at(3.0), at(6.0), at(9.0)]) { const u = clamp((TT - t) / 1.2); if (u > 0 && u < 1) fShape([[690, 650 - u * 160], [710, 610 - u * 160], [730, 650 - u * 160]], FL.white, { lw: 3.5, alpha: 1 - u }); } for (const t of [at(2.0), at(5.5), at(8.5)]) fPop(t, 300, 560, () => { if (TT < t + 1.2) fText('♥', 300 + (TT - t) * 30, 600 - (TT - t) * 80, 54, FL.pink, { align: 'center' }); }); }
   if (!o.end) { for (let i = 0; i < 3; i++) { const u = mod(TT * 0.4 + i / 3, 1); wisp(330 + i * 40 + u * 120, 640 - u * 160, 0.55, 'hw' + i); } fLabel('your eyes!', 380, 420, 540, 585, at(4.6), { color: FL.pink }); }
 }
 function cHook(at) {
@@ -171,6 +171,10 @@ function sDefence() {
   const vx = lerp(1000, 560, sm(TT, at(1.4), at(6.6))) + (TT > at(7.2) ? sm(TT, at(7.2), at(8.4)) * 260 : 0);
   fShape([[1000, 650], [vx + 40, 605], [vx + 40, 680]], '#7d5536', { line: false });
   vole(vx, 640, 1.0, TT > at(7.2) ? 'ouch' : 'happy');
+  if (TT > at(1.4) && TT < at(6.6)) for (let i = 0; i < 6; i++) { const u = mod(TT * 1.6 + i / 6, 1); fCirc(vx + 80 + u * 90, 640 - Math.sin(u * Math.PI) * 70 + u * 30, 9 - u * 4, '#7d5536', { lw: 2.5 }); }
+  fPop(at(4.4), 400, 420, () => fText('!', 400, 470, 110, FL.pink, { align: 'center' }));
+  if (TT > at(9.0)) for (let i = 0; i < 4; i++) { const u = mod(TT * 0.35 + i / 4, 1); wisp(430 + i * 40, 560 - u * 300, 0.55, 'up' + i, 'happy'); }
+  fPop(at(10.6), 250, 760, () => fLabel('phew', 250, 760, 360, 640, at(10.6), { color: '#3c9a52' }));
   if (TT > at(7.0)) for (let i = 0; i < 5; i++) { const u = clamp((TT - at(7.0)) / 1.6), a = i / 5 * TAU; wisp(470 + Math.cos(a) * 140 * u, 600 + Math.sin(a) * 90 * u, 0.6, 'dw' + i, 'wow'); }
   fLabel('a hungry vole', 820, 860, vx, 640, at(2.4), { color: '#6b4a30' });
 }
@@ -185,8 +189,10 @@ function cDefence(at) {
 // ---- 7. so what helps? chill it, a sharp knife, a fan
 function sTips() {
   kitchen(); board(330, 760); halfOnion(300, 735, 0.7);
+  if (TT > at(1.6)) for (let i = 0; i < 8; i++) { const R = RNG('sn', i), u = mod(TT * 0.25 + i / 8, 1), x = R.r(40, 320) + Math.sin(u * 6 + i) * 12, y = 200 + u * 380; for (let a = 0; a < 3; a++) { const an = a * Math.PI / 3; fLine([[x - Math.cos(an) * 9, y - Math.sin(an) * 9], [x + Math.cos(an) * 9, y + Math.sin(an) * 9]], '#8ec5ff', 3.5); } }
+  if (TT > at(6.4) && TT < at(9.0)) { const c = Math.max(0, Math.sin((TT - at(6.4)) * 6)); for (let i = 0; i < Math.floor((TT - at(6.4)) * 1.5); i++) fRect(250 + i * 26, 726, 18, 22, 6, FLESH, { lw: 3 }); knife(330, 706, -0.2, c); }
   fPop(at(1.6), 170, 420, () => { fRect(70, 240, 200, 300, 20, '#e9f4fb', { lw: 6, shade: [18, 0] }); fLine([[70, 340], [270, 340]], FL.ink, 5); fRect(240, 270, 12, 50, 6, '#b8c4d0', { lw: 3 }); onion(170, 460, 0.45, { mood: 'sleep', key: 'onC' }); for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3; fLine([[170 - Math.cos(a) * 30, 290 - Math.sin(a) * 30], [170 + Math.cos(a) * 30, 290 + Math.sin(a) * 30]], '#5ab6f0', 6); } });
-  fPop(at(5.2), 480, 520, () => { knife(420, 560, -0.15, 0); const k = Math.max(0, Math.sin(TT * 3)); fLine([[560, 470 - 20 * k], [560, 470 + 20 * k]], FL.white, 6); fLine([[540 - 20 * k, 490], [580 + 20 * k, 490]], FL.white, 6); });
+  fPop(at(5.2), 480, 520, () => { if (TT < at(6.4) || TT > at(9.0)) knife(420, 560, -0.15, 0); const k = Math.max(0, Math.sin(TT * 3)); fLine([[560, 470 - 20 * k], [560, 470 + 20 * k]], FL.white, 6); fLine([[540 - 20 * k, 490], [580 + 20 * k, 490]], FL.white, 6); });
   fPop(at(9.2), 800, 520, () => { fRect(780, 560, 40, 180, 10, '#8a96a8', { lw: 5 }); fCirc(800, 500, 90, '#cfe8f7', { lw: 6 }); for (let i = 0; i < 3; i++) { const a = TT * 9 + i * TAU / 3; fShape([[800, 500], [800 + Math.cos(a - 0.35) * 80, 500 + Math.sin(a - 0.35) * 80], [800 + Math.cos(a + 0.35) * 80, 500 + Math.sin(a + 0.35) * 80]], '#5ab6f0', { lw: 4 }); } fCirc(800, 500, 14, FL.ink, { line: false }); for (let i = 0; i < 3; i++) { const u = mod(TT * 0.8 + i / 3, 1); wisp(680 - u * 300, 420 + i * 40, 0.45, 'tw' + i, 'happy'); } });
   cook(620, 660 - 60, 60, { mood: 'happy', tears: 0, arms: [0.6, 2.4] });
 }
