@@ -46,3 +46,13 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-18 | Where does your food go? (journey) | human body | sketchbook | suggested (batch 4) |
 | 2026-10-18 | Why is the sea salty? (mystery) | science why | riso | suggested (batch 4) |
 | 2026-10-18 | The 5 fastest animals on Earth (countdown) | nature | pixel | suggested (batch 4) |
+| 2026-10-18 | How does a 400-tonne plane stay in the air? (journey) | tech | isometric + machines | suggested (batch 4, set 2) |
+| 2026-10-18 | Why do onions make you cry? (question chain) | science why | sketchbook | suggested (batch 4, set 2) |
+| 2026-10-18 | The Great Emu War, 1932 (versus) | history | cut-paper | suggested (batch 4, set 2) |
+| 2026-10-18 | How a microwave really heats food (myth vs fact) | tech | crosshatch + machines | suggested (batch 4, set 2) |
+| 2026-10-18 | What if you fell through a hole in the Earth? (what if) | space / what if | math | suggested (batch 4, set 2) |
+| 2026-10-18 | Why do some volcanoes explode and others ooze? (process) | nature / earth | cut-paper | suggested (batch 4, set 2) |
+| 2026-10-18 | 5 times countries printed too much money (countdown) | money / history | riso | suggested (batch 4, set 2) |
+| 2026-10-18 | How do fireflies glow without getting hot? (day in the life) | nature | sketchbook | suggested (batch 4, set 2) |
+| 2026-10-18 | From Pong to today: video games (timeline) | tech history | pixel | suggested (batch 4, set 2) |
+| 2026-10-18 | How deep is the ocean? (scale journey) | nature / scale | riso | suggested (batch 4, set 2) |
