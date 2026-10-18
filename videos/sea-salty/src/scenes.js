@@ -18,15 +18,26 @@ function mountains(o = {}) {
   fShape([[255, 400], [330, 300], [400, 405], [365, 385], [330, 420], [295, 390]], FL.white, { lw: 5 });   // snow cap
   if (o.grass !== false) fShape([[-60, 860], [300, 820], [560, 830], [700, 900], [720, 1150], [-60, 1150]], FL.grass, { shade: [0, -12], shc: FL.grassD, lw: 6 });
 }
+// the coast in three depths: far range + clouds, mid hills with pines + birds, near mountain/river/beach/sea
+function backdrop(o = {}) {
+  fLayer(0.12, () => { fMountain(130, 760, 520, 330, { c: '#a9bfd6', snow: 0.3, lw: 4 }); fMountain(520, 760, 600, 400, { c: '#b7c9de', snow: 0.3, lw: 4 }); fMountain(900, 760, 480, 300, { c: '#a9bfd6', snow: 0.3, lw: 4 }); });
+  fLayer(0.2, () => { fCloud2(150, 160, 0.9, { speed: 8 }); fCloud2(720, 230, 1.2, { speed: 12 }); });
+  fLayer(0.4, () => { fShape([[-200, 820], [100, 700], [380, 760], [700, 690], [1000, 770], [2200, 760], [2200, 1100], [-200, 1100]], '#7fcf86', { lw: 5, shade: [0, -14], shc: '#68b872' }); for (const [x, sc] of [[60, 0.9], [150, 1.1], [610, 0.8], [700, 1]]) fPine(x, 760 - (x > 500 ? 40 : 10), sc); fBirds(200, 260, 3, { speed: 30 }); });
+}
+function nearMountain() { fMountain(320, 900, 720, 600, { peak: 0.02, snow: 0.22 }); fMountain(70, 900, 360, 360, { c: '#c49b78' }); }
 const RIVER = [[330, 330], [345, 430], [310, 520], [380, 640], [500, 760], [640, 850]];
 function river(P, w = 30, c = FL.sea) { fLine(P, FL.ink, w + 10, { smooth: true }); fLine(P, c, w, { smooth: true }); for (let i = 0; i < 6; i++) { const [x, y] = along(P, mod(TT * 0.16 + i / 6, 1)); fLine([[x - 8, y], [x + 8, y]], FL.white, 5); } }
 function sea(y0, o = {}) { fBand(y0, o.c ?? FL.sea, { amp: 10, f: 0.012, ph: TT * 1.6, lw: 6 }); for (let i = 0; i < 6; i++) { const x = mod(i * 330 + TT * 40, 2100) - 100; fLine(arcPts(x, y0 + 70 + (i % 2) * 60, 30, Math.PI * 1.15, Math.PI * 1.85, 8), FL.white, 5, { alpha: 0.8 }); } }
 
+// seaweed that sways from its root
+function weed(x, y, s = 1, c = '#3fae7a') { const P = []; for (let i = 0; i <= 8; i++) { const u = i / 8, a = Math.sin(TT * 1.3 + x * 0.02 + u * 2.4) * 22 * u * s; P.push([x + a, y - u * 170 * s]); } fLine(P, FL.ink, 22 * s, { smooth: true }); fLine(P, c, 14 * s, { smooth: true }); for (let i = 2; i < 8; i += 2) { const [px, py] = P[i]; fCirc(px + 12 * s, py, 10 * s, c, { ry: 5 * s, rot: -0.5, lw: 3 }); } }
 // ---- 1. the case: a river runs into the sea; fresh on one side, salty on the other
 function sHook(o = {}) {
-  fSky(o.end ? '#ffcf8a' : FL.sky, o.end ? '#ffe7c2' : FL.skyL);
-  if (o.end) fSun(820, 300, 90, { mood: 'happy' }); else { fCloud(700, 200, 1.0); fCloud(180, 140, 0.7); }
-  sea(820); mountains(); river(RIVER);
+  fSky(o.end ? '#ffc98a' : FL.sky, o.end ? '#ffe7c2' : FL.skyL);
+  if (o.end) fLayer(0.05, () => fSun(840, 330, 90, { mood: 'happy' }));
+  backdrop(o);
+  fSea2(820); nearMountain(); fShape([[-60, 880], [300, 840], [560, 850], [680, 900], [700, 1150], [-60, 1150]], FL.grass, { shade: [0, -12], shc: FL.grassD, lw: 6 }); fTree(120, 880, 0.9); fTree(240, 870, 0.7); fTufts(300, 600, 872, 5); river(RIVER);
+  if (!o.end) { const u = mod((TT - at(0)) * 0.25, 1); if (u < 0.35) { const k = u / 0.35; fFish(820 + k * 120, 860 - Math.sin(k * Math.PI) * 140, 0.45, { bubbles: false, c: FL.pink }); } }
   fHero(470, 780, 54, { color: FL.purple, mood: o.end ? 'happy' : TT > at(4.8) ? 'wow' : 'smile', arms: o.end ? 'up' : [0.4, 2.2], hop: o.end ? null : at(4.8) });
   if (!o.end) { fLabel('fresh', 170, 600, 330, 560, at(1.6), { color: FL.seaD }); fLabel('salty!', 860, 960, 840, 900, at(4.8), { color: FL.pink }); }
   if (!o.end && TT > at(8.0)) fPop(at(8.0), 860, 640, () => fText('?', 860, 700, 180, FL.pink, { align: 'center' }));
@@ -40,7 +51,10 @@ function cHook(at) {
 
 // ---- 2. the evidence: a glass of seawater, then the sea's salt piled over the land beside a 40-storey tower
 function sEvidence() {
-  fSky(FL.sky, FL.skyL); fBand(900, FL.grass, { lw: 6 });
+  fSky(FL.sky, FL.skyL);
+  fLayer(0.12, () => { fMountain(560, 900, 520, 330, { c: '#a9bfd6', snow: 0.3, lw: 4 }); fMountain(880, 900, 420, 260, { c: '#b7c9de', snow: 0.3, lw: 4 }); });
+  fLayer(0.2, () => { fCloud2(200, 150, 1.0, { speed: 9 }); fBirds(500, 250, 3, { speed: 30 }); });
+  fBand(900, FL.grass, { lw: 6 }); fTree(330, 905, 0.8); fTufts(60, 400, 900, 5);
   const gx = 230, gy = 560, f = ev(at(2.6), 2.0);
   fShape([[gx - 110, gy - 200], [gx + 110, gy - 200], [gx + 90, gy + 200], [gx - 90, gy + 200]], 'rgba(255,255,255,0.7)', { lw: 6 });
   fShape([[gx - 104, gy - 150], [gx + 104, gy - 150], [gx + 91, gy + 194], [gx - 91, gy + 194]], FL.sea, { line: false, shade: [14, 0], shc: FL.seaD });
@@ -61,9 +75,10 @@ function cEvidence(at) {
 // ---- 3. clue 1: slightly acidic rain slowly dissolves rock
 function sRain() {
   fSky('#a9c7da', FL.skyL); fBand(900, FL.grass, { lw: 6 });
-  fCloud(330, 170, 1.6, '#e8eef4'); fCloud(600, 140, 1.2, '#e8eef4');
+  fLayer(0.12, () => { fMountain(700, 900, 600, 380, { c: '#9fb3c8', snow: 0.3, lw: 4 }); });
+  fLayer(0.2, () => { fCloud2(260, 170, 1.6, { c: '#e8eef4', shc: '#cdd8e2', speed: 6 }); fCloud2(640, 140, 1.2, { c: '#e8eef4', shc: '#cdd8e2', speed: 9 }); });
   for (let i = 0; i < 22; i++) { const R = RNG('rd', i), x = R.r(140, 760), y = mod(R.r(0, 700) + TT * R.r(380, 480), 620) + 230; fDrop(x, y, 9, FL.sea, { lw: 2.5, shade: false, hi: false }); }
-  mountains({ grass: false });
+  nearMountain(); fPine(640, 900, 1.0); fPine(720, 905, 0.8); fTufts(560, 980, 900, 6);
   for (let i = 0; i < 5; i++) { const t0 = at(4.6) + i * 1.3, u = clamp((TT - t0) / 3.2); if (u <= 0) continue; const x = lerp(300 + i * 18, 640 + i * 30, u), y = lerp(330 + i * 26, 870, EZ.i2(u)); grain(x, y, 0.7, 'rg' + i, { c: '#f7e3c4', mood: u < 1 ? 'wow' : 'smile' }); }
   fLabel('a weak acid', 160, 300, 230, 380, at(3.6), { color: FL.pink });
   fHero(800, 830, 52, { mood: TT > at(8.0) ? 'wow' : 'smile', look: [-0.8, -0.3] });
@@ -77,9 +92,13 @@ function cRain(at) {
 
 // ---- 4. clue 2: rivers carry the minerals; a lens zooms into the water
 function sRivers() {
-  fSky(FL.sky, FL.skyL); fBand(690, FL.grass, { lw: 6 });
+  fSky(FL.sky, FL.skyL);
+  fLayer(0.12, () => { fMountain(560, 700, 520, 300, { c: '#a9bfd6', snow: 0.3, lw: 4 }); fMountain(860, 700, 420, 260, { c: '#b7c9de', snow: 0.3, lw: 4 }); });
+  fLayer(0.25, () => { fCloud2(300, 140, 1.0, { speed: 10 }); fBirds(700, 220, 3, { speed: 35 }); });
+  fLayer(0.5, () => { fShape([[-200, 720], [300, 660], [800, 700], [1300, 650], [2200, 700], [2200, 1100], [-200, 1100]], '#7fcf86', { lw: 5 }); for (const x of [640, 760, 880]) fPine(x, 690, 0.8); });
+  fBand(740, FL.grass, { lw: 6 });
   const P = [[-60, 820], [160, 850], [320, 800], [500, 870], [700, 830], [1000, 880], [1300, 860], [2000, 900]];
-  river(P, 70);
+  river(P, 70); for (const [x, y, sc] of [[80, 760, 0.8], [600, 780, 0.9], [900, 770, 0.7]]) fTree(x, y, sc, { fruit: x === 600 ? FL.red : null }); fTufts(200, 520, 760, 5);
   for (let i = 0; i < 5; i++) { const [x, y] = along(P.slice(0, 6), mod(TT * 0.06 + i / 5, 1)); grain(x, y - 6, 0.5, 'rvg' + i); }
   fLens(420, 400, 175, popS(at(1.6)), () => {
     fRect(240, 220, 360, 360, 0, FL.sea, { line: false });
@@ -97,7 +116,10 @@ function cRivers(at) {
 
 // ---- 5. clue 3: hot vents on the sea floor
 function sVents() {
-  fSky(FL.seaD, FL.deepD); fBand(900, FL.rockD, { lw: 6, amp: 12, f: 0.01 });
+  fSky(FL.seaD, FL.deepD);
+  fLayer(0.15, () => { for (const [x, h] of [[120, 260], [820, 200], [1100, 300]]) fShape([[x - 90, 920], [x - 40, 920 - h], [x + 30, 920 - h * 0.8], [x + 80, 920]], '#1a5a8c', { line: false }); });
+  fLayer(0.5, () => { const u = mod((TT - at(0)) * 0.07, 1); fFish(lerp(1100, -200, u), 260, 0.5, { dir: -1, c: FL.yellow }); fFish(lerp(1180, -120, u), 320, 0.35, { dir: -1, c: FL.yellow, bubbles: false }); });
+  fBand(900, FL.rockD, { lw: 6, amp: 12, f: 0.01 }); weed(80, 900, 1.1); weed(230, 905, 0.8); weed(860, 900, 1);
   for (const [cx, h, key] of [[380, 300, 'v1'], [640, 210, 'v2']]) {
     for (let i = 0; i < 9; i++) { const u = mod(TT * 0.3 + i / 9, 1), x = cx + Math.sin(u * 6 + i) * 26 * u, y = 900 - h - u * 520; fCirc(x, y, 20 + u * 36, '#4a5670', { alpha: 1 - u * 0.7, lw: 4 }); }
     fShape([[cx - 62, 905], [cx - 30, 900 - h], [cx + 30, 900 - h], [cx + 62, 905]], '#3a3f4f', { shade: [14, 0], lw: 6 });
@@ -116,8 +138,8 @@ function cVents(at) {
 
 // ---- 6. clue 4: the Sun lifts the water, the salt stays
 function sSun() {
-  fSky('#ffe9b0', FL.skyL); fSun(170, 190, 70, { mood: 'happy' }); fCloud(780, 170, 1.3);
-  sea(820);
+  fSky('#ffe9b0', FL.skyL); fLayer(0.05, () => fSun(170, 190, 70, { mood: 'happy' })); fLayer(0.25, () => { fCloud2(760, 170, 1.3, { speed: 14 }); fBirds(300, 330, 3, { speed: 45 }); });
+  fSea2(820);
   for (let i = 0; i < 8; i++) { const u = mod(TT * 0.2 + i / 8, 1), x = 130 + i * 100 + Math.sin(u * 8 + i) * 14, y = 800 - u * 520; fDrop(x, y, 12, FL.skyL, { lw: 3, alpha: 1 - u * 0.6, shade: false, hi: false }); }
   const n = Math.floor(3 + 7 * clamp((TT - at(6.0)) / 6)); for (let i = 0; i < n; i++) { const R = RNG('sg', i); grain(R.r(80, 920), R.r(900, 1030), 0.7, 'sg' + i, { mood: i % 3 ? 'smile' : 'focus' }); }
   if (TT > at(8.4)) for (let i = 0; i < 7; i++) { const R = RNG('fr', i), x = R.r(680, 900), y = mod(R.r(0, 300) + TT * 360, 240) + 240; fDrop(x, y, 8, FL.sea, { lw: 2.5, shade: false, hi: false }); }
@@ -134,10 +156,12 @@ function cSun(at) {
 
 // ---- 7. the turn: salt in = salt out (mud and sea life take some)
 function sTurn() {
-  fSky(FL.sea, FL.deep); fBand(860, '#c9a27a', { lw: 6, amp: 8, f: 0.01 });
+  fSky(FL.sea, FL.deep);
+  fLayer(0.15, () => { for (const [x, h] of [[200, 180], [700, 240]]) fShape([[x - 120, 880], [x - 50, 880 - h], [x + 40, 880 - h * 0.8], [x + 110, 880]], '#2276ad', { line: false }); for (let i = 0; i < 6; i++) { const R = RNG('lr', i), y = mod(R.r(0, 900) - TT * R.r(40, 80), 900); fCirc(R.r(40, 960), y, R.r(5, 9), 'rgba(255,255,255,0.3)', { lw: 2, line: FL.white }); } }); fBand(860, '#c9a27a', { lw: 6, amp: 8, f: 0.01 });
   for (let i = 0; i < 7; i++) { const u = mod(TT * 0.15 + i / 7, 1), x = lerp(-30, 470 + (i % 4) * 110, Math.min(1, u * 1.6)), y = lerp(260 + (i % 3) * 70, 880, EZ.i2(clamp((u - 0.4) / 0.6))); grain(x, y, 0.6, 'tg' + i); }
-  const fx = 300 + Math.sin(TT * 0.7) * 170, fy = 440 + Math.sin(TT * 1.4) * 20, dir = Math.cos(TT * 0.7) >= 0 ? 1 : -1;
-  fShape([[fx - dir * 70, fy], [fx - dir * 130, fy - 42], [fx - dir * 130, fy + 42]], FL.orangeD, { lw: 5 }); fCirc(fx, fy, 80, FL.orange, { ry: 46, shade: [0, -8], lw: 5 }); fFace(fx + dir * 30, fy - 6, 0.75, 'smile', 'fish', { blush: false });
+  const fx = 330 + Math.sin(TT * 0.6) * 200, fy = 460 + Math.sin(TT * 1.2) * 24, dir = Math.cos(TT * 0.6) >= 0 ? 1 : -1;
+  fFish(fx, fy, 0.75, { dir });
+  weed(60, 880, 1.2); weed(560, 880, 0.9); weed(930, 885, 1.1);
   fCirc(760, 850, 70, '#f7c6d2', { ry: 34, lw: 5 }); fLine(arcPts(760, 850, 70, Math.PI, TAU, 14, 0.5), FL.ink, 5); fFace(760, 846, 0.45, 'happy', 'clam');
   fPop(at(9.0), 640, 300, () => { fLine([[490, 300], [790, 300]], FL.ink, 12); fLine([[640, 300], [640, 420]], FL.ink, 12); fText('IN', 520, 280, 42, FL.pink, { align: 'center' }); fText('OUT', 760, 280, 42, FL.pink, { align: 'center' }); });
   fLabel('into the mud', 220, 980, 330, 890, at(5.0), { color: FL.rockD });
@@ -151,13 +175,13 @@ function cTurn(at) {
 }
 
 // ---- 8. the hush: a still sea
-function sHush() { fSky(FL.sky, FL.skyL); fBand(560, FL.sea, { lw: 6 }); }
+function sHush() { fSky(FL.sky, FL.skyL); fLayer(0.2, () => fCloud2(500, 220, 1.1, { speed: 6 })); fSea2(600); }
 
 // ---- 9. the answer: the rivers were salty all along
 function sAnswer() {
   fSky('#ffd77a', '#ffefc2');
   for (let i = 0; i < 20; i++) { const R = RNG('cf', i), x = R.r(0, 980), y = mod(R.r(0, 1080) + (TT - HIT) * R.r(90, 170), 1120) - 20; fRect(x, y, 18, 10, 3, [FL.pink, FL.sea, FL.grass, FL.purple][i % 4], { lw: 2 }); }
-  sea(820); mountains(); river(RIVER, 34, FL.pinkL);
+  backdrop(); fSea2(820); nearMountain(); fShape([[-60, 880], [300, 840], [560, 850], [680, 900], [700, 1150], [-60, 1150]], FL.grass, { shade: [0, -12], shc: FL.grassD, lw: 6 }); fTree(120, 880, 0.9); river(RIVER, 34, FL.pinkL);
   for (let i = 0; i < 5; i++) { const [x, y] = along(RIVER, mod(TT * 0.18 + i / 5, 1)); grain(x, y, 0.6, 'ang' + i, { mood: 'happy' }); }
   fLabel('salty all along', 170, 560, 330, 500, at(3.4), { color: FL.pink, size: 38 });
   fHero(470, 780, 60, { mood: 'happy', arms: 'up', hop: HIT + 0.2 });

@@ -96,6 +96,82 @@ function fDrop(x, y, r, c = FL.sea, o = {}) { const P = [[x, y - r * 1.6], ...el
 function fPop(t, x, y, fn) { const k = popS(t); if (k <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.translate(-x, -y); fn(); ctx.restore(); }
 
 // =====================================================================
+//  DEPTH + LIVING ASSETS (the user's note: a little parallax so scenes feel alive; detailed, gently animated
+//  mountains, trees, clouds, sea, fish, volcanoes). Motion is purposeful and slow: drift, sway, swim, puff. No jitter.
+// =====================================================================
+// parallax: draw fn() on a layer at depth d (0 = far, still; 1 = near, moves most). The whole scene drifts slowly
+// sideways, so layers slide past each other. o.drift (px per s at depth 1), o.sway (px), o.y (vertical bob px)
+function fLayer(d, fn, o = {}) { const t = TT - E0, dx = -(o.drift ?? 6) * t * d + Math.sin(TT * 0.22) * (o.sway ?? 14) * d, dy = Math.sin(TT * 0.17 + 1) * (o.y ?? 4) * d; ctx.save(); ctx.translate(dx, dy); fn(); ctx.restore(); }
+// a mountain with a lit side and a shade side, a jagged snow cap, ridge lines and a few rocks
+function fMountain(x, base, w, h, o = {}) {
+  const c = o.c ?? FL.rock, cd = o.cd ?? fSh(c, 0.78), top = [x + (o.peak ?? 0) * w, base - h], L = [x - w / 2, base], Rr = [x + w / 2, base];
+  fShape([L, [lerp(L[0], top[0], 0.55) - w * 0.04, lerp(L[1], top[1], 0.55)], top, [lerp(Rr[0], top[0], 0.6) + w * 0.03, lerp(Rr[1], top[1], 0.6)], Rr], c, { lw: o.lw ?? 5 });
+  fShape([top, [lerp(Rr[0], top[0], 0.6) + w * 0.03, lerp(Rr[1], top[1], 0.6)], Rr, [top[0] + w * 0.06, base]], cd, { line: false });   // shade side
+  fLine([top, [top[0] + w * 0.06, base - h * 0.3]], fSh(c, 0.7), 4, { alpha: 0.7 });
+  for (let i = 0; i < 3; i++) { const u = 0.35 + i * 0.18, rx = lerp(L[0], top[0], u) + w * 0.08 * (i - 1), ry = lerp(base, top[1], u * 0.8); fLine([[rx, ry], [rx + w * 0.05, ry + h * 0.06]], fSh(c, 0.72), 4, { alpha: 0.6 }); }
+  if (o.snow !== false) { const sh = h * (o.snow ?? 0.26), ys = top[1] + sh, xl = lerp(top[0], L[0], sh / h * 1.05), xr = lerp(top[0], Rr[0], sh / h * 1.05);
+    fShape([top, [xr, ys], [lerp(xr, top[0], 0.35), ys - sh * 0.18], [top[0] + (xr - top[0]) * 0.1, ys + sh * 0.08], [lerp(xl, top[0], 0.4), ys - sh * 0.15], [xl, ys]], FL.white, { lw: 4, shade: [sh * 0.12, 0], shc: '#dfeaf2' }); }
+}
+// a leafy tree that sways from the trunk (s = scale, 1 = ~140 px tall)
+function fTree(x, y, s = 1, o = {}) {
+  const a = Math.sin(TT * 1.1 + x * 0.013) * 0.035 * (o.sway ?? 1), c = o.c ?? FL.grass;
+  fRect(x - 9 * s, y - 70 * s, 18 * s, 72 * s, 5 * s, o.trunk ?? FL.rockD, { lw: 4 });
+  ctx.save(); ctx.translate(x, y - 60 * s); ctx.rotate(a); ctx.translate(-x, -(y - 60 * s));
+  for (const [dx, dy, r] of [[-30, -70, 40], [30, -72, 42], [0, -110, 50]]) fCirc(x + dx * s, y + dy * s, r * s, c, { lw: 4, shade: [-r * s * 0.2, -r * s * 0.25], shc: fSh(c, 0.8) });
+  if (o.fruit) for (const [dx, dy] of [[-30, -60], [20, -100], [36, -66]]) fCirc(x + dx * s, y + dy * s, 7 * s, o.fruit, { lw: 2.5 });
+  ctx.restore();
+}
+// a pine: three stacked triangles, swaying
+function fPine(x, y, s = 1, o = {}) {
+  const a = Math.sin(TT * 0.9 + x * 0.02) * 0.03, c = o.c ?? '#3e9f6a';
+  fRect(x - 7 * s, y - 30 * s, 14 * s, 32 * s, 3, FL.rockD, { lw: 3.5 });
+  ctx.save(); ctx.translate(x, y - 30 * s); ctx.rotate(a); ctx.translate(-x, -(y - 30 * s));
+  for (let i = 0; i < 3; i++) { const w = (70 - i * 14) * s, yb = y - (28 + i * 34) * s; fShape([[x - w / 2, yb], [x, yb - 58 * s], [x + w / 2, yb]], c, { lw: 4, shade: [w * 0.18, 0], shc: fSh(c, 0.8) }); }
+  ctx.restore();
+}
+// a cloud that drifts and wraps across the frame (speed px/s); bottom shading
+// o.span: the width it wraps in (from -300); channel scenes keep it to the scene side so nothing drifts under the words
+const F_SPAN = () => (typeof CHL !== 'undefined' ? 1350 : W + 600);
+function fCloud2(x, y, s = 1, o = {}) { const xx = mod(x + (TT - E0) * (o.speed ?? 10) + 300, o.span ?? F_SPAN()) - 300; const P = [...ellipsePts(xx - 55 * s, y + 8 * s, 48 * s, 34 * s, 0, 20, Math.PI * 0.5, Math.PI * 1.5), ...ellipsePts(xx - 10 * s, y - 22 * s, 50 * s, 46 * s, 0, 20, Math.PI, Math.PI * 1.75), ...ellipsePts(xx + 40 * s, y - 12 * s, 44 * s, 40 * s, 0, 20, Math.PI * 1.25, TAU), ...ellipsePts(xx + 70 * s, y + 10 * s, 36 * s, 30 * s, 0, 20, Math.PI * 1.5, Math.PI * 2.5)];
+  fShape(P, o.c ?? FL.white, { lw: 4.5, shade: [0, -14 * s], shc: o.shc ?? '#dbeaf3' }); }
+// birds: little V shapes flapping across
+function fBirds(x, y, n = 3, o = {}) { for (let i = 0; i < n; i++) { const bx = mod(x + i * 46 + (TT - E0) * (o.speed ?? 40), (o.span ?? F_SPAN()) - 150) - 150, by = y + i * 18 + Math.sin(TT * 1.3 + i) * 8, f = Math.sin(TT * 9 + i * 1.7) * 10; fLine([[bx - 16, by - f * 0.6], [bx, by], [bx + 16, by - f * 0.6]], FL.ink, 4, { smooth: false }); } }
+// the sea: a darker back swell, a front surface with moving crests, foam and sparkles; depth gradient below
+function fSea2(y0, o = {}) {
+  const c = o.c ?? FL.sea, cd = o.cd ?? FL.seaD, t = TT;
+  const wave = (yy, amp, f, ph, col, lw) => { const P = [[-200, yy]]; for (let x = -200; x <= W + 200; x += 40) P.push([x, yy + Math.sin(x * f + t * ph) * amp]); P.push([W + 200, H + 300], [-200, H + 300]); fShape(P, col, { lw }); };
+  wave(y0 - 14, 9, 0.009, 1.1, cd, 0);
+  wave(y0, 11, 0.012, 1.7, c, o.lw ?? 5);
+  ctx.save(); const g = ctx.createLinearGradient(0, y0, 0, y0 + 500); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(10,40,90,0.35)'); ctx.fillStyle = g; ctx.fillRect(-200, y0 + 20, W + 400, 700); ctx.restore();
+  for (let i = 0; i < 8; i++) { const x = mod(i * 260 + t * 30, W + 300) - 150, yy = y0 + 60 + (i % 3) * 70; fLine(arcPts(x, yy, 26, Math.PI * 1.15, Math.PI * 1.85, 8), FL.white, 5, { alpha: 0.75, smooth: true }); }
+  for (let i = 0; i < 6; i++) { const R = RNG('spk', i), x = R.r(0, W), yy = y0 + R.r(30, 260), k = Math.max(0, Math.sin(t * 2.2 + i * 1.9)); if (k > 0.6) { const r = 7 * (k - 0.6) / 0.4; fLine([[x - r, yy], [x + r, yy]], FL.white, 3); fLine([[x, yy - r], [x, yy + r]], FL.white, 3); } }
+}
+// a fish that swims (tail wags, little fin flaps); dir 1 = right; s = scale (1 = ~150 px long)
+function fFish(x, y, s = 1, o = {}) {
+  const dir = o.dir ?? 1, c = o.c ?? FL.orange, wag = Math.sin(TT * 7 + x * 0.01) * 0.35;
+  ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s);
+  ctx.save(); ctx.translate(-58, 0); ctx.rotate(wag); fShape([[0, 0], [-46, -34], [-36, 0], [-46, 34]], o.tail ?? fSh(c, 0.85), { lw: 4.5 }); ctx.restore();
+  fShape([[-10, -40], [12, -58], [30, -38]], fSh(c, 0.85), { lw: 4 });
+  fCirc(0, 0, 66, c, { ry: 42, lw: 5, shade: [0, -12], hi: true });
+  for (const sx of [-14, 8]) fLine([[sx, -38], [sx - 6, 38]], o.stripe ?? FL.white, 7, { alpha: 0.85 });
+  ctx.save(); ctx.translate(10, 18); ctx.rotate(Math.sin(TT * 5) * 0.3); fShape([[0, 0], [-22, 12], [-6, 20]], fSh(c, 0.85), { lw: 3.5 }); ctx.restore();
+  fCirc(34, -10, 10, FL.white, { lw: 3 }); fCirc(37, -10, 5, FL.ink, { line: false }); fLine(arcPts(48, 8, 8, 0.3, 1.6, 6), FL.ink, 3);
+  ctx.restore();
+  if (o.bubbles !== false) for (let i = 0; i < 3; i++) { const u = mod(TT * 0.8 + i / 3, 1); fCirc(x + dir * (70 * s + 10) + Math.sin(u * 6) * 4, y - 20 * s - u * 90, 4 + u * 5, 'rgba(255,255,255,0.4)', { lw: 2, line: FL.white, alpha: 1 - u }); }
+}
+// a volcano: a shaded cone, a glowing crater, lava runs, and smoke that puffs up (heat 0..1 = how active)
+function fVolcano(x, base, w, h, o = {}) {
+  const heat = o.heat ?? 1, c = o.c ?? '#8d6e63', top = base - h, cw = w * 0.16;
+  for (let i = 0; i < 7; i++) { const u = mod(TT * 0.18 + i / 7, 1); fCirc(x + Math.sin(u * 5 + i) * 30 * u, top - 30 - u * 360, (24 + u * 60) * (0.6 + 0.4 * heat), u < 0.15 ? '#ffb347' : '#8a8f9c', { lw: 4, alpha: (1 - u) * heat }); }
+  fShape([[x - w / 2, base], [x - cw, top], [x + cw, top], [x + w / 2, base]], c, { lw: 5 });
+  fShape([[x + cw * 0.2, top], [x + cw, top], [x + w / 2, base], [x + w * 0.1, base]], fSh(c, 0.78), { line: false });
+  fCirc(x, top + 4, cw, FL.orange, { ry: cw * 0.28, lw: 4 }); fCirc(x, top + 4, cw * 0.6, FL.yellow, { ry: cw * 0.15, line: false });
+  if (heat > 0.3) for (const [dx, len] of [[-0.4, 0.45], [0.35, 0.6]]) { const f = Math.min(1, len * (0.75 + 0.25 * Math.sin(TT * 1.4 + dx * 5))); fLine([[x + dx * cw, top + 6], [x + dx * w * 0.32, top + h * f * 0.9]], FL.ink, 18, { smooth: true }); fLine([[x + dx * cw, top + 6], [x + dx * w * 0.32, top + h * f * 0.9]], FL.orange, 11, { smooth: true }); }
+}
+// grass tufts along a line (they sway a little)
+function fTufts(x0, x1, y, n = 8, c = FL.grassD) { for (let i = 0; i < n; i++) { const x = lerp(x0, x1, (i + 0.5) / n), a = Math.sin(TT * 1.6 + i) * 4; fLine([[x - 8, y], [x - 12 + a, y - 18]], c, 4); fLine([[x, y], [x + a, y - 24]], c, 4); fLine([[x + 8, y], [x + 12 + a, y - 18]], c, 4); } }
+
+// =====================================================================
 //  STYLE — the renderer's hooks
 // =====================================================================
 const STYLE = {

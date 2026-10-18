@@ -61,6 +61,11 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   look was "used a lot" and not liked: new style **flat** (engine/animate/styles/flat) built from the Peekaboo notes:
   flat colours, clean dark outlines, one-step cel shading, no texture; `fShape` uses straight edges (core `trace()`
   rounds every corner, which turned a glass into a capsule). Batch 4 uses flat for all three videos.
+- **Parallax and living assets** (the user's next note): flat kit `fLayer(depth, fn)` slides far layers less than near
+  ones as the scene drifts; detailed, gently animated assets: fMountain (lit/shade sides, snow cap, ridges), fTree and
+  fPine (sway), fCloud2 (drifts), fBirds (flap), fSea2 (two swells, crests, sparkles, depth), fFish (tail wag, fin,
+  bubbles), fVolcano (smoke puffs, glowing lava), fTufts. Keep drifting things on the scene side (x < ~1000): clouds
+  wrap within 1350 px in channel videos so nothing passes under the lettering.
 - The two LoopyLuci animation skills the user suggested were empty boilerplate (generic package/test advice, no
   animation content); removed.
 - Suggest **10** topics, not 6 (CLAUDE.md step 2, the dashboard button and its prompt).
