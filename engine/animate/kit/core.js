@@ -60,6 +60,8 @@ const EZ = {
 let ctx = null;   // current 2d context
 let F = 0;        // absolute frame index
 let B = 0;        // boil index — reseeds every 2 frames (Math.floor(t*12))
+let BW = 0;       // the boil index the wobble/jitter is seeded with: = B when lines should boil, 0 = still lines
+                  // (channel videos: off by default, the user's rule; CHANNEL.boil = true turns it on)
 
 const C = {
   ink: '#3a2417', cream: '#efe5cf', paper: '#f4ecd9', paperLine: 'rgba(90,130,190,0.32)',
@@ -139,7 +141,7 @@ function pointAt(P, frac) { const S = subPath(P, frac); return S[S.length - 1]; 
 // smooth hand wobble along the normal; reseeded every boil step
 function wobble(P, closed, amt, key, step = 7) {
   const Q = resample(P, closed, step), n = Q.length;
-  const R = RNG('wob', key, B);
+  const R = RNG('wob', key, BW);
   const f1 = R.r(0.012, 0.03), f2 = R.r(0.05, 0.1), p1 = R.r(0, TAU), p2 = R.r(0, TAU);
   const sx = R.n(amt * 0.5), sy = R.n(amt * 0.5);
   const out = new Array(n); let s = 0;
@@ -206,7 +208,7 @@ function texture(bb, t) {
 }
 // parallel hatching inside current clip. t: a angle, gap, c, w, al, dash [min,max], skip, dens(x,y)
 function hatch(bb, t) {
-  const a = t.a ?? 0.7, gap = t.gap ?? 7, S = RNG('hs', t.key), R = RNG('hj', t.key, B);
+  const a = t.a ?? 0.7, gap = t.gap ?? 7, S = RNG('hs', t.key), R = RNG('hj', t.key, BW);
   const cx = (bb.x0 + bb.x1) / 2, cy = (bb.y0 + bb.y1) / 2, rad = Math.hypot(bb.x1 - bb.x0, bb.y1 - bb.y0) / 2 + 4;
   const ca = Math.cos(a), sa = Math.sin(a), dens = t.dens, jit = t.jit ?? 0.9, dash = t.dash;
   ctx.beginPath();
@@ -229,7 +231,7 @@ function hatch(bb, t) {
 }
 // colored-pencil diagonal strokes
 function pencil(bb, t) {
-  const S = RNG('ps', t.key), R = RNG('pj', t.key, B);
+  const S = RNG('ps', t.key), R = RNG('pj', t.key, BW);
   const area = (bb.x1 - bb.x0) * (bb.y1 - bb.y0);
   const n = Math.min(t.max ?? 6000, t.n ?? Math.floor(area / (t.per ?? 700)));
   const a = t.a ?? -0.95, L = t.len ?? 14, dens = t.dens;
@@ -245,7 +247,7 @@ function pencil(bb, t) {
 }
 // square stipple dots
 function stipple(bb, t) {
-  const S = RNG('ss', t.key), R = RNG('sj', t.key, B);
+  const S = RNG('ss', t.key), R = RNG('sj', t.key, BW);
   const n = t.n ?? 400, sz = t.s ?? 2.2, dens = t.dens, jit = t.jit ?? 0.8;
   ctx.fillStyle = t.c; ctx.globalAlpha = t.al ?? 1; ctx.beginPath();
   for (let i = 0; i < n; i++) {
@@ -258,7 +260,7 @@ function stipple(bb, t) {
 // screen-space paper grain, reseeded with the boil
 function grain(o = {}) {
   ctx.save(); screen();
-  const R = RNG('grain', B), n = o.n ?? 2600;
+  const R = RNG('grain', BW), n = o.n ?? 2600;
   ctx.fillStyle = o.dark || 'rgba(70,45,25,0.13)'; ctx.beginPath();
   for (let i = 0; i < n; i++) ctx.rect(R.r(0, W), R.r(0, H), 1.7, 1.7);
   ctx.fill();
@@ -276,7 +278,7 @@ function grain(o = {}) {
 //  construction lines, rulers, sparks, bursts, rainbow contours
 // ---------------------------------------------------------------------
 function construct(cx, cy, r, o = {}) {
-  const R = RNG('con', o.key ?? 'c', B);
+  const R = RNG('con', o.key ?? 'c', BW);
   ctx.save();
   ctx.strokeStyle = o.c || C.lav; ctx.lineWidth = o.w ?? 1.4; ctx.globalAlpha = o.al ?? 1; ctx.lineCap = 'round';
   const a0 = (o.a0 ?? R.r(0, TAU)), sw = o.sweep ?? 1.05;
@@ -290,12 +292,12 @@ function construct(cx, cy, r, o = {}) {
   ctx.restore();
 }
 function cline(x1, y1, x2, y2, o = {}) {
-  const R = RNG('cl', o.key ?? 'l', B);
+  const R = RNG('cl', o.key ?? 'l', BW);
   ctx.save(); ctx.strokeStyle = o.c || C.lavS; ctx.lineWidth = o.w ?? 1.2; ctx.globalAlpha = o.al ?? 1;
   ctx.beginPath(); ctx.moveTo(x1 + R.n(1), y1 + R.n(1)); ctx.lineTo(x2 + R.n(1), y2 + R.n(1)); ctx.stroke(); ctx.restore();
 }
 function ruler(x1, y1, x2, y2, o = {}) {
-  const R = RNG('rul', o.key ?? 'r', B);
+  const R = RNG('rul', o.key ?? 'r', BW);
   const L = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy, ny = ux;
   const frac = clamp(o.frac ?? 1), step = o.step ?? 16, tk = o.tick ?? 7, side = o.side ?? 1;
   ctx.save(); ctx.strokeStyle = o.c || C.periD; ctx.lineWidth = o.w ?? 1.5; ctx.globalAlpha = o.al ?? 1; ctx.lineCap = 'round';
@@ -313,7 +315,7 @@ function ruler(x1, y1, x2, y2, o = {}) {
 // glowing radial spark (dark world)
 function sparkBurst(cx, cy, r, o = {}) {
   if (r <= 0.5) return;
-  const R = RNG('spk', o.key ?? 's', B), n = o.n ?? 18, rays = [];
+  const R = RNG('spk', o.key ?? 's', BW), n = o.n ?? 18, rays = [];
   for (let i = 0; i < n; i++) { const a = i / n * TAU + R.n(0.14); rays.push([a, r * R.r(0.28, 0.5), r * R.r(0.72, 1.15)]); }
   const path = () => { ctx.beginPath(); for (const [a, r0, r1] of rays) { ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); } };
   ctx.save(); ctx.lineCap = 'round';
@@ -329,7 +331,7 @@ function sparkBurst(cx, cy, r, o = {}) {
 }
 // radial tick burst (warm world impact)
 function burst(cx, cy, r0, r1, o = {}) {
-  const R = RNG('bur', o.key ?? 'b', B), n = o.n ?? 12;
+  const R = RNG('bur', o.key ?? 'b', BW), n = o.n ?? 12;
   ctx.save(); ctx.strokeStyle = o.c || C.ink; ctx.lineWidth = o.w ?? 3; ctx.lineCap = 'round'; ctx.globalAlpha = o.al ?? 1; ctx.beginPath();
   for (let i = 0; i < n; i++) {
     const a = i / n * TAU + R.n(0.15) + (o.rot ?? 0), a1 = r0 * R.r(0.85, 1.1), b1 = r1 * R.r(0.75, 1.15);
@@ -346,14 +348,14 @@ function star4(x, y, s, c) {
 function rainbow(P, o = {}) {
   const bb = bbox(P), cx = o.cx ?? (bb.x0 + bb.x1) / 2, cy = o.cy ?? (bb.y0 + bb.y1) / 2, n = o.n ?? 3;
   for (let i = 0; i < n; i++) {
-    const S = RNG('rb', o.key, i, B), sc = 1 + (o.spread ?? 0.07) * (i + 1) + S.n(0.02);
+    const S = RNG('rb', o.key, i, BW), sc = 1 + (o.spread ?? 0.07) * (i + 1) + S.n(0.02);
     const Q = P.map(([x, y]) => [cx + (x - cx) * sc + S.n(o.drift ?? 3), cy + (y - cy) * sc + S.n(o.drift ?? 3)]);
     ink(Q, { closed: o.closed ?? true, color: RAINBOW[(i + (o.off ?? 0)) % RAINBOW.length], w: o.w ?? 1.6, amt: o.amt ?? 3.5, key: o.key + 'rb' + i, alpha: o.al ?? 0.85 });
   }
 }
 // hex cell grid inside current clip
 function hexGrid(bb, size, o = {}) {
-  const h = size * Math.sqrt(3), R = RNG('hex', o.key ?? 'h', B);
+  const h = size * Math.sqrt(3), R = RNG('hex', o.key ?? 'h', BW);
   ctx.save(); ctx.strokeStyle = o.c || C.periS; ctx.lineWidth = o.w ?? 1.2; ctx.globalAlpha = o.al ?? 1; ctx.beginPath();
   let row = 0;
   for (let y = bb.y0 - h; y < bb.y1 + h; y += h * 0.5, row++) {
@@ -374,7 +376,7 @@ function hexGrid(bb, size, o = {}) {
 // ---------------------------------------------------------------------
 // ragged hatched rim; dir=+1 strokes reach outward, -1 inward
 function irisRim(cx, cy, r, dir, o = {}) {
-  const R = RNG('irisR', o.key ?? 'i', B), n = Math.min(1600, Math.floor(r * TAU / 2.0));
+  const R = RNG('irisR', o.key ?? 'i', BW), n = Math.min(1600, Math.floor(r * TAU / 2.0));
   ctx.strokeStyle = o.c || '#0b0c17'; ctx.lineWidth = o.w ?? 1.6; ctx.lineCap = 'round'; ctx.beginPath();
   for (let i = 0; i < n; i++) {
     const a = R.r(0, TAU), L = R.r(3, 11) + (R.f() < 0.28 ? R.r(10, 34) : 0), sl = R.n(0.4);
@@ -407,7 +409,7 @@ function fillAll(color) { ctx.save(); screen(); ctx.fillStyle = color; ctx.fillR
 function monoText(str, x, y, size, color, o = {}) {
   ctx.save();
   ctx.font = `${o.weight ?? 700} ${size}px ${MONO}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
-  const cw = ctx.measureText('M').width, R = RNG('txt', o.key ?? str, B), jit = o.jit ?? 0.9;
+  const cw = ctx.measureText('M').width, R = RNG('txt', o.key ?? str, BW), jit = o.jit ?? 0.9;
   const n = Math.min(o.count ?? str.length, str.length);
   ctx.globalAlpha = o.al ?? 1;
   for (let i = 0; i < n; i++) {

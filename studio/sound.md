@@ -21,4 +21,4 @@ it; the payoff is the loudest moment and the ending decays (built in). Three vid
 **SFX kits** follow the drawing style automatically (`KITS` in score-channel.js): cut-paper = paper taps and swishes,
 sketchbook = pencil taps and page flips, isometric = soft digital clicks and air, pixel = 8-bit blips, math = chalk taps.
 Extra sounds for scene cues (`sfx: [[sec, kind, arg]]`): pop, chime, whoosh, thud, click, typing, scribble, ding, beep,
-rise, drone, paper, flip, pencil, tick, coin, drip, buzz (a bee, a fly), shutter. `SCORE.sfx` can override any of them.
+rise, drone, paper, flip, pencil, tick, coin, drip, bubble (water, vents, fizz), buzz (a bee, a fly), shutter. `SCORE.sfx` can override any of them.

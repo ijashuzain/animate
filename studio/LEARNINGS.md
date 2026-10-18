@@ -56,6 +56,13 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 ---
 
 ## User requests (2026-10-18)
+- **No wobble, no grain** (feedback on the riso sea frames): the boil (every line re-wobbled 12x a second) is now off for
+  channel videos (`BW` = the wobble seed, 0 unless `CHANNEL.boil`); B still drives timing (blinks). The halftone/grain
+  look was "used a lot" and not liked: new style **flat** (engine/animate/styles/flat) built from the Peekaboo notes:
+  flat colours, clean dark outlines, one-step cel shading, no texture; `fShape` uses straight edges (core `trace()`
+  rounds every corner, which turned a glass into a capsule). Batch 4 uses flat for all three videos.
+- The two LoopyLuci animation skills the user suggested were empty boilerplate (generic package/test advice, no
+  animation content); removed.
 - Suggest **10** topics, not 6 (CLAUDE.md step 2, the dashboard button and its prompt).
 - **Background music 70% quieter.** score-head: the music bus runs at `MUSIC_LEVEL` (0.25, measured -9.7 dB on the
   machine demo after the master compressor; SCORE.musicLevel overrides). The loudness stage now normalises with the gain

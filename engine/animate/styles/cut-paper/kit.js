@@ -16,7 +16,7 @@ const PAL = {
 const HANDF = HAND;
 function handText(str, x, y, size, color, o = {}) {
   ctx.save();
-  const R = RNG('ht', o.key ?? str, B);
+  const R = RNG('ht', o.key ?? str, BW);
   ctx.translate(x + R.n(0.7), y + R.n(0.7)); ctx.rotate((o.rot ?? 0) + R.n(0.006));
   ctx.font = `${o.weight ?? 400} ${size}px ${HANDF}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);

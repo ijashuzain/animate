@@ -81,6 +81,7 @@ function renderFrame(t, canvas, sub) {
   ctx = cv.getContext('2d');
   F = ((Math.floor(sub ? t * FPS + 1e-6 : Math.round(t * FPS)) % NFRAMES) + NFRAMES) % NFRAMES;
   B = Math.floor(F / 2);
+  BW = (typeof CHL !== 'undefined' && !CHL.boil) ? 0 : B;   // still lines unless the piece asks for the boil
   TT = (STYLE.ones ? (sub ? F + (t * FPS - Math.floor(t * FPS + 1e-6)) : F) : B * 2) / FPS;
   // the era is picked by the real frame, so a cut on an odd frame (a 16th at 24fps) lands on that frame;
   // on its first frame the new era is drawn at its own start time (motion stays on 2s inside it)

@@ -140,6 +140,7 @@
     tick: (t) => tone('sine', t, 2400, 0.018, 0.001, 0.03, RS.n(0.3), 0.1),
     coin: (t) => { tone('square', t, nz('B5'), 0.02, 0.001, 0.07, 0, 0.1, 5000); tone('square', t + 0.07, nz('E6'), 0.02, 0.001, 0.25, 0, 0.1, 5000); },
     drip: (t) => blip(t, 1800, 500, 0.12, 0.03, RS.n(0.3)),
+    bubble: (t) => blip(t, 380, 1300, 0.09, 0.022, RS.n(0.4)),
     buzz: (t, d = 0.8) => { const o = osc('sawtooth', 220, t, t + d); o.frequency.setValueAtTime(220, t); for (let u = 0; u < d; u += 0.05) o.frequency.setValueAtTime(215 + RS.n(12), t + u); const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.012, t + 0.1); g.gain.setValueAtTime(0.012, t + d - 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(lp); lp.connect(g); out(g, RS.n(0.5), 0.2); },
     shutter: (t) => { noiseHit(t, 0.03, 'highpass', 3000, 0.8, 0.05); noiseHit(t + 0.07, 0.05, 'bandpass', 1500, 1, 0.04); },
   };

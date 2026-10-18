@@ -58,7 +58,7 @@ Keep the dashboard updated at **every** step (see "Dashboard"). Status lines say
 4. **Research each video** (stage `researching`). Web-check every claim that will be on screen or said; write
    `videos/<slug>/research.md` (the one true thing, facts with sources, visual references, style choice and why).
    Say "a", not "the first", unless sourced. Note claims you state from knowledge rather than a search.
-5. **Pick the style** (stage `styling`) from `engine/animate/styles/` (cut-paper, crosshatch, riso, sketchbook, math, pixel,
+5. **Pick the style** (stage `styling`) from `engine/animate/styles/` (flat (the default now), cut-paper, crosshatch, riso, sketchbook, math, pixel,
    isometric) or a new one via `engine/animate/new-style.md`. Match the subject: cut-paper for stories and histories, math for
    equations and graphs, pixel for computing/gaming history, isometric for products/infrastructure, riso/sketchbook for
    softer editorial topics, crosshatch for mechanisms. Read that style's STYLE.md and look at its sample.png first.
@@ -158,6 +158,9 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
   Comic Neue if missing (`apt-get install -y fonts-comic-neue`); without it captions fall back to a serif.
 - **Calm behind words (the user's rule):** never put busy texture (halftone dots, hatching, heavy grain) under the lettering.
   Backgrounds where text sits are flat or near-flat; texture lives on the objects. Riso: `calmField()`, not a printed field.
+- **No boil, little texture (the user's rule):** lines stay still (the wobble/boil is off for channel videos; `CHANNEL.boil = true`
+  only when a scene needs it) and avoid grainy textures (halftone dots, grain, pencil fills). Default to the `flat` style
+  (styles/flat: flat colours, clean outlines, cel shading, faces, lens zooms, pointing labels).
 - Deterministic drawing: `RNG(...)` and `B`/`TT`, never `Math.random()` or the clock. Don't fade kit textures with globalAlpha.
 - Facts are checked; claims are hedged where science is uncertain ("could", "about").
 - Never wait on a background job with `pgrep -f <pattern>` loops: the loop matches its own command line. Use `run_in_background`

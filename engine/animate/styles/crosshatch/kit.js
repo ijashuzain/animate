@@ -8,7 +8,7 @@
 const HANDF = HAND;
 function handText(str, x, y, size, color, o = {}) {
   ctx.save();
-  const R = RNG('ht', o.key ?? str, B);
+  const R = RNG('ht', o.key ?? str, BW);
   ctx.translate(x + R.n(0.7), y + R.n(0.7)); ctx.rotate((o.rot ?? 0) + R.n(0.006));
   ctx.font = `${o.weight ?? 400} ${size}px ${HANDF}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);
@@ -27,7 +27,7 @@ function paperSheet(key = 'sheet', o = {}) {   // warm paper with faint ruled li
   if (o.ruled !== false) { ctx.save(); ctx.strokeStyle = C.paperLine; ctx.lineWidth = 1.4; ctx.beginPath(); for (let y = 260; y < H; y += 64) { ctx.moveTo(0, y); ctx.lineTo(W, y + RNG('rl', key, y).n(2)); } ctx.stroke(); ctx.restore(); }
 }
 function woodSurface(x0, y0, x1, y1, key, o = {}) {
-  const S = RNG('woodS', key), R = RNG('woodR', key, B);
+  const S = RNG('woodS', key), R = RNG('woodR', key, BW);
   paint(box(x0, y0, x1 - x0, y1 - y0), {
     raw: true, line: false, fill: o.fill || C.wood, key,
     tex: [{ k: 'pencil', c: C.woodL, al: 0.32, a: 0.02, len: 46, per: 900 }, { k: 'pencil', c: C.woodD, al: 0.16, a: -0.03, len: 30, per: 1400 }],
@@ -47,7 +47,7 @@ function woodSurface(x0, y0, x1, y1, key, o = {}) {
 }
 function darkWorld(key, o = {}) {   // navy, dust specks and tiny crosses: inside the computer
   fillAll(o.fill || C.navy);
-  const R = RNG('dust', key), J = RNG('dustj', key, B);
+  const R = RNG('dust', key), J = RNG('dustj', key, BW);
   ctx.save(); screen();
   ctx.fillStyle = 'rgba(150,160,220,0.28)'; ctx.beginPath();
   for (let i = 0; i < (o.dust ?? 260); i++) ctx.rect(R.r(0, W) + J.n(0.6), R.r(0, H) + J.n(0.6), R.r(1, 2.4), R.r(1, 2.4));

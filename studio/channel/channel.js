@@ -60,7 +60,7 @@ function chShape(P, fill, o = {}) {   // a paper shape: a slightly wobbly, torn 
 }
 function chText(str, x, y, size, color = CH.ink, o = {}) {   // hand lettering, written on with frac
   ctx.save();
-  const R = RNG('cht', o.key ?? str, B);
+  const R = RNG('cht', o.key ?? str, BW);
   ctx.translate(x + R.n(0.6), y + R.n(0.6)); ctx.rotate((o.rot ?? 0) + R.n(0.005));
   ctx.font = `${o.weight ?? CHL.weight ?? 400} ${size}px ${CHF()}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
   const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);

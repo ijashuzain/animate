@@ -26,7 +26,7 @@ const SK_MARKER = '"Segoe Print", "Marker Felt", "Bradley Hand", "Comic Sans MS"
 // ---------------------------------------------------------------------
 // wobble along the normal, phases reseeded every boil step; index-based so the tremor follows the stroke
 function gwob(P, key, amp) {
-  const R = RNG('gw', key, B), p1 = R.r(0, TAU), p2 = R.r(0, TAU), f1 = 0.28 + R.f() * 0.25, f2 = 0.9 + R.f() * 0.5;
+  const R = RNG('gw', key, BW), p1 = R.r(0, TAU), p2 = R.r(0, TAU), f1 = 0.28 + R.f() * 0.25, f2 = 0.9 + R.f() * 0.5;
   const n = P.length, out = new Array(n);
   for (let i = 0; i < n; i++) {
     const a = P[Math.max(0, i - 1)], b = P[Math.min(n - 1, i + 1)];
@@ -94,7 +94,7 @@ function gclip(P) { trace(resample(P, false, 16), false); ctx.closePath(); ctx.c
 // parallel hatching inside a clip that is already set; structure seeded by key, tremor on the boil
 function ghatch(x0, y0, x1, y1, o = {}) {
   const { ang = -0.85, gap = 7, col = SK.graph, w = 2, a = 0.5, key = 'gh' } = o;
-  const S = RNG('ghs', key), R = RNG('ghj', key, B);
+  const S = RNG('ghs', key), R = RNG('ghj', key, BW);
   ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.globalAlpha *= a; ctx.lineCap = 'round';
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, rad = Math.hypot(x1 - x0, y1 - y0) / 2 + 4, ca = Math.cos(ang), sa = Math.sin(ang);
   ctx.beginPath();
@@ -167,7 +167,7 @@ function handLetter(str, x, y, size, o = {}) {
   ctx.translate(x, y); ctx.rotate(rot); ctx.translate(-x, -y);
   for (let i = 0; i < n && i < shown; i++) {
     if (str[i] === ' ') continue;
-    const k = clamp(shown - i), R = RNG('hl', key, i, B);
+    const k = clamp(shown - i), R = RNG('hl', key, i, BW);
     const jx = R.n(1.2) * jit, jy = R.n(1.4) * jit, jr = R.n(0.025) * jit, gx = x0 + xs[i], gw = xs[i + 1] - xs[i];
     ctx.save(); ctx.globalAlpha = a * (0.25 + 0.75 * k);
     ctx.translate(gx + gw / 2 + jx, y + jy + (1 - k) * size * 0.12); ctx.rotate(jr); ctx.scale(0.8 + 0.2 * k, 0.8 + 0.2 * k);

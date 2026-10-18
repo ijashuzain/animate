@@ -3,9 +3,52 @@
     "name": "Batch 1 · 3 explainers",
     "started": "2026-10-12T21:58:43.889Z"
   },
-  "updated": "2026-10-18T07:47:08.225Z",
-  "videos": {},
+  "updated": "2026-10-18T08:07:01.860Z",
+  "videos": {
+    "sea-salty": {
+      "title": "Why Is the Sea Salty but Rivers Aren't?",
+      "style": "riso",
+      "stage": "researching",
+      "detail": "Folder created from the explainer template",
+      "why": "Every fact on screen gets checked before any drawing",
+      "progress": 0,
+      "updated": "2026-10-18T08:07:01.734Z"
+    },
+    "onion-tears": {
+      "title": "Why Do Onions Make You Cry?",
+      "style": "cut-paper",
+      "stage": "researching",
+      "detail": "Folder created from the explainer template",
+      "why": "Every fact on screen gets checked before any drawing",
+      "progress": 0,
+      "updated": "2026-10-18T08:07:01.799Z"
+    },
+    "firefly-glow": {
+      "title": "How Do Fireflies Glow Without Getting Hot?",
+      "style": "sketchbook",
+      "stage": "researching",
+      "detail": "Folder created from the explainer template",
+      "why": "Every fact on screen gets checked before any drawing",
+      "progress": 0,
+      "updated": "2026-10-18T08:07:01.860Z"
+    }
+  },
   "log": [
+    {
+      "t": "2026-10-18T08:07:01.860Z",
+      "slug": "firefly-glow",
+      "note": "created videos/firefly-glow (sketchbook)"
+    },
+    {
+      "t": "2026-10-18T08:07:01.799Z",
+      "slug": "onion-tears",
+      "note": "created videos/onion-tears (cut-paper)"
+    },
+    {
+      "t": "2026-10-18T08:07:01.734Z",
+      "slug": "sea-salty",
+      "note": "created videos/sea-salty (riso)"
+    },
     {
       "t": "2026-10-18T07:47:08.225Z",
       "slug": null,

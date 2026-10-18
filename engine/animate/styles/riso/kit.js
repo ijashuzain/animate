@@ -149,7 +149,7 @@ function endSheet() {
 // o.auto = the mask is "wherever any plate has ink" (line-only layers; paper knockouts do nothing there);
 // o.shapes = every fill and line also adds itself to the mask (props, tags, a hero printed over anything); T.rot rotates
 function beginLayer(pitch = PITCH.world, o = {}) {
-  const P = plates(), J = RNG('reg', B % 3), m = ctx.getTransform(), T0 = o.T || { s: 1, x: 0, y: 0 };
+  const P = plates(), J = RNG('reg', BW % 3), m = ctx.getTransform(), T0 = o.T || { s: 1, x: 0, y: 0 };
   const T = { s: m.a * T0.s, x: m.e + m.a * T0.x, y: m.f + m.a * T0.y };
   const cr = Math.cos(T0.rot || 0), sr = Math.sin(T0.rot || 0), dv = (x, y) => [T.x + T.s * (x * cr - y * sr), T.y + T.s * (x * sr + y * cr)];
   let b = [0, 0, W, H];
@@ -222,7 +222,7 @@ function printLayer() {
   if (w <= 0 || h <= 0) return;
   const pl0 = PLATE.teal.g.getImageData(x0, y0, w, h).data, pl1 = PLATE.pink.g.getImageData(x0, y0, w, h).data, pl2 = PLATE.yellow.g.getImageData(x0, y0, w, h).data;
   const m = auto ? null : PLATE.mask.g.getImageData(x0, y0, w, h).data;
-  const pp = paperPixels(), out = OUT.data, drop = dropouts(B % 3), p = pitch * T.s;
+  const pp = paperPixels(), out = OUT.data, drop = dropouts(BW % 3), p = pitch * T.s;
   const c0 = Math.cos(ANGLE.teal * DEG) / p, s0 = Math.sin(ANGLE.teal * DEG) / p;
   const c1 = Math.cos(ANGLE.pink * DEG) / p, s1 = Math.sin(ANGLE.pink * DEG) / p;
   const c2 = Math.cos(ANGLE.yellow * DEG) / p, s2 = Math.sin(ANGLE.yellow * DEG) / p;
@@ -271,7 +271,7 @@ function specks(x0, y0, x1, y1, n, key) {
 function ribbon(P, o = {}) {
   const closed = !!o.closed, key = o.key ?? 'rib';
   const Q = o.amt === 0 ? resample(P, closed, o.step ?? 5) : wobble(P, closed, o.amt ?? 1.4, key, o.step ?? 5);
-  const n = Q.length, total = pathLen(closed ? [...Q, Q[0]] : Q) || 1, R = RNG('press', key, B % 3);
+  const n = Q.length, total = pathLen(closed ? [...Q, Q[0]] : Q) || 1, R = RNG('press', key, BW % 3);
   const f1 = R.r(0.02, 0.05), f2 = R.r(0.12, 0.3), p1 = R.r(0, TAU), p2 = R.r(0, TAU), rough = o.rough ?? 0.15, w = o.w ?? 4;
   const L = [], Rt = []; let s = 0;
   for (let i = 0; i < n; i++) {
@@ -298,7 +298,7 @@ function rimLine(P, key, o = {}) {
   const tones = o.tones || { teal: 1 }, w = o.w ?? 9;
   line(P, tones, { closed: true, w, rough: o.rough ?? 0.55, amt: o.amt ?? 2.2, key, mask: o.mask, knock: o.knock });
   if (o.double === false) return;
-  const Q = resample(P, true, 8), R = RNG('rim2', key, B % 3), n = Q.length, i0 = R.i(0, n - 1), span = Math.floor(n * R.r(0.2, 0.4));
+  const Q = resample(P, true, 8), R = RNG('rim2', key, BW % 3), n = Q.length, i0 = R.i(0, n - 1), span = Math.floor(n * R.r(0.2, 0.4));
   const S = Array.from({ length: span }, (_, i) => Q[(i0 + i) % n]).map(([x, y]) => [x + R.n(1) + 3, y + 3]);
   if (S.length > 2) line(S, tones, { w: w * 0.35, taper: 0.3, amt: 1.2, key: key + '2', mask: o.mask });
 }
@@ -312,7 +312,7 @@ function rim(cx, cy, r, key, o = {}) { rimLine(ringPts(cx, cy, r), key, o); }
 function typeW(str, size, weight = 900) { ctx.save(); ctx.font = `${weight} ${size}px ${PRINT}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
 function type(str, x, y, size, tones, o = {}) {
   const frac = clamp(o.frac ?? 1); if (frac <= 0) return;
-  const R = RNG('type', o.key ?? str, B % 3), font = `${o.weight ?? 900} ${size}px ${PRINT}`;
+  const R = RNG('type', o.key ?? str, BW % 3), font = `${o.weight ?? 900} ${size}px ${PRINT}`;
   const w = typeW(str, size, o.weight ?? 900), x0 = o.align === 'center' ? x - w / 2 : x;
   const knock = o.knock !== false, jx = R.n(0.7), jy = R.n(0.7), rot = R.n(0.004);
   const each = (g, paint) => {
