@@ -69,6 +69,9 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - **Fonts per topic** (the user's note): Google Fonts in studio/fonts (from raw.githubusercontent.com/google/fonts),
   installed for the renderer by studio/tools/fonts.sh; channel lettering takes `CHANNEL.font` / `titleFont` / `labelFont`.
   Sea video: Fredoka (headings, labels) + Nunito (reading lines).
+- Dead beats in the flat style: gentle sway/drift alone measures as "still" (mean pixel change < 0.8 over 0.5 s) because
+  flat areas don't change. The first render had 3-5 stretches per video (one at 13-21 s, right at the viewers' leak).
+  Plan a visible beat every ~3 s (a pop, an entrance, a label, a jump); dark scenes need bigger or lighter movers.
 - The two LoopyLuci animation skills the user suggested were empty boilerplate (generic package/test advice, no
   animation content); removed.
 - Suggest **10** topics, not 6 (CLAUDE.md step 2, the dashboard button and its prompt).

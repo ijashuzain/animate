@@ -57,11 +57,9 @@ SOUND (mix: renders/audio.wav)
   silence before it: 2.0s at <= -40 dBFS ending 93.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
   loudness: -26.4 LUFS integrated, range 6.1 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
-DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.15, "still" below 0.80; silence acts are exempt)
-  WARN  13.25-21.00s: 7.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  42.00-46.25s: 4.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  46.75-50.75s: 4.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-dead beats: WARN (3 stretches over 3s)
+DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.21, "still" below 0.80; silence acts are exempt)
+  WARN  13.25-16.25s: 3.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
+dead beats: WARN (1 stretch over 3s)
 PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
 
 video: 1920x1080, 2868 frames decoded

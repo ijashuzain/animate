@@ -17,7 +17,7 @@ MORPHS: 8 shape-morph bridges at 12, 25, 38, 51, 64, 77, 90, 106.5s, all centred
 
 PACING: 1 hard cuts (0 in the last 5s), mean segment 59.25s, shortest 26.00s, plus 0 on-2s montage steps
 FLAT FRAMES (contrast < 6/255): none
-LOOP: diff(last=2843, first=0) = 8.98; typical consecutive diff in the first 40 frames = 0.23 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
+LOOP: diff(last=2843, first=0) = 8.96; typical consecutive diff in the first 40 frames = 0.23 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
 
 NARRATION (voice-over added outside; checks density and word hits)
  #   t0-t1          words  wps   shot  line
@@ -57,13 +57,9 @@ SOUND (mix: renders/audio.wav)
   silence before it: 2.0s at <= -40 dBFS ending 92.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
   loudness: -24.8 LUFS integrated, range 8.5 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
-DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.13, "still" below 0.80; silence acts are exempt)
-  WARN  67.00-71.75s: 4.8s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  72.75-77.00s: 4.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
+DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.19, "still" below 0.80; silence acts are exempt)
   WARN  79.50-82.50s: 3.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  83.00-86.25s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  107.50-118.50s: 11.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-dead beats: WARN (5 stretches over 3s)
+dead beats: WARN (1 stretch over 3s)
 PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
 
 video: 1920x1080, 2844 frames decoded

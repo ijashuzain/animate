@@ -160,11 +160,12 @@ function sDanger() {
   night({ swarm: false });
   const bx = lerp(1150, -250, mod((TT - at(0)) * 0.22, 1)), by = 260 + Math.sin(TT * 2) * 60, w = Math.sin(TT * 10) * 30;
   { const d = sm(TT, at(4.0), at(5.6)) * 260 - sm(TT, at(10.0), at(11.4)) * 220; fLine([[820, 90], [820, 300 + d]], 'rgba(230,235,255,0.7)', 2.5); fCirc(820, 300 + d, 28, '#2a1f3a', { lw: 3 }); for (const k of [-1, 1]) for (let j = 0; j < 3; j++) fLine([[820 + k * 20, 300 + d - 8 + j * 10], [820 + k * 46, 300 + d - 20 + j * 16]], '#2a1f3a', 4); fFace(820, 302 + d, 0.42, 'focus', 'spider', { blush: false }); }
-  fShape([[bx, by], [bx - 70, by - 30 - w], [bx - 120, by + 10 - w * 0.5], [bx - 80, by + 10], [bx - 40, by + 30], [bx, by + 20], [bx + 40, by + 30], [bx + 80, by + 10], [bx + 120, by + 10 - w * 0.5], [bx + 70, by - 30 - w]], '#2a1f3a', { lw: 4, line: '#110b1c' }); fFace(bx, by + 8, 0.6, 'focus', 'bat', { blush: false });
+  fShape([[bx, by], [bx - 70, by - 30 - w], [bx - 120, by + 10 - w * 0.5], [bx - 80, by + 10], [bx - 40, by + 30], [bx, by + 20], [bx + 40, by + 30], [bx + 80, by + 10], [bx + 120, by + 10 - w * 0.5], [bx + 70, by - 30 - w]], '#6a5a8c', { lw: 5, line: '#110b1c' }); fFace(bx, by + 8, 0.6, 'focus', 'bat', { blush: false });
   for (let k = 0; k < 6; k++) fLine([[960, 80], [960 - 260 * Math.cos(k * 0.3), 80 + 260 * Math.sin(k * 0.3)]], 'rgba(230,235,255,0.6)', 2.5);
   for (let r = 1; r <= 4; r++) fLine(arcPts(960, 80, r * 60, Math.PI * 0.5, Math.PI, 10), 'rgba(230,235,255,0.6)', 2.5);
   fCirc(330, 860, 140, '#3f8a5c', { ry: 40, lw: 4 });
-  const spit = TT > at(9.0); fCirc(330, 790, 80, '#6cc56a', { ry: 60, lw: 5, shade: [-10, -10] }); for (const k of [-1, 1]) fCirc(330 + k * 40, 740, 24, '#6cc56a', { lw: 4 }); fFace(330, 770, 1.1, spit ? 'ouch' : 'focus', 'frog');
+  for (let i = 0; i < 5; i++) { const R = RNG('df', i), on = Math.sin(TT * 2.6 + i * 1.3) > 0.3 ? 1 : 0; glow(R.r(500, 950), R.r(420, 800), 60, on); fCirc(R.r(500, 950), R.r(420, 800), 6, '#f6ffb0', { line: false, alpha: 0.3 + 0.7 * on }); }
+  const spit = TT > at(9.0), hop = Math.max(0, Math.sin(clamp((TT - at(3.0)) / 0.6) * Math.PI)) * 40 + Math.max(0, Math.sin(clamp((TT - at(5.6)) / 0.6) * Math.PI)) * 40; ctx.save(); ctx.translate(0, -hop); fCirc(330, 790, 80, '#6cc56a', { ry: 60, lw: 5, shade: [-10, -10] }); for (const k of [-1, 1]) fCirc(330 + k * 40, 740, 24, '#6cc56a', { lw: 4 }); fFace(330, 770, 1.1, spit ? 'ouch' : 'focus', 'frog'); ctx.restore();
   const fx = spit ? 420 + sm(TT, at(9.0), at(10.0)) * 200 : 460, fy = spit ? 700 - sm(TT, at(9.0), at(10.0)) * 200 : 700;
   if (!spit) fLine([[350, 790], [lerp(350, fx, sm(TT, at(7.6), at(8.6))), lerp(790, fy, sm(TT, at(7.6), at(8.6)))]], FL.pink, 12);
   firefly(fx, fy, 0.9, { lit: 1, key: 'dg', mood: spit ? 'happy' : 'wow', fly: spit });
@@ -210,6 +211,7 @@ function sEnd() {
   fLayer(0.3, () => { for (const [x, sc] of [[70, 1.4], [200, 1.1], [760, 1.3], [900, 1.0]]) fPine(x, 760, sc); fShape([[-200, 760], [400, 730], [1000, 760], [2200, 750], [2200, 1100], [-200, 1100]], '#6cb07a', { lw: 4 }); });
   fShape([[540, 960], [610 + Math.sin(TT * 1.2) * 8, 640], [640, 960]], '#4ba552', { lw: 4 });
   firefly(615, 690, 1.2, { lit: 0.15, key: 'end', mood: 'sleep', rot: -1.3, face: false });
+  { const u = clamp((TT - at(1.8)) / 5.5); if (u > 0 && u < 1) firefly(lerp(-80, 590, u), 500 + Math.sin(u * 9) * 40, 0.8, { fly: true, lit: (1 - u) * 0.8, key: 'home', mood: 'sleep', dir: 1 }); }
   fBirds(150, 260, 3, { speed: 40 }); if (TT > at(5.0)) fBirds(-200 + (TT - at(5.0)) * 70, 340, 4, { speed: 0 });
   grass(960, '#4ba552');
 }
