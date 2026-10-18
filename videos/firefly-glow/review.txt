@@ -17,7 +17,7 @@ MORPHS: 8 shape-morph bridges at 12, 25, 38, 51, 64, 78, 91, 107.5s, all centred
 
 PACING: 1 hard cuts (0 in the last 5s), mean segment 59.75s, shortest 26.00s, plus 0 on-2s montage steps
 FLAT FRAMES (contrast < 6/255): 600, 601, 912, 913, 1536, 1537, 1872, 1873
-LOOP: diff(last=2867, first=0) = 121.98; typical consecutive diff in the first 40 frames = 0.16 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
+LOOP: diff(last=2867, first=0) = 121.99; typical consecutive diff in the first 40 frames = 0.16 (info: F4/F6 loop pixel-exactly and F4 checks it; other formats return to the opening image, changed)
 
 NARRATION (voice-over added outside; checks density and word hits)
  #   t0-t1          words  wps   shot  line
@@ -36,11 +36,11 @@ STORY ARC (loudness in dBFS over 100ms windows: median / 90th percentile; music 
  act          role       t0-t1         cuts  cuts/s  motion   mix med  mix p90  music
  1 Dusk       build      0.00-38.00s      0    0.00     0.3    -31.2    -25.8   -31.4
  2 Night      journey    38.00-78.00s      0    0.00     0.3    -30.6    -26.1   -30.8
- 3 Danger     peak       78.00-91.00s      0    0.00     0.7    -29.4    -25.5   -29.5
+ 3 Danger     peak       78.00-91.00s      0    0.00     0.8    -29.4    -25.5   -29.5
  4 Hush       silence    91.00-93.50s      0    0.00     3.3   -120.0    -76.0  -120.0
  5 Twist      gift       93.50-107.50s      1    0.07     0.4    -27.5    -23.2   -27.8
  6 Dawn       goodbye    107.50-119.50s      0    0.00     0.2    -38.1    -31.8   -38.7
-  info  no cut-rate rule (no hard cuts, or eras joined by morphs): peak motion 0.7 vs max other 3.3 (pixel motion includes noise/boil, so it is not a rule here)
+  info  no cut-rate rule (no hard cuts, or eras joined by morphs): peak motion 0.8 vs max other 3.3 (pixel motion includes noise/boil, so it is not a rule here)
   PASS  gift is the loudest act (p90 -23.2 vs next -25.5)
   PASS  gift p90 >= peak p90 + 1 dB (-23.2 vs -25.5): the busiest moment is not the loudest
   PASS  silence median <= peak median - 15 dB (-120.0 vs -29.4)
@@ -57,11 +57,8 @@ SOUND (mix: renders/audio.wav)
   silence before it: 2.0s at <= -40 dBFS ending 93.5s in the 2s before (craft.md wants 0.5-4s when the story has a turn)
   loudness: -25.2 LUFS integrated, range 6.6 LU, true peak -1.0 dBFS (phone target about -16 to -14 LUFS, peak <= -1)
 
-DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 0.87, "still" below 0.80; silence acts are exempt)
-  WARN  79.75-83.75s: 4.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  84.00-87.25s: 3.3s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-  WARN  108.75-112.75s: 4.0s with nothing new on screen (deadMax 3s) — add a move, a reveal or a cut
-dead beats: WARN (3 stretches over 3s)
+DEAD BEATS (the picture's change over 0.5s, every 0.25s; median 1.11, "still" below 0.80; silence acts are exempt)
+dead beats: PASS (0 stretches over 3s)
 PHONE SHEET: review/phone.jpg (one frame a second at 360px wide — read every caption at this size)
 
 video: 1920x1080, 2868 frames decoded
