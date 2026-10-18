@@ -5,6 +5,17 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## Soft look (Oct 2026): the user's visual references
+- **User feedback: "I am not satisfied with the visuals"**, with references: Headspace-style blob characters with noodle
+  limbs, tone-on-tone flat vector rooms, a flat autumn landscape (round trees, cones, layered hills), a TV cartoon.
+  Answer: `CHANNEL.look = 'soft'` in the flat kit. No outlines by default (fSoft), tone-on-tone palettes (fTint/fMix),
+  fBlob characters (body pill/bean/ball/tall; pose stand/walk/wave/cheer/point/sit; mood; hair; extra callback),
+  fNoodle limbs, fTreeRound, fCone, fBush, fHills (parallax ridges), fLeaves, fGlow. Firefly video rebuilt as the proof.
+- Palette rule for soft night scenes: everything in one hue family (purples), and the hero in a warm complementary
+  colour (orange #ff8f5e). The first try had a purple hero on a purple night: it vanished.
+- Keep moving characters out of the lettering column (x < 1000): a flying bug drifted into the text at 1100.
+- Not done yet (asked, unanswered): the textured storybook grain. Default stays grain-free (the user's rule).
+
 ## Batch 3 (Oct 2026): Earth stops spinning (riso, what-if, ambient), why we dream (sketchbook, question chain, lofi),
 ## who killed the dinosaurs (crosshatch, mystery, mystery)
 

@@ -163,6 +163,9 @@ Also mirror stages locally with `node studio/tools/status.mjs <slug> <stage> "<w
 - **No boil, little texture (the user's rule):** lines stay still (the wobble/boil is off for channel videos; `CHANNEL.boil = true`
   only when a scene needs it) and avoid grainy textures (halftone dots, grain, pencil fills). Default to the `flat` style
   (styles/flat: flat colours, clean outlines, cel shading, faces, lens zooms, pointing labels).
+- **Soft look (the user's references):** prefer `CHANNEL.look = 'soft'` with the flat style: no outlines, tone-on-tone
+  palettes, Headspace-like `fBlob` characters with noodle limbs, round trees/cones/layered hills; the hero in a warm colour
+  that contrasts with the scene's hue family. videos/firefly-glow (archive later) is the reference build.
 - Deterministic drawing: `RNG(...)` and `B`/`TT`, never `Math.random()` or the clock. Don't fade kit textures with globalAlpha.
 - Facts are checked; claims are hedged where science is uncertain ("could", "about").
 - Never wait on a background job with `pgrep -f <pattern>` loops: the loop matches its own command line. Use `run_in_background`

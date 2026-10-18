@@ -17,6 +17,8 @@ const FLAT_FONT = '"Inter Display", Inter, "Liberation Sans", Arial, sans-serif'
 const fFont = (o = {}) => o.font ?? ((typeof CHANNEL !== 'undefined' && CHANNEL.labelFont) || FLAT_FONT);
 // straight-edged path (core trace() rounds every corner); dense point lists (ellipses) still read as curves
 function fPath(P, closed = true) { ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]); for (let i = 1; i < P.length; i++) ctx.lineTo(P[i][0], P[i][1]); if (closed) ctx.closePath(); }
+// the soft look (CHANNEL.look = 'soft'): no outlines unless a shape asks for one; tone-on-tone, limited palettes
+const fSoft = () => typeof CHANNEL !== 'undefined' && CHANNEL.look === 'soft';
 const fSh = (c, k = 0.82) => { const h = c.replace('#', ''), n = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); return '#' + n.map((v) => Math.round(v * k).toString(16).padStart(2, '0')).join(''); };   // a darker tone of c for cel shading
 
 // a flat shape: points P, fill c. o: line (false | colour), lw, shade (cel shadow: true or [dx, dy]), shc, drop ([dx, dy] flat drop shadow), alpha
@@ -30,7 +32,7 @@ function fShape(P, c, o = {}) {
     ctx.save(); tr(P); ctx.clip(); ctx.fillStyle = o.shc ?? fSh(c); ctx.fill(); ctx.translate(dx, dy); tr(P); ctx.fillStyle = c; ctx.fill(); ctx.restore();
   }
   if (o.hi) { const b = bbox(P, 0); ctx.save(); tr(P); ctx.clip(); ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.beginPath(); ctx.ellipse(b.x0 + (b.x1 - b.x0) * 0.3, b.y0 + (b.y1 - b.y0) * 0.25, (b.x1 - b.x0) * 0.12, (b.y1 - b.y0) * 0.07, -0.5, 0, TAU); ctx.fill(); ctx.restore(); }
-  if (o.line !== false) { ctx.lineWidth = o.lw ?? 5; ctx.strokeStyle = o.line ?? FL.ink; ctx.lineJoin = 'round'; tr(P); ctx.stroke(); }
+  if (o.line !== false && !(fSoft() && o.line == null)) { ctx.lineWidth = o.lw ?? 5; ctx.strokeStyle = o.line ?? FL.ink; ctx.lineJoin = 'round'; tr(P); ctx.stroke(); }
   ctx.restore();
 }
 const fCirc = (x, y, r, c, o = {}) => fShape(ellipsePts(x, y, Math.max(0.5, r), Math.max(0.5, o.ry ?? r), o.rot ?? 0, 48), c, o);
@@ -172,6 +174,77 @@ function fVolcano(x, base, w, h, o = {}) {
 }
 // grass tufts along a line (they sway a little)
 function fTufts(x0, x1, y, n = 8, c = FL.grassD) { for (let i = 0; i < n; i++) { const x = lerp(x0, x1, (i + 0.5) / n), a = Math.sin(TT * 1.6 + i) * 4; fLine([[x - 8, y], [x - 12 + a, y - 18]], c, 4); fLine([[x, y], [x + a, y - 24]], c, 4); fLine([[x + 8, y], [x + 12 + a, y - 18]], c, 4); } }
+
+// =====================================================================
+//  SOFT LOOK (the user's references: Headspace-style blob characters, tone-on-tone flat vector rooms, layered autumn
+//  hills): no outlines, one harmonious palette per scene, background props as tints of the ground colour, characters
+//  as rounded blobs with noodle limbs that walk, wave and bounce. Use with CHANNEL.look = 'soft'.
+// =====================================================================
+const fHex = (c) => { const h = c.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
+const fMix = (a, b, k) => { const A = fHex(a), Bc = fHex(b); return '#' + A.map((v, i) => Math.round(v + (Bc[i] - v) * k).toString(16).padStart(2, '0')).join(''); };
+const fTint = (c, k) => (k >= 0 ? fMix(c, '#ffffff', k) : fMix(c, '#1a1630', -k));   // k > 0 lighter, k < 0 darker (towards a deep plum, not grey)
+// a noodle: a thick round-capped curve from a to b, bending by bend (px, sideways)
+function fNoodle(a, b, w, c, bend = 0) { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, cx = mx - dy / L * bend, cy = my + dx / L * bend; ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = w; ctx.strokeStyle = c; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.quadraticCurveTo(cx, cy, b[0], b[1]); ctx.stroke(); ctx.restore(); }
+// a blob character (Headspace-like). (x, y) = the feet on the ground. o: body 'pill' | 'bean' | 'ball' | 'tall', w, h, c (body),
+// limb (limb colour), pose 'stand' | 'walk' | 'wave' | 'cheer' | 'point' | 'sit', walk (speed, 0 = stand), dir 1 | -1,
+// mood (face), eyes 'dots' | 'big', look [x, y], hair 'tuft' | 'band' | 'curl' | null, hairc, hop (time), arms [aL, aR] override
+function fBlob(x, y, o = {}) {
+  const key = o.key ?? 'blob', w = o.w ?? 120, h = o.h ?? 170, c = o.c ?? '#5b8def', lc = o.limb ?? fTint(c, -0.55), dir = o.dir ?? 1, lw = o.lw ?? Math.max(10, w * 0.12);
+  const ph = TT * (o.walk ?? 0) * 6 + key.length, walking = (o.walk ?? 0) > 0;
+  const hop = o.hop != null ? Math.max(0, Math.sin(clamp((TT - o.hop) / 0.55) * Math.PI)) : 0, sq = o.hop != null ? Math.sin(clamp((TT - o.hop) / 0.55) * Math.PI * 2) * 0.06 : 0;
+  const bob = walking ? Math.abs(Math.sin(ph)) * 8 : Math.sin(TT * 2 + key.length) * 2.5;
+  const leg = h * 0.32, by = y - leg - bob - hop * 90, sx = 1 + sq, sy = 1 - sq;
+  fCirc(x, y + 4, w * 0.55 * (1 - hop * 0.4), 'rgba(30,20,60,0.13)', { ry: 9, line: false });
+  if (o.pose !== 'sit') for (const s of [-1, 1]) { const st = walking ? Math.sin(ph + (s > 0 ? Math.PI : 0)) * 26 : s * 6, lift = walking ? Math.max(0, Math.cos(ph + (s > 0 ? Math.PI : 0))) * 12 : 0, fx = x + s * w * 0.18 + st * dir, fy = y - lift - hop * 90; fNoodle([x + s * w * 0.18, by + 4], [fx, fy], lw, lc, -st * 0.25 * dir); fCirc(fx + dir * 8, fy - 2, lw * 0.75, lc, { ry: lw * 0.45, line: false }); }
+  // body
+  ctx.save(); ctx.translate(x, by); ctx.scale(sx, sy); ctx.translate(-x, -by);
+  const bodyP = (o.body ?? 'pill') === 'ball' ? ellipsePts(x, by - h * 0.34, w * 0.55, h * 0.36, 0, 48) : (o.body === 'bean') ? ellipsePts(x, by - h * 0.36, w * 0.5, h * 0.4, dir * 0.12, 48) : rrectPts(x - w / 2, by - h * (o.body === 'tall' ? 0.95 : 0.72), w, h * (o.body === 'tall' ? 0.95 : 0.72), w * 0.48, 10);
+  const top = by - h * ((o.body ?? 'pill') === 'tall' ? 0.95 : 0.72), cy = by - h * 0.4;
+  // arms (behind for the far arm would need depth; both in front reads fine in this look)
+  const A = o.arms ?? ({ wave: [0.5, 2.5 + Math.sin(TT * 7) * 0.35], cheer: [2.6 + Math.sin(TT * 6) * 0.2, 2.6 - Math.sin(TT * 6) * 0.2], point: [0.4, 1.6], sit: [0.6, 0.6] }[o.pose] ?? (walking ? [0.35 + Math.sin(ph) * 0.4, 0.35 - Math.sin(ph) * 0.4] : [0.35, 0.35]));
+  const drawArm = (s, a) => { const shx = x + s * w * 0.42, shy = cy + h * 0.02, L = h * 0.42, hx = shx + s * Math.sin(a) * L, hy = shy + Math.cos(a) * L; fNoodle([shx, shy], [hx, hy], lw * 0.9, lc, s * 14 * Math.cos(a)); fCirc(hx, hy, lw * 0.62, lc, { line: false }); };
+  fShape(bodyP, c, { line: false });
+  if (o.belly !== false) { ctx.save(); trace(bodyP, true); ctx.clip(); fCirc(x - dir * w * 0.25, by + 6, w * 0.7, fTint(c, -0.12), { ry: h * 0.32, line: false }); ctx.restore(); }
+  // hair
+  if (o.hair === 'tuft') for (let i = -1; i <= 1; i++) fNoodle([x + i * w * 0.12, top + 8], [x + i * w * 0.2 + Math.sin(TT * 2 + i) * 3, top - 22 - (i === 0 ? 10 : 0)], lw * 0.8, o.hairc ?? lc);
+  if (o.hair === 'band') { ctx.save(); trace(bodyP, true); ctx.clip(); fRect(x - w, top + h * 0.12, w * 2, h * 0.08, 0, o.hairc ?? FL.pink, { line: false }); ctx.restore(); }
+  if (o.hair === 'curl') fCirc(x + dir * w * 0.15, top + 4, w * 0.28, o.hairc ?? fTint(c, -0.35), { line: false });
+  // face
+  const fx = x + dir * w * 0.08, fy = top + h * (o.body === 'ball' ? 0.2 : 0.2), lk = o.look ?? [dir * 0.6, 0];
+  const blink = (B + key.length * 5) % 53 < 2;
+  if ((o.eyes ?? 'big') === 'big') for (const s of [-1, 1]) { const ex = fx + s * w * 0.14, ey = fy; if (blink || o.mood === 'sleep' || o.mood === 'happy') { fLine(arcPts(ex, ey + 2, w * 0.07, o.mood === 'happy' ? Math.PI * 1.1 : 0.2, o.mood === 'happy' ? Math.PI * 1.9 : Math.PI - 0.2, 8), FL.ink, Math.max(3, w * 0.035), { smooth: true }); continue; } fCirc(ex, ey, w * 0.1, FL.white, { line: false }); fCirc(ex + lk[0] * w * 0.035, ey + lk[1] * w * 0.035, w * 0.055, FL.ink, { line: false }); }
+  else for (const s of [-1, 1]) fCirc(fx + s * w * 0.12, fy, w * 0.04, FL.ink, { ry: blink ? w * 0.01 : w * 0.05, line: false });
+  const my = fy + h * 0.11, mood = o.mood ?? 'smile';
+  if (mood === 'wow' || mood === 'ouch') fCirc(fx, my + 4, w * 0.06, FL.ink, { ry: w * 0.08, line: false });
+  else if (mood === 'sad') fLine(arcPts(fx, my + w * 0.1, w * 0.08, Math.PI * 1.2, Math.PI * 1.8, 8), FL.ink, Math.max(3, w * 0.03), { smooth: true });
+  else if (mood === 'focus' || mood === 'sleep') fLine([[fx - w * 0.06, my + 2], [fx + w * 0.06, my + 2]], FL.ink, Math.max(3, w * 0.03));
+  else { ctx.save(); ctx.beginPath(); ctx.arc(fx, my - w * 0.02, w * (mood === 'happy' ? 0.1 : 0.08), 0.15, Math.PI - 0.15); ctx.closePath(); ctx.fillStyle = mood === 'happy' ? FL.ink : 'rgba(0,0,0,0)'; ctx.fill(); ctx.lineWidth = Math.max(3, w * 0.03); ctx.strokeStyle = FL.ink; ctx.lineCap = 'round'; if (mood !== 'happy') ctx.stroke(); ctx.restore(); }
+  if (o.blush !== false) for (const s of [-1, 1]) fCirc(fx + s * w * 0.27, fy + h * 0.07, w * 0.06, 'rgba(255,120,150,0.4)', { ry: w * 0.035, line: false });
+  ctx.restore();
+  drawArm(-1, A[0]); drawArm(1, A[1]);
+  if (o.extra) o.extra({ x, by, top, w, h, cy });
+}
+// a round leafy tree (autumn-flat reference): a tapered trunk with branches, a cluster canopy with a darker underside and leaf marks
+function fTreeRound(x, y, s = 1, o = {}) {
+  const c = o.c ?? '#e2553b', a = Math.sin(TT * 0.9 + x * 0.01) * 0.025, tc = o.trunk ?? fTint(c, -0.55);
+  fShape([[x - 12 * s, y], [x - 6 * s, y - 120 * s], [x + 6 * s, y - 120 * s], [x + 12 * s, y]], tc, { line: false });
+  fNoodle([x, y - 70 * s], [x - 40 * s, y - 120 * s], 7 * s, tc); fNoodle([x, y - 90 * s], [x + 36 * s, y - 135 * s], 6 * s, tc);
+  ctx.save(); ctx.translate(x, y - 100 * s); ctx.rotate(a); ctx.translate(-x, -(y - 100 * s));
+  const blobs = [[0, -170, 95], [-70, -130, 70], [70, -125, 72], [-30, -215, 60], [40, -205, 58]];
+  for (const [dx, dy, r] of blobs) fCirc(x + dx * s, y + dy * s, r * s, c, { line: false });
+  ctx.save(); for (const [dx, dy, r] of blobs) { ctx.beginPath(); ctx.arc(x + dx * s, y + dy * s, r * s, 0, TAU); } ctx.clip(); fCirc(x + 30 * s, y - 70 * s, 150 * s, fTint(c, -0.15), { ry: 70 * s, line: false }); ctx.restore();
+  for (let i = 0; i < (o.leaves ?? 9); i++) { const R = RNG('tl', x, i); fCirc(x + R.r(-110, 110) * s, y + R.r(-240, -100) * s, 8 * s, fTint(c, -0.28), { ry: 14 * s, rot: R.r(-1, 1), line: false }); }
+  ctx.restore();
+}
+// a cone tree (cypress / poplar silhouette) and a bush
+function fCone(x, y, s = 1, c = '#c98a2f') { const a = Math.sin(TT * 0.8 + x * 0.02) * 0.02; ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.translate(-x, -y); fShape([[x, y - 230 * s], ...ellipsePts(x, y - 95 * s, 34 * s, 120 * s, 0, 30, -Math.PI * 0.45, Math.PI * 1.45)], c, { line: false }); fShape([[x, y - 230 * s], [x + 30 * s, y - 120 * s], [x + 26 * s, y - 20 * s], [x, y - 10 * s]], fTint(c, -0.14), { line: false }); ctx.restore(); fRect(x - 4 * s, y - 14 * s, 8 * s, 18 * s, 2, fTint(c, -0.5), { line: false }); }
+function fBush(x, y, s = 1, c = '#c94a3a') { for (const [dx, dy, r] of [[-40, -30, 42], [0, -46, 52], [42, -28, 40]]) fCirc(x + dx * s, y + dy * s, r * s, c, { line: false }); fRect(x - 82 * s, y - 30 * s, 164 * s, 30 * s, 0, c, { line: false }); fCirc(x + 10 * s, y - 14 * s, 60 * s, fTint(c, -0.15), { ry: 18 * s, line: false }); }
+// layered rolling hills: layers = [{ y, c, amp, f, ph, d }] far -> near (d = parallax depth)
+function fHills(layers) { for (const L of layers) fLayer(L.d ?? 0.2, () => { const P = [[-300, L.y]]; for (let x = -300; x <= W + 300; x += 40) P.push([x, L.y - Math.sin(x * (L.f ?? 0.004) + (L.ph ?? 0)) * (L.amp ?? 60) - Math.sin(x * (L.f ?? 0.004) * 2.3 + (L.ph ?? 0) * 1.7) * (L.amp ?? 60) * 0.3]); P.push([W + 300, H + 300], [-300, H + 300]); fShape(P, L.c, { line: false }); if (L.shade) { ctx.save(); trace(P, true); ctx.clip(); fCirc(L.shade[0], L.y + 140, 420, fTint(L.c, -0.1), { ry: 120, line: false }); ctx.restore(); } }); }
+// falling leaves (or petals / snow): n, colours, the area they fall through
+function fLeaves(n, cols, o = {}) { const x0 = o.x0 ?? 0, x1 = o.x1 ?? 1000, y0 = o.y0 ?? -40, y1 = o.y1 ?? 1100; for (let i = 0; i < n; i++) { const R = RNG('lf', o.key ?? 'l', i), u = mod(TT * R.r(0.05, 0.09) + R.f(), 1), x = R.r(x0, x1) + Math.sin(TT * 1.2 + i) * 40, y = lerp(y0, y1, u), rot = TT * R.r(0.8, 2) + i; fCirc(x, y, 10 * (o.s ?? 1), cols[i % cols.length], { ry: 18 * (o.s ?? 1), rot, line: false }); } }
+// a soft glow (light): radial falloff, colour as 'r,g,b'
+function fGlow(x, y, r, a = 1, c = '255,230,120') { if (a <= 0) return; ctx.save(); const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${c},${0.8 * a})`); g.addColorStop(0.4, `rgba(${c},${0.3 * a})`); g.addColorStop(1, `rgba(${c},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.restore(); }
 
 // =====================================================================
 //  STYLE — the renderer's hooks
