@@ -19,7 +19,8 @@ kit/                   the shared drawing kit (plain JS, deterministic, canvas 2
                        Grow it: anything a second film could use goes here, not in a film.
 films/<slug>/          one folder per film: plan.md, script-timed.md, film.json, src/*.js, score.py, audio/ (wav ignored),
                        hf/ (generated HyperFrames project), stills/, renders/ (ignored)
-tools2/                film.mjs (build, stills, sheet, draft/looks/final renders through HyperFrames), synth.py (numpy synth)
+tools2/                film.mjs (build, still, sheet, board = the storyboard check, thumb, draft/looks/final renders through
+                       HyperFrames + a 1080p copy), synth.py (numpy synth: instruments + sound effects)
 studio/references/     the tutorial notes, the HyperFrames digest (framework rules, motion, audio), peekaboo.md
 studio/LEARNINGS.md    taste + lessons, newest first; studio/voice.md: narration voice; studio/fonts: Google Fonts (OFL)
 studio/vendor/         youtube-agent-skill scorers (hooks, titles), anatomy kit; studio/dashboard: the live page
@@ -65,14 +66,19 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    `node tools2/film.mjs <slug> still 2,9,15 0.5`. Fix what you see before moving on (see "Quality bar").
 6. **Score**: `films/<slug>/score.py` with `tools2/synth.py`: music that follows the film's arc and a sound for every
    action; `python3 films/<slug>/score.py` writes audio/music.wav and audio/sfx.wav. Music sits well under the voice.
-7. **Draft**: `node tools2/film.mjs <slug> draft` (30 s ≈ 1.5 min) -> send `renders/<slug>-draft.mp4` + plan + script to
+7. **Storyboard check (the user's rule; never skip)**: list the major scenes in film.json `board` ([t, label], one per beat
+   plus the key gags, 12-20 tiles) and run `node tools2/film.mjs <slug> board`: one image, numbered tiles with time and
+   label (`stills/board.png`). Look at it yourself first (every tile must show its gag; move a time if not), then send it
+   with SendUserFile and **wait for the user's notes** ("#4: ..."). Apply them, re-send the board if the changes are big,
+   and only then render the draft. Update the dashboard (stage `reviewing`, "storyboard sent").
+8. **Draft**: `node tools2/film.mjs <slug> draft` (30 s ≈ 1.5 min) -> send `renders/<slug>-draft.mp4` + plan + script to
    the user, with the weak spots you see. **The user steers here**; change, re-draft if big.
-8. **Final**: `node tools2/film.mjs <slug> final` (run_in_background). **Always deliver 1080p** (the user's rule): film.mjs
+9. **Final**: `node tools2/film.mjs <slug> final` (run_in_background). **Always deliver 1080p** (the user's rule): film.mjs
    makes `renders/<slug>-final-1080p.mp4` under 30 MB (never send a 720p copy). Thumbnail: `node tools2/film.mjs <slug> thumb`. Deliver
    `script-timed.md` (the voice script with a time window per line: the user records the voice AFTER the picture,
    with ElevenLabs), metadata and a thumbnail. When the voice arrives: drop it in `audio/`, add it to film.json, carve
    the music under it (hyperframes-audio), re-render.
-9. **Learn** (always): what the user liked/disliked into `studio/LEARNINGS.md` (taste first), general fixes into `kit/`
+10. **Learn** (always): what the user liked/disliked into `studio/LEARNINGS.md` (taste first), general fixes into `kit/`
    or `tools2/`, the film into `topics/log.md` and `board/history`. Commit and push (generated files never).
 
 ## Quality bar (check every film before the draft goes out; from the pilot's weak spots)

@@ -4,6 +4,8 @@
 //   node tools2/film.mjs <slug> still 1.5,9,20 [scale]  build, then render those seconds side by side -> films/<slug>/stills/
 //   node tools2/film.mjs <slug> sheet [every=1] [scale] one frame every N seconds in a grid -> stills/sheet.png
 //   node tools2/film.mjs <slug> draft|looks|final       build, then HyperFrames render at that quality -> renders/ (+ a 1080p copy < 30 MB)
+//   node tools2/film.mjs <slug> board                   the storyboard check: film.json board [[t, label], ...] -> stills/board.png
+//                                                       (one image of every major scene, numbered, for the user's notes BEFORE the draft)
 //   node tools2/film.mjs <slug> thumb                   film.json thumb { t, lines: [[text, size, colour]], font } -> youtube/thumbnail.png 1280x720
 // films/<slug>/film.json: { title, duration, fps, fonts: [{ family, file }], src: [files], audio: [{ id, src, start, volume }] }
 // A film's scripts define FILM = { draw(t) } on a 1920x1080 canvas, using kit/motion.js (K) and kit/paint.js (P).
@@ -21,12 +23,14 @@ const FD = path.join(ROOT, 'films', slug), HF = path.join(FD, 'hf');
 const F = JSON.parse(fs.readFileSync(path.join(FD, 'film.json'), 'utf8'));
 const fps = F.fps ?? 30, dur = F.duration;
 
+const writeIf = (file, data) => { if (!fs.existsSync(file) || !fs.readFileSync(file).equals(Buffer.from(data))) fs.writeFileSync(file, data); };
+const copyIf = (a, b) => writeIf(b, fs.readFileSync(a));
 function build() {
   fs.mkdirSync(HF, { recursive: true });
-  fs.copyFileSync(require.resolve('gsap/dist/gsap.min.js'), path.join(HF, 'gsap.min.js'));
-  const faces = (F.fonts ?? []).map((f) => { const b = path.basename(f.file); fs.copyFileSync(path.join(ROOT, f.file), path.join(HF, b)); return `@font-face { font-family: '${f.family}'; src: url('${b}'); font-weight: 100 900; }`; }).join('\n');
+  copyIf(require.resolve('gsap/dist/gsap.min.js'), path.join(HF, 'gsap.min.js'));
+  const faces = (F.fonts ?? []).map((f) => { const b = path.basename(f.file); copyIf(path.join(ROOT, f.file), path.join(HF, b)); return `@font-face { font-family: '${f.family}'; src: url('${b}'); font-weight: 100 900; }`; }).join('\n');
   const audio = (F.audio ?? []).filter((a) => fs.existsSync(path.join(FD, a.src))).map((a, i) => {
-    const b = path.basename(a.src); fs.copyFileSync(path.join(FD, a.src), path.join(HF, b));
+    const b = path.basename(a.src); copyIf(path.join(FD, a.src), path.join(HF, b));
     return `<audio id="${a.id}" src="${b}" data-start="${a.start ?? 0}" data-duration="${a.duration ?? dur}" data-track-index="${10 + i}" data-volume="${a.volume ?? 1}"></audio>`;
   }).join('\n');
   const js = ['kit/motion.js', 'kit/paint.js', ...(F.kit ?? [])].map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n')
@@ -59,7 +63,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); el
 </script>
 </body></html>
 `;
-  fs.writeFileSync(path.join(HF, 'index.html'), html);
+  writeIf(path.join(HF, 'index.html'), html);
   if (!fs.existsSync(path.join(HF, 'hyperframes.json'))) fs.writeFileSync(path.join(HF, 'hyperframes.json'), JSON.stringify({ name: slug }, null, 2));
   if (!fs.existsSync(path.join(HF, 'meta.json'))) fs.writeFileSync(path.join(HF, 'meta.json'), JSON.stringify({ id: slug, name: F.title }, null, 2));
 }
@@ -100,6 +104,36 @@ else if (['draft', 'looks', 'final'].includes(mode)) {
     if (fs.statSync(share).size < 29e6) break;
   }
   console.log('1080p copy:', path.relative(ROOT, share), (fs.statSync(share).size / 1e6).toFixed(1), 'MB');
+}
+else if (mode === 'board') {
+  const B = F.board; if (!B) { console.error('film.json has no "board": [[t, label], ...]'); process.exit(2); }
+  const { chromium } = require('playwright');
+  const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const errs = []; page.on('pageerror', (e) => errs.push(e.message));
+  await page.goto(pathToFileURL(path.join(HF, 'index.html')).href);
+  await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
+  const url = await page.evaluate(([B, title]) => {
+    const cols = 4, w = 576, h = 324, cap = 46, pad = 14, head = 90, rows = Math.ceil(B.length / cols);
+    const s = document.createElement('canvas'); s.width = cols * (w + pad) + pad; s.height = head + rows * (h + cap + pad) + pad; const g = s.getContext('2d');
+    g.fillStyle = '#14122a'; g.fillRect(0, 0, s.width, s.height);
+    g.fillStyle = '#ffffff'; g.font = '700 40px sans-serif'; g.textBaseline = 'middle'; g.fillText(title + ': storyboard check', pad + 6, head / 2);
+    g.fillStyle = '#9a96c8'; g.font = '400 24px sans-serif'; g.textAlign = 'right'; g.fillText('reply with the number to change', s.width - pad - 6, head / 2); g.textAlign = 'left';
+    const c = document.getElementById('c');
+    B.forEach(([t, label], i) => {
+      window.drawAt(t); const x = pad + (i % cols) * (w + pad), y = head + Math.floor(i / cols) * (h + cap + pad);
+      g.drawImage(c, x, y, w, h);
+      g.fillStyle = '#26234a'; g.fillRect(x, y + h, w, cap);
+      g.fillStyle = '#ffd36b'; g.beginPath(); g.arc(x + 26, y + h + cap / 2, 17, 0, 6.3); g.fill();
+      g.fillStyle = '#14122a'; g.font = '800 20px sans-serif'; g.textAlign = 'center'; g.fillText(String(i + 1), x + 26, y + h + cap / 2 + 1);
+      const mm = Math.floor(t / 60), ss = (t % 60).toFixed(0).padStart(2, '0');
+      g.textAlign = 'left'; g.fillStyle = '#9a96c8'; g.font = '600 20px sans-serif'; g.fillText(`${mm}:${ss}`, x + 52, y + h + cap / 2 + 1);
+      g.fillStyle = '#ffffff'; g.font = '600 21px sans-serif'; let lab = label; while (g.measureText(lab).width > w - 120 && lab.length > 4) lab = lab.slice(0, -2); if (lab !== label) lab += '…'; g.fillText(lab, x + 108, y + h + cap / 2 + 1);
+    });
+    return s.toDataURL('image/png');
+  }, [B, F.title]);
+  await browser.close();
+  const out = path.join(FD, 'stills', 'board.png'); fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, Buffer.from(url.split(',')[1], 'base64'));
+  console.log('wrote', path.relative(ROOT, out), `(${B.length} scenes)`, errs.length ? 'PAGE ERRORS: ' + errs.join(' | ') : 'no page errors');
 }
 else if (mode === 'thumb') {
   const T = F.thumb; if (!T) { console.error('film.json has no "thumb"'); process.exit(2); }

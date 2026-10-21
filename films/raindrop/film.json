@@ -45,5 +45,79 @@
         "#ffe066"
       ]
     ]
-  }
+  },
+  "board": [
+    [
+      4.5,
+      "Rainy window: ocean, cloud, dino bubbles"
+    ],
+    [
+      12.6,
+      "Inside the drop: meet Drip"
+    ],
+    [
+      20.6,
+      "Deep ocean: whale, fish, the queue"
+    ],
+    [
+      29.0,
+      "Sunlit surface: jiggling molecules"
+    ],
+    [
+      33.45,
+      "Launch: Drip jumps as vapour"
+    ],
+    [
+      40.5,
+      "Cold sky: Drip shivers, salt crystal"
+    ],
+    [
+      44.8,
+      "The huddle makes a cloud droplet"
+    ],
+    [
+      48.6,
+      "Pull out: droplet, feather, 9 days"
+    ],
+    [
+      54.0,
+      "Storm cloud: a million merges"
+    ],
+    [
+      61.2,
+      "Not a tear: a hamburger bun"
+    ],
+    [
+      67.2,
+      "Mountain: the three-way signpost"
+    ],
+    [
+      79.6,
+      "River ride: waterwheel, town"
+    ],
+    [
+      84.6,
+      "Fisherman's hat, 2 weeks"
+    ],
+    [
+      89.4,
+      "Silence at the dusk sea"
+    ],
+    [
+      93.6,
+      "The loop: billions of years"
+    ],
+    [
+      101.8,
+      "Dinosaur flashback: the gulp"
+    ],
+    [
+      108.6,
+      "Sunset: the three numbers"
+    ],
+    [
+      116.4,
+      "Back at the window: say hi"
+    ]
+  ]
 }
