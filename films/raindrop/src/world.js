@@ -130,12 +130,12 @@ function drawDino(t, x, y, s, n = 0, col = '#8fa86a', o = {}) {
     // head (the reference look): a smooth profile that flows out of the neck: forehead bump, round snout, lighter jaw,
     // one eye with a highlight, a thin smile, a nostril (kit/cast.js profileFace); the jaw drops to drink
     P.at(R.head[0], R.head[1], dinoHeadRot(n), 1.35, 1.35, () => {
-      const open = o.mouth ?? 0;
+      const open = 0;
       const head = [[-34, 26], [-6, 44], [26, 46], [58, 38], [84, 24], [94, 6], [86, -10], [60, -14 - open * 4], [20, -20], [-20, -24], [-40, -10]];
       P.lit(head, P.lin(0, 46, 0, -24, P.mixc(col, '#ffffff', 0.12), col), { d: 0.12, shade: 'rgba(30,20,5,0.2)', rim: 'rgba(255,240,200,0.35)', light: [-0.3, 1] });
       P.clip(() => P.trace(head), () => P.smooth([[-40, -24], [90, -16], [92, -6], [40, -6], [-40, -8]], belly, { a: 0.9 }));
-      if (open > 0) { P.smooth([[50, -2], [90, 3], [86, -4 - open * 5], [54, -5 - open * 3]], '#5a2424'); P.smooth([[60, -4 - open * 2.5], [82, -2 - open * 4], [70, -5 - open * 3]], '#e07a7a'); }
-      Cast.profileFace(t, 36, 18, 15, { mood: o.mood ?? 'smile', look: (o.look ?? [0.7, 0])[0], seed: 21, ink: '#1e1a14', mouth: [2.6, -1.1], nose: [3.25, 0.15] });
+      // the face is clipped to the head, so the eye, smile and nostril can never sit outside it (no open mouth: a closed smile)
+      P.clip(() => P.trace(head), () => Cast.profileFace(t, 34, 16, 15, { mood: o.mood === 'wow' ? 'smile' : (o.mood ?? 'smile'), look: (o.look ?? [0.7, 0])[0], seed: 21, ink: '#1e1a14', mouth: [2.5, -0.85], nose: [3.0, 0.25] }));
     });
   });
 }

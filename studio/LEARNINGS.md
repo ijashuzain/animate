@@ -23,6 +23,8 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   front-facing face on a side-view head: a smooth head that flows out of the neck, one eye with a highlight, a thin
   smile, a nostril, a pale underside along the neck and jaw. Now `Cast.profileFace` in kit/cast.js. Rule: when the user
   sends a reference, match its construction (silhouette, face placement, details), not just its colours.
+  Follow-up ("what is this red brown thing on face?"): an open mouth drawn as a dark wedge read as a blob hanging off the
+  jaw. Fix: no open mouths on simple flat characters (a closed smile), and clip face features to the head's outline.
 - What worked: a character made of the subject (a water molecule with hydrogen ears), a passport stamped at each
   stop (a running gag that also carries the numbers), scene joins as camera moves (dive into a drop, rise, fall, slide).
 - Gotchas: never read a value computed in the previous frame (a zoom target) - frames render out of order; compute it
