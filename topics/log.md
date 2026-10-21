@@ -56,3 +56,6 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-18 | How do fireflies glow without getting hot? (day in the life) | nature | flat | **made** (batch 4, firefly-glow) |
 | 2026-10-18 | From Pong to today: video games (timeline) | tech history | pixel | suggested (batch 4, set 2) |
 | 2026-10-18 | How deep is the ocean? (scale journey) | nature / scale | riso | suggested (batch 4, set 2) |
+
+## 2026-10-21 (rebuild pilot)
+- MADE: Seed to Giant (30 s pilot, one continuous shot, flat vector) — films/seed-to-giant
