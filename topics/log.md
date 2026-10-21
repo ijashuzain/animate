@@ -59,3 +59,15 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 
 ## 2026-10-21 (rebuild pilot)
 - MADE: Seed to Giant (30 s pilot, one continuous shot, flat vector) — films/seed-to-giant
+
+## 2026-10-21 (rebuilt workflow): 10 suggested, each with its visual idea
+| 2026-10-21 | The 10-Day Trip of a Single Raindrop (one continuous journey) | nature | suggested |
+| 2026-10-21 | What Your Body Does to a Sandwich in 24 Hours (factory tour) | science how | suggested |
+| 2026-10-21 | Why 400 Tonnes of Plane Doesn't Fall (air as a crowd of balls) | tech | suggested |
+| 2026-10-21 | From Shells to Swipes: 5,000 Years of Money (a coin relay) | money / history | suggested |
+| 2026-10-21 | What If You Fell Into a Black Hole? (two views) | space / what if | suggested |
+| 2026-10-21 | How a Cloud Builds a Lightning Bolt (ice bumper cars) | nature | suggested |
+| 2026-10-21 | How One Block Got to the Top of the Great Pyramid (follow one block) | history | suggested |
+| 2026-10-21 | Why Cats Always Land on Their Feet (sports replay) | nature / physics | suggested |
+| 2026-10-21 | How Your 'Hello' Crosses the Ocean in 0.1 Seconds (a word's journey) | tech | suggested |
+| 2026-10-21 | Why February Sometimes Has 29 Days (Earth the late runner) | science / history | suggested |
