@@ -30,7 +30,7 @@
     }
   ],
   "thumb": {
-    "t": 101.6,
+    "t": 102.4,
     "side": "right",
     "font": "\"Baloo 2\", sans-serif",
     "lines": [
@@ -44,6 +44,11 @@
         150,
         "#ffe066"
       ]
+    ],
+    "zoom": 1.7,
+    "shift": [
+      -600,
+      60
     ]
   },
   "board": [
