@@ -103,9 +103,9 @@ function dinoRig(n) {
   const d = [p2[0] - p1[0], p2[1] - p1[1]], ang = Math.atan2(d[1], d[0]);
   return { q, head: p2, ang };
 }
-const dinoHeadRot = (n) => { const R = dinoRig(n); return R.ang * 0.55 - (n > 0.5 ? 0.25 : 0); };
+const dinoHeadRot = (n) => { const R = dinoRig(n); return R.ang * 0.4 - (n > 0.5 ? 0.15 : 0); };
 // the mouth in the dino's local units (for placing things in it)
-function dinoMouth(n) { const R = dinoRig(n), r = dinoHeadRot(n), lx = 96 * 1.35, ly = -14 * 1.35; return [R.head[0] + Math.cos(r) * lx - Math.sin(r) * ly, R.head[1] + Math.sin(r) * lx + Math.cos(r) * ly]; }
+function dinoMouth(n) { const R = dinoRig(n), r = dinoHeadRot(n), lx = 80 * 1.35, ly = -2 * 1.35; return [R.head[0] + Math.cos(r) * lx - Math.sin(r) * ly, R.head[1] + Math.sin(r) * lx + Math.cos(r) * ly]; }
 function drawDino(t, x, y, s, n = 0, col = '#8fa86a', o = {}) {
   const dark = P.mixc(col, '#1e2a14', 0.35), belly = P.mixc(col, '#f3e6b0', 0.6), spot = P.mixc(col, '#2e3f1c', 0.25), R = dinoRig(n);
   P.at(x, y, 0, s, s, () => {
@@ -122,17 +122,20 @@ function drawDino(t, x, y, s, n = 0, col = '#8fa86a', o = {}) {
     // neck: a smooth tapering curve, spots along the top, then the head
     const pts = [], wd = []; for (let k = 0; k <= 10; k++) { pts.push(R.q(k / 10)); wd.push(K.lerp(110, 54, k / 10)); }
     P.ribbon(pts, wd, P.lin(190, 250, R.head[0], R.head[1], col, P.mixc(col, '#ffffff', 0.08)));
+    const under = [], uw = []; for (let k = 0; k <= 10; k++) { const [px, py] = R.q(k / 10), [qx, qy] = R.q(Math.min(1, k / 10 + 0.01)), dx = qx - px, dy = qy - py, d = Math.hypot(dx, dy) || 1; under.push([px + dy / d * K.lerp(30, 14, k / 10), py - dx / d * K.lerp(30, 14, k / 10)]); uw.push(K.lerp(40, 18, k / 10)); }
+    P.ribbon(under, uw, P.mixc(belly, col, 0.25));
     for (let k = 2; k < 9; k += 2) { const [px, py] = R.q(k / 10); P.circle(px - 8, py + 14, 9, spot, { ry: 6 }); }
     // near legs (lighter) with feet and toenails
     for (const lx of [-90, 175]) { P.ribbon([[lx, 180], [lx + 4, 80], [lx, 6]], [80, 66, 70], P.lin(lx - 40, 0, lx + 40, 0, col, dark)); P.lit(P.blobPts(lx + 8, 14, 46, 18, 10, 0.05, lx), col, { d: 0.2 }); for (const tx of [-22, 0, 22]) P.circle(lx + 26 + tx * 0.9, 8, 7, '#f3ead0', { ry: 5 }); }
-    // head: snout forward along the neck's end, face, cheeks, nostril; the mouth opens to drink
+    // head (the reference look): a smooth profile that flows out of the neck: forehead bump, round snout, lighter jaw,
+    // one eye with a highlight, a thin smile, a nostril (kit/cast.js profileFace); the jaw drops to drink
     P.at(R.head[0], R.head[1], dinoHeadRot(n), 1.35, 1.35, () => {
       const open = o.mouth ?? 0;
-      P.lit(P.blobPts(30, 2, 74, 48, 14, 0.03, 9), P.lin(0, 50, 0, -46, P.mixc(col, '#ffffff', 0.15), col), { d: 0.16, shade: 'rgba(30,20,5,0.25)', rim: 'rgba(255,240,200,0.4)' });
-      if (open > 0) P.smooth([[62, -14], [94, -11], [90, -15 - open * 9], [66, -18 - open * 5]], '#5a2424');
-      P.circle(92, 14, 6, dark, { ry: 4 });
-      P.circle(52, -14, 13, 'rgba(255,120,120,0.35)', { ry: 8 });
-      Cast.face(t, 22, 12, 36, { mood: o.mood ?? 'happy', look: o.look ?? [0.7, -0.2], seed: 21, ink: '#22180c' });
+      const head = [[-34, 26], [-6, 44], [26, 46], [58, 38], [84, 24], [94, 6], [86, -10], [60, -14 - open * 4], [20, -20], [-20, -24], [-40, -10]];
+      P.lit(head, P.lin(0, 46, 0, -24, P.mixc(col, '#ffffff', 0.12), col), { d: 0.12, shade: 'rgba(30,20,5,0.2)', rim: 'rgba(255,240,200,0.35)', light: [-0.3, 1] });
+      P.clip(() => P.trace(head), () => P.smooth([[-40, -24], [90, -16], [92, -6], [40, -6], [-40, -8]], belly, { a: 0.9 }));
+      if (open > 0) { P.smooth([[50, -2], [90, 3], [86, -4 - open * 5], [54, -5 - open * 3]], '#5a2424'); P.smooth([[60, -4 - open * 2.5], [82, -2 - open * 4], [70, -5 - open * 3]], '#e07a7a'); }
+      Cast.profileFace(t, 36, 18, 15, { mood: o.mood ?? 'smile', look: (o.look ?? [0.7, 0])[0], seed: 21, ink: '#1e1a14', mouth: [2.6, -1.1], nose: [3.25, 0.15] });
     });
   });
 }

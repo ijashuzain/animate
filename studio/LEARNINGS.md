@@ -19,6 +19,10 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 - **The user asked for a verification step**: "send me all the major scenes snapshot as a single image so I can refer it and
   ask you to do the changes before generating entire video". Now step 7 of the flow: `film.mjs <slug> board` makes one
   numbered storyboard image (film.json `board`); send it and wait for notes before the draft render.
+- **Dinosaur, the user's reference** (a sheet of flat cute dinosaurs): animals seen from the side get a side-view face, not a
+  front-facing face on a side-view head: a smooth head that flows out of the neck, one eye with a highlight, a thin
+  smile, a nostril, a pale underside along the neck and jaw. Now `Cast.profileFace` in kit/cast.js. Rule: when the user
+  sends a reference, match its construction (silhouette, face placement, details), not just its colours.
 - What worked: a character made of the subject (a water molecule with hydrogen ears), a passport stamped at each
   stop (a running gag that also carries the numbers), scene joins as camera moves (dive into a drop, rise, fall, slide).
 - Gotchas: never read a value computed in the previous frame (a zoom target) - frames render out of order; compute it

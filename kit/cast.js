@@ -67,3 +67,22 @@ Cast.person = (t, x, s, o = {}) => {
     });
   });
 };
+// Cast.profileFace(t, x, y, s, o): a side-view face for animals (the flat "cute dino" look): one eye with a highlight
+// (blinks), a thin smile toward the snout, a nostril, a little blush. Faces +x; s = eye diameter in world units.
+//   o: mood 'smile' | 'happy' (eye closes to an arc) | 'wow' (bigger eye, round mouth) | 'sleep'; mouth [x, y] (relative, in eye
+//   units) where the smile sits; nose [x, y]; look -1..1 (pupil forward/back); ink, blush
+Cast.profileFace = (t, x, y, s, o = {}) => {
+  const mood = o.mood ?? 'smile', ink = o.ink ?? '#1e1a14', k = s / 20, bl = Cast.blink(t, o.seed ?? 0), m = o.mouth ?? [3.2, -1.6], nz = o.nose ?? [4.6, 0.6];
+  P.at(x, y, 0, k, k, () => {
+    const r = mood === 'wow' ? 11.5 : 10, open = mood === 'sleep' || mood === 'happy' ? 0 : 1 - bl;
+    if (open > 0.15) {
+      P.circle(0, 0, r, '#fffdf6', { ry: r * open });
+      P.circle(2.5 + (o.look ?? 0.6) * 2.5, -0.5, r * 0.55, ink, { ry: r * 0.6 * open });
+      P.circle(1.2 + (o.look ?? 0.6) * 2.5, 2.5, r * 0.2, '#ffffff');
+    } else P.ribbon([[-r * 0.8, mood === 'happy' ? -1 : 1], [0, mood === 'happy' ? 3 : -1.5], [r * 0.8, mood === 'happy' ? -1 : 1]], 2.2, ink);
+    if (mood === 'wow') P.circle(m[0] * 20 + 6, m[1] * 20, 4.5, '#5a2424', { ry: 5.5 });
+    else P.ribbon([[m[0] * 20 - 12, m[1] * 20 + 2], [m[0] * 20 - 2, m[1] * 20 - 2.5], [m[0] * 20 + 8, m[1] * 20 + 1.5]], 2.2, ink);
+    P.circle(nz[0] * 20, nz[1] * 20, 2.6, ink, { ry: 1.8 });
+    P.circle(m[0] * 20 - 16, m[1] * 20 + 8, 6, o.blush ?? 'rgba(255,120,120,0.3)', { ry: 4 });
+  });
+};
