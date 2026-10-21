@@ -95,14 +95,44 @@ function drawSign(t, x, y, s, u = [1, 1, 1]) {
 }
 function drawHouse(x, y, s, col, seed) { P.at(x, y, 0, s, s, () => { P.rect(-50, 0, 100, 80, P.lin(-50, 0, 50, 0, '#fff7e6', col ?? C.wall)); P.poly([[-62, 76], [62, 76], [0, 130]], K.hash(seed, 1) > 0.5 ? C.roof : '#4f7fc4'); P.rect(-30, 30, 22, 22, '#ffd36b', { r: 3 }); P.rect(10, 0, 22, 40, '#8a5a3a', { r: 3 }); }); }
 function drawWheel(t, x, y, s) { P.at(x, y, 0, s, s, () => { P.ctx.save(); P.ctx.rotate(-t * 1.6); for (let i = 0; i < 10; i++) { P.ctx.save(); P.ctx.rotate(i * Math.PI / 5); P.rect(-6, 0, 12, 120, C.woodDark); P.rect(-26, 110, 52, 18, C.wood, { r: 3 }); P.ctx.restore(); } P.ctx.restore(); P.circle(0, 0, 22, C.woodDark); P.circle(0, 0, 10, C.wood); }); }
-// a long-necked dinosaur drinking (sepia flashback), neck angle n 0 (up) .. 1 (down to the water)
-function drawDino(t, x, y, s, n = 0, col = '#7a5a3a') {
+// a long-necked dinosaur (a friendly sauropod). n: neck 0 (head high) .. 1 (drinking at the water); local units, ground y = 0,
+// facing right. dinoRig gives the neck curve and the head position so the film can aim the camera at the head.
+function dinoRig(n) {
+  const e = K.ease.inOut(K.clamp(n)), p0 = [190, 250], p1 = [K.lerp(320, 470, e), K.lerp(470, 330, e)], p2 = [K.lerp(400, 640, e), K.lerp(640, 60, e)];
+  const q = (u) => [(1 - u) * (1 - u) * p0[0] + 2 * (1 - u) * u * p1[0] + u * u * p2[0], (1 - u) * (1 - u) * p0[1] + 2 * (1 - u) * u * p1[1] + u * u * p2[1]];
+  const d = [p2[0] - p1[0], p2[1] - p1[1]], ang = Math.atan2(d[1], d[0]);
+  return { q, head: p2, ang };
+}
+const dinoHeadRot = (n) => { const R = dinoRig(n); return R.ang * 0.55 - (n > 0.5 ? 0.25 : 0); };
+// the mouth in the dino's local units (for placing things in it)
+function dinoMouth(n) { const R = dinoRig(n), r = dinoHeadRot(n), lx = 96 * 1.35, ly = -14 * 1.35; return [R.head[0] + Math.cos(r) * lx - Math.sin(r) * ly, R.head[1] + Math.sin(r) * lx + Math.cos(r) * ly]; }
+function drawDino(t, x, y, s, n = 0, col = '#8fa86a', o = {}) {
+  const dark = P.mixc(col, '#1e2a14', 0.35), belly = P.mixc(col, '#f3e6b0', 0.6), spot = P.mixc(col, '#2e3f1c', 0.25), R = dinoRig(n);
   P.at(x, y, 0, s, s, () => {
-    for (const [lx, ph] of [[-120, 0], [-60, 1], [60, 2], [120, 3]]) P.rect(lx - 22, 0, 44, 170, P.mixc(col, '#000000', ph % 2 ? 0.15 : 0), { r: 16 });
-    P.lit([[-220, 130], [-150, 260], [100, 280], [210, 200], [180, 120], [-100, 110]], col, { d: 0.18, shade: 'rgba(30,15,5,0.3)', rim: 'rgba(255,230,180,0.3)' });
-    P.ribbon([[-200, 170], [-300, 150], [-380, 110]], [60, 30, 4], col);
-    const a = K.lerp(-1.05, 0.55, n), nx = 180 + Math.cos(a) * 300, ny = 220 - Math.sin(a) * 300;
-    P.ribbon([[170, 210], [180 + Math.cos(a) * 150, 220 - Math.sin(a) * 150 + 30], [nx, ny]], [80, 46, 36], col);
-    P.at(nx, ny, -a * 0.6, 1, 1, () => { P.lit(P.blobPts(30, 0, 52, 32, 12, 0.04, 3), col, { d: 0.2 }); Cast.face(t, 34, 6, 30, { mood: 'happy', look: [0.6, -0.4], seed: 21, ink: '#2a1a0c' }); });
+    // shadow on the ground
+    P.circle(20, 4, 300, 'rgba(60,40,10,0.22)', { ry: 26 });
+    // far legs (darker), tail
+    for (const lx of [-150, 120]) { P.ribbon([[lx, 170], [lx - 4, 80], [lx, 6]], [74, 62, 66], dark); P.blob(lx + 6, 12, 42, 16, dark, { seed: lx }); }
+    const sw = Math.sin(t * 1.5) * 30;
+    P.ribbon([[-200, 210], [-330, 190 + sw * 0.3], [-450, 140 + sw * 0.7], [-560, 90 + sw]], [110, 70, 36, 6], P.lin(-560, 0, -200, 0, dark, col));
+    // body with belly and spots
+    const body = [[-240, 190], [-190, 300], [-40, 335], [130, 315], [240, 245], [215, 150], [60, 110], [-130, 125]];
+    P.lit(body, P.lin(0, 335, 0, 110, P.mixc(col, '#ffffff', 0.12), col), { d: 0.16, shade: 'rgba(30,20,5,0.28)', rim: 'rgba(255,240,200,0.35)', light: [-0.4, 0.9] });
+    P.clip(() => P.trace(body), () => { P.circle(10, 120, 230, belly, { ry: 60 }); for (let i = 0; i < 7; i++) P.circle(-170 + i * 55, 290 - (i % 2) * 22, 16 + (i % 3) * 5, spot, { ry: 11 }); });
+    // neck: a smooth tapering curve, spots along the top, then the head
+    const pts = [], wd = []; for (let k = 0; k <= 10; k++) { pts.push(R.q(k / 10)); wd.push(K.lerp(110, 54, k / 10)); }
+    P.ribbon(pts, wd, P.lin(190, 250, R.head[0], R.head[1], col, P.mixc(col, '#ffffff', 0.08)));
+    for (let k = 2; k < 9; k += 2) { const [px, py] = R.q(k / 10); P.circle(px - 8, py + 14, 9, spot, { ry: 6 }); }
+    // near legs (lighter) with feet and toenails
+    for (const lx of [-90, 175]) { P.ribbon([[lx, 180], [lx + 4, 80], [lx, 6]], [80, 66, 70], P.lin(lx - 40, 0, lx + 40, 0, col, dark)); P.lit(P.blobPts(lx + 8, 14, 46, 18, 10, 0.05, lx), col, { d: 0.2 }); for (const tx of [-22, 0, 22]) P.circle(lx + 26 + tx * 0.9, 8, 7, '#f3ead0', { ry: 5 }); }
+    // head: snout forward along the neck's end, face, cheeks, nostril; the mouth opens to drink
+    P.at(R.head[0], R.head[1], dinoHeadRot(n), 1.35, 1.35, () => {
+      const open = o.mouth ?? 0;
+      P.lit(P.blobPts(30, 2, 74, 48, 14, 0.03, 9), P.lin(0, 50, 0, -46, P.mixc(col, '#ffffff', 0.15), col), { d: 0.16, shade: 'rgba(30,20,5,0.25)', rim: 'rgba(255,240,200,0.4)' });
+      if (open > 0) P.smooth([[62, -14], [94, -11], [90, -15 - open * 9], [66, -18 - open * 5]], '#5a2424');
+      P.circle(92, 14, 6, dark, { ry: 4 });
+      P.circle(52, -14, 13, 'rgba(255,120,120,0.35)', { ry: 8 });
+      Cast.face(t, 22, 12, 36, { mood: o.mood ?? 'happy', look: o.look ?? [0.7, -0.2], seed: 21, ink: '#22180c' });
+    });
   });
 }

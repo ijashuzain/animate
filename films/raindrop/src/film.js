@@ -31,7 +31,7 @@ function sWindow(t, end = false) {
       P.circle(0, 0, 70, 'rgba(255,255,255,0.92)'); P.circle(-bx * 0.25, -70 - 10, 12, 'rgba(255,255,255,0.8)');
       if (k === 'ocean') { P.clip(() => { P.ctx.beginPath(); P.ctx.arc(0, 0, 62, 0, 6.3); }, () => { P.rect(-70, -70, 140, 70, '#2a86c8'); P.smooth([[-70, 0], [-35, 14 + Math.sin(t * 4) * 6], [0, 0], [35, 14 + Math.sin(t * 4 + 1) * 6], [70, 0], [70, -10], [-70, -10]], '#58c4f0'); }); }
       if (k === 'cloud') drawCloud(0, -10, 0.32, 3, '#ffffff', 'rgba(140,150,200,0.35)');
-      if (k === 'dino') P.at(-10, -45, 0, 0.18, 0.18, () => drawDino(t, 0, 0, 1, 0.3, '#6fa05a'));
+      if (k === 'dino') P.at(-20, -42, 0, 0.11, 0.11, () => drawDino(t, 0, 0, 1, 0.2, '#6fa05a'));
     });
   });
 }
@@ -218,7 +218,8 @@ function sHush(t) {
 }
 // where the dinosaur's head is at time t (the camera zooms there; Drip rides there)
 const dinoNeck = (t) => tw(t, 96.4, 98.6, 'inOut') * (1 - tw(t, 99.4, 100.4, 'inOut') * 0.45);
-const dinoHead = (t) => { const DX = -520, DY = -340, DS = 1.1, a = K.lerp(-1.05, 0.55, dinoNeck(t)); return [DX + DS * (180 + Math.cos(a) * 300 + 34), DY + DS * (220 - Math.sin(a) * 300)]; };
+const DINO = { x: -560, y: -340, s: 1.0 };
+const dinoHead = (t) => { const h = dinoMouth(dinoNeck(t)); return [DINO.x + DINO.s * (h[0] - 30), DINO.y + DINO.s * (h[1] + 10)]; };
 // 10. 90.6-104.4: the twist: the passport's old pages, then a sepia dinosaur gulping Drip
 function sTwist(t) {
   const sep = tw(t, 95.0, 96.0);
@@ -231,9 +232,12 @@ function sTwist(t) {
     for (let i = 0; i < 5; i++) P.ribbon([[-100 + i * 180, -360 - (i % 2) * 30], [0 + i * 180, -360 - (i % 2) * 30]], 4, 'rgba(255,255,255,0.6)');
     for (let i = 0; i < 9; i++) { const x = -900 + i * 220; P.ribbon([[x, -330], [x + 20, -40], [x - 10, 160]], [18, 10, 4], '#8a6a3a'); for (let k = -1; k <= 1; k += 2) P.smooth([[x + 10, 0], [x + k * 140, 60 + Math.sin(t + i) * 8], [x + k * 160, 20], [x + 10, -20]], k > 0 ? '#9aa04a' : '#7f8a3a'); }
     const [hx, hy] = dinoHead(t);
-    drawDino(t, -520, -340, 1.1, dinoNeck(t), '#9a8a5a');
+    drawDino(t, DINO.x, DINO.y, DINO.s, dinoNeck(t), '#8fa86a', { mouth: tw(t, 97.8, 98.3) * (1 - tw(t, 98.9, 99.2)) + tw(t, 100.8, 101.2) * 0.6, mood: t > 98.9 && t < 100.6 ? 'happy' : t > 100.6 ? 'wow' : 'smile', look: t > 100.6 ? [0, 0] : [0.7, -0.3] });
     const gulp = tw(t, 98.5, 99.0);
-    if (t > 96.2) drawDrip(t, lerp(hx + 20, hx + 30, gulp), lerp(-345, hy + 10, gulp), 0.3, { mood: t > 99 ? 'wow' : 'happy', arms: t > 101.2 ? 'wave' : null, wave: 1, look: [0, 0.4] });
+    const pop = K.ease.backOut(clamp((t - 101.0) / 0.4));
+    const mo = dinoMouth(dinoNeck(t)), mx = DINO.x + DINO.s * mo[0], my = DINO.y + DINO.s * mo[1];
+    if (t > 96.2 && t < 99.0) drawDrip(t, lerp(mx + 40, mx, gulp), lerp(-338 + Math.sin(t * 2) * 4, my, gulp), lerp(0.3, 0.15, gulp), { mood: 'happy', look: [-0.6, 0.3] });
+    if (t > 101.0) drawDrip(t, mx + pop * 22, my + pop * 10, 0.24 * pop, { mood: 'happy', arms: 'wave', wave: 1, look: [0, 0] });
   });
   // the loop: sea -> sky -> cloud -> mountain -> sea, Drip lapping it faster and faster as the years spin up
   const la = tw(t, 90.8, 91.6) * (1 - tw(t, 94.8, 95.4));
