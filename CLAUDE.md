@@ -67,7 +67,8 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    action; `python3 films/<slug>/score.py` writes audio/music.wav and audio/sfx.wav. Music sits well under the voice.
 7. **Draft**: `node tools2/film.mjs <slug> draft` (30 s ≈ 1.5 min) -> send `renders/<slug>-draft.mp4` + plan + script to
    the user, with the weak spots you see. **The user steers here**; change, re-draft if big.
-8. **Final**: `node tools2/film.mjs <slug> final` (run_in_background). Deliver the mp4 (< 30 MB, else a share copy),
+8. **Final**: `node tools2/film.mjs <slug> final` (run_in_background). **Always deliver 1080p** (the user's rule): film.mjs
+   makes `renders/<slug>-final-1080p.mp4` under 30 MB (never send a 720p copy). Thumbnail: `node tools2/film.mjs <slug> thumb`. Deliver
    `script-timed.md` (the voice script with a time window per line: the user records the voice AFTER the picture,
    with ElevenLabs), metadata and a thumbnail. When the voice arrives: drop it in `audio/`, add it to film.json, carve
    the music under it (hyperframes-audio), re-render.
@@ -84,6 +85,11 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
 - **The hero looks grand at the climax**: largest, central, lit (a sun or glow behind it); comparisons smaller and aside.
 - **Readable without the voice**: each gag reads in a still; words on screen only for numbers, names, scale labels.
 - **Faithful self-review**: send the draft with the weak spots you see named; fix them before the final.
+- **Crowds vary**: repeated characters differ in size, tint, mood (some sleepy) and props (hats, glasses).
+- **Every scene is a living place**: not a horizon and a sun; give it 3+ moving extras (a boat, gulls, steam, a fish).
+- **Soft shapes are one shape**: clouds and bushes drawn as a dark underside layer + body + soft highlight, never as
+  separately outlined blobs; flashbacks stay bright (warm sepia, a sun), not muddy brown.
+- **Shorelines and joins are shaped**: no rectangles meeting at hard vertical edges.
 
 ## Dashboard
 Live page: **https://claude.ai/artifact/N1dKeyKqmYkGV63YzWXZLw** (Artifact with a shared database; the user watches it).

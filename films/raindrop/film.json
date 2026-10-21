@@ -2,11 +2,48 @@
   "title": "The 10-Day Trip of a Single Raindrop",
   "duration": 117.5,
   "fps": 30,
-  "fonts": [{ "family": "Baloo 2", "file": "studio/fonts/Baloo2[wght].ttf" }],
-  "kit": ["kit/cast.js"],
-  "src": ["src/world.js", "src/film.js"],
+  "fonts": [
+    {
+      "family": "Baloo 2",
+      "file": "studio/fonts/Baloo2[wght].ttf"
+    }
+  ],
+  "kit": [
+    "kit/cast.js"
+  ],
+  "src": [
+    "src/world.js",
+    "src/film.js"
+  ],
   "audio": [
-    { "id": "music", "src": "audio/music.wav", "start": 0, "volume": 1 },
-    { "id": "sfx", "src": "audio/sfx.wav", "start": 0, "volume": 1 }
-  ]
+    {
+      "id": "music",
+      "src": "audio/music.wav",
+      "start": 0,
+      "volume": 1
+    },
+    {
+      "id": "sfx",
+      "src": "audio/sfx.wav",
+      "start": 0,
+      "volume": 1
+    }
+  ],
+  "thumb": {
+    "t": 101.6,
+    "side": "right",
+    "font": "\"Baloo 2\", sans-serif",
+    "lines": [
+      [
+        "A DINO",
+        170,
+        "#ffffff"
+      ],
+      [
+        "DRANK ME",
+        150,
+        "#ffe066"
+      ]
+    ]
+  }
 }

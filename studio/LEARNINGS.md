@@ -5,6 +5,19 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## 2026-10-21: film 1 "The 10-Day Trip of a Single Raindrop" (Drip's road trip, 117 s)
+- **The user: "But I need 1080p"** (the draft went out as a 720p share copy). Rule: always deliver 1080p; film.mjs final
+  now makes a 1080p copy under 30 MB itself (-tune animation, CRF 24 up to 33; the 117 s draft was 16.8 MB at CRF 25).
+- **The user asked for my own named weak spots to be fixed** ("with fixes"), so the self-review list is the to-do list:
+  coast as a block -> a shaped beach and the river running into the sea; a sparse surface -> island, sailboat, gulls,
+  flying fish, steam; a muddy flashback -> warm bright sepia with a sun and a lake; outlined cloud blobs -> one soft
+  shape (underside + body + highlight); identical molecules -> sizes, tints, sleepy ones, hats, glasses. All now rules
+  in CLAUDE.md "Quality bar".
+- What worked: a character made of the subject (a water molecule with hydrogen ears), a passport stamped at each
+  stop (a running gag that also carries the numbers), scene joins as camera moves (dive into a drop, rise, fall, slide).
+- Gotchas: never read a value computed in the previous frame (a zoom target) - frames render out of order; compute it
+  from t. Scene cross-fades need an offscreen layer (`P.layer`), because helpers set globalAlpha themselves.
+
 ## 2026-10-21: the rebuild and the pilot "Seed to Giant" (the user: "This look amazing")
 - **What worked:** one continuous shot with a single idea (the camera falls with the seed, then rides the growing tip);
   a gag per line (the sleeping cone, a whale balancing on its tail, a cat on the roof); real-scale objects passing as

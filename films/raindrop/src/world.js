@@ -34,10 +34,20 @@ function drawDrip(t, x, y, s, o = {}) {
 // another water molecule (the crowd): simpler, paler, with its own little face
 function drawMol(t, x, y, s, seed, o = {}) {
   const j = o.jiggle ?? 1, jx = K.noise(t * 6 * j + seed, seed) * 8 * j, jy = K.noise(t * 6 * j + seed + 50, seed) * 8 * j, rot = K.noise(t * 2 + seed, 3) * 0.5;
-  P.at(x + jx, y + jy, rot, s, s, () => {
+  const sz = 0.85 + 0.35 * K.hash(seed, 13), tint = ['#7cc4f2', '#8fd0f5', '#6fb8ec', '#9ad6f0'][seed % 4], kind = seed % 9;
+  const mood = o.mood ?? (seed % 5 === 1 ? 'sleep' : seed % 7 === 2 ? 'wow' : seed % 3 ? 'smile' : 'happy');
+  P.at(x + jx, y + jy, rot, s * sz, s * sz, () => {
     for (const side of [-1, 1]) { const a = Math.PI / 2 + side * 0.91, ex = Math.cos(a) * 58, ey = Math.sin(a) * 58; P.ribbon([[Math.cos(a) * 28, Math.sin(a) * 28], [ex, ey]], [10, 7], C.molDeep); P.circle(ex, ey, 20, o.ear ?? '#dceefb'); }
-    P.lit(P.blobPts(0, 0, 46, 45, 12, 0.03, seed), P.rad(-12, 14, 64, '#a8dcff', o.col ?? C.mol, C.molDeep), { d: 0.15, rim: 'rgba(255,255,255,0.4)' });
-    if (o.face !== false) Cast.face(t, 2, 2, 38, { mood: o.mood ?? (seed % 3 ? 'smile' : 'happy'), look: [K.noise(t + seed, 9) * 0.8, 0], seed });
+    P.lit(P.blobPts(0, 0, 46, 45, 12, 0.03, seed), P.rad(-12, 14, 64, '#a8dcff', o.col ?? tint, C.molDeep), { d: 0.15, rim: 'rgba(255,255,255,0.4)' });
+    if (o.face !== false) {
+      Cast.face(t, 2, 2, 38, { mood, look: [K.noise(t + seed, 9) * 0.8, 0], seed });
+      if (seed % 11 === 3) { P.ctx.save(); P.ctx.strokeStyle = '#22314a'; P.ctx.lineWidth = 3.5; for (const gx of [-9, 11]) { P.ctx.beginPath(); P.ctx.arc(gx, 4, 9, 0, 6.3); P.ctx.stroke(); } P.ctx.beginPath(); P.ctx.moveTo(0, 5); P.ctx.lineTo(2, 5); P.ctx.stroke(); P.ctx.restore(); }
+    }
+    if (o.hats !== false) {
+      if (kind === 0) { P.smooth([[-34, 30], [-28, 58], [0, 70], [28, 58], [34, 30]], '#e35d4f'); P.rect(-36, 26, 72, 12, '#f7f0e0', { r: 6 }); P.circle(0, 72, 9, '#f7f0e0'); }
+      else if (kind === 4) { P.rect(-30, 36, 60, 10, '#2a2a3a', { r: 3 }); P.rect(-20, 44, 40, 40, '#2a2a3a', { r: 3 }); P.rect(-20, 48, 40, 7, '#e35d4f'); }
+      else if (kind === 7) { P.smooth([[-34, 34], [-30, 58], [0, 64], [30, 58], [34, 34]], '#3f8f45'); P.smooth([[20, 34], [62, 30], [58, 40], [20, 42]], '#2f6f35'); }
+    }
   });
 }
 // the passport: a navy booklet; open 0..1; pages = list of stamps [{ txt, sub, col, rot }] shown when open
@@ -71,7 +81,15 @@ function drawWhale(t, x, y, s) { P.at(x, y, Math.sin(t * 0.6) * 0.04, s, s, () =
 // bubbles rising across the screen (screen space), seeded
 function bubbles(t, n, seed, a = 1, speed = 120) { P.screen((ctx) => { for (let i = 0; i < n; i++) { const x = K.hash(i, seed) * 1920 + Math.sin(t * 1.5 + i) * 18, y = 1150 - ((K.hash(i, seed + 1) * 1300 + t * speed * (0.6 + K.hash(i, seed + 2))) % 1300), r = 4 + 14 * K.hash(i, seed + 3); ctx.globalAlpha = a * 0.55; ctx.strokeStyle = '#d8f6ff'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.3); ctx.stroke(); ctx.globalAlpha = a * 0.5; ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.25, 0, 6.3); ctx.fill(); } }); }
 // a fluffy cloud of lit blobs
-function drawCloud(x, y, s, seed, col = '#ffffff', shade = 'rgba(120,110,170,0.3)') { P.at(x, y, 0, s, s, () => { const pts = [[-120, 0, 70], [-50, 30, 90], [40, 40, 100], [120, 10, 75], [0, -10, 110]]; P.blob(0, -20, 200, 60, col, { seed, n: 10, w: 0.05 }); for (const [cx, cy, r] of pts) P.lit(P.blobPts(cx, cy, r, r * 0.8, 10, 0.08, seed + cx), col, { light: [-0.3, 1], shade, d: 0.3, rim: 'rgba(255,255,255,0.6)' }); }); }
+function drawCloud(x, y, s, seed, col = '#ffffff') {
+  // one soft shape: a darker underside layer, the body on top, highlights on the tops (no per-blob outlines)
+  const pts = [[-120, 0, 70], [-50, 30, 90], [40, 40, 100], [120, 10, 75], [0, -10, 110]], dark = P.mixc(col, '#3a3470', 0.3);
+  P.at(x, y, 0, s, s, () => {
+    P.blob(0, -36, 200, 52, dark, { seed, n: 10, w: 0.05 }); for (const [cx, cy, r] of pts) P.blob(cx, cy - 16, r, r * 0.8, dark, { seed: seed + cx, n: 10, w: 0.08 });
+    P.blob(0, -22, 196, 50, col, { seed, n: 10, w: 0.05 }); for (const [cx, cy, r] of pts) P.blob(cx, cy + 2, r * 0.95, r * 0.76, col, { seed: seed + cx, n: 10, w: 0.08 });
+    for (const [cx, cy, r] of pts) P.blob(cx - r * 0.2, cy + r * 0.38, r * 0.5, r * 0.22, 'rgba(255,255,255,0.16)', { seed: seed + cx + 1, n: 8, w: 0.15 });
+  });
+}
 // the salt crystal: a little isometric cube
 function drawSalt(x, y, s, rot = 0) { P.at(x, y, rot, s, s, () => { P.poly([[0, 40], [40, 20], [0, 0], [-40, 20]], '#ffffff'); P.poly([[-40, 20], [0, 0], [0, -46], [-40, -26]], '#dfe8f3'); P.poly([[0, 0], [40, 20], [40, -26], [0, -46]], '#c4d2e4'); }); }
 // the raindrop: sphere -> bun (flat bottom) as k goes 0..1; seeds 0..1 show sesame seeds

@@ -3,7 +3,8 @@
 //   node tools2/film.mjs <slug>                         build films/<slug>/hf/ (index.html + gsap + fonts + audio)
 //   node tools2/film.mjs <slug> still 1.5,9,20 [scale]  build, then render those seconds side by side -> films/<slug>/stills/
 //   node tools2/film.mjs <slug> sheet [every=1] [scale] one frame every N seconds in a grid -> stills/sheet.png
-//   node tools2/film.mjs <slug> draft|looks|final       build, then HyperFrames render at that quality -> renders/
+//   node tools2/film.mjs <slug> draft|looks|final       build, then HyperFrames render at that quality -> renders/ (+ a 1080p copy < 30 MB)
+//   node tools2/film.mjs <slug> thumb                   film.json thumb { t, lines: [[text, size, colour]], font } -> youtube/thumbnail.png 1280x720
 // films/<slug>/film.json: { title, duration, fps, fonts: [{ family, file }], src: [files], audio: [{ id, src, start, volume }] }
 // A film's scripts define FILM = { draw(t) } on a 1920x1080 canvas, using kit/motion.js (K) and kit/paint.js (P).
 import fs from 'node:fs';
@@ -92,5 +93,34 @@ else if (['draft', 'looks', 'final'].includes(mode)) {
   const r = spawnSync(path.join(ROOT, 'node_modules/.bin/hyperframes'), ['render', '--quality', q, '--fps', String(fps), '-o', out], { cwd: HF, env, stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8', maxBuffer: 1 << 28 });
   const log = (r.stdout + r.stderr).split('\n').filter((l) => !l.startsWith('@hf-progress') && !l.includes('[Render:trace]') && !/█|░/.test(l)).slice(-12).join('\n');
   console.log(log); if (r.status !== 0) process.exit(r.status ?? 1);
+  // the user's rule: always deliver 1080p. Make a 1080p copy under the 30 MB send limit (flat art compresses well).
+  const share = path.join(FD, 'renders', `${slug}-${mode}-1080p.mp4`);
+  for (const crf of [24, 27, 30, 33]) {
+    execSync(`ffmpeg -y -loglevel error -i "${out}" -c:v libx264 -crf ${crf} -preset slow -tune animation -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart "${share}"`);
+    if (fs.statSync(share).size < 29e6) break;
+  }
+  console.log('1080p copy:', path.relative(ROOT, share), (fs.statSync(share).size / 1e6).toFixed(1), 'MB');
+}
+else if (mode === 'thumb') {
+  const T = F.thumb; if (!T) { console.error('film.json has no "thumb"'); process.exit(2); }
+  const { chromium } = require('playwright');
+  const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  await page.goto(pathToFileURL(path.join(HF, 'index.html')).href);
+  await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
+  const url = await page.evaluate((T) => {
+    window.drawAt(T.t); const c = document.getElementById('c'), g = c.getContext('2d');
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    // readable on a phone: a dark wash behind the words, the heaviest weight, a thick dark outline (LEARNINGS)
+    const side = T.side ?? 'right', x0 = side === 'right' ? 1000 : 0, gr = g.createLinearGradient(side === 'right' ? 900 : 1020, 0, side === 'right' ? 1500 : 420, 0);
+    gr.addColorStop(0, 'rgba(10,8,30,0)'); gr.addColorStop(1, 'rgba(10,8,30,0.6)'); g.fillStyle = gr; g.fillRect(side === 'right' ? 900 : 0, 0, 1020, 1080);
+    const cx = side === 'right' ? 1440 : 480, total = T.lines.reduce((a, l) => a + l[1] * 1.02, 0); let y = 540 - total / 2;
+    for (const [str, size, fill] of T.lines) { y += size * 0.86; let sz = size; g.font = `800 ${sz}px ${T.font ?? 'sans-serif'}`; const w = g.measureText(str).width; if (w > 840) { sz = size * 840 / w; g.font = `800 ${sz}px ${T.font ?? 'sans-serif'}`; } g.textAlign = 'center'; g.lineJoin = 'round'; g.save(); g.shadowColor = 'rgba(0,0,0,0.5)'; g.shadowBlur = 30; g.shadowOffsetY = 12; g.lineWidth = sz * 0.22; g.strokeStyle = '#16112e'; g.strokeText(str, cx, y); g.restore(); g.lineWidth = sz * 0.2; g.strokeStyle = '#16112e'; g.strokeText(str, cx, y); g.fillStyle = fill; g.fillText(str, cx, y); y += size * 0.16; }
+    void x0; return c.toDataURL('image/png');
+  }, T);
+  await browser.close();
+  const D = path.join(FD, 'youtube'); fs.mkdirSync(D, { recursive: true });
+  const big = path.join(D, 'thumb-1920.png'), out = path.join(D, 'thumbnail.png');
+  fs.writeFileSync(big, Buffer.from(url.split(',')[1], 'base64')); execSync(`ffmpeg -y -loglevel error -i "${big}" -vf scale=1280:720:flags=lanczos "${out}"`); fs.unlinkSync(big);
+  console.log('wrote', path.relative(ROOT, out));
 }
 else if (mode !== 'build') { console.error('unknown mode', mode); process.exit(2); }

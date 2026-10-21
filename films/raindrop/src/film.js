@@ -84,6 +84,12 @@ function sSurface(t) {
   P.at(620, 420, 0, 1, 1, () => { P.glow(0, 0, 460, '255,220,140', 0.9); P.circle(0, 0, 110, P.rad(-20, 20, 130, '#fffbe6', '#ffd66b', '#ffb03a')); for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * 0.2; P.ribbon([[Math.cos(a) * 140, Math.sin(a) * 140], [Math.cos(a) * 200, Math.sin(a) * 200]], [14, 4], 'rgba(255,214,107,0.8)'); } });
   for (let i = 0; i < 4; i++) { const x = -700 + i * 420; P.ribbon([[620, 420], [x + Math.sin(t * 3 + i) * 30, 60]], [6, 2], `rgba(255,200,100,${0.25 + 0.15 * Math.sin(t * 5 + i)})`); }
   drawCloud(-560, 620 + Math.sin(t * 0.4) * 10, 0.9, 5, '#fff4ea', 'rgba(255,150,120,0.25)'); drawCloud(-200, 1350, 1.2, 9, '#f6eaff', 'rgba(150,120,200,0.3)');
+  // far island with palms, a sailboat, gulls
+  P.at(-760, 30, 0, 1, 1, () => { P.smooth([[-180, -10], [-90, 60], [40, 70], [160, -10]], P.lin(0, 70, 0, -10, '#f2d69a', '#d9b46a')); for (const [px, h2, a] of [[-40, 170, -0.15], [30, 140, 0.12]]) { P.ribbon([[px, 50], [px + Math.sin(a) * h2 * 0.5, 50 + h2 * 0.5], [px + Math.sin(a) * h2, 50 + h2]], [10, 8, 6], '#8a5a3a'); for (let k = 0; k < 5; k++) { const la = -1.2 + k * 0.6 + Math.sin(t * 2 + k) * 0.06; P.ribbon([[px + Math.sin(a) * h2, 50 + h2], [px + Math.sin(a) * h2 + Math.cos(la) * 70, 50 + h2 + Math.sin(la) * 40 - 20]], [14, 2], '#3f9f55'); } } });
+  P.at(420 + Math.sin(t * 0.3) * 40, 20 + Math.sin(t * 1.6) * 6, Math.sin(t * 1.6) * 0.06, 1, 1, () => { P.smooth([[-90, 0], [90, 0], [60, -34], [-60, -34]], '#d9534f'); P.rect(-3, 0, 6, 190, '#6e4024'); P.poly([[6, 30], [6, 180], [90, 40]], '#fff6e6'); P.poly([[-6, 40], [-6, 150], [-70, 50]], '#ffe0c0'); });
+  for (let i = 0; i < 4; i++) { const gx = ((t * 90 + i * 380) % 2400) - 1200, gy = 300 + i * 60 + Math.sin(t * 2 + i) * 20, fl = Math.sin(t * 10 + i) * 0.7; P.ribbon([[gx - 28, gy + fl * 16], [gx, gy], [gx + 28, gy + fl * 16]], 6, '#ffffff'); }
+  const ff = clamp((t - 28.4) / 1.2); if (ff > 0 && ff < 1) P.at(-300 + ff * 520, Math.sin(ff * Math.PI) * 220 - 40, -0.6 + ff * 1.2, 0.9, 0.9, () => { drawFish(t, 0, 0, 1, '#7fd0ff', 9); for (const k of [-1, 1]) P.smooth([[-4, 4], [20, 40 * k], [34, 30 * k]], 'rgba(220,245,255,0.8)'); });
+  for (let i = 0; i < 9; i++) { const sx = -900 + i * 230 + Math.sin(i) * 40, u = ((t * 0.35 + hash(i, 85)) % 1); P.ribbon([[sx, 10 + u * 300], [sx + Math.sin(t * 2 + i) * 30, 70 + u * 300], [sx + Math.sin(t * 2 + i + 1) * 40, 130 + u * 300]], [16 * (1 - u), 10 * (1 - u), 2], `rgba(255,255,255,${0.35 * Math.sin(u * Math.PI) * (0.5 + 0.5 * tw(t, 26.2, 29))})`); }
   // the sea below: waves, depth gradient
   const wave = (x) => Math.sin(x * 0.01 + t * 2) * 14 + Math.sin(x * 0.023 - t * 1.4) * 8;
   const top = []; for (let x = -1100; x <= 1100; x += 40) top.push([x, wave(x)]);
@@ -131,7 +137,7 @@ function sRain(t) {
   P.sky(P.mixc(C.storm0, '#7fb6e8', tw(t, 57.6, 60)), P.mixc(C.storm1, '#cfeaff', tw(t, 57.6, 60)));
   P.cam({ x: 0, y: -fall * 9000, h: 700 });
   // storm cloud body: dark lit blobs around, rushing up as we fall
-  for (let i = 0; i < 16; i++) { const x = (hash(i, 131) * 2 - 1) * 1300, y = (hash(i, 132) * 2 - 1) * 900 + 200; P.alpha(0.85, () => drawCloud(x, y, 1.2 + hash(i, 133), i, P.mixc('#5a5a96', '#9a9ad0', hash(i, 134)), 'rgba(30,20,70,0.35)')); }
+  for (let i = 0; i < 16; i++) { const x = (hash(i, 131) * 2 - 1) * 1300, y = (hash(i, 132) * 2 - 1) * 900 + 200; drawCloud(x, y, 1.2 + hash(i, 133), i, P.mixc('#5a5a96', '#9a9ad0', hash(i, 134))); }
   for (let i = 0; i < 10; i++) { const x = (hash(i, 141) * 2 - 1) * 1200, y = -1600 - i * 700; drawCloud(x, y, 1.6, i + 30, '#d8dcf2', 'rgba(110,110,170,0.3)'); }
   // landscape far below (appears as we leave the cloud)
   const land = tw(t, 58.0, 61.0); if (land > 0) P.screen((ctx) => { ctx.globalAlpha = land; for (let L = 0; L < 3; L++) { ctx.fillStyle = ['#a7c8b0', '#7fb38a', '#5c9a68'][L]; ctx.beginPath(); ctx.moveTo(0, 1080); for (let x = 0; x <= 1920; x += 60) ctx.lineTo(x, 760 + L * 90 - 120 * Math.abs(Math.sin(x * 0.004 + L * 2)) - tw(t, 61, 64) * 300 * (L + 1)); ctx.lineTo(1920, 1080); ctx.fill(); } });
@@ -193,7 +199,13 @@ function sRiver(t) {
   P.ribbon([[5640, 140], [5900, 210], [6000, -300]], [5, 2, 1], C.woodDark);
   const hat = tw(t, 82.5, 84.5, 'out'); P.at(5600 + hat * 500, 200 + Math.sin(hat * 3.1) * 160, hat * 6, 1, 1, () => { P.rect(-34, 0, 68, 10, '#c2a15a', { r: 4 }); P.rect(-20, 8, 40, 28, '#d8b86a', { r: 8 }); });
   // the coast
-  P.rect(7600, -700, 4000, 440, P.lin(0, -260, 0, -700, P.mixc('#3ec4e6', '#e89a80', dusk), C.sea1)); P.rect(7300, -330, 400, 60, C.sand, { r: 20 });
+  { const sea = P.mixc('#3ec4e6', '#e8a088', dusk), seaD = P.mixc(C.sea1, '#5a4a7a', dusk);
+    P.smooth([[6900, -150], [7400, -175], [8200, -140], [12000, -140], [12000, -250], [7300, -262], [6900, -255]], P.lin(0, -150, 0, -262, P.mixc(C.sand, '#e8b890', dusk), '#c9a46a'), { tension: 0.3 });
+    const sp = []; for (let x = 7700; x <= 12000; x += 60) sp.push([x, -230 + Math.sin(x * 0.01 + t * 2) * 10]); sp.push([12000, -760], [7300, -760], [7450, -420]);
+    P.poly(sp, P.lin(0, -230, 0, -700, sea, seaD));
+    for (let i = 0; i < 12; i++) { const x = 7800 + i * 260, y = -250 - (i % 3) * 90; P.ribbon([[x, y + Math.sin(t * 2 + i) * 8], [x + 120, y + Math.sin(t * 2 + i + 1) * 8]], 5, 'rgba(255,255,255,0.55)'); }
+    for (let i = 0; i < 5; i++) { const x = 7300 + i * 140; P.lit(P.blobPts(x, -170, 18, 10, 8, 0.2, i), '#f3d9b0', { d: 0.2 }); }
+    P.at(8600, -260 + Math.sin(t * 1.4) * 8, Math.sin(t * 1.4) * 0.05, 1.3, 1.3, () => { P.smooth([[-90, 0], [90, 0], [60, -34], [-60, -34]], '#4f7fc4'); P.rect(-3, 0, 6, 160, '#6e4024'); P.poly([[6, 26], [6, 150], [80, 36]], '#fff6e6'); }); }
   // Drip, riding the river (screen x ~ -320)
   const dx = cx - 320 + Math.sin(t * 1.3) * 40, rap = t > 75.6 && t < 77.4 ? Math.abs(Math.sin(t * 9)) * 60 : 0;
   drawDrip(t, dx, rv(dx) + 40 + rap + Math.sin(t * 3) * 10, 0.95, { mood: rap > 10 ? 'wow' : 'happy', arms: 'up', rot: Math.sin(t * 2) * 0.15, look: [0.8, 0] });
@@ -214,13 +226,16 @@ const dinoHead = (t) => { const DX = -520, DY = -340, DS = 1.1, a = K.lerp(-1.05
 // 10. 90.6-104.4: the twist: the passport's old pages, then a sepia dinosaur gulping Drip
 function sTwist(t) {
   const sep = tw(t, 95.0, 96.0);
-  P.sky(P.mixc('#2b2a5a', C.sepia0, sep), P.mixc('#7a4f7a', C.sepia1, sep));
+  P.sky(P.mixc('#2b2a5a', '#f2c98a', sep), P.mixc('#7a4f7a', '#fff0cc', sep));
   const zt = tw(t, 99.2, 101.0, 'inOut'), za = dinoHead(t); P.cam({ x: za[0] * zt, y: za[1] * zt, h: 1080 * logTrack([[95.6, 1], [99.2, 1, 'inOut'], [101.0, 0.3, 'inOut'], [104.4, 0.28]])(t) });
   if (sep > 0) P.alpha(sep, () => {
-    P.rect(-1200, -700, 2400, 360, P.lin(0, -340, 0, -700, '#9a7a4a', '#6a4a2a')); P.rect(-1200, -360, 2400, 60, '#c9a46c');
-    for (let i = 0; i < 9; i++) { const x = -900 + i * 220; P.ribbon([[x, -330], [x + 20, -40], [x - 10, 160]], [18, 10, 4], '#6a5a30'); for (let k = -1; k <= 1; k += 2) P.smooth([[x + 10, 0], [x + k * 140, 60], [x + k * 160, 20], [x + 10, -20]], '#8a7a40'); }
+    P.at(560, 420, 0, 1, 1, () => { P.glow(0, 0, 420, '255,220,150', 0.9); P.circle(0, 0, 90, '#fff2cc'); });
+    for (let L = 0; L < 2; L++) { const pts = [[-1300, -200]]; for (let x = -1300; x <= 1300; x += 60) pts.push([x, 60 + L * -120 + 140 * Math.abs(Math.sin(x * 0.003 + L * 2))]); pts.push([1300, -200]); P.poly(pts, ['#e8c690', '#d9b07a'][L]); }
+    P.rect(-1300, -700, 2600, 400, P.lin(0, -300, 0, -700, '#c99a5e', '#a87a46')); P.smooth([[-200, -330], [300, -300], [900, -330], [900, -420], [200, -440], [-300, -400]], P.lin(0, -300, 0, -440, '#bfe0d8', '#8ab8b4'));
+    for (let i = 0; i < 5; i++) P.ribbon([[-100 + i * 180, -360 - (i % 2) * 30], [0 + i * 180, -360 - (i % 2) * 30]], 4, 'rgba(255,255,255,0.6)');
+    for (let i = 0; i < 9; i++) { const x = -900 + i * 220; P.ribbon([[x, -330], [x + 20, -40], [x - 10, 160]], [18, 10, 4], '#8a6a3a'); for (let k = -1; k <= 1; k += 2) P.smooth([[x + 10, 0], [x + k * 140, 60 + Math.sin(t + i) * 8], [x + k * 160, 20], [x + 10, -20]], k > 0 ? '#9aa04a' : '#7f8a3a'); }
     const [hx, hy] = dinoHead(t);
-    drawDino(t, -520, -340, 1.1, dinoNeck(t), '#8a6a42');
+    drawDino(t, -520, -340, 1.1, dinoNeck(t), '#9a8a5a');
     const gulp = tw(t, 98.5, 99.0);
     if (t > 96.2) drawDrip(t, lerp(hx + 20, hx + 30, gulp), lerp(-345, hy + 10, gulp), 0.3, { mood: t > 99 ? 'wow' : 'happy', arms: t > 101.2 ? 'wave' : null, wave: 1, look: [0, 0.4] });
   });
