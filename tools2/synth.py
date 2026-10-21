@@ -193,3 +193,55 @@ class Mix:
         with wave.open(path, 'wb') as w:
             w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(data.tobytes())
         print('wrote', path, f'{self.n / SR:.1f}s')
+
+
+def sfx_bubble(f0=500):
+    """a blub: a quick upward sine chirp"""
+    t = t_(0.12)
+    f = f0 * (1 + 3 * (t / 0.12) ** 2)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / 0.12) * 0.5
+
+
+def sfx_boing(f0=180, d=0.6):
+    t = t_(d)
+    f = f0 * (1 + 0.6 * np.exp(-t * 4)) * (1 + 0.08 * np.sin(2 * np.pi * 14 * t))
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4) * 0.6
+
+
+def sfx_rain(d, density=60):
+    """rain on glass: many tiny ticks over a soft hiss"""
+    n = int(d * SR); x = highpass(noise(d), 2500) * 0.05
+    for _ in range(int(d * density)):
+        i = rng.integers(0, max(1, n - 400)); L = rng.integers(60, 300)
+        x[i:i + L] += rng.standard_normal(L) * np.exp(-np.arange(L) / (L / 5)) * rng.uniform(0.1, 0.5)
+    return x * env(n, 0.3, 0.1, 1, 0.5)
+
+
+def sfx_flip():
+    t = t_(0.18)
+    return highpass(noise(0.18), 1800) * np.sin(np.pi * t / 0.18) ** 2 * 0.5
+
+
+def sfx_splat():
+    t = t_(0.4)
+    x = lowpass(noise(0.4), 1600) * np.exp(-t * 12) * 0.9; th = sfx_thud(); x[:len(th)] += th * 0.5
+    return x
+
+
+def sfx_gulp():
+    t = t_(0.35)
+    f = 260 - 160 * (t / 0.35)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / 0.35) * 0.7
+
+
+def sfx_stamp():
+    x = sfx_thud() * 0.9; c = sfx_tick(1400) * 0.6; x[:len(c)] += c
+    return x
+
+
+def sfx_chatter(d=0.8):
+    """teeth chattering: fast clicks"""
+    n = int(d * SR); x = np.zeros(n)
+    for k in range(int(d * 22)):
+        i = int(k / 22 * SR); c = sfx_tick(3200 + 400 * (k % 2))[: n - i]; x[i:i + len(c)] += c * 0.6
+    return x

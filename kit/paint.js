@@ -13,6 +13,13 @@ P.cam = (c, ox = 0, oy = 0) => {
 P.toScreen = (x, y) => { const c = P.c, k = P.k, r = c.rot || 0, cs = Math.cos(r), sn = Math.sin(r), dx = x - c.x, dy = y - c.y; return [P.W / 2 + k * (cs * dx + sn * dy), P.H / 2 + k * (sn * dx - cs * dy)]; };
 P.screen = (fn) => { const ctx = P.ctx; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); fn(ctx); ctx.restore(); };
 P.save = () => P.ctx.save(); P.restore = () => P.ctx.restore();
+// draw fn into an offscreen layer and composite it at alpha a (clean cross-fades of whole scenes)
+P.layer = (a, fn) => {
+  if (a <= 0) return; if (a >= 1) return fn();
+  const main = P.ctx; if (!P._off) { P._off = document.createElement('canvas'); P._off.width = P.W; P._off.height = P.H; }
+  const o = P._off.getContext('2d'); o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, P.W, P.H);
+  const keep = P.c; P.begin(o); fn(); P.begin(main); P.c = keep; main.globalAlpha = a; main.drawImage(P._off, 0, 0); main.globalAlpha = 1;
+};
 P.alpha = (a, fn) => { const ctx = P.ctx; ctx.save(); ctx.globalAlpha *= a; fn(); ctx.restore(); };
 // local transform for an object: translate, rotate, scale (sx, sy), then fn draws in local units
 P.at = (x, y, rot, sx, sy, fn) => { const ctx = P.ctx; ctx.save(); ctx.translate(x, y); if (rot) ctx.rotate(rot); if (sx !== 1 || sy !== 1) ctx.scale(sx, sy ?? sx); fn(); ctx.restore(); };
@@ -71,7 +78,7 @@ P.sky = (top, bottom, mid) => P.screen((ctx) => { const g = ctx.createLinearGrad
 P.haze = (col, a) => { if (a <= 0) return; P.screen((ctx) => { ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillRect(0, 0, P.W, P.H); }); };
 P.vignette = (a = 0.35) => P.screen((ctx) => { const g = ctx.createRadialGradient(P.W / 2, P.H / 2, P.H * 0.45, P.W / 2, P.H / 2, P.H * 1.05); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,10,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, P.W, P.H); });
 // screen text (labels, counters): font family loaded by the film; o: size, weight, color, align, alpha, shadow
-P.text = (str, sx, sy, o = {}) => P.screen((ctx) => { ctx.globalAlpha = o.alpha ?? 1; ctx.font = `${o.weight ?? 700} ${o.size ?? 48}px ${o.font ?? 'sans-serif'}`; ctx.textAlign = o.align ?? 'center'; ctx.textBaseline = 'middle'; if (o.shadow) { ctx.shadowColor = o.shadow; ctx.shadowBlur = (o.size ?? 48) * 0.4; } ctx.fillStyle = o.color ?? '#fff'; if (o.ls) ctx.letterSpacing = o.ls; ctx.fillText(str, sx, sy); });
+P.text = (str, sx, sy, o = {}) => P.screen((ctx) => { ctx.globalAlpha *= o.alpha ?? 1; ctx.font = `${o.weight ?? 700} ${o.size ?? 48}px ${o.font ?? 'sans-serif'}`; ctx.textAlign = o.align ?? 'center'; ctx.textBaseline = 'middle'; if (o.shadow) { ctx.shadowColor = o.shadow; ctx.shadowBlur = (o.size ?? 48) * 0.4; } ctx.fillStyle = o.color ?? '#fff'; if (o.ls) ctx.letterSpacing = o.ls; ctx.fillText(str, sx, sy); });
 // colour helpers
 P.hex = (c) => { const n = parseInt(c.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
 P.mixc = (a, b, u) => { const A = P.hex(a), B = P.hex(b); return '#' + A.map((v, i) => Math.round(K.lerp(v, B[i], K.clamp(u))).toString(16).padStart(2, '0')).join(''); };
