@@ -85,6 +85,7 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
 - **The hero looks grand at the climax**: largest, central, lit (a sun or glow behind it); comparisons smaller and aside.
 - **Readable without the voice**: each gag reads in a still; words on screen only for numbers, names, scale labels.
 - **Faithful self-review**: send the draft with the weak spots you see named; fix them before the final.
+- **No stamps, badges or HUD collectibles** (the user's dislike): numbers live in calm pills beside the action (`P.pill`).
 - **Crowds vary**: repeated characters differ in size, tint, mood (some sleepy) and props (hats, glasses).
 - **Every scene is a living place**: not a horizon and a sun; give it 3+ moving extras (a boat, gulls, steam, a fish).
 - **Soft shapes are one shape**: clouds and bushes drawn as a dark underside layer + body + soft highlight, never as

@@ -79,6 +79,19 @@ P.haze = (col, a) => { if (a <= 0) return; P.screen((ctx) => { ctx.globalAlpha =
 P.vignette = (a = 0.35) => P.screen((ctx) => { const g = ctx.createRadialGradient(P.W / 2, P.H / 2, P.H * 0.45, P.W / 2, P.H / 2, P.H * 1.05); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,10,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, P.W, P.H); });
 // screen text (labels, counters): font family loaded by the film; o: size, weight, color, align, alpha, shadow
 P.text = (str, sx, sy, o = {}) => P.screen((ctx) => { ctx.globalAlpha *= o.alpha ?? 1; ctx.font = `${o.weight ?? 700} ${o.size ?? 48}px ${o.font ?? 'sans-serif'}`; ctx.textAlign = o.align ?? 'center'; ctx.textBaseline = 'middle'; if (o.shadow) { ctx.shadowColor = o.shadow; ctx.shadowBlur = (o.size ?? 48) * 0.4; } ctx.fillStyle = o.color ?? '#fff'; if (o.ls) ctx.letterSpacing = o.ls; ctx.fillText(str, sx, sy); });
+// a calm pill label in screen space (numbers, names): pops in with u (0..1); o.icon(ctx, r) draws a small icon at its left
+P.pill = (str, sx, sy, o = {}) => {
+  const u = o.u ?? 1; if (u <= 0) return;
+  P.screen((ctx) => {
+    const size = o.size ?? 40; ctx.font = `${o.weight ?? 700} ${size}px ${o.font ?? 'sans-serif'}`;
+    const iw = o.icon ? size * 1.3 : 0, w = ctx.measureText(str).width + iw + size * 1.1, h = size * 1.6, k = K.ease.backOut(K.clamp(u));
+    ctx.translate(sx, sy); ctx.scale(k, k); ctx.globalAlpha *= K.clamp(u * 2);
+    ctx.fillStyle = 'rgba(10,20,50,0.18)'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2 + 6, w, h, h / 2); ctx.fill();
+    ctx.fillStyle = o.bg ?? 'rgba(255,255,255,0.94)'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, h / 2); ctx.fill();
+    if (o.icon) { ctx.save(); ctx.translate(-w / 2 + size * 0.55 + iw / 2, 0); o.icon(ctx, size * 0.5); ctx.restore(); }
+    ctx.fillStyle = o.color ?? '#1a2a4a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(str, iw / 2, 2);
+  });
+};
 // colour helpers
 P.hex = (c) => { const n = parseInt(c.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
 P.mixc = (a, b, u) => { const A = P.hex(a), B = P.hex(b); return '#' + A.map((v, i) => Math.round(K.lerp(v, B[i], K.clamp(u))).toString(16).padStart(2, '0')).join(''); };

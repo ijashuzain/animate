@@ -70,14 +70,14 @@ for at, f0 in ((2.7, 700), (3.8, 800), (5.0, 900)): fx.add(sfx_pop(f0), at, 0.45
 fx.add(sfx_whoosh(1.4), 9.6, 0.5)                                                       # dive into the drop
 for i in range(10): fx.add(sfx_bubble(400 + 60 * i), 10.4 + i * 0.13, 0.25)
 fx.add(sfx_boing(260, 0.5), 11.5, 0.4)                                                  # Drip turns
-fx.add(sfx_pop(1300), 13.0, 0.4); fx.add(sfx_pop(1100), 13.6, 0.4)                     # suitcase, passport
+fx.add(sfx_pop(1300), 13.0, 0.4)                                                        # suitcase
 fx.add(sfx_whoosh(1.0, up=False), 14.4, 0.5)                                            # out into the ocean
 for i in range(14): fx.add(sfx_bubble(300 + 40 * (i % 5)), 15.5 + i * 0.7, 0.18)
 fx.add(sfx_whale(2.4), 17.0, 0.45)
 for i in range(4): fx.add(sfx_tick(1800), 16.6 + i * 0.45, 0.25)                         # the 97% ring
 fx.add(sfx_whoosh(0.5), 19.5, 0.3)
 fx.add(sfx_fwip(False), 21.7, 0.3)                                                      # the yawn
-fx.add(sfx_stamp(), 23.6, 0.8); fx.add(sfx_stamp(), 49.2, 0.8); fx.add(sfx_stamp(), 84.6, 0.8)
+for at in (22.6, 48.0, 83.4): fx.add(sfx_pop(1400), at, 0.35); fx.add(bell(N('C6'), 1.0), at + 0.05, 0.15)   # fact pills
 fx.add(sfx_whoosh(2.2), 24.3, 0.4)                                                      # up to the light
 for i in range(22): fx.add(sfx_tick(2200 + 300 * (i % 3)), 26.4 + i * (0.22 - i * 0.006), 0.12 + i * 0.01)   # jiggling, faster
 fx.add(sfx_boing(160, 0.7), 31.0, 0.6); fx.add(sfx_boing(140, 0.9), 31.9, 0.7)          # trampoline
@@ -100,10 +100,10 @@ for i in range(6): fx.add(sfx_thud(), 77.0 + i * 0.55, 0.15)                    
 fx.add(sfx_whoosh(0.6), 82.5, 0.4)                                                      # the hat
 fx.add(sfx_splash(), 86.2, 0.3)
 fx.add(sfx_pop(500), 91.0, 0.4)
-for i in range(6): fx.add(sfx_flip(), 92.3 + i * 0.45, 0.5)                             # old pages
+for i in range(10): fx.add(sfx_whoosh(0.35), 91.4 + 3.6 * (i / 10) ** 0.6, 0.25 + 0.03 * i)   # the loop, faster and faster
 fx.add(sfx_whoosh(1.0, up=False), 95.0, 0.4)
 fx.add(sfx_splash(), 98.3, 0.3); fx.add(sfx_gulp(), 98.7, 0.8)                          # the gulp
-fx.add(sfx_stamp(), 104.6, 0.6); fx.add(sfx_stamp(), 106.0, 0.6); fx.add(sfx_stamp(), 107.6, 0.6)
+for at in (104.6, 106.0, 107.6): fx.add(sfx_pop(1300), at, 0.35); fx.add(bell(N('F6'), 1.0), at + 0.05, 0.15)
 fx.add(sfx_fwip(), 109.6, 0.5); fx.add(sfx_whoosh(2.0), 109.8, 0.5); fx.add(sfx_sparkle(6, 2600), 110.4, 0.3)
 fx.add(sfx_pop(1200), 115.3, 0.4); fx.add(sfx_sparkle(5, 3000), 115.5, 0.3)              # the drop waves
 

@@ -13,6 +13,9 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   flying fish, steam; a muddy flashback -> warm bright sepia with a sun and a lake; outlined cloud blobs -> one soft
   shape (underside + body + highlight); identical molecules -> sizes, tints, sleepy ones, hats, glasses. All now rules
   in CLAUDE.md "Quality bar".
+- **The user: "I don't like that stamp things"** (the passport stamps that slammed in and flew to a corner badge). Removed:
+  numbers now sit in calm pills next to the action (`P.pill`, with an icon), and the twist is a glowing loop Drip laps
+  faster and faster while the years spin up. Rule: no rubber stamps, badges or HUD collectibles; facts live in the scene.
 - What worked: a character made of the subject (a water molecule with hydrogen ears), a passport stamped at each
   stop (a running gag that also carries the numbers), scene joins as camera moves (dive into a drop, rise, fall, slide).
 - Gotchas: never read a value computed in the previous frame (a zoom target) - frames render out of order; compute it

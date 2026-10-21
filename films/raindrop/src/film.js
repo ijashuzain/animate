@@ -1,21 +1,14 @@
 // The Raindrop (Drip's road trip): 11 scenes joined by camera moves (zoom-throughs, a rise, a fall, a slide).
 // Scene windows overlap; the later scene fades in over the earlier one during the overlap.
 const { lerp, clamp, tw, track, logTrack, hash, noise } = K;
-const STAMPS = [
-  { t: 23.6, txt: 'OCEAN', sub: '~3,000 years', col: '#1f6fb3' },
-  { t: 49.2, txt: 'AIR', sub: '~9 days', col: '#8a4fb8' },
-  { t: 84.6, txt: 'RIVER', sub: '~2 weeks', col: '#1e9aa8' },
-];
-// a stamp slams in centre-right, holds, then flies to the passport badge in the corner
-function stampHud(t) {
-  const got = STAMPS.filter((s) => t > s.t + 1.6).length, badge = tw(t, 13.6, 14.2, 'backOut') * (1 - tw(t, 89.6, 90.4)) * (t < 104 ? 1 : 0);
-  if (badge > 0) P.screen((ctx) => { ctx.save(); ctx.translate(1780, 130); ctx.scale(badge, badge); ctx.rotate(-0.08); ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.roundRect(-58, -76, 120, 160, 12); ctx.fill(); ctx.fillStyle = C.passport; ctx.beginPath(); ctx.roundRect(-62, -80, 120, 160, 12); ctx.fill(); ctx.strokeStyle = C.gold; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(-2, -6, 28, 0, 6.3); ctx.stroke(); ctx.fillStyle = C.gold; ctx.font = `800 26px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText(got ? `${got} stamp${got > 1 ? 's' : ''}` : 'PASSPORT', -2, 58); ctx.restore(); });
-  for (const s of STAMPS) {
-    const d = t - s.t; if (d < 0 || d > 1.7) continue;
-    const slam = K.ease.backOut(clamp(d / 0.25)), fly = K.ease.inOut(clamp((d - 1.2) / 0.5)), x = lerp(1350, 1780, fly), y = lerp(560, 130, fly), sc = lerp(lerp(2.2, 1.25, slam), 0.3, fly);
-    P.screen((ctx) => { ctx.save(); ctx.translate(x, y); ctx.scale(sc, -sc); P.at(0, 0, 0.18, 1, 1, () => drawStamp(s, 1 - fly * 0.5)); ctx.restore(); });
-  }
-}
+// small icons for the fact pills (screen space, radius r)
+const ICON = {
+  sea: (ctx, r) => { ctx.fillStyle = '#2a86c8'; ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.3); ctx.fill(); ctx.strokeStyle = '#bfeaff'; ctx.lineWidth = r * 0.18; ctx.beginPath(); ctx.moveTo(-r * 0.7, 0); ctx.quadraticCurveTo(-r * 0.35, -r * 0.4, 0, 0); ctx.quadraticCurveTo(r * 0.35, r * 0.4, r * 0.7, 0); ctx.stroke(); },
+  cloud: (ctx, r) => { ctx.fillStyle = '#8fb4e8'; for (const [x, y, k] of [[-0.4, 0.15, 0.45], [0.05, -0.15, 0.6], [0.45, 0.15, 0.42]]) { ctx.beginPath(); ctx.arc(x * r, y * r, k * r, 0, 6.3); ctx.fill(); } ctx.fillRect(-0.85 * r, 0.1 * r, 1.7 * r, 0.45 * r); },
+  sun: (ctx, r) => { ctx.fillStyle = '#ffb03a'; ctx.beginPath(); ctx.arc(0, 0, r * 0.55, 0, 6.3); ctx.fill(); ctx.strokeStyle = '#ffb03a'; ctx.lineWidth = r * 0.16; ctx.lineCap = 'round'; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(Math.cos(a) * r * 0.75, Math.sin(a) * r * 0.75); ctx.lineTo(Math.cos(a) * r * 1.0, Math.sin(a) * r * 1.0); ctx.stroke(); } },
+  river: (ctx, r) => { ctx.strokeStyle = '#1e9aa8'; ctx.lineWidth = r * 0.42; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-r * 0.8, -r * 0.6); ctx.quadraticCurveTo(r * 0.8, -r * 0.3, -r * 0.2, r * 0.2); ctx.quadraticCurveTo(-r * 0.9, r * 0.6, r * 0.8, r * 0.7); ctx.stroke(); },
+};
+const fact = (t, t0, t1, str, sx, sy, icon) => P.pill(str, sx, sy, { u: tw(t, t0, t0 + 0.35) * (1 - tw(t, t1 - 0.3, t1)), font: FONT, size: 42, weight: 700, icon: ICON[icon] });
 const hero = (t, fn) => fn();
 
 // 1. 0-11.2: a rainy window; one drop; little thought-bubbles (ocean, cloud, dinosaur); the camera dives into the drop
@@ -73,6 +66,7 @@ function sOcean(t) {
   // 97%: a ring fills
   const ru = tw(t, 16.4, 18.4, 'out'), ra = tw(t, 16.2, 16.6) * (1 - tw(t, 19.4, 19.8));
   if (ra > 0) P.screen((ctx) => { ctx.globalAlpha = ra; ctx.lineCap = 'round'; ctx.lineWidth = 34; ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.arc(1460, 560, 170, 0, 6.3); ctx.stroke(); ctx.strokeStyle = '#7fe0ff'; ctx.beginPath(); ctx.arc(1460, 560, 170, -Math.PI / 2, -Math.PI / 2 + ru * 0.97 * Math.PI * 2); ctx.stroke(); ctx.fillStyle = '#ffffff'; ctx.font = `800 96px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(Math.round(ru * 97) + '%', 1460, 548); ctx.font = `600 34px ${FONT}`; ctx.fillText("of Earth's water", 1460, 622); });
+  fact(t, 22.6, 25.4, 'about 3,000 years in the sea', 960, 860, 'sea');
   bubbles(t, 30, 71, 0.8, 140);
 }
 // 4. 25.6-38.2: the sunlit surface; jiggle; trampoline; launch as vapour, the camera rises with Drip
@@ -128,6 +122,7 @@ function sCold(t) {
   for (let i = 0; i < 14; i++) { const a = (i / 14) * 6.283, fx = Math.cos(a) * (480 + hash(i, 111) * 260) + Math.sin(t * 1.3 + i) * 40, fy = Math.sin(a) * (300 + hash(i, 112) * 120) + Math.cos(t + i) * 20, hx = Math.cos(a) * 230, hy = Math.sin(a) * 200; drawMol(t, lerp(fx, hx, hud), lerp(fy, hy, hud), 0.62, 120 + i, { jiggle: 0.4, mood: hud > 0.8 ? 'happy' : 'worried', face: true }); }
   const shiver = tw(t, 37.8, 38.2) * (1 - tw(t, 43.5, 44.5));
   drawDrip(t, lerp(-260, 60, hud), lerp(80, 80, hud), 1.0, { ghost: 1 - tw(t, 37.4, 38.6), mood: shiver > 0.3 ? 'worried' : 'happy', shiver, arms: shiver > 0.3 ? 'hold' : 'wave', look: [0.6, -0.2] });
+  fact(t, 48.0, 50.8, 'about 9 days in the air', 960, 900, 'cloud');
   if (shiver > 0.3) P.screen((ctx) => { const [sx, sy] = P.toScreen(lerp(-260, 60, hud), 80); ctx.fillStyle = '#ffffff'; ctx.font = `800 64px ${FONT}`; ctx.textAlign = 'center'; ctx.globalAlpha = 0.85; ctx.fillText('brrr', sx + 200 + Math.sin(t * 40) * 4, sy - 120); });
 }
 // 6. 49.8-64: inside the storm cloud: merges, a million; the drop falls; not a tear: a bun
@@ -210,6 +205,7 @@ function sRiver(t) {
   const dx = cx - 320 + Math.sin(t * 1.3) * 40, rap = t > 75.6 && t < 77.4 ? Math.abs(Math.sin(t * 9)) * 60 : 0;
   drawDrip(t, dx, rv(dx) + 40 + rap + Math.sin(t * 3) * 10, 0.95, { mood: rap > 10 ? 'wow' : 'happy', arms: 'up', rot: Math.sin(t * 2) * 0.15, look: [0.8, 0] });
   if (rap > 0) for (let i = 0; i < 6; i++) P.circle(dx - 60 + i * 24, rv(dx) + 30 + rap * hash(i, 191), 10, 'rgba(255,255,255,0.8)');
+  fact(t, 83.4, 86.4, 'about 2 weeks in a river', 960, 180, 'river');
 }
 // 9. 88-91.2: silence: the still sea at dusk
 function sHush(t) {
@@ -239,11 +235,22 @@ function sTwist(t) {
     const gulp = tw(t, 98.5, 99.0);
     if (t > 96.2) drawDrip(t, lerp(hx + 20, hx + 30, gulp), lerp(-345, hy + 10, gulp), 0.3, { mood: t > 99 ? 'wow' : 'happy', arms: t > 101.2 ? 'wave' : null, wave: 1, look: [0, 0.4] });
   });
-  // the passport, open, pages flipping through old stamps
-  const pa = tw(t, 91.0, 91.6, 'backOut') * (1 - tw(t, 95.0, 95.6)); if (pa > 0) {
-    const old = [{ txt: 'CLOUD', sub: 'ice age', col: '#5a7ab8' }, { txt: 'OCEAN', sub: '3 billion yrs ago', col: '#1f6fb3' }, { txt: 'GLACIER', sub: '20,000 yrs ago', col: '#4a90b8' }, { txt: 'RIVER', sub: 'ancient Egypt', col: '#1e9aa8' }];
-    drawPassport(t, 0, 0, 1.8 * pa, tw(t, 91.4, 92.0), old, Math.max(0, (t - 92.3) * 2.2) * (t < 94.8 ? 1 : 0));
-  }
+  // the loop: sea -> sky -> cloud -> mountain -> sea, Drip lapping it faster and faster as the years spin up
+  const la = tw(t, 90.8, 91.6) * (1 - tw(t, 94.8, 95.4));
+  if (la > 0) P.screen((ctx) => {
+    ctx.save(); ctx.globalAlpha *= la; ctx.translate(960, 560);
+    const R = 400, RY = 250;
+    ctx.strokeStyle = 'rgba(127,224,255,0.25)'; ctx.lineWidth = 26; ctx.beginPath(); ctx.ellipse(0, 0, R, RY, 0, 0, 6.3); ctx.stroke();
+    const laps = Math.pow(tw(t, 91.2, 95.2, 'linear'), 2.2) * 14, ang = laps * Math.PI * 2;
+    for (let k = 0; k < 40; k++) { const a = ang - k * 0.05 * (1 + laps * 0.3); ctx.fillStyle = `rgba(160,235,255,${0.5 * (1 - k / 40)})`; ctx.beginPath(); ctx.arc(Math.cos(a - Math.PI / 2) * R, Math.sin(a - Math.PI / 2) * -RY, 14 * (1 - k / 40), 0, 6.3); ctx.fill(); }
+    for (const [a, ic] of [[Math.PI / 2, 'sea'], [0, 'sun'], [-Math.PI / 2, 'cloud'], [Math.PI, 'river']]) { ctx.save(); ctx.translate(Math.cos(a) * R * 1.32, Math.sin(a) * RY * 1.4); ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.beginPath(); ctx.arc(0, 0, 52, 0, 6.3); ctx.fill(); ICON[ic](ctx, 30); ctx.restore(); }
+    const yrs = Math.pow(10, 9.6 * tw(t, 91.4, 94.6, 'in'));
+    const label = yrs < 1.5 ? '1 year' : yrs < 1e3 ? Math.round(yrs) + ' years' : yrs < 1e6 ? Math.round(yrs / 1e3) + ' thousand years' : yrs < 1e9 ? Math.round(yrs / 1e6) + ' million years' : 'billions of years';
+    ctx.fillStyle = '#ffffff'; ctx.font = `800 56px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, 0, 0);
+    ctx.restore();
+  });
+  if (la > 0) { const ang = Math.pow(tw(t, 91.2, 95.2, 'linear'), 2.2) * 14 * Math.PI * 2, px = 960 + Math.cos(ang - Math.PI / 2) * 400, py = 560 + Math.sin(ang - Math.PI / 2) * -250; P.alpha(la, () => drawDrip(t, px - 960, 540 - py, 0.5, { mood: t > 93.5 ? 'wow' : 'happy', arms: 'up', look: [0.5, 0] })); }
+
 }
 // 11. 103.8-117.5: sunset: three stamps line up; Drip jumps again; back to the rainy window: a drop waves
 function sEnd(t) {
@@ -255,15 +262,16 @@ function sEnd(t) {
   for (let i = 0; i < 6; i++) drawCloud(-1000 + i * 420, 1600 + (i % 2) * 300, 1.4, i + 50, '#e8ecff', 'rgba(100,110,170,0.35)');
   const jump = tw(t, 109.6, 113.6, 'out');
   drawDrip(t, Math.sin(t) * 40, -60 + jump * 1800, 0.9, { mood: 'happy', arms: t > 109.4 ? 'up' : 'wave', wave: t < 109.4 ? 1 : 0, ghost: tw(t, 110.0, 110.8), look: [0, 0.6] });
-  // the three stamps of this trip, lined up
-  STAMPS.forEach((s, i) => { const tt = [104.6, 106.0, 107.6][i], a = K.ease.backOut(clamp((t - tt) / 0.3)) * (1 - tw(t, 109.4, 109.9)); if (a <= 0) return; P.screen((ctx) => { ctx.save(); ctx.translate(500 + i * 460, 300); ctx.scale(a * 1.9, -a * 1.9); P.at(0, 0, [0.12, -0.08, 0.1][i], 1, 1, () => drawStamp(s, 1)); ctx.restore(); }); });
+  // the three numbers of the trip
+  fact(t, 104.6, 109.6, 'about 9 days in the air', 960, 200, 'cloud');
+  fact(t, 106.0, 109.6, 'about 2 weeks in a river', 960, 300, 'river');
+  fact(t, 107.6, 109.6, 'about 3,000 years in the sea', 960, 400, 'sea');
 }
 const SC = [[0, 11.2, sWindow], [10.2, 15.6, sMolecules], [14.6, 26.6, sOcean], [25.6, 38.2, sSurface], [37.2, 50.8, sCold], [49.8, 64.0, sRain], [63.4, 76.0, sMountain], [75.2, 88.6, sRiver], [88.0, 91.2, sHush], [90.6, 104.4, sTwist], [103.8, 114.8, sEnd], [114.0, 117.5, (t) => sWindow(t, true)]];
 const FILM = {
   draw(t) {
     const on = SC.filter(([a, b]) => t >= a && t < b);
     on.forEach(([a, b, fn], i) => { if (i === 0) fn(t); else P.layer(tw(t, a, on[i - 1][1], 'inOut'), () => fn(t)); P.begin(P.ctx); });
-    stampHud(t);
     P.vignette(0.3);
   },
 };

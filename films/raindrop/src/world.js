@@ -50,30 +50,6 @@ function drawMol(t, x, y, s, seed, o = {}) {
     }
   });
 }
-// the passport: a navy booklet; open 0..1; pages = list of stamps [{ txt, sub, col, rot }] shown when open
-function drawPassport(t, x, y, s, open = 0, stamps = [], flip = 0) {
-  P.at(x, y, -0.06, s, s, () => {
-    P.rect(-110, -150, 220, 300, 'rgba(0,0,0,0.25)', { r: 18 });
-    if (open < 0.05) {
-      P.rect(-100, -140, 200, 280, P.lin(-100, 0, 100, 0, '#2b4f8f', C.passport), { r: 16 });
-      P.circle(0, 10, 46, 'rgba(0,0,0,0)'); P.ctx.save(); P.ctx.strokeStyle = C.gold; P.ctx.lineWidth = 5; P.ctx.beginPath(); P.ctx.arc(0, 10, 44, 0, 6.3); P.ctx.ellipse(0, 10, 18, 44, 0, 0, 6.3); P.ctx.moveTo(-44, 10); P.ctx.lineTo(44, 10); P.ctx.stroke(); P.ctx.restore();
-      P.text('', 0, 0);
-      return;
-    }
-    const w = 200 * open;
-    P.rect(-w, -140, w, 280, P.lin(-w, 0, 0, 0, '#efe2c4', C.paper), { r: 12 }); P.rect(0, -140, 200 * open, 280, P.lin(0, 0, 200, 0, C.paper, '#e9d9b6'), { r: 12 });
-    P.rect(-3, -140, 6, 280, 'rgba(120,90,50,0.3)');
-    stamps.forEach((st, i) => { const u = K.ease.backOut(K.clamp(st.u ?? 1)); if (u <= 0) return; const px = (i % 2 ? 100 : -100) * open, py = 70 - Math.floor(i / 2) * 120 + (i % 2 ? -20 : 0); P.at(px, py, st.rot ?? 0.15, K.lerp(1.6, 1, u) * 0.8, K.lerp(1.6, 1, u) * 0.8, () => drawStamp(st, Math.min(1, u * 1.5))); });
-    if (flip > 0) { const f = flip % 1, fx = Math.cos(f * Math.PI) * 200; P.poly([[0, -140], [fx, -140 + Math.sin(f * Math.PI) * 30], [fx, 140 + Math.sin(f * Math.PI) * 30], [0, 140]], f < 0.5 ? '#f3e5c4' : '#e2d0a8'); }
-  });
-}
-function drawStamp(st, a = 1) {
-  P.alpha(a * 0.9, () => {
-    P.ctx.save(); P.ctx.strokeStyle = st.col ?? C.ink; P.ctx.lineWidth = 7; P.ctx.beginPath(); P.ctx.roundRect(-92, -52, 184, 104, 14); P.ctx.stroke(); P.ctx.lineWidth = 3; P.ctx.beginPath(); P.ctx.roundRect(-82, -42, 164, 84, 10); P.ctx.stroke(); P.ctx.restore();
-    // stamp text is drawn upright in local space (the camera flips y, so flip it back)
-    P.at(0, 0, 0, 1, -1, () => { const ctx = P.ctx; ctx.fillStyle = st.col ?? C.ink; ctx.textAlign = 'center'; ctx.font = `800 34px ${FONT}`; ctx.fillText(st.txt, 0, 2); ctx.font = `600 22px ${FONT}`; ctx.fillText(st.sub ?? '', 0, 30); });
-  });
-}
 // sea life
 function drawFish(t, x, y, s, col, seed) { const w = Math.sin(t * 9 + seed) * 0.25; P.at(x, y, 0, s, s, () => { P.poly([[-40, 0], [-62, 16 + w * 20], [-62, -16 + w * 20]], P.mixc(col, '#000000', 0.15)); P.lit(P.blobPts(0, 0, 44, 22, 12, 0.02, seed), col, { d: 0.2, rim: 'rgba(255,255,255,0.35)' }); P.circle(26, 5, 5, '#fff'); P.circle(27, 5, 2.6, '#123'); }); }
 function drawJelly(t, x, y, s, seed) { const p = Math.sin(t * 2.4 + seed); P.at(x, y, 0, s * (1 + p * 0.06), s * (1 - p * 0.06), () => { P.glow(0, 10, 90, '255,170,230', 0.35); for (let i = 0; i < 5; i++) P.ribbon([[-24 + i * 12, -6], [-24 + i * 12 + Math.sin(t * 3 + i) * 8, -60], [-24 + i * 12 + Math.sin(t * 3 + i + 1) * 12, -110]], [5, 4, 1], 'rgba(255,190,235,0.6)'); P.smooth([[-40, -4], [-34, 26], [0, 42], [34, 26], [40, -4], [0, 2]], 'rgba(255,170,225,0.75)'); }); }
