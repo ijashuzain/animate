@@ -5,6 +5,16 @@ Showcased work: Kevin Ngo's JavaScript animations (a Rube Goldberg morning, a pa
 story, a doodle dinosaur, a music video. Everything is drawn by code (canvas/SVG + GSAP), captured by headless Chrome and
 encoded by FFmpeg; HyperFrames (HeyGen, HTML compositions -> video) or Remotion adds a timeline and rendering harness.
 
+## Part 2: what already works on YouTube
+- **Day One Films** (its first video passed 2 million views): a plain white bean-shaped character, no face detail, in
+  dark cinematic rooms lit by one source (a spotlight, a desk lamp, a screen glow). One-word titles and thumbnails:
+  "WHAT IF?", "DISCIPLINE.", "DOPAMINE.", "JUST SHOW UP.", "READ THIS.", with the character in a big emotional pose.
+  The tutorial's point: "honestly, they aren't that complex"; *simple shapes* + *lighting* + *emotion* carry it.
+- The doodle dinosaur history (Sonnet): a timeline told by one tiny hero walking through eras, a scribbly crayon line on
+  cream paper, the era written small at the bottom ("230 million years ago", "160 million years ago"...).
+- The range: crayon piano robot with a cat, a paper-collage "what do you love?" story, a pencil library, an ink blot.
+  "Almost an infinite amount" of looks: the style is chosen per video, not fixed for the channel.
+
 ## The three levels
 1. **Prompt only** ("use JavaScript to animate a black hole"): random quality, sometimes "ridiculous".
 2. **Reference + research:** a reference video for the style to match, *style + pacing research* (a slider:

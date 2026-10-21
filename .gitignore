@@ -9,3 +9,8 @@ archive/*/index.html
 node_modules/
 videos/*/youtube/*.png
 studio/demos/*/index.html
+# films: generated HyperFrames project, renders, stills and audio
+films/*/hf/
+films/*/renders/
+films/*/stills/
+films/*/audio/*.wav

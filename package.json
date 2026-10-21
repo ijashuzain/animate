@@ -1,0 +1,10 @@
+{
+  "name": "animate-studio",
+  "private": true,
+  "type": "module",
+  "description": "Jist of Stories: animated films in code (kit/ + films/, rendered with HyperFrames)",
+  "devDependencies": {
+    "gsap": "3.15.0",
+    "hyperframes": "0.8.181"
+  }
+}

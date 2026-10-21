@@ -1,0 +1,11 @@
+{
+  "title": "Seed to Giant",
+  "duration": 30,
+  "fps": 30,
+  "fonts": [{ "family": "Fredoka", "file": "studio/fonts/Fredoka[wdth,wght].ttf" }],
+  "src": ["src/world.js", "src/film.js"],
+  "audio": [
+    { "id": "music", "src": "audio/music.wav", "start": 0, "volume": 1 },
+    { "id": "sfx", "src": "audio/sfx.wav", "start": 0, "volume": 1 }
+  ]
+}
