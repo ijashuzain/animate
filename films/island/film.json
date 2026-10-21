@@ -1,0 +1,111 @@
+{
+  "title": "How a Volcano Builds an Island From Nothing",
+  "duration": 128,
+  "fps": 30,
+  "fonts": [
+    {
+      "family": "Nunito",
+      "file": "studio/fonts/Nunito[wght].ttf"
+    }
+  ],
+  "kit": [
+    "kit/cast.js",
+    "kit/nature.js"
+  ],
+  "src": [
+    "src/world.js",
+    "src/film.js"
+  ],
+  "audio": [
+    {
+      "id": "music",
+      "src": "audio/music.wav",
+      "start": 0,
+      "volume": 1
+    },
+    {
+      "id": "sfx",
+      "src": "audio/sfx.wav",
+      "start": 0,
+      "volume": 1
+    }
+  ],
+  "board": [
+    [
+      7.6,
+      "The sub sets a camera on the sea floor"
+    ],
+    [
+      9.6,
+      "An anglerfish peers into the lens"
+    ],
+    [
+      16.0,
+      "REC: day 1, jellies; hot rock rises below"
+    ],
+    [
+      20.5,
+      "The sea floor cracks and glows"
+    ],
+    [
+      29.6,
+      "Pillow lava: toothpaste in ice water"
+    ],
+    [
+      34.5,
+      "A crab in a nightcap sleeps on the lava"
+    ],
+    [
+      40.5,
+      "Thousands of years: fish, the mountain climbs"
+    ],
+    [
+      46.5,
+      "A whale passes; 4 km tall and growing"
+    ],
+    [
+      51.4,
+      "The sea boils; the crab wakes"
+    ],
+    [
+      57.0,
+      "Steam and ash blast through the waves"
+    ],
+    [
+      64.6,
+      "New land breaks the surface"
+    ],
+    [
+      70.8,
+      "First sunlight: the island smiles"
+    ],
+    [
+      80.6,
+      "A coconut sprouts; a spider balloons in"
+    ],
+    [
+      84.2,
+      "A bird drops a seed; green spreads"
+    ],
+    [
+      91.0,
+      "Rain, waterfalls, valleys"
+    ],
+    [
+      98.4,
+      "Forest, and a canoe arrives"
+    ],
+    [
+      101.2,
+      "Night: a camp fire, the summit glow"
+    ],
+    [
+      110.0,
+      "The camera moves: the island chain drifts"
+    ],
+    [
+      123.0,
+      "The next island, with its own camera"
+    ]
+  ]
+}
