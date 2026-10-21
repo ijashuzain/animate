@@ -73,7 +73,7 @@ const seedX = (t) => 0.02 + Math.sin((t - 9.6) * 1.4) * 0.45 * (1 - tw(t, 11.8, 
 const ht = logTrack([[14.4, 0.0001], [15.6, 0.05, 'out'], [16.8, 1.6, 'in2'], [18.4, 10, 'linear'], [21.0, 30, 'linear'], [23.0, 50, 'linear'], [25.8, 84, 'out']]);
 const camFallH = logTrack([[9.6, 0.19], [10.6, 7, 'inOut'], [12.1, 7, 'linear'], [12.9, 0.09, 'inOut'], [13.4, 0.13, 'inOut'], [14.2, 0.13], [14.9, 0.12, 'inOut']]);
 const camFallY = (t) => { const fy = t < 12.9 ? seedY(t) + (t > 10.4 && t < 12.6 ? -camFallH(t) * 0.12 : 0) : 0.002; return lerp(lerp(fy, -0.035, tw(t, 13.2, 13.7, 'inOut')), 0.03, tw(t, 14.1, 14.6, 'inOut')); };
-const climbXf = track([[15.6, 0], [16.8, 0.15], [18.0, -0.1], [19.6, 0.1], [21.2, 0.17], [23.0, 0], [25.0, -0.12], [26.4, -0.12], [28.2, -0.08]]);
+const climbXf = track([[15.6, 0], [16.8, 0.15], [18.0, -0.1], [19.6, 0.1], [21.2, 0.17], [23.0, 0], [25.0, -0.16], [26.4, -0.16], [28.2, -0.05]]);
 const outH = logTrack([[26.4, 1], [28.4, 1.45, 'inOut']]);
 function cam2(t) {
   const fall = { x: t < 12.9 ? seedX(t) : 0.002, y: camFallY(t), h: camFallH(t) };
@@ -100,8 +100,17 @@ function sky2(t, c) {
 }
 function ground(t, c) {
   // soil cross-section and ash bed (y = 0 is the surface)
-  P.rect(-5000, -60, 10000, 60, P.lin(0, 0, 0, -0.3, C.soil, C.soilDeep));
-  for (let i = 0; i < 40; i++) { const x = (hash(i, 51) * 2 - 1) * 0.12, y = -0.012 - hash(i, 52) * 0.1; P.blob(x, y, 0.004 + 0.007 * hash(i, 53), 0.003 + 0.005 * hash(i, 54), C.stone, { seed: i, a: 0.9 }); }
+  P.rect(-5000, -60, 10000, 60, C.soilDeep);
+  // strata: wavy bands from dark humus near the top to clay below
+  const bands = [['#4a2f20', 0], ['#5c3b27', -0.018], ['#6b4630', -0.045], ['#7a5236', -0.08], ['#86603f', -0.12]];
+  for (const [col, y0] of bands) { const pts = [[-0.4, -60]]; for (let x = -0.4; x <= 0.4; x += 0.02) pts.push([x, y0 + Math.sin(x * 40 + y0 * 90) * 0.003]); pts.push([0.4, -60]); P.poly(pts, col); }
+  // stones: shaded, varied
+  const stones = ['#9a8a7c', '#7d7f86', '#b3a08a', '#8c7466'];
+  for (let i = 0; i < 34; i++) { const x = (hash(i, 51) * 2 - 1) * 0.16, y = -0.014 - hash(i, 52) * 0.12, rx = 0.003 + 0.006 * hash(i, 53); P.lit(P.blobPts(x, y, rx, rx * (0.55 + 0.3 * hash(i, 54)), 9, 0.15, i), stones[i % 4], { d: 0.28, shade: 'rgba(30,15,5,0.35)', rim: 'rgba(255,240,220,0.3)' }); }
+  // fine roots of other plants, and a worm going about its day
+  for (let i = 0; i < 7; i++) { const x = (hash(i, 55) * 2 - 1) * 0.15; P.ribbon([[x, 0], [x + 0.006, -0.02 - 0.03 * hash(i, 56)], [x - 0.004, -0.04 - 0.05 * hash(i, 57)]], [0.0012, 0.0008, 0.0003], 'rgba(230,205,160,0.55)'); }
+  const wx = -0.06 + (t - 12.5) * 0.008, wpts = []; for (let i = 0; i < 9; i++) wpts.push([wx - i * 0.0035, -0.052 + Math.sin(t * 6 - i * 0.9) * 0.0018]);
+  if (t > 12.5 && t < 15) { P.ribbon(wpts, [0.0034, 0.0036, 0.0036, 0.0035, 0.0034, 0.0032, 0.003, 0.0027, 0.0022], '#d98a8a'); P.circle(wx + 0.0006, -0.0515 + Math.sin(t * 6) * 0.0018, 0.0006, '#3a1d1d'); }
   P.rect(-5000, -0.004, 10000, 0.004, C.ash);
   for (let i = 0; i < 30; i++) P.blob((hash(i, 61) * 2 - 1) * 0.3, 0.0005, 0.02 + 0.03 * hash(i, 62), 0.004, i % 2 ? C.ashLight : C.ash, { seed: i });
   // bigger world at bigger scales: forest floor, burnt logs, smoke
@@ -118,17 +127,25 @@ function parent(t, c) {
   P.ribbon([[x0, 53.5], [-2.6, 53.0], [-0.4, 52.2], [0, 52.03]], [0.5, 0.3, 0.12, 0.05], '#6b4a2e');
   for (let i = 0; i < 12; i++) P.blob(x0 + 0.4 + i * 0.5, 53.2 + Math.sin(i) * 0.3, 0.5, 0.25, i % 2 ? C.leaf : C.leafDark, { seed: i });
   P.at(0, 52, 0, 0.001, 0.001, () => drawCone(t, { open: 1, burn: 1, eyes: 1, look: [0.2, -1] }));
+  // lower branches the falling seed rushes past (they reach across the frame)
+  for (const [by, len, s] of [[46, 7, 1], [40.5, 9, 2], [34, 6.5, 3], [27, 8.5, 4], [19.5, 7, 5]]) {
+    P.ribbon([[x0, by + 0.4], [x0 + len * 0.45, by + 0.1], [x0 + len, by - 0.5]], [0.55, 0.32, 0.08], '#5e3a24');
+    for (let i = 0; i < 7; i++) { const u = (i + 1) / 8, bx = x0 + len * u, byy = by + 0.2 - u * 0.7 + Math.sin(i + s) * 0.25; P.lit(P.blobPts(bx, byy, 0.9 - u * 0.3, 0.42, 9, 0.25, s * 10 + i), P.mixc(C.leaf, '#6a3a1c', 0.2 + 0.25 * (i % 2)), { shade: 'rgba(20,0,0,0.35)', rim: 'rgba(255,150,80,0.35)', light: [0.2, -1], d: 0.3 }); }
+  }
 }
 function smoke(t, c, k) { if (k <= 0) return; for (let i = 0; i < 26; i++) { const y = (hash(i, 81) * 60 + t * 1.5) % 60, x = (hash(i, 82) * 2 - 1) * 8 + Math.sin(t * 0.5 + i) * 0.5, r = 1.5 + 3 * hash(i, 83); P.blob(x, y, r, r * 0.7, `rgba(${90 + 40 * hash(i, 84)},${80 + 30 * hash(i, 84)},${90 + 30 * hash(i, 84)},${0.22 * k})`, { seed: i }); } }
 function partB(t) {
   const c = cam2(t);
   sky2(t, c);
   P.cam(c);
+  const sun = tw(t, T.gold, T.top); if (sun > 0) { P.glow(10, 120, 90, '255,210,140', sun); P.circle(10, 120, 9, P.rgba('#fff2c8', sun)); }
   const grove = tw(t, 19, 23);
   if (grove > 0) P.alpha(grove, () => { for (const [gx, gh, s] of [[-95, 70, 1], [-150, 78, 2], [70, 74, 3], [125, 66, 4], [-230, 60, 5], [200, 72, 6]]) drawTree(t, gh, { x: gx, seed: s, fade: 0.55, haze: P.mixc('#9cc8ec', '#f0c88a', tw(t, T.gold, T.top)) }); });
   const fade = 1 - tw(t, 15.5, 19);
   if (fade > 0) P.alpha(fade, () => parent(t, c));
   smoke(t, c, 1 - tw(t, 13, 16));
+  // glowing needles and ash flakes drifting down around the fall
+  if (t < 13.2) for (let i = 0; i < 40; i++) { const y = 54 - ((hash(i, 301) * 56 + t * (1.2 + hash(i, 302))) % 56), x = (hash(i, 303) * 2 - 1) * 5 + Math.sin(t * 2 + i) * 0.4, r = 0.03 + 0.05 * hash(i, 304), hot = i % 3 === 0; P.at(x, y, t * 3 + i, 1, 1, () => P.rect(-r * 2, -r * 0.4, r * 4, r * 0.8, hot ? '#ffb14a' : '#5a5560', { a: 0.85 })); if (hot) P.glow(x, y, r * 8, '255,150,60', 0.5); }
   // the other seeds, spinning down beside ours, and speed streaks while we fall
   if (t < 13) for (let i = 0; i < 9; i++) { const ox = (hash(i, 201) * 2 - 1) * 5, oy = seedY(t) + (hash(i, 202) * 2 - 1) * 4 + (t - 9.6) * (hash(i, 203) - 0.5) * 3; drawSeed(seedX(t) + ox + Math.sin(t * 1.7 + i) * 0.4, oy, (60 + 50 * hash(i, 204)) / P.k / 0.005 * 0.001, t * 13 + i, i); }
   const sp = tw(t, 10.2, 10.8) * (1 - tw(t, 12.2, 12.7));
@@ -154,7 +171,7 @@ function partB(t) {
   if (t > 16.0) drawKid(t, lerp(2.6, 0.85, tw(t, 16.0, 16.7, 'out')), tip);
   if (t > 16.5) drawHouse(t, -7.5);
   if (t > 18) drawWhale(t, 21, T.whale);
-  if (t > 21) drawTower(t, -38);
+  if (t > 21) drawTower(t, -58);
   // birds and the cloud deck
   if (t > 21.5) for (let i = 0; i < 5; i++) { const x = -30 + (t - 21.5) * 9 + i * 2.2, y = 40 + Math.sin(i) * 2, f = Math.sin(t * 12 + i) * 0.6; P.ribbon([[x - 0.9, y + f * 0.6], [x, y], [x + 0.9, y + f * 0.6]], 0.18, '#2a3550'); }
   clouds(t, c);
@@ -182,7 +199,7 @@ function hud(t) {
   const u = tw(t, 15.8, 25.8, 'linear'), n = Math.round(Math.exp(lerp(0, Math.log(2000), Math.pow(u, 1.15))));
   P.text(`${n.toLocaleString('en-US')} year${n > 1 ? 's' : ''}`, 260, 120, { font: FONT, size: 64, weight: 600, alpha: a, shadow: 'rgba(0,0,0,0.3)' });
   const m = tw(t, 25.9, 26.4) * (1 - tw(t, 27.6, 28.0));
-  if (m > 0) { const [x0, y0] = P.toScreen(-38, 84), [x1, y1] = P.toScreen(0, ht(t)); P.screen((ctx) => { ctx.globalAlpha = m; ctx.strokeStyle = '#ffd65a'; ctx.lineWidth = 5; ctx.setLineDash([16, 14]); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }); P.text('84 m', (x0 + x1) / 2, Math.min(y0, y1) - 50, { font: FONT, size: 60, weight: 600, color: '#ffd65a', alpha: m, shadow: 'rgba(0,0,0,0.3)' }); }
+  if (m > 0) { const [x0, y0] = P.toScreen(-58, 84), [x1, y1] = P.toScreen(0, ht(t)); P.screen((ctx) => { ctx.globalAlpha = m; ctx.strokeStyle = '#ffd65a'; ctx.lineWidth = 5; ctx.setLineDash([16, 14]); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }); P.text('84 m', (x0 + x1) / 2, Math.min(y0, y1) - 50, { font: FONT, size: 60, weight: 600, color: '#ffd65a', alpha: m, shadow: 'rgba(0,0,0,0.3)' }); }
 }
 
 const FILM = {

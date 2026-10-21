@@ -43,24 +43,20 @@ function drawCone(t, o = {}) {
     }
   }
   if (heat > 0) P.clip(() => { P.ctx.beginPath(); P.ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); }, () => P.rect(-40, -40, 80, 40, P.lin(0, -ry, 0, 0, `rgba(255,140,40,${0.55 * heat})`, 'rgba(255,140,40,0)')));
-  // face
-  const eyes = o.eyes ?? 0, look = o.look ?? [0, 0];
-  for (const ex of [-8, 8]) {
-    if (eyes < 0.5) P.ribbon([[ex - 3.4, 5.5], [ex, 3.6], [ex + 3.4, 5.5]], 1.1, '#2a1a10');
-    else { const r = 3.6 * K.lerp(0.6, 1, (eyes - 0.5) * 2); P.circle(ex, 5, r, '#fffaf0', { ry: r * 1.15 }); P.circle(ex + look[0] * 1.4, 5 + look[1] * 1.6, r * 0.5, '#1e1410'); P.circle(ex + look[0] * 1.4 - 0.6, 5.7 + look[1] * 1.6, r * 0.16, '#fff'); }
-  }
-  if (eyes >= 0.5) P.circle(0, -3, 2.2 * eyes, '#2a1a10', { ry: 2.6 * eyes }); else P.circle(0, -2.4, 1.3, '#2a1a10', { ry: 0.7 });
+  // face (kit/cast.js): asleep, then wide awake
+  const eyes = o.eyes ?? 0;
+  Cast.face(t, 0, 2, 30, { mood: eyes < 0.5 ? 'sleep' : 'wow', look: o.look ?? [0, 0], seed: 3, ink: '#24160c' });
 }
 // a young-to-ancient giant sequoia of height ht (m), standing at (x0, 0). Young: a narrow spire of drooping tiers.
 // Old: the lower trunk is bare and red, the crown breaks into clumps. o.fade/o.haze: mix toward a haze colour (distance)
 function drawTree(t, ht, o = {}) {
   if (ht <= 0) return;
   const hz = (c) => (o.fade ? P.mixc(c, o.haze, o.fade) : c), x0 = o.x ?? 0, seed = o.seed ?? 0;
-  const age = K.clamp((ht - 8) / 60), wb = 0.004 + 0.085 * ht, sway = (u) => x0 + Math.sin(t * 1.1 + u * 3 + seed) * 0.01 * ht * u * u;
+  const age = K.clamp((ht - 8) / 60), wb = 0.004 + 0.085 * ht * (1 + 0.25 * K.clamp((ht - 40) / 44)), sway = (u) => x0 + Math.sin(t * 1.1 + u * 3 + seed) * 0.01 * ht * u * u;
   const n = 14, trunk = [], widths = [];
   for (let i = 0; i <= n; i++) { const u = i / n; trunk.push([sway(u), u * ht]); widths.push(wb * Math.pow(1 - u, 0.85) * (1 + 0.7 * Math.pow(1 - u, 8) * age) + 0.002); }
   const crown0 = K.lerp(0.06, 0.45, age), tiers = Math.round(K.lerp(6, 12, K.clamp(ht / 20)));
-  const prof = (u) => { const v = K.clamp((u - crown0) / (1 - crown0)); return ht * (K.lerp(0.34, 0.2, age) * (1 - v) + age * 0.16 * Math.sin(Math.PI * Math.min(1, v * 1.15))); };
+  const prof = (u) => { const v = K.clamp((u - crown0) / (1 - crown0)); return ht * (K.lerp(0.34, 0.2, age) * (1 - v) + age * 0.27 * Math.sin(Math.PI * Math.min(1, v * 1.1))); };
   P.ribbon(trunk, widths, P.lin(x0 - wb / 2, 0, x0 + wb / 2, 0, hz(C.barkLight), hz(C.bark), hz(C.barkDark)));
   if (ht > 1.5) for (let f = 0; f < 5; f++) { const fx = x0 + (f - 2) * wb * 0.17; P.ribbon([[fx, 0], [fx - x0 + sway(0.3), ht * 0.3], [fx - x0 + sway(0.6), ht * 0.62]], [wb * 0.04, wb * 0.028, 0.001], 'rgba(70,25,15,0.4)'); }
   for (let i = 0; i < tiers; i++) {
@@ -75,17 +71,7 @@ function drawTree(t, ht, o = {}) {
   P.poly([[sway(1) - ht * 0.025, ht * 0.95], [sway(1), ht * 1.03], [sway(1) + ht * 0.025, ht * 0.95]], hz(C.leafLight));
 }
 // a kid (1.3 m tall) at (x, 0): waves; looks at a point (lx, ly)
-function drawKid(t, x, look) {
-  P.at(x, 0, 0, 1, 1, () => {
-    P.circle(0, 0.01, 0.32, 'rgba(0,0,0,0.18)', { ry: 0.05 });
-    for (const s of [-1, 1]) P.ribbon([[s * 0.09, 0.05], [s * 0.1, 0.55]], [0.12, 0.13], C.pants);
-    P.lit([[-0.22, 0.5], [0.22, 0.5], [0.2, 0.95], [-0.2, 0.95]], C.shirt, { d: 0.2 });
-    const wave = Math.sin(t * 9) * 0.5; P.ribbon([[0.18, 0.88], [0.38, 1.08], [0.42 + Math.sin(wave) * 0.15, 1.3]], [0.09, 0.08, 0.08], C.shirt); P.circle(0.42 + Math.sin(wave) * 0.15, 1.33, 0.06, C.skin);
-    P.ribbon([[-0.18, 0.88], [-0.28, 0.66], [-0.25, 0.5]], [0.09, 0.08, 0.08], C.shirt);
-    const a = Math.atan2(look[1] - 1.1, look[0] - x), tilt = K.clamp(a - Math.PI / 2, -0.6, 0.6) * 0.5;
-    P.at(0, 1.05, -tilt, 1, 1, () => { P.lit(P.blobPts(0, 0.1, 0.19, 0.2, 10, 0.03, 5), C.skin, { d: 0.15 }); P.blob(0, 0.2, 0.2, 0.11, C.hair, { seed: 9 }); P.circle(-0.06, 0.12, 0.022, '#222'); P.circle(0.06, 0.12, 0.022, '#222'); P.circle(0, 0.04, 0.04, '#7a2d2d', { ry: 0.03 }); });
-  });
-}
+function drawKid(t, x, look) { Cast.person(t, x, 1.3, { pose: 'wave', look, mood: 'happy', kid: true, seed: 2 }); }
 function drawHouse(t, x) {
   P.at(x, 0, 0, 1, 1, () => {
     P.rect(-4, 0, 8, 5.6, P.lin(-4, 0, 4, 0, '#fff3dc', C.wall, '#e6d2ad'));

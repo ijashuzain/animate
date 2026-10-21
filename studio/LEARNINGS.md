@@ -5,6 +5,20 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## 2026-10-21: the rebuild and the pilot "Seed to Giant" (the user: "This look amazing")
+- **What worked:** one continuous shot with a single idea (the camera falls with the seed, then rides the growing tip);
+  a gag per line (the sleeping cone, a whale balancing on its tail, a cat on the roof); real-scale objects passing as
+  the camera zooms out (`K.logTrack` for zooms: equal ratios feel like equal speed); a fire flash hiding the change from
+  millimetres to metres; a score with a sound for every action. Draft render of 30 s: ~80 s (the old pipeline: ~25 min).
+- **The user's follow-up: "Fix weak spots also in upcoming videos".** The weak spots I had named, and the fixes (now
+  rules in CLAUDE.md "Quality bar"): simple faces -> `kit/cast.js` (faces with lids, highlights, brows, mouth moods;
+  a person rig with poses and look-at); an empty fall -> branches rushing past, burning needles, ash at several depths;
+  plain grey pebbles -> soil strata, shaded stones, roots, a worm; a small-looking hero at the end -> a grander crown,
+  the tower moved aside, a sun behind the tree.
+- Gotchas: a camera pan must scale with the zoom (pan in fractions of the visible height), or a tight shot pans the
+  subject out of frame; `K.ease.backOut(0)` is 2e-16, not 0, so guard starts with `t < t0`; arm angles: one sign
+  convention for both arms (positive = outward), or one arm folds across the body.
+
 ## 2026-10-21: the user asked for a full rebuild (decisions, before any code)
 - **The user's verdict:** "completely disappointed" with the animation, the explanation, the visual style, the
   presentation and the workflow. All four pain points were picked: it looks cheap/basic, feels static, the explanation
