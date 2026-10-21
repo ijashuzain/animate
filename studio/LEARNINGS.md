@@ -5,6 +5,20 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## 2026-10-21: the user asked for a full rebuild (decisions, before any code)
+- **The user's verdict:** "completely disappointed" with the animation, the explanation, the visual style, the
+  presentation and the workflow. All four pain points were picked: it looks cheap/basic, feels static, the explanation
+  is unclear, and the workflow is too slow and opaque.
+- **Target:** Kurzgesagt (rich flat vector worlds, constant camera motion, dense visual metaphors).
+- **Artwork:** open-licence SVG packs AND drawing our own.
+- **Rollout:** a full rebuild of the engine, styles and workflow. **First, analyse and learn completely from a YouTube
+  tutorial the user will share.** The user wants a structured workflow and quality output.
+- **"No more same style of presentation and animations with just topic and assets and element changes. I need more
+  creative."** Every video gets its own visual idea, metaphors, shot design and motion; the template-swap approach is over.
+- Diagnosis (mine): slideshow structure (10 scenes x 12 s, pop-ins), text doing the explaining (the right half of every
+  frame), hand-coded primitives as a quality ceiling, checks that measure rules and not watchability, no storyboard,
+  and no fast preview before a 25-minute render.
+
 ## The user's taste, in one place (from every conversation so far; update it whenever they react)
 What they asked for or liked:
 - **Soft, friendly flat vector** (their references: Headspace-style blobs, tone-on-tone rooms, a flat autumn landscape):
