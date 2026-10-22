@@ -1,6 +1,6 @@
 {
   "title": "Why Cats Always Land on Their Feet",
-  "duration": 125,
+  "duration": 122,
   "fps": 30,
   "fonts": [
     {
@@ -81,31 +81,35 @@
       "Back half follows, about 80 ms later"
     ],
     [
-      82.0,
+      80.0,
       "Replay with each half's angle"
     ],
     [
-      89.5,
+      86.5,
       "Silence: upright, legs out, back arched"
     ],
     [
-      100.0,
+      97.0,
       "Landing: soft paws, dust"
     ],
     [
-      106.5,
+      103.5,
       "Kitten at 3 weeks: half a turn, a flop"
     ],
     [
-      110.0,
+      107.0,
       "At 7 weeks: on its feet"
     ],
     [
-      114.5,
-      "Low stool vs high shelf: time to turn?"
+      109.2,
+      "Measured: 30 cm stool vs 1.5 m shelf"
     ],
     [
-      121.5,
+      110.0,
+      "Low stool: not enough time to turn"
+    ],
+    [
+      118.5,
       "Full speed again; it walks off, kitten follows"
     ]
   ]

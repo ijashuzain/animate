@@ -1,7 +1,7 @@
 # Why Cats Always Land on Their Feet: the voice script (timed to the picture)
 
 Record after watching the draft (ElevenLabs). Calm, curious, warm; about 2.5 words a second. Each line must fit its window;
-a little early is fine, never late. Window times are in seconds of the film (2:05 total).
+a little early is fine, never late. Window times are in seconds of the film (2:02 total).
 
 | # | window (s) | on screen | line |
 |---|---|---|---|
@@ -16,13 +16,13 @@ a little early is fine, never late. Window times are in seconds of the film (2:0
 | 9 | 42.0 - 49.5 | "lower back: stiffer" | The lower back is stiffer. So now the front and back halves can turn on their own. |
 | 10 | 50.0 - 63.0 | front legs tucked, the front half turns | Front legs tuck in, back legs stretch out. Tucked in, the front half spins round fast, while the stretched-out back half barely moves. |
 | 11 | 64.0 - 75.5 | they swap; the back half follows (about 80 ms) | Then they swap. Back legs tuck, front legs stretch, and the back half follows, less than a tenth of a second later. |
-| 12 | 76.0 - 88.0 | replay with each half's angle | No pushing off anything, and no spin to start with. The cat twists against itself, one half at a time, until it's turned all the way over. |
-| 13 | 88.5 - 90.5 | upright, frozen, glowing | (silence) |
-| 14 | 90.5 - 99.0 | legs out, back arched, falling to the rug | Last: legs out, back arched, like a little parachute and a spring. |
-| 15 | 99.5 - 104.0 | the landing, dust | Soft paws and bending joints soak up the landing. |
-| 16 | 104.5 - 111.0 | the kitten at 3 weeks flops; at 7 weeks lands | Kittens start learning this at about three weeks old, and most have it by about seven weeks. |
-| 17 | 111.5 - 116.3 | 30 cm stool vs 1.5 m shelf | But it isn't magic. From a short fall, there may not be time to finish the turn. |
-| 18 | 116.5 - 124.5 | full speed again; it walks off, the kitten follows | So it's not luck. It's a balance sensor, a bendy spine and a lot of practice, all in about a third of a second. |
+| 12 | 76.0 - 85.0 | replay with each half's angle | No pushing off, no spin to start with: the cat twists against itself, one half at a time, until it's all the way over. |
+| 13 | 85.5 - 87.5 | upright, frozen, glowing | (silence) |
+| 14 | 87.5 - 96.0 | legs out, back arched, falling to the rug | Last: legs out, back arched, like a little parachute and a spring. |
+| 15 | 96.5 - 101.0 | the landing, dust | Soft paws and bending joints soak up the landing. |
+| 16 | 101.5 - 108.0 | the kitten at 3 weeks flops; at 7 weeks lands | Kittens start learning this at about three weeks old, and most have it by about seven weeks. |
+| 17 | 108.5 - 113.3 | measured: 30 cm stool, 1.5 m shelf; a cat slips off the stool and lands mid-turn | But it isn't magic. From a short fall, there may not be time to finish the turn. |
+| 18 | 113.5 - 121.5 | full speed again; it walks off, the kitten follows | So it's not luck. It's a balance sensor, a bendy spine and a lot of practice, all in about a third of a second. |
 
 ## Package
 - Title (49): Why Cats Always Land on Their Feet (in Slow Motion)

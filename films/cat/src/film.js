@@ -1,9 +1,9 @@
 // Why Cats Land on Their Feet: one real fall in a living room at night, replayed in slow motion with a millisecond
 // clock; the camera rides the falling cat, and cutaways open over its real body (inner ear, nerves, spine) at each step.
-const T = { fall: 3.0, rw0: 6.4, rw1: 9.6, ear: 10, eyes: 24, sig: 28, bend: 34, front: 50, back: 64, replay: 76, hush: 88.5, legs: 90.5, kit: 104, two: 111.5, end: 116.5, D: 125 };
+const T = { fall: 3.0, rw0: 6.4, rw1: 9.6, ear: 10, eyes: 24, sig: 28, bend: 34, front: 50, back: 64, replay: 76, rEnd: 83, hush: 85.5, legs: 87.5, kit: 101, two: 108.5, end: 113.5, D: 122 };
 // story time (ms since the cat left the shelf): real speed in the hook, a rewind, then slow motion through the steps
 const MS = track([[0, -3000], [T.fall, 0, 'linear'], [T.rw0, 3400, 'linear'], [T.rw1, 0, 'inOut'], [T.ear, 0], [T.eyes, 15, 'linear'], [T.bend, 50, 'linear'], [T.front, 90, 'linear'], [T.back, 170, 'linear'], [T.replay, 250, 'linear']]);
-const MS2 = track([[T.replay, 250], [T.replay + 0.6, 0, 'inOut'], [86, 250, 'inOut'], [T.hush, 300, 'out'], [T.legs, 300], [99.5, LAND, 'in'], [T.kit, LAND + 900, 'out']]);
+const MS2 = track([[T.replay, 250], [T.replay + 0.6, 0, 'inOut'], [T.rEnd, 250, 'inOut'], [T.hush, 300, 'out'], [T.legs, 300], [T.legs + 9, LAND, 'in'], [T.kit, LAND + 900, 'out']]);
 const msOf = (t) => (t < T.replay ? MS(t) : t < T.kit ? MS2(t) : t < T.end ? 0 : (t - T.end - 1.0) * 1000);
 // the world's own clock: in slow motion the pendulum, the moth and the goldfish slow down too
 const worldT = (t) => (t < T.fall ? t : t < T.kit ? T.fall + msOf(t) / 1000 : t);
@@ -41,10 +41,10 @@ function camera(t, st) {
     // [t, x, y, h, follow 0..1 (0 = the room, 1 = the cat), aim at the head 0..1]
     [0, 40, 140, 330, 0, 0], [2.6, 50, 122, 250, 0, 0], [T.fall, 60, 118, 250, 0, 0], [T.rw0, 80, 110, 270, 0, 0], [T.rw1, 0, 0, 90, 1, 0],
     [T.ear + 2.6, 0, 0, 21, 1, 1], [T.eyes - 0.3, 0, 0, 20, 1, 1], [T.eyes + 1.6, 30, 40, 230, 0.55, 0], [T.sig - 0.4, 30, 40, 230, 0.55, 0], [T.sig + 1.2, 0, 0, 82, 1, 0],
-    [T.bend + 1.5, 0, 0, 70, 1, 0], [T.front, 0, 0, 80, 1, 0], [T.replay, 0, 0, 82, 1, 0], [T.hush, 0, 0, 72, 1, 0], [T.legs + 0.6, 0, 0, 72, 1, 0], [98.5, 0, 0, 140, 1, 0], [103.6, 0, 0, 150, 1, 0],
+    [T.bend + 1.5, 0, 0, 70, 1, 0], [T.front, 0, 0, 80, 1, 0], [T.replay, 0, 0, 82, 1, 0], [T.hush, 0, 0, 72, 1, 0], [T.legs + 0.6, 0, 0, 72, 1, 0], [T.legs + 8, 0, 0, 140, 1, 0], [T.kit - 0.4, 0, 0, 150, 1, 0],
   ];
   if (t >= T.kit && t < T.two) return { x: lerp(-60, -372, tw(t, T.kit, T.kit + 0.7, 'expoInOut')), y: 70, h: 175 };
-  if (t >= T.two && t < T.end) return { x: lerp(-372, -40, tw(t, T.two, T.two + 0.7, 'expoInOut')), y: 100, h: lerp(170, 270, tw(t, T.two, T.two + 0.7)) };
+  if (t >= T.two && t < T.end) { const w = tw(t, T.two, T.two + 0.7, 'expoInOut'), z = tw(t, T.two + 1.5, T.two + 2.3, 'inOut'); return { x: lerp(lerp(-372, -60, w), -150, z), y: lerp(100, 34, z), h: lerp(lerp(170, 280, w), 105, z) }; }
   if (t >= T.end) { const w = tw(t, T.end + 2.2, T.D - 1, 'inOut'); return { x: lerp(60, c[0] + 30, w), y: lerp(120, 90, w), h: lerp(250, 200, w) }; }
   let i = 1; while (i < keys.length - 1 && t > keys[i][0]) i++;
   const a = keys[i - 1], b = keys[i], u = K.ease.inOut(K.inv(a[0], b[0], t));
@@ -82,7 +82,7 @@ const FILM = {
 function heroBeats(t, st) {
   const { ms, o, p } = st, F = Animals.catFrame(o);
   // a warm glow behind the cat while it hangs, upright, in the silence
-  const hush = tw(t, 86.5, T.hush) * (1 - tw(t, T.legs + 1, T.legs + 3)); if (hush > 0) { const c = centre(p, o); P.glow(c[0], c[1], 70, '255,214,150', 0.35 * hush); }
+  const hush = tw(t, T.rEnd + 0.5, T.hush) * (1 - tw(t, T.legs + 1, T.legs + 3)); if (hush > 0) { const c = centre(p, o); P.glow(c[0], c[1], 70, '255,214,150', 0.35 * hush); }
   // eyes find the floor: a soft line of sight from the eyes to the rug
   const look = tw(t, T.eyes + 0.6, T.eyes + 1.6) * (1 - tw(t, T.sig - 0.2, T.sig + 0.6));
   if (look > 0) { const h = headAt(p, o); P.alpha(look * 0.85, () => P.poly([[h[0] - 1, h[1]], [h[0] + 1, h[1]], [h[0] + 22, 0.5], [h[0] - 14, 0.5]], P.lin(0, h[1], 0, 0, 'rgba(255,240,200,0.1)', 'rgba(255,240,200,0.55)'))); P.alpha(look, () => P.circle(h[0] + 4, 1, 18, 'rgba(255,236,170,0.45)', { ry: 2.4 })); }
@@ -120,10 +120,10 @@ function heroBeats(t, st) {
   lab('legs tucked: turns fast', [-0.62, 0.2], -160, -250, tw(t, T.back + 2.5, T.back + 3.1) * (1 - tw(t, T.replay - 0.6, T.replay)));
   lab('about 80 ms later', [-0.62, -0.4], -160, 250, tw(t, T.back + 5.5, T.back + 6.1) * (1 - tw(t, T.replay - 0.6, T.replay)));
   if (t > T.replay + 0.6 && t < T.hush) {
-    const a = tw(t, T.replay + 0.8, T.replay + 1.4) * (1 - tw(t, 87.4, 88));
+    const a = tw(t, T.replay + 0.8, T.replay + 1.4) * (1 - tw(t, T.hush - 1.1, T.hush - 0.5));
     lab(`front ${Math.round(o.front * 180)}°`, [0.62, 0.2], 140, -250, a, 36); lab(`back ${Math.round(o.back * 180)}°`, [-0.62, 0.2], -160, -250, a, 36);
   }
-  lab('legs out, back arched', [0, 0.6], 0, -240, tw(t, T.legs + 1.2, T.legs + 1.8) * (1 - tw(t, 97.5, 98.3)));
+  lab('legs out, back arched', [0, 0.6], 0, -240, tw(t, T.legs + 1.2, T.legs + 1.8) * (1 - tw(t, T.legs + 7, T.legs + 7.8)));
   // the landing: dust puffs, a little bounce
   const land = T.legs + 9; if (t > land - 0.1 && t < land + 2 && ms >= LAND) {
     const u = tw(t, land, land + 1.6, 'out');
@@ -140,7 +140,7 @@ function clockPill(t, st) {
   if (t > T.fall - 0.2 && t < T.rw0) { const shown = Math.min(Math.max(ms, 0), 300) / 1000; pill(`${shown.toFixed(2)} s`, 300, 110, tw(t, T.fall - 0.2, T.fall) * (1 - tw(t, T.rw0 - 0.3, T.rw0)), { icon: STOPWATCH, size: 46 }); }
   if (t >= T.rw0 && t < T.rw1 + 0.2) pill('rewind', 300, 110, tw(t, T.rw0, T.rw0 + 0.3) * (1 - tw(t, T.rw1, T.rw1 + 0.2)), { icon: REWIND, size: 46 });
   if (t >= T.rw1 && t < T.kit) pill(`${Math.round(Math.max(0, Math.min(ms, LAND)))} ms`, 300, 110, tw(t, T.rw1 + 0.2, T.rw1 + 0.6) * (1 - tw(t, T.kit - 0.6, T.kit - 0.1)), { icon: STOPWATCH, size: 46 });
-  if (t >= T.replay + 0.3 && t < 86) pill('replay', 300, 200, tw(t, T.replay + 0.3, T.replay + 0.7) * (1 - tw(t, 85.4, 86)), { size: 34, icon: REWIND });
+  if (t >= T.replay + 0.3 && t < T.rEnd) pill('replay', 300, 200, tw(t, T.replay + 0.3, T.replay + 0.7) * (1 - tw(t, T.rEnd - 0.6, T.rEnd)), { size: 34, icon: REWIND });
   if (t >= T.end && t < T.D) { const shown = Math.min(Math.max(ms, 0), 300) / 1000; pill(`${shown.toFixed(2)} s`, 300, 110, tw(t, T.end + 0.6, T.end + 1) * (1 - tw(t, T.D - 2, T.D - 1.5)), { icon: STOPWATCH, size: 46 }); }
 }
 // the kitten: 3 weeks old it only half turns and flops onto the cushion; at 7 weeks it lands on its feet
@@ -150,7 +150,7 @@ function kittenBeat(t) {
   cushion(sx + 30, 0, 50);
   const tries = [[T.kit + 1.4, '3 weeks old', 0.5], [T.kit + 4.6, '7 weeks old', 1]];
   for (const [t0, label, skill] of tries) {
-    const a = tw(t, t0 - 1.2, t0 - 0.9) * (1 - tw(t, t0 + 2.6, t0 + 2.9)); if (a <= 0 || t > t0 + 2.9 || t < t0 - 1.2) continue;
+    const a = tw(t, Math.max(t0 - 0.9, T.kit + 0.9), Math.max(t0 - 0.6, T.kit + 1.2)) * (1 - tw(t, t0 + 2.6, t0 + 2.9)); if (a <= 0 || t > t0 + 2.9 || t < t0 - 1.2) continue;
     pill(label, 960, 150, a, { size: 42 });
     const kms = (t - t0) * 300;                 // slow motion: 3.3 x slower
     let x = sx, y = ky, o;
@@ -166,16 +166,21 @@ function kittenBeat(t) {
 }
 // two falls side by side: from a low footstool the turn isn't finished in time (a cushion catches it); from the shelf it is
 function twoFalls(t) {
-  const a = tw(t, T.two + 0.4, T.two + 0.9);
-  const sx = -170, stool = 30;
+  const a = tw(t, T.two + 0.4, T.two + 0.9), sx = -170, stool = 30;
   P.rect(sx - 22, 0, 44, stool - 4, P.lin(0, stool, 0, 0, C.wood, C.wood2), { r: 2 }); P.lit([[sx - 26, stool - 5], [sx + 26, stool - 5], [sx + 26, stool], [sx - 26, stool]], '#c94f4a', { d: 0.2 });
   cushion(sx + 40, 0, 56);
-  const ms = (t - T.two - 1.6) * 180, ly = stool - 30 * S + 2, LL = Math.round(Math.sqrt(ly / G) * 1000);
-  // left: a ginger cat on the stool
-  { let o, x, y; if (ms < 0) { const pm = Math.max(-2900, (t - T.two - 1.6) * 1000), sl = tw(pm, -470, 0, 'in'); o = pose(pm); x = lerp(lerp(sx - 16, sx + 2, tw(pm, -1300, -650, 'linear')), sx + 18, sl); y = lerp(stool, ly, sl); } else { const f = Math.min(ms, LL) / 1000; x = sx + 18 + f * 30; y = Math.max(0, ly - G * f * f) + (ms >= LL ? 7 : 0); o = pose(Math.min(ms, LL)); if (ms >= LL) o.mood = 'wow'; }
-    Animals.cat(t, x, y, S, Object.assign(o, { col: '#d9874a' })); }
-  // right: our cat from the shelf
-  { const o = pose(ms), p = place(ms); hero(t, p.x, p.y, S, o); }
-  pill('30 cm', 640, 860, a, { size: 40 }); pill('1.5 m', 1250, 230, a, { size: 40 });
-  pill('not enough time to turn', 640, 950, tw(t, T.two + 3.3, T.two + 3.8), { size: 34 });
+  // measuring lines: the stool (30 cm) and the bookcase (1.5 m), drawn up from the floor
+  const measure = (x, h, label, u, labelDx) => { if (u <= 0) return; const top = h * K.ease.out(clamp(u * 1.4));
+    P.alpha(clamp(u * 3), () => { P.ribbon([[x, 0], [x, top]], 1.4, '#1a2a4a'); for (const y of [0, top]) P.ribbon([[x - 4, y], [x + 4, y]], 1.4, '#1a2a4a');
+      P.poly([[x, top], [x - 3, top - 6], [x + 3, top - 6]], '#1a2a4a'); P.poly([[x, 0], [x - 3, 6], [x + 3, 6]], '#1a2a4a'); });
+    const [px, py] = P.toScreen(x, h / 2); pill(label, px + labelDx, py, clamp(u * 2 - 0.6), { size: 40 }); };
+  measure(SHELF.x1 + 16, SHELF.top, '1.5 m', a, 90);
+  measure(sx - 36, stool, '30 cm', tw(t, T.two + 0.8, T.two + 1.3), -100);
+  // a ginger cat walks along the stool, slips and falls: in slow motion there isn't time to finish the turn
+  const ms = (t - T.two - 2.2) * 120, ly = stool - 30 * S + 2, LL = Math.round(Math.sqrt(ly / G) * 1000);
+  let o, x, y;
+  if (ms < 0) { const pm = Math.max(-2900, (t - T.two - 2.2) * 1000), sl = tw(pm, -470, 0, 'in'); o = pose(pm); x = lerp(lerp(sx - 16, sx + 2, tw(pm, -1300, -650, 'linear')), sx + 18, sl); y = lerp(stool, ly, sl); }
+  else { const f = Math.min(ms, LL) / 1000; x = sx + 18 + f * 30; y = Math.max(0, ly - G * f * f) + (ms >= LL ? 7 : 0); o = pose(Math.min(ms, LL)); if (ms >= LL) o.mood = 'wow'; }
+  Animals.cat(t, x, y, S, Object.assign(o, { col: '#d9874a' }));
+  pill('not enough time to turn', 960, 930, tw(t, T.two + 3.7, T.two + 4.1), { size: 38 });
 }
