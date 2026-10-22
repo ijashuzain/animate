@@ -40,7 +40,7 @@ function camera(t, st) {
   const keys = [
     // [t, x, y, h, follow 0..1 (0 = the room, 1 = the cat), aim at the head 0..1]
     [0, 40, 140, 330, 0, 0], [2.6, 50, 122, 250, 0, 0], [T.fall, 60, 118, 250, 0, 0], [T.rw0, 80, 110, 270, 0, 0], [T.rw1, 0, 0, 90, 1, 0],
-    [T.ear + 2.6, 0, 0, 21, 1, 1], [T.eyes - 0.3, 0, 0, 20, 1, 1], [T.eyes + 1.6, 50, 92, 230, 0, 0], [T.sig - 0.4, 50, 92, 230, 0, 0], [T.sig + 1.2, 0, 0, 82, 1, 0],
+    [T.ear + 2.6, 0, 0, 21, 1, 1], [T.eyes - 0.3, 0, 0, 20, 1, 1], [T.eyes + 1.6, 30, 40, 230, 0.55, 0], [T.sig - 0.4, 30, 40, 230, 0.55, 0], [T.sig + 1.2, 0, 0, 82, 1, 0],
     [T.bend + 1.5, 0, 0, 70, 1, 0], [T.front, 0, 0, 80, 1, 0], [T.replay, 0, 0, 82, 1, 0], [T.hush, 0, 0, 72, 1, 0], [T.legs + 0.6, 0, 0, 72, 1, 0], [98.5, 0, 0, 140, 1, 0], [103.6, 0, 0, 150, 1, 0],
   ];
   if (t >= T.kit && t < T.two) return { x: lerp(-60, -372, tw(t, T.kit, T.kit + 0.7, 'expoInOut')), y: 70, h: 175 };
@@ -50,7 +50,7 @@ function camera(t, st) {
   const a = keys[i - 1], b = keys[i], u = K.ease.inOut(K.inv(a[0], b[0], t));
   const f = lerp(a[4], b[4], u), aim = lerp(a[5], b[5], u), tx = lerp(c[0], h[0], aim), ty = lerp(c[1], h[1], aim);
   const ty2 = t > T.legs ? Math.max(ty + 10, 62) : ty;
-  const roll = Math.PI * tw(t, T.ear + 0.4, T.ear + 2.8, 'inOut') * (1 - tw(t, T.eyes - 0.3, T.eyes + 1.4, 'inOut'));
+  const roll = Math.PI * tw(t, T.ear + 0.4, T.ear + 2.8, 'inOut') * (1 - tw(t, T.eyes - 1.6, T.eyes - 0.1, 'inOut'));
   return { rot: roll, x: lerp(lerp(a[1], b[1], u), tx, f), y: lerp(lerp(a[2], b[2], u), ty2, f), h: Math.exp(lerp(Math.log(a[3]), Math.log(b[3]), u)) };
 }
 // dust motes drifting in the lamp light (on the world clock, so they hang still in slow motion)
