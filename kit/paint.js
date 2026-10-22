@@ -18,7 +18,9 @@ P.layer = (a, fn) => {
   if (a <= 0) return; if (a >= 1) return fn();
   const main = P.ctx; if (!P._off) { P._off = document.createElement('canvas'); P._off.width = P.W; P._off.height = P.H; }
   const o = P._off.getContext('2d'); o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, P.W, P.H);
-  const keep = P.c; P.begin(o); fn(); P.begin(main); P.c = keep; main.globalAlpha = a; main.drawImage(P._off, 0, 0); main.globalAlpha = 1;
+  // keep the caller's camera transform inside the layer, then composite the layer in screen space
+  const keep = P.c, keepK = P.k, m = main.getTransform(); P.begin(o); o.setTransform(m); fn(); P.ctx = main; P.c = keep; P.k = keepK;
+  main.save(); main.setTransform(1, 0, 0, 1, 0, 0); main.globalAlpha *= a; main.drawImage(P._off, 0, 0); main.restore();
 };
 P.alpha = (a, fn) => { const ctx = P.ctx; ctx.save(); ctx.globalAlpha *= a; fn(); ctx.restore(); };
 // local transform for an object: translate, rotate, scale (sx, sy), then fn draws in local units

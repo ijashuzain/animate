@@ -52,8 +52,8 @@ function sOcean(t) {
   P.screen((ctx) => { ctx.globalCompositeOperation = 'lighter'; for (let i = 0; i < 6; i++) { const x = 300 + i * 280 + Math.sin(t * 0.3 + i) * 60; const g = ctx.createLinearGradient(0, 0, 0, 1080); g.addColorStop(0, `rgba(120,220,255,${0.12 + rise * 0.15})`); g.addColorStop(1, 'rgba(120,220,255,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - 40, 0); ctx.lineTo(x + 40, 0); ctx.lineTo(x + 220, 1080); ctx.lineTo(x + 40, 1080); ctx.fill(); } ctx.fillStyle = 'rgba(220,240,255,0.5)'; for (let i = 0; i < 70; i++) { const x = hash(i, 51) * 1920 + Math.sin(t + i) * 10, y = (hash(i, 52) * 1080 + t * 12) % 1080; ctx.fillRect(x, y, 3, 3); } });
   P.cam({ x: 0, y: lerp(0, 900, rise), h: 1080 * logTrack([[14.6, 6], [15.8, 1.0, 'out'], [24, 0.95]])(t) });
   // the whale glides behind, the fish school crosses, a jellyfish bobs
-  P.alpha(0.55, () => drawWhale(t, lerp(1400, -1500, tw(t, 15.5, 23.5, 'linear')), 380, 1.4));
-  for (let i = 0; i < 22; i++) { const fx = lerp(-1400, 1500, tw(t, 15.2, 20.5, 'linear')) + (hash(i, 61) * 2 - 1) * 260 + Math.sin(t * 2 + i) * 20, fy = -330 + (hash(i, 62) * 2 - 1) * 110; drawFish(t, -fx, fy, 0.7 + 0.3 * hash(i, 63), i % 3 ? '#ffb25a' : '#ff7f6e', i); }
+  P.alpha(0.55, () => P.at(lerp(1400, -1500, tw(t, 15.5, 23.5, 'linear')), 380, 0, -1, 1, () => drawWhale(t, 0, 0, 1.4)));   // heading left, so flipped to face left
+  for (let i = 0; i < 22; i++) { const fx = lerp(-1400, 1500, tw(t, 15.2, 20.5, 'linear')) + (hash(i, 61) * 2 - 1) * 260 + Math.sin(t * 2 + i) * 20, fy = -330 + (hash(i, 62) * 2 - 1) * 110; P.at(-fx, fy, 0, -1, 1, () => drawFish(t, 0, 0, 0.7 + 0.3 * hash(i, 63), i % 3 ? '#ffb25a' : '#ff7f6e', i)); }   // swimming left, so facing left
   drawJelly(t, -620 + Math.sin(t * 0.4) * 30, 120 + Math.sin(t * 0.7) * 40, 1.2, 1);
   drawJelly(t, 700, -40 + Math.sin(t * 0.6) * 40, 0.8, 2);
   // the queue (19.6-24): molecules holding tickets, Drip last, yawning

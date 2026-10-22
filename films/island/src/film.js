@@ -60,6 +60,11 @@ function events(t) {
   drawMountain(t, h, { veg: tw(t, 84, 96), valleys: tw(t, 89, 95), beach: tw(t, 76, 80) });
   const active = tw(t, T.ooze, T.ooze + 1) * (1 - tw(t, 76, 80));
   if (active > 0 && h > 0) { P.glow(0, top, 160 + h * 0.2, '255,120,40', 0.6 * active); for (let i = 0; i < 4; i++) { const s = i % 2 ? 1 : -1, x1 = s * (60 + i * 50); P.ribbon([[0, top - 6], [x1 * 0.6, mountainY(x1 * 0.6, h) - 4], [x1, mountainY(x1, h) - 4]], [16, 12, 6], `rgba(255,${120 + 40 * Math.sin(t * 3 + i)},40,${0.85 * active})`); } }
+  // lava veins glowing down the dark flanks while the mountain grows (draft note: the dome was one dark shape)
+  const vein = tw(t, 34, 37) * (1 - tw(t, 74, 78));
+  if (vein > 0 && h > 120) { const W = 420 + 0.95 * h; for (let k = 0; k < 6; k++) { const s = k % 2 ? 1 : -1, x0 = s * (20 + k * 18), x1 = s * W * (0.45 + 0.07 * k), pts = []; for (let j = 0; j <= 8; j++) { const x = K.lerp(x0, x1, j / 8), y = mountainY(x, h) - 18 - 30 * Math.sin(j / 8 * Math.PI) + Math.sin(j * 1.7 + k) * 10; if (y > SEA - 6) continue; pts.push([x, y]); } if (pts.length > 2) { const pulse = 0.6 + 0.4 * Math.sin(t * 2.4 + k); P.ribbon(pts, 7, `rgba(255,${110 + 40 * pulse},40,${0.85 * vein})`); for (const [px, py] of pts.filter((_, j) => j % 3 === 1)) P.glow(px, py, 46, '255,120,40', 0.35 * vein * pulse); } } }
+  if (t > 42 && h > 300) { const W = 420 + 0.95 * h, life = tw(t, 42, 48); for (let i = 0; i < 16; i++) { const s = i % 2 ? 1 : -1, x = s * W * (0.55 + 0.4 * hash(i, 91)), y = mountainY(x, h) - 4; if (y > SEA - 120) continue; const g = life * (0.6 + 0.4 * hash(i, 92)); if (i % 3 === 0) P.smooth([[x - 12 * g, y], [x - 8 * g, y + 44 * g], [x + 10 * g, y + 50 * g], [x + 14 * g, y]], i % 2 ? '#e8a050' : '#d96a8a'); else if (i % 3 === 1) for (let j = 0; j < 3; j++) { P.ribbon([[x + j * 9, y], [x + j * 9 + Math.sin(t + j) * 4, y + 34 * g + j * 8]], 5, '#efe6d6'); P.circle(x + j * 9 + Math.sin(t + j) * 4, y + 38 * g + j * 8, 6 * g, '#ff6b8a'); } else P.blob(x, y + 10 * g, 22 * g, 12 * g, '#7a5a9a', { seed: i }); }
+    for (let i = 0; i < 6; i++) { const a = t * 0.35 + i * 1.05, rx = 380 + h * 0.4, x = Math.cos(a) * rx, y = FLOOR + h * 0.45 + Math.sin(a * 2) * 40 + i * 18; if (y > SEA - 40) continue; Nature.fish(t, x, y, 0.45, ['#ffd36b', '#7fd0ff', '#ff9a7a'][i % 3], 40 + i, -Math.sign(Math.sin(a)) || 1); } }
   // pillows oozing out while small (22-37)
   if (t > T.ooze && t < T.grow + 2) for (let i = 0; i < 8; i++) { const tt = T.ooze + i * 1.6, u = tw(t, tt, tt + 1.2, 'out'); if (u <= 0) continue; const a = -2.6 + i * 0.75, x = Math.cos(a) * 60 * (1 + i * 0.15), y = mountainY(x, h) - 6; P.lit(P.blobPts(x + Math.cos(a) * 20 * u, y + 6, 26 * u + 4, 18 * u + 3, 9, 0.1, i), P.rad(x, y, 30, i === 7 ? '#ff9a4a' : '#3a3448', '#1e1a28'), { d: 0.25, rim: 'rgba(170,200,240,0.45)' }); }
   // the toothpaste inset (27.6-32)
@@ -70,11 +75,18 @@ function events(t) {
   // generations of fish, a whale, a ruler (37-50)
   Nature.school(t, 37.5, 42.5, -1300, 1300, 40, 14, ['#ffb25a', '#ff7f6e'], 1.0, 3);
   Nature.school(t, 42.0, 47.5, 1300, -1300, -40, 14, ['#7fd0ff', '#a0e8c0'], 1.0, 9);
-  if (t > T.whale - 1 && t < 51) P.alpha(0.8, () => Nature.whale(t, lerp(1400, -1500, tw(t, T.whale - 1, 51, 'linear')), 60, 0.55));
+  if (t > T.whale - 1 && t < 51) P.alpha(0.8, () => Nature.whale(t, lerp(1400, -1500, tw(t, T.whale - 1, 51, 'linear')), 60, 0.55, '#2d5580', -1));
   const ra = tw(t, 38.5, 39) * (1 - tw(t, 49.6, 50.2)); if (ra > 0) { const [sx, sy0] = P.toScreen(560, FLOOR), [, sy1] = P.toScreen(560, top); P.screen((ctx) => { ctx.globalAlpha = ra; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(sx, sy0); ctx.lineTo(sx, sy1); ctx.stroke(); for (let k = 0; k <= 5; k++) { const y = lerp(sy0, sy1, k / 5); ctx.beginPath(); ctx.moveTo(sx - 12, y); ctx.lineTo(sx + 12, y); ctx.stroke(); } }); P.pill(`${(h / 560 * 5).toFixed(1)} km tall`, sx + 140, sy1, { u: ra, font: FONT, size: 34, weight: 800 }); }
   // near the surface: the sea boils, steam and ash blast up, rocks fly, birds scatter (50-63)
   const boil = tw(t, T.boil, 51.5) * (1 - tw(t, 64, 70)); if (boil > 0) Nature.bubbles(t, 50, 77, boil, 260, [700, 1220, 300, 560]);
-  for (const [tt, sx] of [[53.0, -20], [55.4, 60], [57.8, -80], [60.2, 30], [62.4, -40]]) { const u = tw(t, tt, tt + 2.6, 'out'); if (u <= 0 || u >= 1) continue; P.alpha(1 - u * 0.6, () => { Nature.cloud(sx, SEA + 60 + u * 320, 0.5 + u * 1.2, Math.round(tt), P.mixc('#9a96a8', '#4a4652', u)); }); for (let i = 0; i < 6; i++) { const a = 0.6 + i * 0.35, d = u * 420; P.circle(sx + Math.cos(a) * d * 0.7, SEA + Math.sin(a) * d - u * u * 360, 10, '#2a2428'); P.glow(sx + Math.cos(a) * d * 0.7, SEA + Math.sin(a) * d - u * u * 360, 24, '255,120,40', 0.6 * (1 - u)); } }
+  // the blasts: a flash at the surface, a tall column of steam and ash, a spray ring, flying rocks (bigger: draft note)
+  for (const [tt, sx] of [[53.0, -20], [55.4, 60], [57.8, -80], [60.2, 30], [62.4, -40]]) {
+    const u = tw(t, tt, tt + 2.8, 'out'); if (u <= 0 || u >= 1) continue;
+    if (u < 0.2) P.glow(sx, SEA, 520, '255,200,140', (0.2 - u) * 5);
+    P.layer(1 - u * 0.55, () => P.clip(() => { P.ctx.beginPath(); P.ctx.rect(-9000, SEA - 4, 18000, 6000); }, () => { for (let k = 0; k < 4; k++) Nature.cloud(sx + Math.sin(k * 2 + tt) * 40 * u, SEA + 40 + k * 150 * u, (0.9 + u * 2.1) * (1 - k * 0.15), Math.round(tt) + k, P.mixc(k % 2 ? '#d8d6e0' : '#a8a4b4', '#5a5662', u * 0.8)); }));
+    P.ctx.save(); P.ctx.strokeStyle = `rgba(255,255,255,${0.8 * (1 - u)})`; P.ctx.lineWidth = 8; P.ctx.beginPath(); P.ctx.ellipse(sx, SEA, 120 + u * 520, 30 + u * 60, 0, Math.PI, 2 * Math.PI, true); P.ctx.stroke(); P.ctx.restore();
+    for (let i = 0; i < 12; i++) { const a = 0.35 + i * 0.2, d = u * 760, x = sx + Math.cos(a) * d * 0.8, y = SEA + Math.sin(a) * d - u * u * 620; P.lit(P.blobPts(x, y, 14, 11, 7, 0.2, i), '#2a2428', { d: 0.3, rim: 'rgba(255,140,60,0.5)' }); P.glow(x, y, 34, '255,120,40', 0.7 * (1 - u)); }
+  }
   for (let i = 0; i < 6; i++) { const u = tw(t, 53.4 + i * 0.25, 57.4 + i * 0.25, 'in'); if (u > 0 && u < 1) Nature.bird(t, 300 + i * 40 + u * 900, SEA + 160 + i * 25 + u * 200, 1.0, i, 1); }
   // the breach: steam where the lava meets the sea; the sun; the island's face (63-75)
   if (h > 640 && t < 80) for (const s of [-1, 1]) { const xs = s * (lerp(80, 300, tw(t, T.breach, 72))), u = (t * 0.6) % 1; for (let i = 0; i < 4; i++) { const v = (u + i / 4) % 1; P.circle(xs + Math.sin(i + t) * 20, SEA + 10 + v * 160, 26 + v * 50, `rgba(240,240,245,${0.5 * (1 - v) * (1 - tw(t, 76, 80))})`); } }
@@ -107,11 +119,11 @@ function chain(t) {
     for (let i = 0; i < 14; i++) { const x = ((-i * 500 - t * 120) % 7000) + 3500; P.poly([[x, FLOOR - 120], [x - 60, FLOOR - 90], [x, FLOOR - 60], [x - 20, FLOOR - 90]], 'rgba(255,255,255,0.35)'); }
     drawPlume(t, FLOOR - 10, 1, 900);
     // the next island, growing on the right, with its own little camera
-    drawMountain(t, lerp(140, 320, tw(t, T.next, 124)), { cx: 1900, seed: 9 });
-    drawAngler(t, lerp(2500, 1600, tw(t, T.next, 127, 'linear')), FLOOR + 240, 1.3, -1, 'happy');
+    drawMountain(t, lerp(200, 430, tw(t, T.next, 124)), { cx: 1900, seed: 9 }); P.glow(1900, FLOOR + lerp(200, 430, tw(t, T.next, 124)), 220, '255,120,40', 0.5 + 0.2 * Math.sin(t * 2));
+    drawAngler(t, lerp(2700, 1500, tw(t, T.next, 127.5, 'linear')), FLOOR + 380, 2.0, -1, 'happy');
   });
-  P.pill('older islands drift away and sink', 560, 200, { u: tw(t, 106, 106.4) * (1 - tw(t, 114.4, 114.9)), font: FONT, size: 40, weight: 800 });
-  P.pill('the next island, already growing', 960, 200, { u: tw(t, 117.5, 117.9) * (1 - tw(t, 127, 127.5)), font: FONT, size: 40, weight: 800 });
+  P.pill('older islands drift away and sink', 600, 200, { u: tw(t, 106, 106.4) * (1 - tw(t, 114.4, 114.9)), font: FONT, size: 52, weight: 800 });
+  P.pill('the next island, already growing', 960, 200, { u: tw(t, 117.5, 117.9) * (1 - tw(t, 127, 127.5)), font: FONT, size: 52, weight: 800 });
 }
 const FILM = {
   draw(t) {

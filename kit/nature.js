@@ -18,7 +18,8 @@ Nature.school = (t, t0, t1, x0, x1, y, n = 14, cols = ['#ffb25a', '#ff7f6e'], s 
   const dir = x1 > x0 ? 1 : -1;
   for (let i = 0; i < n; i++) Nature.fish(t, K.lerp(x0, x1, u) + (K.hash(i, seed) * 2 - 1) * 220 + Math.sin(t * 2 + i) * 14, y + (K.hash(i, seed + 1) * 2 - 1) * 90, s * (0.8 + 0.4 * K.hash(i, seed + 2)), cols[i % cols.length], i + seed, dir);
 };
-Nature.whale = (t, x, y, s, col = '#2d5580') => P.at(x, y, Math.sin(t * 0.6) * 0.04, s, s, () => {
+// the whale's head is at +x; dir -1 faces it left (always set dir to the way it travels)
+Nature.whale = (t, x, y, s, col = '#2d5580', dir = 1) => P.at(x, y, Math.sin(t * 0.6) * 0.04, s * dir, s, () => {
   const tail = Math.sin(t * 1.6) * 30, dark = P.mixc(col, '#0a1a30', 0.4);
   P.smooth([[-380, 10], [-200, 70], [120, 90], [340, 40], [400, -10], [300, -60], [0, -70], [-260, -30], [-420, 30 + tail * 0.3]], P.lin(0, 90, 0, -70, P.mixc(col, '#ffffff', 0.15), dark));
   P.poly([[-400, 20 + tail * 0.4], [-520, 90 + tail], [-470, 10 + tail * 0.5], [-520, -60 + tail]], dark);

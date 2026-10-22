@@ -94,6 +94,9 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
 - **No stamps, badges or HUD collectibles** (the user's dislike): numbers live in calm pills beside the action (`P.pill`).
 - **Animals in profile get `Cast.profileFace`** (one eye, smile, nostril; the user's dino reference); front faces only
   for characters facing us.
+- **Creatures face the way they travel** (the user caught a whale and fish swimming backwards, twice): whenever x moves,
+  set the facing from the sign of the motion (`dir` on Nature.fish/school/whale/bird; or `P.at(x, y, 0, -1, 1, ...)`).
+  Check every mover in the sheet: head first. Backing away is the only exception, and it must look deliberate.
 - **Crowds vary**: repeated characters differ in size, tint, mood (some sleepy) and props (hats, glasses).
 - **Every scene is a living place**: not a horizon and a sun; give it 3+ moving extras (a boat, gulls, steam, a fish).
 - **Soft shapes are one shape**: clouds and bushes drawn as a dark underside layer + body + soft highlight, never as

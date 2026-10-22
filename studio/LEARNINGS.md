@@ -6,6 +6,9 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 ---
 
 ## 2026-10-22: film 2 "How a Volcano Builds an Island" (the fixed camera), storyboard notes
+- **The user: "this fish is going backward (I notice the same in some previous videos)"**: a whale (and the raindrop
+  film's whale and fish school) moved left while drawn facing right. Rule in CLAUDE.md: creatures face the way they
+  travel; Nature.whale now takes `dir`. Raindrop source fixed too.
 - **The user: "What's the blue thing on the crab?"** A nightcap drawn as a flat floating shape read as a blob. Rule: a
   prop must read in a small still; when in doubt leave it out (closed eyes + z's already say "asleep").
 - **The user disliked the camera-on-a-tripod framing** (a sub placing a camera at the start, a second camera at the end):
