@@ -34,7 +34,9 @@ function drawHero(t, st, extra) {
   return { ox, oy, oo };
 }
 function camera(t, st) {
-  const c = centre(st.p, st.o), h = headAt(st.p, st.o);
+  const c = centre(st.p, st.o), h0 = headAt(st.p, st.o), r = st.p.rot || 0, F0 = Animals.catFrame(st.o), bc = [st.p.x, st.p.y + F0.by * S];
+  // the head as drawn (the cat rotates about its body centre); aim a little toward the scan window, which sits over the eyes
+  const hv = [h0[0] - bc[0], h0[1] - bc[1]], h = [bc[0] + hv[0] * Math.cos(r) - hv[1] * Math.sin(r), bc[1] + hv[0] * Math.sin(r) + hv[1] * Math.cos(r) - 3];
   const keys = [
     // [t, x, y, h, follow 0..1 (0 = the room, 1 = the cat), aim at the head 0..1]
     [0, 40, 140, 330, 0, 0], [2.6, 50, 122, 250, 0, 0], [T.fall, 60, 118, 250, 0, 0], [T.rw0, 80, 110, 270, 0, 0], [T.rw1, 0, 0, 90, 1, 0],
@@ -89,13 +91,13 @@ function heroBeats(t, st) {
   const flex = tw(t, T.bend + 4, T.bend + 7);
   const earA = tw(t, T.ear + 1.6, T.ear + 3.2) * (1 - tw(t, T.eyes - 0.5, T.eyes + 0.6)) + nerveA * 0.0;
   drawHero(t, st, (F2) => {
-    insides(t, F2, nerveA, sig, spineA, flex);
+    insides(t, F2, nerveA, sig, spineA, flex, o);
     if (earA > 0) {
       const R = F2.head[2] + (st.p.rot || 0), g0 = [-Math.sin(R), -Math.cos(R)];
       const spark = t > T.ear + 8 && t < T.eyes - 0.6 ? (t * 1.4) % 1 : 0;
       P.at(F2.head[0], F2.head[1], F2.head[2], F2.hs, F2.hs, () => innerEar(t, earA, g0, spark, F2, (top, sac) => {
         pill('inner ear: balance organ', top[0] - 520, top[1], tw(t, T.ear + 3, T.ear + 3.6) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)));
-        pill('crystals', sac[0] + 380, sac[1], tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
+        pill('crystals', sac[0] - 20, sac[1] - 170, tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
       }));
     }
     rollArrow(F2, 0.62, tw(t, T.front + 1, T.front + 2) * (1 - tw(t, T.back - 0.5, T.back + 0.5)), true);

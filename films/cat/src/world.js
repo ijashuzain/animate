@@ -161,72 +161,85 @@ const headAt = (p, o, s = S) => { const F = Animals.catFrame(o); return [p.x + F
 const toScr = (x, y) => { const m = P.ctx.getTransform(); return [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f]; };
 
 // ---------- the cutaways (drawn in the cat's frame) ----------
-// ---------- the x-ray scan (the user's note: the insides show through a faded, blended scan, only over that area) ----------
-// inside the clip of the cat's own shape: a cool translucent tint that fades out softly at the edge of an ellipse, a slow
-// scan line sweeping across it; parts drawn inside fade with the same falloff (xf)
-const XR = { tint: '14,48,80', line: '170,232,255', part: '#d8f4ff', dim: '#9cc8e0' };
-function xray(t, mask, cx, cy, rx, ry, a, fn) {
-  if (a <= 0) return;
-  const xf = (x, y) => clamp(1.6 * (1 - ((x - cx) / rx) ** 2 - ((y - cy) / ry) ** 2)) * a;
-  P.clip(() => P.trace(mask), () => {
-    P.at(cx, cy, 0, rx, ry, () => P.circle(0, 0, 1, P.rad(0, 0, 1, `rgba(${XR.tint},${0.82 * a})`, `rgba(${XR.tint},${0.7 * a})`, `rgba(${XR.tint},0)`)));
-    const u = (t * 0.35) % 1, sx = cx - rx + u * 2 * rx;
-    P.alpha(xf(sx, cy) * 0.8, () => P.rect(sx - rx * 0.08, cy - ry, rx * 0.16, ry * 2, P.lin(sx - rx * 0.08, 0, sx + rx * 0.08, 0, `rgba(${XR.line},0)`, `rgba(${XR.line},0.35)`, `rgba(${XR.line},0)`)));
-    fn(xf);
-  });
-}
-// the inner ear's balance organ, in the head's frame: three looping canals, the sac with its jelly and crystals; the
-// crystals slide toward the real ground (g = the gravity direction in the head's frame), hairs bend, the nerve sparks
+// ---------- the x-ray look (from the user's generated references refs/xray-ear.webp, refs/xray-spine.webp) ----------
+// parts glow straight through the purple fur: cyan tubes and bones with a bright core and a soft halo, a golden nerve;
+// only the ear gets a soft round dark-teal scan window (fading into the fur) behind the eye
+const XR = { halo: 'rgba(110,230,240,0.28)', body: '#7fe3ee', core: '#e8ffff', gold: '#f2c55a', goldHalo: 'rgba(242,197,90,0.3)', spark: '255,170,70' };
+// a glowing tube along pts: halo, body, bright core
+function glowTube(pts, w, a = 1, col = XR.body, halo = XR.halo) { P.alpha(a, () => { P.ribbon(pts, w * 2.6, halo); P.ribbon(pts, w, col); P.ribbon(pts, w * 0.35, XR.core); }); }
+function glowLoop(cx, cy, rx, ry, rot, w, a = 1) { const pts = []; for (let i = 0; i <= 28; i++) { const q = (i / 28) * Math.PI * 2; pts.push([cx + Math.cos(q) * rx * Math.cos(rot) - Math.sin(q) * ry * Math.sin(rot), cy + Math.cos(q) * rx * Math.sin(rot) + Math.sin(q) * ry * Math.cos(rot)]); } glowTube(pts, w, a); }
+// the inner ear's balance organ, in the head's frame, inside a round scan window behind the eye: three loops joined at
+// one point to the sac; crystals sit on a pink jelly layer over fine hairs and slide toward the real ground (g)
 function innerEar(t, a, g, spark, F, labels) {
-  const ox = 2, oy = 4;
-  xray(t, F.headPts, ox, oy, 14, 12, a, (xf) => P.alpha(xf(ox, oy), () => P.at(ox, oy, 0, 1.05, 1.05, () => {
-    P.glow(0, 0, 9, XR.line, 0.35);
-    P.ctx.save(); P.ctx.lineCap = 'round';
-    for (const [cx, cy, rx, ry, r] of [[0.5, 4.2, 4.2, 3.0, 0.2], [3.6, 1.2, 3.0, 3.6, -0.3], [-2.6, 1.6, 2.6, 3.4, 0.4]]) {
-      P.ctx.strokeStyle = 'rgba(200,240,255,0.85)'; P.ctx.lineWidth = 1.4; P.ctx.beginPath(); P.ctx.ellipse(cx, cy, rx, ry, r, 0.4, 5.9); P.ctx.stroke();
-      P.ctx.strokeStyle = 'rgba(255,255,255,0.6)'; P.ctx.lineWidth = 0.4; P.ctx.beginPath(); P.ctx.ellipse(cx, cy, rx, ry, r, 0.6, 2.4); P.ctx.stroke();
-    }
-    P.ctx.restore();
-    // the sac (vestibule): jelly layer with crystals riding on it
-    P.smooth(P.blobPts(0, -1.4, 3.6, 2.6, 12, 0.04, 2), 'rgba(190,230,255,0.45)');
-    const gx = g[0], gy = g[1];
-    P.clip(() => P.trace(P.blobPts(0, -1.4, 3.3, 2.3, 12, 0.04, 2)), () => {
-      for (let i = 0; i < 9; i++) { const hx = -2.6 + i * 0.65; P.ribbon([[hx, -3.7], [hx + gx * 0.9, -2.6 + gy * 0.4]], 0.25, 'rgba(220,245,255,0.8)'); }
-      P.circle(gx * 1.1, -2.2 + gy * 0.5 + 0.2, 3.0, 'rgba(255,255,255,0.4)', { ry: 1.0 });
-      for (let i = 0; i < 9; i++) { const x0 = -2.2 + i * 0.55 + gx * 1.3, y0 = -1.4 + gy * 0.6 + (i % 2) * 0.35; P.poly([[x0, y0], [x0 + 0.25, y0 + 0.45], [x0 + 0.5, y0], [x0 + 0.25, y0 - 0.45]], '#ffffff'); }
+  if (a <= 0) return;
+  const ox = -1.5, oy = 7.4, R = 7.4;
+  P.clip(() => P.trace(F.headPts), () => P.alpha(a, () => {
+    P.circle(ox, oy, R * 1.25, P.rad(ox, oy, R * 1.25, 'rgba(18,62,72,0.92)', 'rgba(18,62,72,0.82)', 'rgba(18,62,72,0)'));
+    P.glow(ox, oy, R, '90,210,220', 0.18);
+    P.at(ox, oy, 0, 0.82, 0.82, () => {
+      const J = [1.6, 0.4];                                            // where the loops join the sac
+      glowLoop(-0.3, 5.0, 1.5, 2.8, -0.25, 0.7); glowLoop(-4.6, 1.8, 2.8, 1.7, 0.1, 0.7); glowLoop(-2.4, -2.9, 2.3, 1.3, 0.25, 0.7);
+      glowTube([[-0.2, 2.3], J], 0.9); glowTube([[-1.9, 1.6], J], 0.9); glowTube([[-0.6, -2.2], J], 0.9);
+      // the nerve, golden, curving away toward the brain
+      const nv = [[5.0, -1.6], [7.2, -1.0], [9.6, 0.6], [12, 1.4]]; P.ribbon(nv, 2.2, XR.goldHalo); P.ribbon(nv, 0.7, XR.gold);
+      for (const dy of [-0.8, 0.2]) P.ribbon([[4.6, -2.6], [6.4, -2.2 + dy], [8.2, -1.2 + dy]], 0.35, XR.gold);
+      if (spark > 0) { const u = spark % 1, i = Math.min(2, Math.floor(u * 3)), f = u * 3 - i; P.glow(lerp(nv[i][0], nv[i + 1][0], f), lerp(nv[i][1], nv[i + 1][1], f), 2.2, XR.spark, 1); }
+      // the sac: glassy cyan ball with a highlight; hairs under it; pink jelly layer with white crystals on top
+      const sx = 3.4, sy = -1.0, sr = 2.4;
+      for (let i = 0; i < 6; i++) P.ribbon([[sx - 1.4 + i * 0.55, sy - sr * 0.55], [sx - 1.6 + i * 0.6, sy - sr - 1.3 - (i % 2) * 0.4]], 0.2, 'rgba(240,210,150,0.8)');
+      P.circle(sx, sy, sr * 1.5, 'rgba(110,230,240,0.22)'); P.circle(sx, sy, sr, P.rad(sx - 0.8, sy + 0.8, sr * 1.3, '#bff6f8', '#5fd2e0', '#2fa8bc'));
+      P.clip(() => { P.ctx.beginPath(); P.ctx.arc(sx, sy, sr * 0.92, 0, 7); }, () => {
+        const gx = g[0], gy = g[1], lx = sx + gx * 0.9, ly = sy - 0.9 + gy * 0.9;
+        P.circle(lx, ly - 0.9, 2.3, 'rgba(240,160,190,0.75)', { ry: 0.9 });
+        for (let i = 0; i < 14; i++) P.circle(lx - 1.6 + (i % 7) * 0.52 + (i > 6 ? 0.26 : 0), ly - 0.3 + (i > 6 ? 0.42 : 0), 0.2 + hash(i, 9) * 0.12, '#ffffff');
+      });
+      P.circle(sx - 0.9, sy + 1.0, 0.6, 'rgba(255,255,255,0.85)');
     });
-    // the nerve to the brain, and its spark
-    P.ribbon([[0, -3.8], [2.5, -5.5], [6.5, -6]], [1.0, 0.85, 0.7], 'rgba(255,224,140,0.9)');
-    if (spark > 0) { const u = spark % 1; P.glow(lerp(0, 6.5, u), lerp(-3.8, -6, u), 3, '255,220,90', 1); }
-  })));
-  if (labels && a > 0) labels(toScr(ox, oy), toScr(ox, oy - 1.4));
+  }));
+  if (labels) labels(toScr(ox, oy), toScr(ox + 2, oy - 0.6));
 }
-// the nervous system and the spine, in the cat's body frame, seen through the scan: brain + cerebellum in the head, the
-// cord down the back, nerves to the four legs; sig 0..1 = the signal's journey ear -> brain -> cord -> legs
-function insides(t, F, nerveA, sig, spineA, flex) {
-  const path = []; for (let i = 0; i <= 20; i++) path.push(F.pt([1.15 - i * 0.105, 0.22]));
-  const body = F.bodyPts(), c = F.pt([0.05, 0]), rx = F.L * 0.62, ry = F.H * 1.1;
-  const scanA = Math.max(nerveA, spineA);
-  xray(t, body, c[0], c[1], rx, ry, scanA, (xf) => {
-    if (spineA > 0) for (let i = 1; i < 20; i++) {
-      const u = 1.15 - i * 0.105, chest = u > 0.05, [x, y] = path[i], k = F.kAt(u), f = xf(x, y) * spineA;
-      P.alpha(f, () => { P.smooth(P.blobPts(x, y, chest ? 2.0 : 2.5, 2.3 * Math.abs(k) + 0.7, 8, 0.02, i), chest ? P.mixc(XR.dim, '#ffffff', 0.4 + 0.6 * flex) : XR.dim); if (chest && flex > 0) P.glow(x, y, 6, XR.line, 0.4 * flex); });
-    }
-    if (nerveA > 0) {
-      for (let i = 0; i < 19; i++) P.alpha(xf(...path[i]) * nerveA, () => P.ribbon([path[i], path[i + 1]], 1.8, 'rgba(255,226,150,0.85)'));
-      for (const u of [0.66, 0.56, -0.8, -0.94]) { const a2 = F.pt([u, 0.22]), b = F.pt([u + 0.04, -0.42]); P.alpha(xf(...a2) * nerveA, () => P.ribbon([a2, b], 1, 'rgba(200,240,255,0.8)')); }
+// the nervous system and the spine, in the cat's body frame, glowing through the fur (no tint): rounded vertebrae along
+// the back with the golden cord through them, branching nerves into the four legs, a spark from the ear down to the legs
+function insides(t, F, nerveA, sig, spineA, flex, o) {
+  const path = []; for (let i = 0; i <= 20; i++) path.push(F.pt([1.15 - i * 0.105, 0.2]));
+  const showA = Math.max(nerveA, spineA);
+  if (showA <= 0) return;
+  // vertebrae: rounded blocks across the spine line, cyan with a halo; the chest part brightens when it bends (flex)
+  const vA = Math.max(spineA, nerveA * 0.55);
+  P.alpha(vA, () => {
+    P.ribbon(path.slice(1, 19), 7.5, 'rgba(110,230,240,0.16)');
+    for (let i = 1; i < 19; i++) {
+      const u = 1.15 - i * 0.105, chest = u > 0.05, [x, y] = path[i], [x2, y2] = path[i + 1], ang = Math.atan2(y2 - y, x2 - x), k = Math.abs(F.kAt(u));
+      const hw = (chest ? 1.5 : 1.8), hh = (chest ? 2.5 : 2.9) * (0.45 + 0.55 * k);
+      P.at(x, y, ang, 1, 1, () => { P.rect(-hw - 0.6, -hh - 0.6, (hw + 0.6) * 2, (hh + 0.6) * 2, 'rgba(110,230,240,0.3)', { r: 1.6 }); P.rect(-hw, -hh, hw * 2, hh * 2, chest ? P.mixc('#7fe3ee', '#d8fbff', flex) : '#78d8e6', { r: 1.1 }); P.rect(-hw * 0.5, -hh * 0.75, hw, hh * 0.5, 'rgba(255,255,255,0.45)', { r: 0.5 }); });
+      if (chest && flex > 0) P.glow(x, y, 5, '150,240,250', 0.35 * flex);
     }
   });
-  // the brain, seen through a scan over the head
-  if (nerveA > 0) { const [hx, hy] = F.head; P.at(hx, hy, F.head[2], F.hs, F.hs, () => xray(t, F.headPts, -4, 5, 16, 13, nerveA, (xf) => {
-    P.alpha(xf(-3, 7), () => { P.smooth(P.blobPts(-2, 8, 5.5, 3.4, 10, 0.08, 3), 'rgba(216,244,255,0.75)'); P.smooth(P.blobPts(-8.5, 6, 3, 2.4, 10, 0.08, 4), 'rgba(170,255,220,0.8)'); P.glow(-4, 7, 8, XR.line, 0.3); });
-  })); }
-  // the signal: ear -> brain -> down the cord -> the leg muscles flash
+  // the golden spinal cord through the vertebrae, into the head
+  P.alpha(Math.max(nerveA, spineA * 0.8), () => { P.ribbon(path.slice(0, 20), 3, XR.goldHalo); P.ribbon(path.slice(0, 20), 1.1, XR.gold); });
+  // nerves into the legs: from the cord out along each leg, with fine branches (the legs hang the way the half faces)
+  // the legs exactly as the cat draws them (same joints), so each nerve runs down the middle of its leg
+  const legPts = F.legX.map(([lx, hind]) => F.leg(lx, hind, hind ? (o.tuckB ?? 0) : (o.tuckF ?? 0), (o.legsOut ?? 0) * 0.55 * (hind ? -1 : 1), hind ? F.back : F.front));
+  if (nerveA > 0) P.alpha(nerveA, () => {
+    for (const pts of legPts) {
+      const u = pts[0][0] / (F.L * 0.5), a0 = F.pt([u, 0.2]), n = pts.length, lastI = n - 1;
+      const tip = [lerp(pts[lastI - 1][0], pts[lastI][0], 0.8), lerp(pts[lastI - 1][1], pts[lastI][1], 0.8)];
+      glowTube([a0, ...pts.slice(0, lastI), tip], 0.5, 0.9);
+      for (let i = 1; i < lastI; i++) { const [x, y] = pts[i], [x2, y2] = pts[i + 1], dx = x2 - x, dy = y2 - y, L2 = Math.hypot(dx, dy) || 1, nx = -dy / L2, ny = dx / L2; const m = [x + dx * 0.4, y + dy * 0.4];
+        P.ribbon([m, [m[0] + dx / L2 * 3 + nx * 2, m[1] + dy / L2 * 3 + ny * 2]], 0.3, XR.body); P.ribbon([m, [m[0] + dx / L2 * 3 - nx * 2, m[1] + dy / L2 * 3 - ny * 2]], 0.3, XR.body); }
+    }
+  });
+  // the brain: a small glowing shape at the back of the head, the cerebellum a greener lobe
+  if (nerveA > 0) { const [hx, hy] = F.head; P.at(hx, hy, F.head[2], F.hs, F.hs, () => P.alpha(nerveA, () => {
+    P.circle(-3, 5, 7, 'rgba(110,230,240,0.18)'); P.smooth(P.blobPts(-2, 6, 5, 3.2, 10, 0.08, 3), 'rgba(160,240,248,0.75)'); P.smooth(P.blobPts(-7.5, 4.2, 2.6, 2.2, 10, 0.08, 4), 'rgba(150,240,190,0.85)');
+    P.ribbon([[-3, 4], [-1, 7], [1, 5]], 0.3, 'rgba(255,255,255,0.6)'); }));
+  }
+  // the signal (warm spark): ear -> brain -> down the cord -> the legs, where the muscles flash
   if (nerveA > 0 && sig > 0) {
     const lit = (u0, u1) => clamp((sig - u0) / (u1 - u0));
     let gp; if (sig < 0.2) { const [hx2, hy2] = F.head; gp = [hx2 - 4, hy2]; } else if (sig < 0.75) gp = path[Math.min(19, Math.floor(lit(0.2, 0.75) * 19))]; else gp = null;
-    if (gp) P.glow(gp[0], gp[1], 10, '255,220,90', nerveA);
-    const m = lit(0.75, 1); if (m > 0) for (const u of [0.66, 0.56, -0.8, -0.94]) { const b = F.pt([u + 0.04, -0.45]); P.glow(b[0], b[1], 10 * m, '255,90,80', nerveA * (0.9 * Math.sin(m * Math.PI) + 0.3 * m)); }
+    if (gp) { P.glow(gp[0], gp[1], 9, XR.spark, nerveA); P.circle(gp[0], gp[1], 1.2, '#fff4d0'); }
+    const m = lit(0.75, 1); if (m > 0) for (const pts of legPts) { const i = Math.min(pts.length - 2, Math.floor(m * (pts.length - 1))), f = m * (pts.length - 1) - i; P.glow(lerp(pts[i][0], pts[i + 1][0], f), lerp(pts[i][1], pts[i + 1][1], f), 6, XR.spark, nerveA * (0.5 + 0.5 * Math.sin(m * Math.PI))); }
   }
 }
 // a curved arrow around one half of the body (seen from the side: a loop around the body's axis)

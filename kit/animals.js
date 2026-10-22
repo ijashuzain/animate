@@ -117,7 +117,17 @@ Animals.catFrame = function (o = {}) {
   const edge = (u, top) => { const w = (blend(u) + 1) / 2, vt = prof(TOP, u), vb = prof(BOT, u); const v = top ? K.lerp(-vb, vt, w) : K.lerp(-vt, vb, w); return [u * L * 0.5, by + v * H + off(u)]; };
   const bodyPts = () => { const us = []; for (let i = 0; i <= 34; i++) us.push(-1.02 + i * 2.42 / 34); return [...us.map((u) => edge(u, true)), ...us.slice(1, -1).reverse().map((u) => edge(u, false))]; };
   const hr = 14, headPts = [[-hr * 1.08, 0], [-hr * 1.02, hr * 0.55], [-hr * 0.5, hr * 0.9], [hr * 0.3, hr * 0.95], [hr * 0.95, hr * 0.6], [hr * 1.1, 0.05 * hr], [hr * 1.22, -hr * 0.3], [hr * 0.95, -hr * 0.45], [hr * 0.6, -hr * 0.8], [0, -hr * 0.9], [-hr * 0.6, -hr * 0.78], [-hr * 1.0, -hr * 0.42], [-hr * 1.18, -hr * 0.22]];
-  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch, bodyPts, headPts };
+  // a leg's joints (hip .. paw) for a leg at x = lx: hind or front, tucked 0..1, swung by angle a, on a half rolled r
+  const leg = (lx, hind, tuck, a, r) => {
+    const k = clampK(half(r)), len = by - H * 0.12;
+    const down = hind ? [[0, 0], [6, -len * 0.42], [-3, -len * 0.8], [-1, -len]] : [[0, 0], [1.5, -len * 0.55], [1, -len]];
+    const tuckd = hind ? [[0, 0], [11, -len * 0.42], [1, -len * 0.56], [9, -len * 0.62]] : [[0, 0], [7, -len * 0.42], [15, -len * 0.36]];
+    const hip = [lx, by - H * 0.1 * k + off(lx / (L * 0.5))], cs = Math.cos(a), sn = Math.sin(a);
+    return down.map(([dx, dy], i) => { const px = K.lerp(dx, tuckd[i][0], tuck), py = K.lerp(dy, tuckd[i][1], tuck); return [hip[0] + px * cs - py * sn, hip[1] + (px * sn + py * cs) * k]; });
+  };
+  // where the four legs sit (x), as Animals.cat draws them: far front, far hind, near front, near hind
+  const legX = [[L * 0.3, false], [-L * 0.26, true], [L * 0.36, false], [-L * 0.33, true]];
+  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch, bodyPts, headPts, leg, legX };
 };
 Animals.catAt = function (x, y, s, o, fn) { P.at(x, y, o.rot ?? 0, s * (o.dir ?? 1), s, () => fn(Animals.catFrame(o))); };
 Animals.cat = function (t, x, y, s, o = {}) {
@@ -133,11 +143,7 @@ Animals.cat = function (t, x, y, s, o = {}) {
     // the head, the belly tucking up toward the hind legs). A rolled half shows its belly line on top: the silhouette keeps
     // its thickness while it rolls, like a real body seen from the side.
     const legs = (lx, hind, r, tuck, c, phase, near) => {
-      const k = clampK(half(r)), len = by - H * 0.12, sw = walk ? Math.sin(ph + phase) * 0.42 : 0, a = sw + out * 0.55 * (hind ? -1 : 1);
-      const down = hind ? [[0, 0], [6, -len * 0.42], [-3, -len * 0.8], [-1, -len]] : [[0, 0], [1.5, -len * 0.55], [1, -len]];
-      const tuckd = hind ? [[0, 0], [11, -len * 0.42], [1, -len * 0.56], [9, -len * 0.62]] : [[0, 0], [7, -len * 0.42], [15, -len * 0.36]];
-      const hip = [lx, by - H * 0.1 * k + off(lx / (L * 0.5))];
-      const pts = down.map(([dx, dy], i) => { const px = K.lerp(dx, tuckd[i][0], tuck), py = K.lerp(dy, tuckd[i][1], tuck), cs = Math.cos(a), sn = Math.sin(a); return [hip[0] + px * cs - py * sn, hip[1] + (px * sn + py * cs) * k]; });
+      const k = clampK(half(r)), sw = walk ? Math.sin(ph + phase) * 0.42 : 0, pts = F.leg(lx, hind, tuck, sw + out * 0.55 * (hind ? -1 : 1), r);
       P.ribbon(pts, hind ? [15, 9.5, 6.5, 6] : [11.5, 7.5, 6], c); const f = pts[pts.length - 1]; P.circle(f[0] + 1.5, f[1] + 0.5 * Math.sign(k), 3.8, c, { ry: 2.8 });
     };
     // tail: rises from the rump in a long S (tailUp 1) or streams out behind (tailUp 0)
@@ -146,8 +152,8 @@ Animals.cat = function (t, x, y, s, o = {}) {
       const tp = U.map(([ux, uy], i) => { const ox = O[i][0], oy = O[i][1], s2 = i / 4; return [r0[0] + K.lerp(ox, ux, up) + sw * 14 * s2 * s2, r0[1] + K.lerp(oy, uy, up) * tk]; });
       P.ribbon(tp, [6.5, 5.5, 5, 4.6, 4.2], col); P.circle(tp[4][0], tp[4][1], 2.6, col); }
     // far legs, then near legs (both under the body, so thighs melt into it; the far pair a shade darker)
-    legs(L * 0.3, false, front, tuckF, far, Math.PI); legs(-L * 0.26, true, back, tuckB, far, 0);
-    legs(L * 0.36, false, front, tuckF, col, 0); legs(-L * 0.33, true, back, tuckB, col, Math.PI);
+    const LX = F.legX; legs(LX[0][0], false, front, tuckF, far, Math.PI); legs(LX[1][0], true, back, tuckB, far, 0);
+    legs(LX[2][0], false, front, tuckF, col, 0); legs(LX[3][0], true, back, tuckB, col, Math.PI);
     // the body: one smooth silhouette with depth
     const body = F.bodyPts();
     A_.lit(body, A_.dark(col, 0.1), 0.4);
