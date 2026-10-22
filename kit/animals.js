@@ -8,7 +8,8 @@
 //                 1 walk, 2 run), mood, look, tail swish, head tilt
 // Animals.cat(t, x, y, s, o)          the hero cat (the user's reference: dark plum, amber eyes, 3/4 head) with a falling
 //                 rig: o.front, o.back = roll 0 (belly up) .. 1 (upright) for each half, o.tuckF, o.tuckB 0..1, o.arch,
-//                 o.bend (spine bend), o.legsOut (landing), o.tailUp, o.walk, o.dir, o.mood, o.look
+//                 o.bend (folds at the waist), o.legsOut (landing), o.tailUp, o.walk, o.dir, o.mood, o.look, o.headScale,
+//                 o.legScale (a kitten: 1.3, 0.8); Animals.catFrame(o) / catAt(x, y, s, o, fn) give its local frame for attachments
 // Animals.bird(t, x, y, s, kind, o)   'gull' | 'raven' | 'condor' | 'eagle' | 'sparrow' | 'parrot' | 'owl' | 'penguin' |
 //                 'flamingo'; o.fly (flap) or perched
 // Animals.lizard, snake, croc, frog, trilobite, butterfly, bee, ladybug, snail, octopus, starfish, seal (see each)
@@ -95,17 +96,31 @@ Animals.quad = function (t, x, y, s, spec, o = {}) {
   });
 };
 // ---------- the hero cat (the user's reference) with a falling rig ----------
+// the cat's local frame for a pose (shared by the drawing and by films that attach things to the cat: a collar, a
+// cutaway, a label): pt([u, v]) = a point at u along the body (-1 rump .. 1 chest, 1.28 head) and v across it
+// (+ back, - belly) in cat-local units; head = [x, y, rot]. Draw inside it with Animals.catAt(x, y, s, o, (F) => ...).
+Animals.catFrame = function (o = {}) {
+  const front = o.front ?? 1, back = o.back ?? 1, arch = o.arch ?? 0, bend = o.bend ?? 0, ls = o.legScale ?? 1;
+  const half = (r) => Math.cos(Math.PI * (1 - r));
+  const kb = half(back), kf = half(front), clampK = (k) => Math.sign(k || 1) * Math.max(0.1, Math.abs(k));
+  const blend = (u) => { const w = K.clamp((u + 0.3) / 0.6); return K.lerp(kb, kf, w * w * (3 - 2 * w)); };
+  const kAt = (u) => clampK(blend(u));
+  const by = 48 * ls, H = 27, L = 64;
+  // arch: the back bows up (away from the belly); bend: the body folds at the waist, both ends toward the belly
+  const off = (u) => (arch * 14 * Math.max(0, 1 - u * u) - bend * 13 * Math.min(1, Math.abs(u))) * kAt(u);
+  const pt = ([u, v]) => [u * L * 0.5, by + v * H * kAt(u) + off(u)];
+  const hs = o.headScale ?? 1, head = [L * 0.64, by + H * 1.12 * clampK(kf) + off(1.28), (o.headRot ?? 0) + Math.PI * (1 - front) + bend * 0.35 * Math.sign(kf || 1)];
+  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch };
+};
+Animals.catAt = function (x, y, s, o, fn) { P.at(x, y, o.rot ?? 0, s * (o.dir ?? 1), s, () => fn(Animals.catFrame(o))); };
 Animals.cat = function (t, x, y, s, o = {}) {
   const col = o.col ?? '#4a3d55', far = A_.dark(col, 0.22), eye = '#f2a93b', dir = o.dir ?? 1;
-  const front = o.front ?? 1, back = o.back ?? 1, tuckF = o.tuckF ?? 0, tuckB = o.tuckB ?? 0, arch = o.arch ?? 0, bend = o.bend ?? 0, out = o.legsOut ?? 0, walk = o.walk ?? 0;
+  const front = o.front ?? 1, back = o.back ?? 1, tuckF = o.tuckF ?? 0, tuckB = o.tuckB ?? 0, out = o.legsOut ?? 0, walk = o.walk ?? 0;
   const ph = t * 6.5;
   // each half rolls on its own: r 1 upright, 0 belly up; its vertical scale is cos(pi*(1-r)); the body is ONE shape whose
   // scale blends from the back half's to the front half's across the waist, so the twist never shows a seam
-  const half = (r) => Math.cos(Math.PI * (1 - r));
-  const kb = half(back), kf = half(front), clampK = (k) => Math.sign(k || 1) * Math.max(0.1, Math.abs(k));
-  const kAt = (u) => clampK(K.lerp(kb, kf, K.clamp((u + 0.3) / 0.6) ** 2 * (3 - 2 * K.clamp((u + 0.3) / 0.6))));
+  const F = Animals.catFrame(o), { half, kb, kf, clampK, kAt, by, H, L, off, pt } = F;
   P.at(x, y, o.rot ?? 0, s * dir, s, () => {
-    const by = 48, H = 27, L = 64, bendY = bend * 10;
     // body profile along u = -1 (rump) .. 1 (chest), offsets of the back line (TOP) and belly line (BOT) from the spine
     // (from the reference: a round haunch, a slight dip behind the shoulders, a deep rounded chest, the neck rising to
     // the head, the belly tucking up toward the hind legs). A rolled half shows its belly line on top: the silhouette keeps
@@ -113,20 +128,18 @@ Animals.cat = function (t, x, y, s, o = {}) {
     const TOP = [[-1.02, -0.05], [-0.95, 0.42], [-0.76, 0.68], [-0.45, 0.6], [-0.05, 0.44], [0.35, 0.5], [0.62, 0.6], [0.88, 0.86], [1.1, 1.06], [1.3, 1.0], [1.4, 0.75]];
     const BOT = [[-1.02, -0.05], [-0.97, -0.3], [-0.82, -0.5], [-0.6, -0.55], [-0.32, -0.38], [0, -0.46], [0.35, -0.6], [0.7, -0.66], [0.95, -0.52], [1.12, -0.22], [1.3, 0.3], [1.4, 0.75]];
     const prof = (tab, u) => { for (let i = 1; i < tab.length; i++) if (u <= tab[i][0]) { const [u0, v0] = tab[i - 1], [u1, v1] = tab[i]; return K.lerp(v0, v1, (u - u0) / (u1 - u0)); } return tab[tab.length - 1][1]; };
-    const archAt = (u) => arch * 14 * Math.max(0, 1 - u * u);
-    const edge = (u, top) => { const k = K.lerp(kb, kf, K.clamp((u + 0.3) / 0.6) ** 2 * (3 - 2 * K.clamp((u + 0.3) / 0.6))), w = (k + 1) / 2, vt = prof(TOP, u), vb = prof(BOT, u); const v = top ? K.lerp(-vb, vt, w) : K.lerp(-vt, vb, w); return [u * L * 0.5, by + bendY + v * H + archAt(u) * k]; };
-    const pt = ([u, v]) => { const k = kAt(u); return [u * L * 0.5, by + bendY + (v * H + archAt(u)) * k]; };
+    const edge = (u, top) => { const w = (F.blend(u) + 1) / 2, vt = prof(TOP, u), vb = prof(BOT, u); const v = top ? K.lerp(-vb, vt, w) : K.lerp(-vt, vb, w); return [u * L * 0.5, by + v * H + off(u)]; };
     const legs = (lx, hind, r, tuck, c, phase, near) => {
       const k = clampK(half(r)), len = by - H * 0.12, sw = walk ? Math.sin(ph + phase) * 0.42 : 0, a = sw + out * 0.55 * (hind ? -1 : 1);
       const down = hind ? [[0, 0], [6, -len * 0.42], [-3, -len * 0.8], [-1, -len]] : [[0, 0], [1.5, -len * 0.55], [1, -len]];
       const tuckd = hind ? [[0, 0], [11, -len * 0.42], [1, -len * 0.56], [9, -len * 0.62]] : [[0, 0], [7, -len * 0.42], [15, -len * 0.36]];
-      const hip = [lx, by + bendY - H * 0.1 * k];
+      const hip = [lx, by - H * 0.1 * k + off(lx / (L * 0.5))];
       const pts = down.map(([dx, dy], i) => { const px = K.lerp(dx, tuckd[i][0], tuck), py = K.lerp(dy, tuckd[i][1], tuck), cs = Math.cos(a), sn = Math.sin(a); return [hip[0] + px * cs - py * sn, hip[1] + (px * sn + py * cs) * k]; });
       P.ribbon(pts, hind ? [15, 9.5, 6.5, 6] : [11.5, 7.5, 6], c); const f = pts[pts.length - 1]; P.circle(f[0] + 1.5, f[1] + 0.5 * Math.sign(k), 3.8, c, { ry: 2.8 });
     };
     // tail: rises from the rump in a long S (tailUp 1) or streams out behind (tailUp 0)
     { const tk = clampK(kb), up = o.tailUp ?? 1, sw = Math.sin(t * 2) * 0.15, r0 = pt([-0.94, 0.3]);
-      const U = [[0, 0], [-8, 10], [-12, 30], [-9, 50], [-3, 60]], O = [[0, 0], [-14, 4], [-30, 6 + arch * 4], [-46, 4], [-56, 8]];
+      const U = [[0, 0], [-8, 10], [-12, 30], [-9, 50], [-3, 60]], O = [[0, 0], [-14, 4], [-30, 6 + F.arch * 4], [-46, 4], [-56, 8]];
       const tp = U.map(([ux, uy], i) => { const ox = O[i][0], oy = O[i][1], s2 = i / 4; return [r0[0] + K.lerp(ox, ux, up) + sw * 14 * s2 * s2, r0[1] + K.lerp(oy, uy, up) * tk]; });
       P.ribbon(tp, [6.5, 5.5, 5, 4.6, 4.2], col); P.circle(tp[4][0], tp[4][1], 2.6, col); }
     // far legs, then near legs (both under the body, so thighs melt into it; the far pair a shade darker)
@@ -137,8 +150,8 @@ Animals.cat = function (t, x, y, s, o = {}) {
     const body = [...us.map((u) => edge(u, true)), ...us.slice(1, -1).reverse().map((u) => edge(u, false))];
     A_.lit(body, A_.dark(col, 0.1), 0.4);
     // head: on a neck above the chest, turned 3/4 toward us, rolling with the front half
-    const hx = L * 0.64, hy = by + bendY + H * 1.12 * clampK(kf);
-    P.at(hx, hy, (o.headRot ?? 0) + Math.PI * (1 - front), 1, 1, () => {
+    if (o.underHead) o.underHead(F);   // a film's own neck details (a collar, a scarf) go between the body and the head
+    P.at(F.head[0], F.head[1], F.head[2], F.hs, F.hs, () => {
       const hr = 14;
       // ears: tall, set wide, pink inside (the far ear a little smaller)
       for (const [ex, es] of [[-0.6, 0.9], [0.5, 1]]) { P.poly([[hr * ex - 6.5 * es, hr * 0.55], [hr * ex - 0.5, hr * 0.55 + 15 * es], [hr * ex + 6 * es, hr * 0.5]], col); P.poly([[hr * ex - 3.8 * es, hr * 0.62], [hr * ex - 0.5, hr * 0.62 + 10 * es], [hr * ex + 3.4 * es, hr * 0.6]], '#f2a0a8'); }

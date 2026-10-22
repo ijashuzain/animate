@@ -1,0 +1,108 @@
+{
+  "title": "Why Cats Always Land on Their Feet",
+  "duration": 125,
+  "fps": 30,
+  "fonts": [
+    {
+      "family": "Fredoka",
+      "file": "studio/fonts/Fredoka[wdth,wght].ttf"
+    }
+  ],
+  "kit": [
+    "kit/cast.js",
+    "kit/nature.js",
+    "kit/animals.js"
+  ],
+  "src": [
+    "src/world.js",
+    "src/film.js"
+  ],
+  "audio": [
+    {
+      "id": "music",
+      "src": "audio/music.wav",
+      "start": 0,
+      "volume": 1
+    },
+    {
+      "id": "sfx",
+      "src": "audio/sfx.wav",
+      "start": 0,
+      "volume": 1
+    }
+  ],
+  "board": [
+    [
+      1.8,
+      "Hook: asleep on the shelf, a moth on its nose"
+    ],
+    [
+      3.1,
+      "It slips off, upside down"
+    ],
+    [
+      5.0,
+      "Lands on its feet: 0.30 s"
+    ],
+    [
+      9.1,
+      "Rewind to the moment it left the shelf"
+    ],
+    [
+      13.5,
+      "Inside the ear: the balance organ"
+    ],
+    [
+      21.0,
+      "The crystals slide toward the real ground"
+    ],
+    [
+      26.5,
+      "The eyes find the floor"
+    ],
+    [
+      31.5,
+      "Signal: ear > brain > spinal cord > legs"
+    ],
+    [
+      44.0,
+      "It bends in the middle: bendy chest spine"
+    ],
+    [
+      57.0,
+      "Front legs tucked: the front half turns"
+    ],
+    [
+      70.0,
+      "Back half follows, about 80 ms later"
+    ],
+    [
+      82.0,
+      "Replay with each half's angle"
+    ],
+    [
+      89.5,
+      "Silence: upright, legs out, back arched"
+    ],
+    [
+      100.0,
+      "Landing: soft paws, dust"
+    ],
+    [
+      106.5,
+      "Kitten at 3 weeks: half a turn, a flop"
+    ],
+    [
+      110.0,
+      "At 7 weeks: on its feet"
+    ],
+    [
+      114.5,
+      "Low stool vs high shelf: time to turn?"
+    ],
+    [
+      121.5,
+      "Full speed again; it walks off, kitten follows"
+    ]
+  ]
+}
