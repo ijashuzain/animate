@@ -6,6 +6,21 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 ---
 
 
+## 2026-10-22: the cat film (storyboard + draft notes)
+- **Cutaways = an x-ray look built from references the user generates**: when my drawing of a cutaway doesn't land, give
+  the user an image-generation prompt and rebuild from what comes back (refs/xray-*.webp). The look that worked: parts glow
+  straight through the fur (cyan tubes/bones with a bright core and a soft halo, a golden nerve, a warm spark travelling);
+  only a small organ gets a soft round dark-teal window that fades into the fur. Never a flat opaque disc, never a dark
+  tint over the whole body.
+- **Bends curve, they never crease**: a spine bends as one smooth curve; the spine itself is an S (catFrame.spineV).
+- **Close-ups read upright**: when the subject is upside down, roll the camera with it for the close-up; roll back while
+  still close, then pull out with the subject kept in frame (no seconds of empty wall).
+- **No sleeping hooks** ("sleeping visual is bad"): the hero does something (walks the shelf) and the accident follows.
+- **Comparisons don't repeat the hero's action**: to compare heights, show the measuring lines (30 cm vs 1.5 m) and the one
+  case we haven't seen yet, up close; not the hero falling again.
+- Furniture is built from straight panels with rounded corners (P.rect r), never P.lit blobs (the sofa read as a dome).
+- Labels appear only once their subject is in frame (not mid-pan); thin lines (whiskers) keep a fixed screen width at any zoom.
+
 ## 2026-10-22: the library (the user's notes)
 - "Very vector flat": library pieces get a little depth like the older crab, turtle and dino (a top-lit gradient, a thin
   warm rim on top, a soft shade underneath, ground shadows). Found and fixed a P.crescent bug (P.trace's beginPath wiped
