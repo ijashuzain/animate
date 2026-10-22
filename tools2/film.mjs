@@ -152,7 +152,7 @@ else if (mode === 'thumb') {
     window.drawAt(T.t); const c = document.getElementById('c'), g = c.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0);
     // optional reframe: zoom about the frame centre and shift (px) so the subject sits clear of the words
-    if (T.zoom || T.shift) { const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; tmp.getContext('2d').drawImage(c, 0, 0); const z = Math.max(1, T.zoom ?? 1), mx = 960 * (z - 1), my = 540 * (z - 1), sx = Math.max(-mx, Math.min(mx, (T.shift ?? [0, 0])[0])), sy = Math.max(-my, Math.min(my, (T.shift ?? [0, 0])[1]));   // clamped: never a black bar g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore(); }
+    if (T.zoom || T.shift) { const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; tmp.getContext('2d').drawImage(c, 0, 0); const z = Math.max(1, T.zoom ?? 1), mx = 960 * (z - 1), my = 540 * (z - 1), sx = Math.max(-mx, Math.min(mx, (T.shift ?? [0, 0])[0])), sy = Math.max(-my, Math.min(my, (T.shift ?? [0, 0])[1]));   /* clamped: never a black bar */ g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore(); }
     // readable on a phone: a dark wash behind the words, the heaviest weight, a thick dark outline (LEARNINGS)
     const side = T.side ?? 'right', x0 = side === 'right' ? 1000 : 0, gr = g.createLinearGradient(side === 'right' ? 900 : 1020, 0, side === 'right' ? 1500 : 420, 0);
     gr.addColorStop(0, 'rgba(10,8,30,0)'); gr.addColorStop(1, 'rgba(10,8,30,0.6)'); g.fillStyle = gr; g.fillRect(side === 'right' ? 900 : 0, 0, 1020, 1080);
