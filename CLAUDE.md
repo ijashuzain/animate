@@ -98,9 +98,14 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
 8. **Draft**: `node tools2/film.mjs <slug> draft` (30 s ≈ 1.5 min) -> send `renders/<slug>-draft.mp4` + plan + script to
    the user, with the weak spots you see. **The user steers here**; change, re-draft if big.
 9. **Final**: `node tools2/film.mjs <slug> final` (run_in_background). **Always deliver 1080p** (the user's rule): film.mjs
-   makes `renders/<slug>-final-1080p.mp4` under 30 MB (never send a 720p copy). Thumbnail: `node tools2/film.mjs <slug> thumb`. Deliver
+   makes `renders/<slug>-final-1080p.mp4` under 30 MB (never send a 720p copy). Thumbnail: `node tools2/film.mjs <slug> thumb`
+   (pills are hidden in thumbnails). **Always deliver YouTube metadata with the final** (the user's rule):
+   `films/<slug>/youtube/metadata.md` in the format of films/cat/youtube/metadata.md: title + 2 alternatives, description
+   (2 paragraphs, the main search phrase in the first line), chapters with timestamps that match the cut (first at 0:00),
+   sources, searches to win, hashtags, tags, category, language, made-for-kids, pinned comment, thumbnail. Send the four
+   files together: the 1080p final, `youtube/thumbnail.png`, `youtube/metadata.md`, and
    `script-timed.md` (the voice script with a time window per line: the user records the voice AFTER the picture,
-   with ElevenLabs), metadata and a thumbnail. When the voice arrives: drop it in `audio/`, add it to film.json, carve
+   with ElevenLabs). Put title/description in the dashboard's `outputs/<slug>`. When the voice arrives: drop it in `audio/`, add it to film.json, carve
    the music under it (hyperframes-audio), re-render.
 10. **Learn** (always): what the user liked/disliked into `studio/LEARNINGS.md` (taste first), general fixes into `kit/`
    or `tools2/`, the film into `topics/log.md` and `board/history`. Commit and push (generated files never).

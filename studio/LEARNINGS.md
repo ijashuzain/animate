@@ -7,6 +7,8 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 ## 2026-10-22: the cat film (storyboard + draft notes)
+- **YouTube metadata ships with every final** (the user asked for it after the cat delivery): youtube/metadata.md
+  with chapters, tags, category, pinned comment (CLAUDE.md step 9).
 - **Cutaways = an x-ray look built from references the user generates**: when my drawing of a cutaway doesn't land, give
   the user an image-generation prompt and rebuild from what comes back (refs/xray-*.webp). The look that worked: parts glow
   straight through the fur (cyan tubes/bones with a bright core and a soft halo, a golden nerve, a warm spark travelling);
