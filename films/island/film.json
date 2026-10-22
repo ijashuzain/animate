@@ -111,5 +111,27 @@
       123.0,
       "The next island, already growing"
     ]
-  ]
+  ],
+  "thumb": {
+    "t": 70.6,
+    "side": "right",
+    "font": "\"Nunito\", sans-serif",
+    "zoom": 1.5,
+    "shift": [
+      -560,
+      -160
+    ],
+    "lines": [
+      [
+        "1 MILLION",
+        150,
+        "#ffffff"
+      ],
+      [
+        "YEARS",
+        190,
+        "#ffe066"
+      ]
+    ]
+  }
 }
