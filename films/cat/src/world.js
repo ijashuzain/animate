@@ -172,11 +172,11 @@ function glowLoop(cx, cy, rx, ry, rot, w, a = 1) { const pts = []; for (let i = 
 // one point to the sac; crystals sit on a pink jelly layer over fine hairs and slide toward the real ground (g)
 function innerEar(t, a, g, spark, F, labels) {
   if (a <= 0) return;
-  const ox = -1.5, oy = 7.4, R = 7.4;
+  const ox = -1.5, oy = 6.0, R = 8.4;
   P.clip(() => P.trace(F.headPts), () => P.alpha(a, () => {
     P.circle(ox, oy, R * 1.25, P.rad(ox, oy, R * 1.25, 'rgba(18,62,72,0.92)', 'rgba(18,62,72,0.82)', 'rgba(18,62,72,0)'));
     P.glow(ox, oy, R, '90,210,220', 0.18);
-    P.at(ox, oy, 0, 0.82, 0.82, () => {
+    P.at(ox, oy, 0, 0.74, 0.74, () => {
       const J = [1.6, 0.4];                                            // where the loops join the sac
       glowLoop(-0.3, 5.0, 1.5, 2.8, -0.25, 0.7); glowLoop(-4.6, 1.8, 2.8, 1.7, 0.1, 0.7); glowLoop(-2.4, -2.9, 2.3, 1.3, 0.25, 0.7);
       glowTube([[-0.2, 2.3], J], 0.9); glowTube([[-1.9, 1.6], J], 0.9); glowTube([[-0.6, -2.2], J], 0.9);

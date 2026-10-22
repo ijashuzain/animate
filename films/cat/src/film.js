@@ -50,7 +50,8 @@ function camera(t, st) {
   const a = keys[i - 1], b = keys[i], u = K.ease.inOut(K.inv(a[0], b[0], t));
   const f = lerp(a[4], b[4], u), aim = lerp(a[5], b[5], u), tx = lerp(c[0], h[0], aim), ty = lerp(c[1], h[1], aim);
   const ty2 = t > T.legs ? Math.max(ty + 10, 62) : ty;
-  return { x: lerp(lerp(a[1], b[1], u), tx, f), y: lerp(lerp(a[2], b[2], u), ty2, f), h: Math.exp(lerp(Math.log(a[3]), Math.log(b[3]), u)) };
+  const roll = Math.PI * tw(t, T.ear + 0.4, T.ear + 2.8, 'inOut') * (1 - tw(t, T.eyes - 0.3, T.eyes + 1.4, 'inOut'));
+  return { rot: roll, x: lerp(lerp(a[1], b[1], u), tx, f), y: lerp(lerp(a[2], b[2], u), ty2, f), h: Math.exp(lerp(Math.log(a[3]), Math.log(b[3]), u)) };
 }
 // dust motes drifting in the lamp light (on the world clock, so they hang still in slow motion)
 function motes(w) {
@@ -97,7 +98,7 @@ function heroBeats(t, st) {
       const spark = t > T.ear + 8 && t < T.eyes - 0.6 ? (t * 1.4) % 1 : 0;
       P.at(F2.head[0], F2.head[1], F2.head[2], F2.hs, F2.hs, () => innerEar(t, earA, g0, spark, F2, (top, sac) => {
         pill('inner ear: balance organ', top[0] - 520, top[1], tw(t, T.ear + 3, T.ear + 3.6) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)));
-        pill('crystals', sac[0] - 20, sac[1] - 170, tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
+        pill('crystals', sac[0] + 330, sac[1] + 40, tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
       }));
     }
     rollArrow(F2, 0.62, tw(t, T.front + 1, T.front + 2) * (1 - tw(t, T.back - 0.5, T.back + 0.5)), true);

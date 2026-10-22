@@ -174,7 +174,8 @@ Animals.cat = function (t, x, y, s, o = {}) {
       for (const [ex, er] of [[-hr * 0.42, 4.6], [hr * 0.36, 5.1]]) { if (op < 0.15) { P.ribbon([[ex - 4, -1], [ex, -2.5], [ex + 4, -1]], 1.5, '#1a1218'); continue; } const r = er * (o.mood === 'wow' ? 1.15 : 1); P.circle(ex, 0, r, eye, { ry: r * op }); P.circle(ex + look[0] * 1.4, look[1] * 1.4, r * 0.58, '#1a1218', { ry: r * 0.66 * op }); P.circle(ex + look[0] * 1.4 - 1.3, 1.5, 1.3, '#ffffff'); }
       P.poly([[-1.8, -4.6], [1.8, -4.6], [0, -6.6]], '#f2a0a8');
       if (o.mood === 'wow') P.circle(0, -10, 2.2, '#2a1820', { ry: 2.8 }); else P.ribbon([[-3.4, -8.6], [-1.7, -9.8], [0, -8.4], [1.7, -9.8], [3.4, -8.6]], 1.1, '#1a1218');
-      P.ctx.save(); P.ctx.strokeStyle = 'rgba(240,230,220,0.75)'; P.ctx.lineWidth = 0.7; for (const s2 of [-1, 1]) for (const k of [0, 1]) { P.ctx.beginPath(); P.ctx.moveTo(s2 * 4.5, -6.5 - k * 2); P.ctx.lineTo(s2 * 18, -5 - k * 4.5); P.ctx.stroke(); } P.ctx.restore();
+      P.ctx.save(); P.ctx.strokeStyle = 'rgba(240,230,220,0.75)'; { const m = P.ctx.getTransform(); P.ctx.lineWidth = Math.min(0.7, 2.6 / Math.hypot(m.a, m.b)); }   // thin at any zoom
+      for (const s2 of [-1, 1]) for (const k of [0, 1]) { P.ctx.beginPath(); P.ctx.moveTo(s2 * 4.5, -6.5 - k * 2); P.ctx.lineTo(s2 * 18, -5 - k * 4.5); P.ctx.stroke(); } P.ctx.restore();
     });
   });
 };
