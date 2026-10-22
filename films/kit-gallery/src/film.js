@@ -23,8 +23,8 @@ const PAGE0 = [
 // page 1: mammals (Animals.quad + the hero cat); page 2: birds, reptiles, small creatures, sea; page 3: nature
 const Q = (k, vh, extra = {}) => [`Animals.quad '${k}'`, vh, 0, vh * 0.42, (t) => Animals.quad(t, 0, 0, 1, k, extra)];
 const PAGE1 = [
-  ['Animals.cat (hero, the user\'s ref)', 120, 0, 50, (t) => Animals.cat(t, -10, 0, 1, { look: [0.3, 0] })],
-  ['Animals.cat falling rig (mid-twist)', 120, 0, 50, (t) => Animals.cat(t, -10, 10, 1, { front: 0.8, back: 0.25, tuckF: 0.6, bend: 0.4, see: 1, signal: 0.3 })],
+  ['Animals.cat (hero, the user\'s ref)', 135, 0, 55, (t) => Animals.cat(t, -10, 0, 1, { look: [0.3, 0] })],
+  ['Animals.cat falling rig (mid-twist)', 120, 0, 50, (t) => Animals.cat(t, -10, 10, 1, { front: 0.8, back: 0.25, tuckF: 0.6, bend: 0.4, mood: 'wow' })],
   Q('dog', 110, { walk: 1 }), Q('fox', 100), Q('wolf', 120), Q('deer', 150), Q('bear', 140), Q('elephant', 220),
   Q('lion', 140), Q('tiger', 130), Q('zebra', 160), Q('giraffe', 260), Q('horse', 180), Q('cow', 170), Q('rabbit', 70), Q('mouse', 50),
 ];
@@ -60,7 +60,19 @@ const PAGE3 = [
   ['Props.conifer (old)', 100, 0, 45, (t) => Props.conifer(t, 80, {})],
   ['Props.volcano (old)', 1300, 0, -80, (t) => Props.volcano(t, 700, { veg: 0.6, beach: 1 })],
 ];
-const PAGES = [PAGE0, PAGE1, PAGE2, PAGE3];
+// page 4: the hero cat's falling rig in the five poses of the user's silhouette reference (+ walk, sleep, look)
+const C = (label, o) => [label, 150, 0, 40, (t) => Animals.cat(t, -10, 0, 1, o)];
+const PAGE4 = [
+  C('1 upside down', { front: 0, back: 0, tuckF: 0.3, tuckB: 0.2, tailUp: 0.8, mood: 'wow' }),
+  C('2 front half turns first', { front: 0.72, back: 0.15, tuckF: 0.8, bend: 0.4, mood: 'wow' }),
+  C('3 back half follows', { front: 1, back: 0.62, tuckB: 0.8, tuckF: 0.1, bend: 0.3, tailUp: 0.3 }),
+  C('4 upright, back arched', { arch: 0.6, legsOut: 0.6, tailUp: 0 }),
+  C('5 landing', { arch: 1, legsOut: 0.25, tailUp: 0.1 }),
+  C('walk', { walk: 1 }),
+  C('sleepy', { mood: 'sleep' }),
+  C('looking around', { look: [-0.5, 0.3], tailUp: 0.6 }),
+];
+const PAGES = [PAGE0, PAGE1, PAGE2, PAGE3, PAGE4];
 let CELLS = PAGE0;
 const FILM = {
   draw(t) {

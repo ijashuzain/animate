@@ -23,7 +23,8 @@ kit/                   the shared drawing kit (plain JS, deterministic, canvas 2
                        the hero cat with a falling rig, 9 birds, lizard, snake, croc, frog, trilobite, insects, octopus, starfish, seal),
                        nature.js also has the faceted set (rock, mesa/canyon wall, peak, pine, cactus, shrub, flowers, mushroom, grass, stump, log).
                        See the gallery pages studio/references/kit-gallery.png, kit-animals.png, kit-small-creatures.png, kit-nature.png
-                       (films/kit-gallery renders them: still 0.5 / 1.5 / 2.5 / 3.5) before pitching.
+                       + kit-cat-poses.png
+                       (films/kit-gallery renders them: still 0.5 / 1.5 / 2.5 / 3.5 / 4.5) before pitching.
                        Grow it: anything a second film could use goes here, not in a film.
 films/<slug>/          one folder per film: plan.md, script-timed.md, film.json, src/*.js, score.py, audio/ (wav ignored),
                        hf/ (generated HyperFrames project), stills/, renders/ (ignored)
@@ -81,6 +82,9 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    the user for reference images BEFORE building it: one message listing the missing items, what each is for, and what a
    good reference shows (side view? the face? the colours?). Build from the references (match their construction: the
    silhouette, where the face sits, the details, not just the colours), and save what's reusable into kit/.
+   **Library pieces are a starting point, never dropped in as-is** (the user's rule): in every film, adapt each kit piece
+   to the film's look, palette, situation and mood (proportions, colours, details, poses, light), through options or a
+   film-side wrapper. The library itself stays generic: film-only details (a cutaway, a spine, labels) live in the film.
 5. **Build**: `film.json` + `src/world.js` (props, characters) + `src/film.js` (`FILM.draw(t)`: camera tracks and beats).
    Look all the time: `node tools2/film.mjs <slug> sheet 0.5 0.15` (a frame every 0.5 s) and
    `node tools2/film.mjs <slug> still 2,9,15 0.5`. Fix what you see before moving on (see "Quality bar").

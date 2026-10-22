@@ -39,8 +39,8 @@ P.poly = (pts, f, o = {}) => { const ctx = P.ctx; ctx.beginPath(); pts.forEach((
 P.circle = (x, y, r, f, o = {}) => { const ctx = P.ctx; ctx.beginPath(); ctx.ellipse(x, y, r, o.ry ?? r, o.rot ?? 0, 0, Math.PI * 2); P.doFill(f, o.a ?? 1); };
 P.rect = (x, y, w, h, f, o = {}) => { const ctx = P.ctx; ctx.beginPath(); if (o.r) ctx.roundRect(x, y, w, h, o.r); else ctx.rect(x, y, w, h); P.doFill(f, o.a ?? 1); };
 // smooth closed (or open) curve through points (Catmull-Rom -> Bezier)
-P.trace = (pts, closed = true, tension = 0.5) => {
-  const ctx = P.ctx, n = pts.length; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+P.trace = (pts, closed = true, tension = 0.5, fresh = true) => {
+  const ctx = P.ctx, n = pts.length; if (fresh) ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
   const get = (i) => (closed ? pts[(i + n) % n] : pts[Math.max(0, Math.min(n - 1, i))]);
   for (let i = 0; i < (closed ? n : n - 1); i++) {
     const p0 = get(i - 1), p1 = get(i), p2 = get(i + 1), p3 = get(i + 2), s = tension / 3;
@@ -65,7 +65,7 @@ P.ribbon = (pts, widths, f, o = {}) => {
 P.clip = (shapeFn, fn) => { const ctx = P.ctx; ctx.save(); shapeFn(); ctx.clip(); fn(); ctx.restore(); };
 // rim light + core shade for a smooth shape: base fill, a dark crescent away from the light, a light crescent toward it.
 // light = direction toward the light (x, y up); d = crescent depth as a fraction of the shape size
-P.crescent = (pts, dx, dy, col) => { const b = P.bounds(pts), ctx = P.ctx; P.clip(() => P.trace(pts), () => { ctx.beginPath(); ctx.rect(b.x - b.w, b.y - b.h, b.w * 3, b.h * 3); P.trace(pts.map(([x, y]) => [x + dx, y + dy])); ctx.fillStyle = P.fill(col); ctx.fill('evenodd'); }); };
+P.crescent = (pts, dx, dy, col) => { const b = P.bounds(pts), ctx = P.ctx; P.clip(() => P.trace(pts), () => { ctx.beginPath(); ctx.rect(b.x - b.w, b.y - b.h, b.w * 3, b.h * 3); P.trace(pts.map(([x, y]) => [x + dx, y + dy]), true, 0.5, false); ctx.fillStyle = P.fill(col); ctx.fill('evenodd'); }); };
 P.lit = (pts, base, o = {}) => {
   const [lx, ly] = o.light ?? [-0.55, 0.85], b = P.bounds(pts), s = Math.max(b.w, b.h);
   P.smooth(pts, base);

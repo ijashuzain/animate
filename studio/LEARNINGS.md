@@ -5,6 +5,17 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+
+## 2026-10-22: the library (the user's notes)
+- "Very vector flat": library pieces get a little depth like the older crab, turtle and dino (a top-lit gradient, a thin
+  warm rim on top, a soft shade underneath, ground shadows). Found and fixed a P.crescent bug (P.trace's beginPath wiped
+  the cut-out rect) that had lit the WHOLE inside of a shape instead of a thin rim; P.lit now does what it says.
+- "Cat doesn't look right": build from the reference's construction, not an oval and sticks. The cat is now ONE
+  silhouette (round haunch, dip behind the shoulders, deep chest, slanted neck under the head, belly tucking up), legs
+  thick at the top melting under the body, hind legs with a hock, an S tail. Check poses on a page (kit-cat-poses.png).
+- "Spine not needed in the library": the library stays generic; film-only details (cutaways, labels) live in the film.
+- "Don't directly use library elements": adapt each piece to every film's look and situation.
+
 ## 2026-10-22: the user's taste: show the real process, no metaphors
 - The user rejected every metaphor pitch: "Why you suggesting metaphors like river as knife, elevators, movie, gravity as
   character? Why can't you directly visualise the process in an informative creative way like we did for the island?"

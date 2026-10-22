@@ -8,7 +8,7 @@
 //                 1 walk, 2 run), mood, look, tail swish, head tilt
 // Animals.cat(t, x, y, s, o)          the hero cat (the user's reference: dark plum, amber eyes, 3/4 head) with a falling
 //                 rig: o.front, o.back = roll 0 (belly up) .. 1 (upright) for each half, o.tuckF, o.tuckB 0..1, o.arch,
-//                 o.bend (spine bend), o.legsOut (landing), o.see (0..1 see-through cutaway), o.walk, o.dir, o.mood
+//                 o.bend (spine bend), o.legsOut (landing), o.tailUp, o.walk, o.dir, o.mood, o.look
 // Animals.bird(t, x, y, s, kind, o)   'gull' | 'raven' | 'condor' | 'eagle' | 'sparrow' | 'parrot' | 'owl' | 'penguin' |
 //                 'flamingo'; o.fly (flap) or perched
 // Animals.lizard, snake, croc, frog, trilobite, butterfly, bee, ladybug, snail, octopus, starfish, seal (see each)
@@ -96,46 +96,60 @@ Animals.quad = function (t, x, y, s, spec, o = {}) {
 };
 // ---------- the hero cat (the user's reference) with a falling rig ----------
 Animals.cat = function (t, x, y, s, o = {}) {
-  const col = o.col ?? '#4a3d55', far = A_.dark(col, 0.25), eye = '#f2a93b', dir = o.dir ?? 1;
+  const col = o.col ?? '#4a3d55', far = A_.dark(col, 0.22), eye = '#f2a93b', dir = o.dir ?? 1;
   const front = o.front ?? 1, back = o.back ?? 1, tuckF = o.tuckF ?? 0, tuckB = o.tuckB ?? 0, arch = o.arch ?? 0, bend = o.bend ?? 0, out = o.legsOut ?? 0, walk = o.walk ?? 0;
   const ph = t * 6.5;
-  // each half is drawn in its own frame; roll r: 1 upright, 0 belly up; the half's vertical scale is cos(pi*(1-r))
+  // each half rolls on its own: r 1 upright, 0 belly up; its vertical scale is cos(pi*(1-r)); the body is ONE shape whose
+  // scale blends from the back half's to the front half's across the waist, so the twist never shows a seam
   const half = (r) => Math.cos(Math.PI * (1 - r));
+  const kb = half(back), kf = half(front), clampK = (k) => Math.sign(k || 1) * Math.max(0.1, Math.abs(k));
+  const kAt = (u) => clampK(K.lerp(kb, kf, K.clamp((u + 0.3) / 0.6) ** 2 * (3 - 2 * K.clamp((u + 0.3) / 0.6))));
   P.at(x, y, o.rot ?? 0, s * dir, s, () => {
-    const by = 40, H = 20, L = 58, bendY = bend * 10;
-    const legs = (lx, side, r, tuck, c, phase) => {
-      const k = half(r), len = 32 * (1 - tuck * 0.55), sw = walk ? Math.sin(ph + phase) * 0.45 : 0, spread = out * 0.5 * side;
-      const hip = [lx, by - H * 0.25 * k], knee = [lx + Math.sin(sw + spread) * len * 0.5 + tuck * side * 6, by - (H * 0.25 + len * 0.5) * k], foot = [lx + Math.sin(sw + spread) * len + tuck * side * 10, by - (H * 0.25 + len) * k + tuck * 6 * k];
-      P.ribbon([hip, knee, foot], [7.5, 6.5, 6], c); P.circle(foot[0], foot[1], 3.8, c);
+    const by = 48, H = 27, L = 64, bendY = bend * 10;
+    // body profile along u = -1 (rump) .. 1 (chest), offsets of the back line (TOP) and belly line (BOT) from the spine
+    // (from the reference: a round haunch, a slight dip behind the shoulders, a deep rounded chest, the neck rising to
+    // the head, the belly tucking up toward the hind legs). A rolled half shows its belly line on top: the silhouette keeps
+    // its thickness while it rolls, like a real body seen from the side.
+    const TOP = [[-1.02, -0.05], [-0.95, 0.42], [-0.76, 0.68], [-0.45, 0.6], [-0.05, 0.44], [0.35, 0.5], [0.62, 0.6], [0.88, 0.86], [1.1, 1.06], [1.3, 1.0], [1.4, 0.75]];
+    const BOT = [[-1.02, -0.05], [-0.97, -0.3], [-0.82, -0.5], [-0.6, -0.55], [-0.32, -0.38], [0, -0.46], [0.35, -0.6], [0.7, -0.66], [0.95, -0.52], [1.12, -0.22], [1.3, 0.3], [1.4, 0.75]];
+    const prof = (tab, u) => { for (let i = 1; i < tab.length; i++) if (u <= tab[i][0]) { const [u0, v0] = tab[i - 1], [u1, v1] = tab[i]; return K.lerp(v0, v1, (u - u0) / (u1 - u0)); } return tab[tab.length - 1][1]; };
+    const archAt = (u) => arch * 14 * Math.max(0, 1 - u * u);
+    const edge = (u, top) => { const k = K.lerp(kb, kf, K.clamp((u + 0.3) / 0.6) ** 2 * (3 - 2 * K.clamp((u + 0.3) / 0.6))), w = (k + 1) / 2, vt = prof(TOP, u), vb = prof(BOT, u); const v = top ? K.lerp(-vb, vt, w) : K.lerp(-vt, vb, w); return [u * L * 0.5, by + bendY + v * H + archAt(u) * k]; };
+    const pt = ([u, v]) => { const k = kAt(u); return [u * L * 0.5, by + bendY + (v * H + archAt(u)) * k]; };
+    const legs = (lx, hind, r, tuck, c, phase, near) => {
+      const k = clampK(half(r)), len = by - H * 0.12, sw = walk ? Math.sin(ph + phase) * 0.42 : 0, a = sw + out * 0.55 * (hind ? -1 : 1);
+      const down = hind ? [[0, 0], [6, -len * 0.42], [-3, -len * 0.8], [-1, -len]] : [[0, 0], [1.5, -len * 0.55], [1, -len]];
+      const tuckd = hind ? [[0, 0], [11, -len * 0.42], [1, -len * 0.56], [9, -len * 0.62]] : [[0, 0], [7, -len * 0.42], [15, -len * 0.36]];
+      const hip = [lx, by + bendY - H * 0.1 * k];
+      const pts = down.map(([dx, dy], i) => { const px = K.lerp(dx, tuckd[i][0], tuck), py = K.lerp(dy, tuckd[i][1], tuck), cs = Math.cos(a), sn = Math.sin(a); return [hip[0] + px * cs - py * sn, hip[1] + (px * sn + py * cs) * k]; });
+      P.ribbon(pts, hind ? [15, 9.5, 6.5, 6] : [11.5, 7.5, 6], c); const f = pts[pts.length - 1]; P.circle(f[0] + 1.5, f[1] + 0.5 * Math.sign(k), 3.8, c, { ry: 2.8 });
     };
-    // far legs
-    legs(L * 0.32, 1, front, tuckF, far, Math.PI); legs(-L * 0.28, -1, back, tuckB, far, 0);
-    // tail: curls up from the back half
-    const tk = half(back), sw = Math.sin(t * 2) * 0.2;
-    P.ribbon([[-L * 0.48, by + 4 * tk], [-L * 0.75, by + (14 + arch * 8) * tk], [-L * 0.9 + out * -10, by + (40 + sw * 20) * (o.tailUp ?? 1) * tk], [-L * 0.85 + 6, by + (52 + sw * 20) * (o.tailUp ?? 1) * tk]], [6.5, 5.5, 5, 4.5], col);
-    // body: two halves (back, front) meeting at the middle; the spine bends and arches
-    const halfBody = (r, front) => { const k = half(r), cx = front ? L * 0.2 : -L * 0.2, ry = H * 0.5 * Math.max(0.12, Math.abs(k)) + (front ? 0 : arch * 6 * Math.abs(k)); A_.lit(P.blobPts(cx, by + bendY + (front ? 0 : arch * 3 * k), L * 0.33, ry, 14, 0.01, front ? 3 : 4), Math.abs(k) < 0.3 ? A_.dark(col, 0.12) : col, 0.9); if (Math.abs(k) > 0.3) P.circle(cx + (front ? 4 : -2), by + bendY - ry * 0.45 * Math.sign(k), L * 0.2, A_.light(col, 0.06), { ry: ry * 0.35 }); };
-    { const kb = half(back), kf2 = half(front), km = (kb + kf2) / 2;
-      if (Math.abs(kb - kf2) < 0.25 && Math.abs(km) > 0.3) { const ry = H * 0.5 * Math.abs(km) + arch * 3 * Math.abs(km), cy = by + bendY + arch * 2 * km; A_.lit(P.blobPts(0, cy, L * 0.53, ry, 16, 0.01, 3), col, 0.9); }
-      else { halfBody(back, false); halfBody(front, true); } }
-    // the cutaway (o.see 0..1): the body goes see-through, the spine and the nerve glow
-    if (o.see) P.alpha(o.see, () => { const k1 = half(back), k2 = half(front); P.ribbon([[-L * 0.48, by + bendY + 6 * k1], [-L * 0.2, by + bendY + (8 + arch * 6) * k1], [0, by + bendY + (9 + arch * 6) * ((k1 + k2) / 2)], [L * 0.25, by + bendY + 8 * k2], [L * 0.45, by + bendY + 6 * k2]], [4, 4.5, 5, 4.5, 4], '#f3e6c8'); for (let i = 0; i < 14; i++) { const u = i / 13, px = -L * 0.46 + u * L * 0.9, kk = u < 0.5 ? k1 : k2; P.ribbon([[px, by + bendY + (9 + arch * 6) * kk - 3], [px, by + bendY + (9 + arch * 6) * kk + 3]], 2.6, '#d9c8a4'); } if (o.signal != null) { const u = K.clamp(o.signal), px = L * 0.45 - u * L * 0.9; P.glow(px, by + bendY + 8 * (u < 0.5 ? k2 : k1), 18, '255,214,90', 1); } });
-    // near legs
-    legs(L * 0.38, 1, front, tuckF, col, 0); legs(-L * 0.22, -1, back, tuckB, col, Math.PI);
-    // head: round, turned 3/4 toward us, following the front half's roll
-    const kf = half(front), hx = L * 0.56, hy = by + bendY + 14 * kf;
+    // tail: rises from the rump in a long S (tailUp 1) or streams out behind (tailUp 0)
+    { const tk = clampK(kb), up = o.tailUp ?? 1, sw = Math.sin(t * 2) * 0.15, r0 = pt([-0.94, 0.3]);
+      const U = [[0, 0], [-8, 10], [-12, 30], [-9, 50], [-3, 60]], O = [[0, 0], [-14, 4], [-30, 6 + arch * 4], [-46, 4], [-56, 8]];
+      const tp = U.map(([ux, uy], i) => { const ox = O[i][0], oy = O[i][1], s2 = i / 4; return [r0[0] + K.lerp(ox, ux, up) + sw * 14 * s2 * s2, r0[1] + K.lerp(oy, uy, up) * tk]; });
+      P.ribbon(tp, [6.5, 5.5, 5, 4.6, 4.2], col); P.circle(tp[4][0], tp[4][1], 2.6, col); }
+    // far legs, then near legs (both under the body, so thighs melt into it; the far pair a shade darker)
+    legs(L * 0.3, false, front, tuckF, far, Math.PI); legs(-L * 0.26, true, back, tuckB, far, 0);
+    legs(L * 0.36, false, front, tuckF, col, 0); legs(-L * 0.33, true, back, tuckB, col, Math.PI);
+    // the body: one smooth silhouette with depth
+    const us = []; for (let i = 0; i <= 34; i++) us.push(-1.02 + i * 2.42 / 34);
+    const body = [...us.map((u) => edge(u, true)), ...us.slice(1, -1).reverse().map((u) => edge(u, false))];
+    A_.lit(body, A_.dark(col, 0.1), 0.4);
+    // head: on a neck above the chest, turned 3/4 toward us, rolling with the front half
+    const hx = L * 0.64, hy = by + bendY + H * 1.12 * clampK(kf);
     P.at(hx, hy, (o.headRot ?? 0) + Math.PI * (1 - front), 1, 1, () => {
-      const hr = 15;
-      for (const ex of [-0.55, 0.45]) { P.poly([[hr * ex - 7, hr * 0.62], [hr * ex - 1, hr * 1.45], [hr * ex + 7, hr * 0.62]], col); P.poly([[hr * ex - 4, hr * 0.7], [hr * ex - 1, hr * 1.22], [hr * ex + 4, hr * 0.7]], '#f2a0a8'); }
-      A_.blob(0, 0, hr * 1.05, hr * 0.95, col, 11);
-      P.circle(0, -hr * 0.15, hr * 0.42, A_.light(col, 0.12), { ry: hr * 0.3 });
+      const hr = 14;
+      // ears: tall, set wide, pink inside (the far ear a little smaller)
+      for (const [ex, es] of [[-0.6, 0.9], [0.5, 1]]) { P.poly([[hr * ex - 6.5 * es, hr * 0.55], [hr * ex - 0.5, hr * 0.55 + 15 * es], [hr * ex + 6 * es, hr * 0.5]], col); P.poly([[hr * ex - 3.8 * es, hr * 0.62], [hr * ex - 0.5, hr * 0.62 + 10 * es], [hr * ex + 3.4 * es, hr * 0.6]], '#f2a0a8'); }
+      // head: a little wider than tall, with cheek tufts
+      const head = [[-hr * 1.08, 0], [-hr * 1.02, hr * 0.55], [-hr * 0.5, hr * 0.9], [hr * 0.3, hr * 0.95], [hr * 0.95, hr * 0.6], [hr * 1.1, 0.05 * hr], [hr * 1.22, -hr * 0.3], [hr * 0.95, -hr * 0.45], [hr * 0.6, -hr * 0.8], [0, -hr * 0.9], [-hr * 0.6, -hr * 0.78], [-hr * 1.0, -hr * 0.42], [-hr * 1.18, -hr * 0.22]];
+      A_.lit(head, A_.dark(col, 0.08), 0.4);
       const bl = Cast.blink(t, 13), op = o.mood === 'sleep' ? 0 : 1 - bl, look = o.look ?? [0.2, 0];
-      for (const ex of [-hr * 0.42, hr * 0.38]) { if (op < 0.15) { P.ribbon([[ex - 5, 2], [ex, 0], [ex + 5, 2]], 1.6, '#1a1218'); continue; } const r = (o.mood === 'wow' ? 6.4 : 5.6); P.circle(ex, 2, r, eye, { ry: r * op }); P.circle(ex + look[0] * 1.5, 2 + look[1] * 1.5, r * 0.55, '#1a1218', { ry: r * 0.6 * op }); P.circle(ex + look[0] * 1.5 - 1.4, 3.6, 1.4, '#ffffff'); }
-      P.poly([[-2, -4], [2, -4], [0, -6.2]], '#f2a0a8');
-      if (o.mood === 'wow') P.circle(0, -10, 2.4, '#2a1820', { ry: 3 }); else P.ribbon([[-4, -9], [-2, -10.5], [0, -9], [2, -10.5], [4, -9]], 1.2, '#1a1218');
-      P.ctx.save(); P.ctx.strokeStyle = 'rgba(240,230,220,0.7)'; P.ctx.lineWidth = 0.8; for (const s2 of [-1, 1]) for (const k of [0, 1]) { P.ctx.beginPath(); P.ctx.moveTo(s2 * 5, -7 - k * 2); P.ctx.lineTo(s2 * 15, -6 - k * 4); P.ctx.stroke(); } P.ctx.restore();
-      // the inner-ear balance organ (cutaway): three loops and the little crystal sac, tilting with gravity
-      if (o.see) P.alpha(o.see, () => { const g = o.gravity ?? 0; P.at(-hr * 0.55, hr * 0.15, 0, 1, 1, () => { P.ctx.save(); P.ctx.strokeStyle = '#8fd0ff'; P.ctx.lineWidth = 1.6; for (const [a, rx, ry] of [[0, 4, 3], [1.1, 3.6, 2.4], [2.1, 3.2, 3.2]]) { P.ctx.beginPath(); P.ctx.ellipse(1.2 + Math.cos(a) * 2, 2 + Math.sin(a) * 2, rx, ry, a, 0, 6.3); P.ctx.stroke(); } P.ctx.restore(); P.circle(0, 0, 2.6, '#cfeeff'); for (let i = 0; i < 4; i++) P.circle(-1 + i * 0.7 + Math.sin(g) * 1.2, -0.6 + Math.cos(g) * 0.6, 0.6, '#ffffff'); P.glow(0, 0, 8, '143,208,255', 0.6); }); });
+      for (const [ex, er] of [[-hr * 0.42, 4.6], [hr * 0.36, 5.1]]) { if (op < 0.15) { P.ribbon([[ex - 4, -1], [ex, -2.5], [ex + 4, -1]], 1.5, '#1a1218'); continue; } const r = er * (o.mood === 'wow' ? 1.15 : 1); P.circle(ex, 0, r, eye, { ry: r * op }); P.circle(ex + look[0] * 1.4, look[1] * 1.4, r * 0.58, '#1a1218', { ry: r * 0.66 * op }); P.circle(ex + look[0] * 1.4 - 1.3, 1.5, 1.3, '#ffffff'); }
+      P.poly([[-1.8, -4.6], [1.8, -4.6], [0, -6.6]], '#f2a0a8');
+      if (o.mood === 'wow') P.circle(0, -10, 2.2, '#2a1820', { ry: 2.8 }); else P.ribbon([[-3.4, -8.6], [-1.7, -9.8], [0, -8.4], [1.7, -9.8], [3.4, -8.6]], 1.1, '#1a1218');
+      P.ctx.save(); P.ctx.strokeStyle = 'rgba(240,230,220,0.75)'; P.ctx.lineWidth = 0.7; for (const s2 of [-1, 1]) for (const k of [0, 1]) { P.ctx.beginPath(); P.ctx.moveTo(s2 * 4.5, -6.5 - k * 2); P.ctx.lineTo(s2 * 18, -5 - k * 4.5); P.ctx.stroke(); } P.ctx.restore();
     });
   });
 };
