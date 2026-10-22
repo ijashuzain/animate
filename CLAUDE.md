@@ -15,7 +15,11 @@ The pilot `films/seed-to-giant` ("This look amazing", the user) is the reference
 kit/                   the shared drawing kit (plain JS, deterministic, canvas 2D):
                        motion.js (K: eases, tracks, logTrack for zooms, settle/squash, rng, noise),
                        paint.js (P: world camera from mm to km, gradients, rim light P.lit, glow, ribbons, blobs, sky, text),
-                       cast.js (Cast.face with lids/brows/mouth moods, Cast.person rig with poses and look-at).
+                       cast.js (Cast.face with lids/brows/mouth moods, Cast.profileFace, Cast.person rig with poses and look-at),
+                       nature.js (fish, schools, whale, jelly, bubbles, cloud, bird, palm, tree, rain),
+                       creatures.js (water molecule hero + crowd, dino, anglerfish, crab, turtle),
+                       props.js (volcano + plume + eruption, canoe, house, waterwheel, signpost, raindrop, conifer, tower, seeds).
+                       See studio/references/kit-gallery.png (films/kit-gallery renders it) before pitching.
                        Grow it: anything a second film could use goes here, not in a film.
 films/<slug>/          one folder per film: plan.md, script-timed.md, film.json, src/*.js, score.py, audio/ (wav ignored),
                        hf/ (generated HyperFrames project), stills/, renders/ (ignored)
@@ -48,7 +52,10 @@ format/genre/style, and write what it teaches into LEARNINGS.md ("Viewer data" s
 ## The flow (the user asks for topics, or picks one)
 Keep the dashboard updated at every step (see "Dashboard"). Status lines say what is happening and why.
 
-1. **Clean up** the last film's generated files (`films/*/hf`, `renders`, `stills` and audio wavs are ignored by git;
+1. **Harvest, then clean up** (the user's rule): before deleting, move every character/prop/effect a second film could
+   use from `films/<slug>/src` into `kit/` (no film constants; options instead), re-render `films/kit-gallery` and copy it
+   to studio/references/kit-gallery.png, and note what made the film work in LEARNINGS. Then `node tools2/film.mjs <slug>
+   clean` deletes the generated files (ask the user first if they haven't downloaded the final). Clean (`films/*/hf`, `renders`, `stills` and audio wavs are ignored by git;
    delete them once the user has the final) and the dashboard's outputs/assets.
 2. **Suggest 10 topics** (the user's rule): read `topics/log.md`, the dashboard's `requests`, and the channel's numbers
    (Windsor). Each topic: title, one-line hook, **the visual idea** (one world or device that carries the whole film:

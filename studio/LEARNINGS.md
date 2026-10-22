@@ -5,7 +5,13 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
-## 2026-10-22: film 2 "How a Volcano Builds an Island" (the fixed camera), storyboard notes
+## 2026-10-22: film 2 "How a Volcano Builds an Island": **the user: "the last video was excellent"**
+- Now the reference build with the pilot. What made it: one locked frame where a million years pass (the subject does
+  all the moving), a rewind hook from the finished result and a callback ending, a small character to follow through
+  time (the sleeping crab), big readable events (eruption columns), life arriving piece by piece, one camera move saved
+  for the twist. Its reusable parts are now in kit/creatures.js and kit/props.js (studio/references/kit-gallery.png).
+
+## 2026-10-22: film 2, storyboard and draft notes
 - **The user: "this fish is going backward (I notice the same in some previous videos)"**: a whale (and the raindrop
   film's whale and fish school) moved left while drawn facing right. Rule in CLAUDE.md: creatures face the way they
   travel; Nature.whale now takes `dir`. Raindrop source fixed too.

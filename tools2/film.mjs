@@ -6,6 +6,7 @@
 //   node tools2/film.mjs <slug> draft|looks|final       build, then HyperFrames render at that quality -> renders/ (+ a 1080p copy < 30 MB)
 //   node tools2/film.mjs <slug> board                   the storyboard check: film.json board [[t, label], ...] -> stills/board.png
 //                                                       (one image of every major scene, numbered, for the user's notes BEFORE the draft)
+//   node tools2/film.mjs <slug> clean                   delete the generated files (hf/, renders/, stills/, audio/*.wav) once delivered
 //   node tools2/film.mjs <slug> thumb                   film.json thumb { t, lines: [[text, size, colour]], font } -> youtube/thumbnail.png 1280x720
 // films/<slug>/film.json: { title, duration, fps, fonts: [{ family, file }], src: [files], audio: [{ id, src, start, volume }] }
 // A film's scripts define FILM = { draw(t) } on a 1920x1080 canvas, using kit/motion.js (K) and kit/paint.js (P).
@@ -86,7 +87,7 @@ async function stills(times, scale, out, cols) {
   if (errs.length) process.exitCode = 1;
 }
 
-build();
+if (mode !== 'clean') build();
 if (mode === 'still') await stills(String(arg).split(',').map(Number), Number(arg2 ?? 0.5), path.join(FD, 'stills', `still-${String(arg).replace(/,/g, '_')}.png`), 4);
 else if (mode === 'sheet') { const every = Number(arg ?? 1), ts = []; for (let t = every / 2; t < dur; t += every) ts.push(Math.round(t * 100) / 100); await stills(ts, Number(arg2 ?? 0.2), path.join(FD, 'stills', 'sheet.png'), 6); }
 else if (['draft', 'looks', 'final'].includes(mode)) {
@@ -135,6 +136,12 @@ else if (mode === 'board') {
   const out = path.join(FD, 'stills', 'board.png'); fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, Buffer.from(url.split(',')[1], 'base64'));
   console.log('wrote', path.relative(ROOT, out), `(${B.length} scenes)`, errs.length ? 'PAGE ERRORS: ' + errs.join(' | ') : 'no page errors');
 }
+else if (mode === 'clean') {
+  for (const d of ['hf', 'renders', 'stills']) fs.rmSync(path.join(FD, d), { recursive: true, force: true });
+  for (const f of fs.existsSync(path.join(FD, 'audio')) ? fs.readdirSync(path.join(FD, 'audio')) : []) if (f.endsWith('.wav')) fs.rmSync(path.join(FD, 'audio', f));
+  for (const f of fs.existsSync(path.join(FD, 'youtube')) ? fs.readdirSync(path.join(FD, 'youtube')) : []) if (f.startsWith('thumb-')) fs.rmSync(path.join(FD, 'youtube', f));
+  console.log('cleaned', slug, '(sources kept; re-render any time)');
+}
 else if (mode === 'thumb') {
   const T = F.thumb; if (!T) { console.error('film.json has no "thumb"'); process.exit(2); }
   const { chromium } = require('playwright');
@@ -145,7 +152,7 @@ else if (mode === 'thumb') {
     window.drawAt(T.t); const c = document.getElementById('c'), g = c.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0);
     // optional reframe: zoom about the frame centre and shift (px) so the subject sits clear of the words
-    if (T.zoom || T.shift) { const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; tmp.getContext('2d').drawImage(c, 0, 0); const z = T.zoom ?? 1, [sx, sy] = T.shift ?? [0, 0]; g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore(); }
+    if (T.zoom || T.shift) { const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; tmp.getContext('2d').drawImage(c, 0, 0); const z = Math.max(1, T.zoom ?? 1), mx = 960 * (z - 1), my = 540 * (z - 1), sx = Math.max(-mx, Math.min(mx, (T.shift ?? [0, 0])[0])), sy = Math.max(-my, Math.min(my, (T.shift ?? [0, 0])[1]));   // clamped: never a black bar g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore(); }
     // readable on a phone: a dark wash behind the words, the heaviest weight, a thick dark outline (LEARNINGS)
     const side = T.side ?? 'right', x0 = side === 'right' ? 1000 : 0, gr = g.createLinearGradient(side === 'right' ? 900 : 1020, 0, side === 'right' ? 1500 : 420, 0);
     gr.addColorStop(0, 'rgba(10,8,30,0)'); gr.addColorStop(1, 'rgba(10,8,30,0.6)'); g.fillStyle = gr; g.fillRect(side === 'right' ? 900 : 0, 0, 1020, 1080);
