@@ -5,6 +5,16 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## 2026-10-22: the user's taste: show the real process, no metaphors
+- The user rejected every metaphor pitch: "Why you suggesting metaphors like river as knife, elevators, movie, gravity as
+  character? Why can't you directly visualise the process in an informative creative way like we did for the island?"
+  and for lightning "no need metaphoric visuals, I need direct approach". The island worked because after the hook it
+  showed the actual process (lava, pillows, the mountain rising, the eruption) clearly, step by step.
+- Rule (CLAUDE.md step 3): pitches show the real thing: real cross-sections, cutaways, real scale and time, slow motion,
+  labels on the real parts. Creativity goes into framing, camera, timing, hooks and small characters that live in the
+  real scene (a crab on the lava), never into replacing the subject with a stand-in (a knife, an elevator, bumper cars,
+  a control room, characters playing forces).
+
 ## 2026-10-22: the user's new process rule: ask for reference images
 - "Ask me reference images if you need to create things like a creature, character, bottle, plant... whatever you don't
   have much info on in the library." Now step 4b of the flow (after the plan, before the build). The dino reference is

@@ -61,7 +61,9 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    (Windsor). Each topic: title, one-line hook, **the visual idea** (one world or device that carries the whole film:
    a machine, a journey, a single continuous shot, a character's day...), category, why it fits. Write to `board/topics`.
 3. **Pitch 3 ideas for the picked topic** (AskUserQuestion): each a different world/hero/camera, with 2-3 example gags.
-   The user picks one. Never reuse a previous film's idea, look or structure: every film is designed fresh.
+   **Show the real process, never a metaphor** (the user's rule): real cross-sections, cutaways, real scale and time,
+   slow motion, labels on the real parts; no stand-ins (knives, elevators, bumper cars, control rooms, forces as
+   characters). Vary the framing, camera, hook and the small living characters in the real scene. The user picks one. Never reuse a previous film's idea, look or structure: every film is designed fresh.
 4. **Plan** (`films/<slug>/plan.md`): the idea; the reference look (Kurzgesagt-like vector by default; crayon, paper
    cut-out, doodle when the idea asks for it, built into `kit/` the first time); pacing (RETENTION: a new thing every
    1-2 s, or TEACHING: slower, for a hard step); **the script as a table, one line = one gag on screen**; the colour
