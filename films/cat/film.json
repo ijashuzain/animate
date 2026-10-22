@@ -112,5 +112,27 @@
       118.5,
       "Full speed again; it walks off, kitten follows"
     ]
-  ]
+  ],
+  "thumb": {
+    "t": 20.5,
+    "side": "left",
+    "font": "\"Fredoka\", sans-serif",
+    "zoom": 1.0,
+    "shift": [
+      0,
+      0
+    ],
+    "lines": [
+      [
+        "0.3",
+        230,
+        "#ffe066"
+      ],
+      [
+        "SECONDS",
+        130,
+        "#ffffff"
+      ]
+    ]
+  }
 }
