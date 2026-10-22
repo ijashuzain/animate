@@ -117,10 +117,10 @@
     "t": 20.5,
     "side": "left",
     "font": "\"Fredoka\", sans-serif",
-    "zoom": 1.0,
+    "zoom": 1.12,
     "shift": [
-      0,
-      0
+      300,
+      30
     ],
     "lines": [
       [

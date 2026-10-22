@@ -83,7 +83,7 @@ P.vignette = (a = 0.35) => P.screen((ctx) => { const g = ctx.createRadialGradien
 P.text = (str, sx, sy, o = {}) => P.screen((ctx) => { ctx.globalAlpha *= o.alpha ?? 1; ctx.font = `${o.weight ?? 700} ${o.size ?? 48}px ${o.font ?? 'sans-serif'}`; ctx.textAlign = o.align ?? 'center'; ctx.textBaseline = 'middle'; if (o.shadow) { ctx.shadowColor = o.shadow; ctx.shadowBlur = (o.size ?? 48) * 0.4; } ctx.fillStyle = o.color ?? '#fff'; if (o.ls) ctx.letterSpacing = o.ls; ctx.fillText(str, sx, sy); });
 // a calm pill label in screen space (numbers, names): pops in with u (0..1); o.icon(ctx, r) draws a small icon at its left
 P.pill = (str, sx, sy, o = {}) => {
-  const u = o.u ?? 1; if (u <= 0) return;
+  const u = o.u ?? 1; if (u <= 0 || (typeof window !== 'undefined' && window.THUMB)) return;   // thumbnails stay clean (no pills)
   P.screen((ctx) => {
     const size = o.size ?? 40; ctx.font = `${o.weight ?? 700} ${size}px ${o.font ?? 'sans-serif'}`;
     const iw = o.icon ? size * 1.3 : 0, w = ctx.measureText(str).width + iw + size * 1.1, h = size * 1.6, k = K.ease.backOut(K.clamp(u));

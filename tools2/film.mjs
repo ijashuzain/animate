@@ -149,7 +149,7 @@ else if (mode === 'thumb') {
   await page.goto(pathToFileURL(path.join(HF, 'index.html')).href);
   await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
   const url = await page.evaluate((T) => {
-    window.drawAt(T.t); const c = document.getElementById('c'), g = c.getContext('2d');
+    window.THUMB = true; window.drawAt(T.t); const c = document.getElementById('c'), g = c.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0);
     // optional reframe: zoom about the frame centre and shift (px) so the subject sits clear of the words
     if (T.zoom || T.shift) { const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; tmp.getContext('2d').drawImage(c, 0, 0); const z = Math.max(1, T.zoom ?? 1), mx = 960 * (z - 1), my = 540 * (z - 1), sx = Math.max(-mx, Math.min(mx, (T.shift ?? [0, 0])[0])), sy = Math.max(-my, Math.min(my, (T.shift ?? [0, 0])[1]));   /* clamped: never a black bar */ g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore(); }
