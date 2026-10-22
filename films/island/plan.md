@@ -1,6 +1,10 @@
 # How a Volcano Builds an Island From Nothing: the plan
 
 ## The idea (picked by the user from 3 pitches, 2026-10-21): the fixed camera
+**Changed after the storyboard check (the user):** no camera on a tripod, no sub, no REC frame; the hook is a rewind
+(the finished island, then time runs backwards to the empty sea floor) and the end calls back: "just a blink, for a planet".
+The crab's nightcap was removed (it read as a blue blob).
+
 A camera on a tripod is set on the dark sea floor and **never moves** while a million years pass in front of it. The
 frame is a Kurzgesagt-style cross-section: the sea floor at the bottom, the sea surface across the upper third, sky above.
 A clock pill in the corner speeds from "day 1" to "a million years". Everything happens inside this one frame: lava,

@@ -3,26 +3,30 @@ const { lerp, clamp, tw, track, logTrack, hash, noise } = K;
 const T = { set: 4.5, view: 10.6, plume: 13.0, crack: 18.0, ooze: 22.0, paste: 27.6, crab: 31.0, grow: 37.0, whale: 44.0, boil: 50.0, blast: 53.0, breach: 63.0, sun: 66.0, face: 68.0, life: 75.0, rain: 88.0, canoe: 95.5, hush: 100.0, pull: 102.5, next: 115.0, end: 128.0 };
 const H = track([[T.ooze, 0], [T.grow, 150, 'out'], [T.boil, 560, 'inOut'], [62, 640, 'inOut'], [72, 790, 'out']]);
 const cycles = track([[0, 0.35], [37, 0.45], [62, 12.0, 'linear'], [68, 12.5, 'out'], [75, 13.5], [88, 16.5, 'linear'], [100, 18.0], [102.5, 18.0], [115, 18.4, 'inOut'], [128, 18.5]]);
-const daylight = (t) => 0.5 - 0.5 * Math.cos(cycles(t) * Math.PI * 2);
+let DAY; // set per frame while the hook overrides the day/night cycle
+const daylight = (t) => (DAY !== undefined ? DAY : 0.5 - 0.5 * Math.cos(cycles(t) * Math.PI * 2));
 const years = logTrack([[T.view, 0.003], [25, 40, 'in'], [T.grow, 2000, 'in'], [T.boil, 300000, 'inOut'], [62, 450000], [75, 520000], [88, 700000], [T.hush, 1000000]]);
 const fmtYears = (y) => (y < 0.02 ? 'day 1' : y < 1 ? `${Math.round(y * 365)} days` : y < 1.5 ? '1 year' : y >= 999000 ? '1 million years' : `${Math.round(y).toLocaleString('en-US', { maximumSignificantDigits: y < 1000 ? 3 : 2 })} years`);
 const CLOCK = (ctx, r) => { ctx.strokeStyle = '#1a2a4a'; ctx.lineWidth = r * 0.18; ctx.beginPath(); ctx.arc(0, 0, r * 0.85, 0, 6.3); ctx.stroke(); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -r * 0.55); ctx.moveTo(0, 0); ctx.lineTo(r * 0.4, r * 0.1); ctx.stroke(); };
 
+// the hook: 0-4.5 s the finished island (story time 95-97), 4.5-9.8 s a rewind to the empty sea floor, then real time
+const REW = [4.5, 9.8];
+const viewTime = (t) => (t < REW[0] ? 95 + t * 0.5 : t < REW[1] ? lerp(97.25, 9.8, K.ease.inOut(K.inv(REW[0], REW[1], t))) : t);
 // the camera: close on the sub at first, then the locked view; one move at the twist (pull back, pan to the next island)
 function camera(t) {
-  const v = tw(t, T.view, T.view + 1.2, 'inOut'), pull = tw(t, T.pull, 113.5, 'inOut'), next = tw(t, T.next, 121.0, 'inOut');
+  const v = 1, pull = tw(t, T.pull, 113.5, 'inOut'), next = tw(t, T.next, 121.0, 'inOut');
   const h = Math.exp(lerp(Math.log(lerp(520, 1080, v)), Math.log(lerp(4200, 1150, next)), pull));
   const x = lerp(lerp(-180, 0, v), lerp(-1300, 1880, next), pull), y = lerp(lerp(-330, 0, v), lerp(-80, -170, next), pull);
   return { x, y, h };
 }
-function sky(t) {
-  const d = daylight(t), gold = Math.max(0, 1 - Math.abs(d - 0.5) * 2.6) * 0.6;
+function sky(t, real = t) {
+  const d = real < REW[0] ? 0.95 : real < REW[1] ? lerp(0.95, daylight(REW[1]), K.ease.inOut(K.inv(REW[0], REW[1], real))) : daylight(t), gold = Math.max(0, 1 - Math.abs(d - 0.5) * 2.6) * 0.6;
   P.sky(P.mixc(P.mixc('#0d1230', '#5aa8e0', d), '#f29a5a', gold * 0.6), P.mixc(P.mixc('#2a2a5a', '#cfeaff', d), '#ffd2a0', gold));
   if (d < 0.35) P.screen((ctx) => { ctx.fillStyle = '#fff'; for (let i = 0; i < 70; i++) { ctx.globalAlpha = (0.35 - d) * 2 * (0.5 + 0.5 * Math.sin(t * 2 + i)); ctx.beginPath(); ctx.arc(hash(i, 1) * 1920, hash(i, 2) * 500, 1.5 + hash(i, 3) * 1.5, 0, 6.3); ctx.fill(); } });
 }
-function seaAndFloor(t, c) {
+function seaAndFloor(t, c, dOverride) {
   // the water body from the surface to the floor, darker with depth; light rays near the top
-  const d = daylight(t);
+  const d = dOverride ?? daylight(t);
   P.rect(-9000, FLOOR, 18000, SEA - FLOOR, { lin: [0, SEA, 0, FLOOR], stops: [[0, P.mixc('#0f3a66', '#2f9cc4', d * 0.7)], [0.35, P.mixc('#0b2a52', '#14608c', d * 0.5)], [1, C.deep]] });
   P.clip(() => { P.ctx.beginPath(); P.ctx.rect(-9000, FLOOR, 18000, SEA - FLOOR); }, () => { for (let i = 0; i < 7; i++) { const x = -800 + i * 260 + Math.sin(t * 0.2 + i) * 40; P.poly([[x - 30, SEA], [x + 30, SEA], [x + 160, SEA - 420], [x + 60, SEA - 420]], `rgba(160,230,255,${0.07 * d})`); } });
   // marine snow
@@ -33,26 +37,18 @@ function seaAndFloor(t, c) {
   P.rect(-9000, FLOOR - 14, 18000, 18, '#5a5a6e');
   for (let i = 0; i < 30; i++) { const x = -1700 + i * 118 + hash(i, 61) * 40; if (Math.abs(x) < 520) continue; const k = i % 4; if (k === 0) P.lit(P.blobPts(x, FLOOR + 6, 26, 14, 8, 0.2, i), '#4a4a5c', { d: 0.3 }); else if (k === 1) { for (let j = 0; j < 3; j++) P.ribbon([[x + j * 8, FLOOR], [x + j * 8 + Math.sin(t + j) * 3, FLOOR + 30 + j * 8]], 5, '#e8e0d0'); for (let j = 0; j < 3; j++) P.circle(x + j * 8 + Math.sin(t + j) * 3, FLOOR + 34 + j * 8, 5, '#ff6b8a'); } else if (k === 2) P.smooth([[x - 14, FLOOR], [x - 10, FLOOR + 40], [x + 10, FLOOR + 46], [x + 14, FLOOR]], '#d9a050'); }
 }
-function viewfinder(t) {
-  const a = tw(t, 11.2, 11.8) * (1 - tw(t, T.pull, T.pull + 1.0)); if (a <= 0) return;
-  P.screen((ctx) => {
-    ctx.globalAlpha = a * 0.75; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 5; const m = 50, L = 70;
-    for (const [x, y, sx, sy] of [[m, m, 1, 1], [1920 - m, m, -1, 1], [m, 1080 - m, 1, -1], [1920 - m, 1080 - m, -1, -1]]) { ctx.beginPath(); ctx.moveTo(x, y + sy * L); ctx.lineTo(x, y); ctx.lineTo(x + sx * L, y); ctx.stroke(); }
-    if (Math.sin(t * 5) > -0.2) { ctx.fillStyle = '#ff3b3b'; ctx.beginPath(); ctx.arc(1700, 104, 12, 0, 6.3); ctx.fill(); }
-    ctx.fillStyle = '#ffffff'; ctx.font = `800 34px ${FONT}`; ctx.textBaseline = 'middle'; ctx.fillText('REC', 1724, 106);
-  });
-  P.pill(fmtYears(years(t)), 300, 110, { u: tw(t, 12.0, 12.4) * (1 - tw(t, T.pull, T.pull + 0.8)), font: FONT, size: 44, weight: 800, icon: CLOCK });
+const REWIND = (ctx, r) => { ctx.fillStyle = '#1a2a4a'; for (const dx of [-r * 0.45, r * 0.35]) { ctx.beginPath(); ctx.moveTo(dx + r * 0.4, -r * 0.6); ctx.lineTo(dx - r * 0.5, 0); ctx.lineTo(dx + r * 0.4, r * 0.6); ctx.fill(); } };
+function clock(t, tv) {
+  const rw = t >= REW[0] && t < REW[1];
+  P.pill(t < REW[0] ? 'today' : fmtYears(years(Math.max(tv, 10.6))), 300, 110, { u: tw(t, 0.3, 0.7) * (1 - tw(t, T.pull, T.pull + 0.8)), font: FONT, size: 44, weight: 800, icon: rw ? REWIND : CLOCK });
+  if (rw) { const a = Math.sin(K.inv(REW[0], REW[1], t) * Math.PI); P.screen((ctx) => { ctx.globalAlpha = 0.25 * a; ctx.fillStyle = '#ffffff'; for (let i = 0; i < 9; i++) { const y = (hash(i, 3) * 1080 + t * 900 * (i % 2 ? 1 : -1)) % 1080; ctx.fillRect(0, (y + 1080) % 1080, 1920, 3); } }); P.pill('rewind', 960, 110, { u: tw(t, REW[0], REW[0] + 0.3) * (1 - tw(t, REW[1] - 0.3, REW[1])), font: FONT, size: 44, weight: 800, icon: REWIND }); }
 }
 function events(t) {
   const h = H(t), top = FLOOR + h;
-  // 0-12: the sub sets the camera down; the anglerfish peers in
-  const subX = lerp(-900, -330, tw(t, 0.3, 4.0, 'out')) + lerp(0, -900, tw(t, 9.0, 12.0, 'in'));
-  if (t < 12.5) drawSub(t, subX, -310, 0.85, tw(t, 3.6, 5.0) * (1 - tw(t, 6.6, 7.6)));
-  const camDown = tw(t, 4.4, 6.0, 'out'); drawCam(t, -150, lerp(-330, FLOOR, camDown) + 0, 0.9, t > 6.2);
-  // the anglerfish: peers into the lens, then wanders; backs away from the crack; waves at the end
-  const ax = t < 12 ? lerp(300, -20, tw(t, 6.8, 9.6, 'inOut')) : t < 22 ? lerp(-460, -740, tw(t, T.crack, 21, 'inOut')) : -740;
-  const ay = t < 12 ? -330 : -260;
-  if (t < 37) drawAngler(t, ax, ay, t < 12 ? 1.0 : 0.6, t < 12 ? -1 : 1, t > T.crack && t < 23 ? 'wow' : 'smile');
+  // the anglerfish swims in once we reach the empty floor, then backs away from the crack
+  const ax = t < 12.5 ? lerp(900, -460, tw(t, 9.4, 12.5, 'out')) : t < 22 ? lerp(-460, -740, tw(t, T.crack, 21, 'inOut')) : -740;
+  const ay = -260;
+  if (t > 9 && t < 37) drawAngler(t, ax, ay, 0.6, t < 12.5 ? -1 : 1, t > T.crack && t < 23 ? 'wow' : 'smile');
   // early life in the open water (12-37): jellies drift, a turtle swims past, plankton glows
   if (t > 11 && t < 40) { Nature.jelly(t, 520 + Math.sin(t * 0.3) * 60, lerp(-80, 120, tw(t, 12, 40, 'linear')), 0.9, 1, '170,220,255'); Nature.jelly(t, -520, lerp(60, -60, tw(t, 12, 40, 'linear')) + Math.sin(t * 0.5) * 30, 0.7, 2); }
   const tu = tw(t, 24.0, 33.0, 'linear'); if (tu > 0 && tu < 1) P.at(lerp(1150, -1150, tu), 40 + Math.sin(tu * 6) * 30, 0, -1, 1, () => { for (const k of [-1, 1]) P.smooth([[10, 0], [-30, k * 60 + Math.sin(t * 3) * k * 14], [-60, k * 50]], '#5a9a6a'); P.lit(P.blobPts(0, 0, 70, 44, 12, 0.04, 8), P.lin(0, 44, 0, -44, '#8ab86a', '#4a7a4a'), { d: 0.2 }); for (let i = 0; i < 5; i++) P.blob(-30 + i * 16, 10 - (i % 2) * 14, 12, 9, 'rgba(40,70,40,0.4)', { seed: i }); P.circle(80, 6, 22, '#7aa86a'); Cast.profileFace(t, 84, 10, 9, { mood: 'smile', seed: 6, mouth: [1.3, -1.0], nose: false }); });
@@ -112,22 +108,22 @@ function chain(t) {
     drawPlume(t, FLOOR - 10, 1, 900);
     // the next island, growing on the right, with its own little camera
     drawMountain(t, lerp(140, 320, tw(t, T.next, 124)), { cx: 1900, seed: 9 });
-    drawCam(t, 1500, FLOOR, 2.4, true);
-    drawAngler(t, 2280, FLOOR + 220, 1.3, -1, 'happy');
+    drawAngler(t, lerp(2500, 1600, tw(t, T.next, 127, 'linear')), FLOOR + 240, 1.3, -1, 'happy');
   });
   P.pill('older islands drift away and sink', 560, 200, { u: tw(t, 106, 106.4) * (1 - tw(t, 114.4, 114.9)), font: FONT, size: 40, weight: 800 });
   P.pill('the next island, already growing', 960, 200, { u: tw(t, 117.5, 117.9) * (1 - tw(t, 127, 127.5)), font: FONT, size: 40, weight: 800 });
 }
 const FILM = {
   draw(t) {
-    const c = camera(t);
-    sky(t); P.cam(c);
-    seaAndFloor(t, c);
+    const c = camera(t), tv = viewTime(t);
+    DAY = undefined; sky(tv, t); P.cam(c);
+    const dl = t < REW[0] ? 0.95 : t < REW[1] ? lerp(0.95, daylight(REW[1]), K.ease.inOut(K.inv(REW[0], REW[1], t))) : undefined; DAY = dl;
+    seaAndFloor(tv, c, dl);
     chain(t);
-    events(t);
+    events(tv);
     // the water's surface on top of everything underwater: waves, foam
     const pts = []; for (let x = -9000; x <= 9000; x += 60) pts.push([x, SEA + Math.sin(x * 0.012 + t * 1.6) * 6]); P.ribbon(pts, 5, 'rgba(255,255,255,0.55)');
-    viewfinder(t);
+    clock(t, tv);
     P.vignette(0.35);
   },
 };

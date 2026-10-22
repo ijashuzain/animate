@@ -5,6 +5,14 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## 2026-10-22: film 2 "How a Volcano Builds an Island" (the fixed camera), storyboard notes
+- **The user: "What's the blue thing on the crab?"** A nightcap drawn as a flat floating shape read as a blob. Rule: a
+  prop must read in a small still; when in doubt leave it out (closed eyes + z's already say "asleep").
+- **The user disliked the camera-on-a-tripod framing** (a sub placing a camera at the start, a second camera at the end):
+  "start and end the story with a different hook". Now a rewind hook (the finished island, then time runs backwards to
+  the empty sea floor) and a callback ending ("just a blink, for a planet"). Rule: don't build the frame device into the
+  story (cameras, viewfinders, REC); let the film show the thing itself.
+
 ## 2026-10-21: film 1 "The 10-Day Trip of a Single Raindrop" (Drip's road trip, 117 s)
 - **The user: "But I need 1080p"** (the draft went out as a 720p share copy). Rule: always deliver 1080p; film.mjs final
   now makes a 1080p copy under 30 MB itself (-tune animation, CRF 24 up to 33; the 117 s draft was 16.8 MB at CRF 25).

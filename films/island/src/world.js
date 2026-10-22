@@ -83,7 +83,6 @@ function drawCrab(t, x, y, s, asleep = true) {
     P.lit(P.blobPts(0, 14, 44, 26, 12, 0.04, 2), P.lin(0, 40, 0, -10, '#ff7a5a', '#d4402c'), { d: 0.2 });
     for (const k of [-1, 1]) { P.ribbon([[k * 10, 34], [k * 14, 52]], 4, '#d4402c'); }
     Cast.face(t, 0, 50, 26, { mood: asleep ? 'sleep' : 'wow', seed: 9, ink: '#2a0a0a' });
-    if (asleep) { P.smooth([[-22, 58], [22, 58], [36, 90], [10, 70]], '#5a7fd6'); P.circle(38, 92, 8, '#ffffff'); P.rect(-24, 54, 48, 8, '#ffffff', { r: 4 }); }
   });
 }
 // a voyaging canoe: two hulls, a crab-claw sail, a few people

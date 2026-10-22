@@ -9,9 +9,12 @@ D = 128.0
 here = os.path.dirname(os.path.abspath(__file__))
 mus, fx = Mix(D), Mix(D)
 N = note
-# 0-37: the deep: low drones and glassy bells (D minor)
-mus.add(pad(N('D2'), 38, a=4, warm=0.3), 0, 0.35); mus.add(pad(N('A2'), 38, a=6, warm=0.3), 2, 0.22)
-for i, n in enumerate(['A5', 'F5', 'D6', 'E5', 'C6', 'A5', 'G5', 'F5', 'D5', 'A5', 'E5', 'D6']): mus.add(bell(N(n), 3.0), 1.5 + i * 2.9, 0.12, 0.5 * (-1) ** i)
+# 0-4.5: the finished island (bright); 4.5-9.8: the rewind (a falling sweep); then the deep (D minor)
+for n in ('D4', 'F#4', 'A4'): mus.add(pad(N(n), 5.0, a=0.3, r=1.0), 0, 0.14)
+for i, n in enumerate(['A5', 'F#5', 'D6', 'A5', 'E6']): mus.add(pluck(N(n), 0.8, 0.8), 0.3 + i * 0.8, 0.25)
+for i in range(16): mus.add(pluck(N(['D6', 'A5', 'F#5', 'D5', 'A4', 'F#4', 'D4', 'A3'][i % 8]), 0.4, 0.5), 4.6 + i * 0.32, 0.18 * (1 - i / 20))
+mus.add(pad(N('D2'), 30, a=4, warm=0.3), 8.0, 0.35); mus.add(pad(N('A2'), 30, a=6, warm=0.3), 10, 0.22)
+for i, n in enumerate(['A5', 'F5', 'D6', 'E5', 'C6', 'A5', 'G5', 'F5', 'D5', 'A5']): mus.add(bell(N(n), 3.0), 10.0 + i * 2.7, 0.12, 0.5 * (-1) ** i)
 mus.add(string(N('D3'), 16, a=6), 21.0, 0.25)
 # 37-50: growth: a slow pulse and rising strings
 for b in range(26): at = 37 + b * 0.5; mus.add(kick(0.4), at, 0.18 if b % 2 == 0 else 0.08); mus.add(bass(N(['D2', 'D2', 'Bb1', 'C2'][(b // 4) % 4]), 0.45), at, 0.3)
@@ -34,11 +37,11 @@ for n in ('D3', 'A3', 'F#4'): mus.add(pad(N(n), 13, a=2, r=4), 115, 0.15)
 for i, n in enumerate(['A5', 'F#5', 'D6', 'A5', 'E5', 'D5']): mus.add(bell(N(n), 3.0), 116 + i * 1.8, 0.16, 0.4 * (-1) ** i)
 
 # ---------- effects ----------
-fx.add(lowpass(noise(11), 300) * 0.3, 0.2, 0.6)                         # sub motor hum
-fx.add(sfx_fwip(), 3.7, 0.3); fx.add(sfx_thud(), 6.0, 0.5)             # the arm, the tripod lands
-fx.add(sfx_tick(3000), 6.3, 0.4); fx.add(bell(N('A6'), 0.4), 6.35, 0.2)   # REC beep
-for i in range(6): fx.add(sfx_bubble(300 + 40 * i), 7.0 + i * 0.4, 0.2)
-fx.add(sfx_whoosh(1.2), 10.4, 0.4)                                      # into the viewfinder
+for i in range(5): fx.add(lowpass(noise(1.2), 700) * np.sin(np.linspace(0, np.pi, int(1.2 * SR))) * 0.3, 0.2 + i * 0.9, 0.3)   # waves on the beach
+for i in range(4): fx.add(sfx_splash(), 1.0 + i * 0.8, 0.12)                                      # paddles
+fx.add(sfx_whoosh(5.0, up=False), 4.5, 0.6)                                                        # the rewind
+for i in range(26): fx.add(sfx_tick(3200 - i * 60), 4.6 + i * 0.2, 0.2)                            # the clock spinning back
+for i in range(6): fx.add(sfx_bubble(300 + 40 * i), 9.9 + i * 0.35, 0.2)
 fx.add(lowpass(noise(6), 120) * 0.6, 13.0, 0.7)                         # the plume rumble
 fx.add(sfx_crunch(1.2), 18.0, 0.7); fx.add(sfx_thud(), 18.3, 0.6)      # the floor cracks
 for i in range(8): fx.add(sfx_splat(), 22.0 + i * 1.6, 0.25); fx.add(lowpass(noise(0.8), 900) * 0.3, 22.2 + i * 1.6, 0.4)   # pillows ooze and hiss
@@ -63,8 +66,7 @@ fx.add(sfx_rain(6.5), 88.0, 0.5); fx.add(lowpass(noise(8), 2500) * 0.15, 90.0, 0
 for i in range(8): fx.add(sfx_splash(), 95.8 + i * 0.45, 0.12)            # paddles
 for i in range(24): fx.add(sfx_tick(4200), 99.8 + i * 0.12, 0.08)         # crickets
 fx.add(sfx_whoosh(3.0, up=False), 102.6, 0.5)
-fx.add(sfx_tick(3000), 117.0, 0.4); fx.add(bell(N('A6'), 0.4), 117.05, 0.2); fx.add(sfx_bubble(500), 118.0, 0.3)
-fx.add(sfx_tick(3000), 125.6, 0.4); fx.add(bell(N('A6'), 0.4), 125.65, 0.2)
+fx.add(sfx_bubble(500), 118.0, 0.3); fx.add(sfx_sparkle(5, 2600), 125.4, 0.25)
 
 mus.reverb(0.3).write(os.path.join(here, 'audio', 'music.wav'), gain=0.5)
 fx.reverb(0.14).write(os.path.join(here, 'audio', 'sfx.wav'), gain=0.9)

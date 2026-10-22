@@ -32,16 +32,20 @@
   ],
   "board": [
     [
-      7.6,
-      "The sub sets a camera on the sea floor"
+      2.0,
+      "Hook: the island today, a canoe arrives"
     ],
     [
-      9.6,
-      "An anglerfish peers into the lens"
+      6.4,
+      "\"Let's rewind\": the forest vanishes, time runs back"
+    ],
+    [
+      9.4,
+      "Back to day 1: the empty, dark sea floor"
     ],
     [
       16.0,
-      "REC: day 1, jellies; hot rock rises below"
+      "Jellies drift; hot rock rises below"
     ],
     [
       20.5,
@@ -53,7 +57,7 @@
     ],
     [
       34.5,
-      "A crab in a nightcap sleeps on the lava"
+      "A crab falls asleep on the lava"
     ],
     [
       40.5,
@@ -101,11 +105,11 @@
     ],
     [
       110.0,
-      "The camera moves: the island chain drifts"
+      "Pull back: the island chain drifts away"
     ],
     [
       123.0,
-      "The next island, with its own camera"
+      "The next island, already growing"
     ]
   ]
 }
