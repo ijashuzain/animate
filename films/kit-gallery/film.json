@@ -2,7 +2,20 @@
   "title": "Kit Gallery",
   "duration": 4,
   "fps": 30,
-  "fonts": [{ "family": "Nunito", "file": "studio/fonts/Nunito[wght].ttf" }],
-  "kit": ["kit/cast.js", "kit/nature.js", "kit/creatures.js", "kit/props.js"],
-  "src": ["src/film.js"]
+  "fonts": [
+    {
+      "family": "Nunito",
+      "file": "studio/fonts/Nunito[wght].ttf"
+    }
+  ],
+  "kit": [
+    "kit/cast.js",
+    "kit/nature.js",
+    "kit/creatures.js",
+    "kit/props.js",
+    "kit/animals.js"
+  ],
+  "src": [
+    "src/film.js"
+  ]
 }

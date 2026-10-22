@@ -74,3 +74,60 @@ Nature.tree = (t, x, y, h, col = '#3f8f45', seed = 0) => {
 };
 // rain streaks across a screen rectangle
 Nature.rain = (t, a, box = [0, 1920, 0, 1080], seed = 5) => { if (a <= 0) return; P.screen((ctx) => { const [x0, x1, y0, y1] = box; ctx.strokeStyle = `rgba(220,235,255,${0.45 * a})`; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; for (let i = 0; i < 70; i++) { const x = x0 + ((K.hash(i, seed) * (x1 - x0) + t * 120) % (x1 - x0)), y = y0 + ((K.hash(i, seed + 1) * (y1 - y0) + t * 900) % (y1 - y0)); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 10, y + 40); ctx.stroke(); } }); };
+// ---------- the faceted nature set (after the user's style library: faceted rocks/mountains, flat flowers, teal desert plants) ----------
+// a faceted rock: a polygon split into lit / mid / shade planes (light from the upper left); o.col, o.seed, o.n points
+Nature.rock = (x, y, w, h, o = {}) => {
+  const col = o.col ?? '#9a8a7e', seed = o.seed ?? 1, n = o.n ?? 7, lit = P.mixc(col, '#fff4e4', 0.28), shade = P.mixc(col, '#2a1a24', 0.32), pts = [];
+  for (let i = 0; i < n; i++) { const a = Math.PI * (i / (n - 1)), r = 0.82 + 0.22 * K.hash(i, seed); pts.push([x - Math.cos(a) * w * 0.5 * r, y + Math.sin(a) * h * r]); }
+  P.poly(pts, col); const c = [x - w * 0.08, y + h * 0.45];
+  for (let i = 0; i < n - 1; i++) { const tri = [pts[i], pts[i + 1], c], mx = (pts[i][0] + pts[i + 1][0]) / 2; P.poly(tri, mx < x - w * 0.1 ? lit : mx > x + w * 0.15 ? shade : col); }
+};
+// a canyon wall / mesa block: stacked bands (cliff = hard, slope = soft), faceted lit and shade sides, ledges, cracks.
+// bands: [[height, colour, 'cliff'|'slope'], ...] from the bottom up; side: 1 the lit face looks right, -1 left
+Nature.mesa = (x, y, w, bands, o = {}) => {
+  let yy = y, inset = 0; const side = o.side ?? 1, seed = o.seed ?? 2;
+  bands.forEach(([bh, col, kind], i) => {
+    const step = kind === 'slope' ? bh * 0.9 : bh * 0.12, x0 = x - w / 2 + inset * (side < 0 ? 1 : 0.4), x1 = x + w / 2 - inset * (side > 0 ? 1 : 0.4);
+    const top0 = x0 + (side < 0 ? step : step * 0.3), top1 = x1 - (side > 0 ? step : step * 0.3);
+    const lit = P.mixc(col, '#ffe8c8', 0.22), shade = P.mixc(col, '#3a1424', 0.35);
+    P.poly([[x0, yy], [x1, yy], [top1, yy + bh], [top0, yy + bh]], col);
+    if (side > 0) P.poly([[x1 - w * 0.18, yy], [x1, yy], [top1, yy + bh], [top1 - w * 0.12, yy + bh]], lit); else P.poly([[x0, yy], [x0 + w * 0.18, yy], [top0 + w * 0.12, yy + bh], [top0, yy + bh]], lit);
+    P.poly([[x0 + w * 0.2, yy], [x0 + w * 0.42, yy], [top0 + w * 0.3, yy + bh], [top0 + w * 0.16, yy + bh]], shade);
+    if (kind === 'cliff') for (let k = 0; k < 3; k++) { const cx = x0 + (x1 - x0) * (0.25 + 0.25 * k) + (K.hash(k, seed + i) - 0.5) * 20; P.ribbon([[cx, yy + bh * 0.05], [cx + 4, yy + bh * 0.5], [cx - 2, yy + bh * 0.95]], 3, shade); }
+    P.rect(top0, yy + bh - 3, top1 - top0, 6, lit);
+    yy += bh; inset += step;
+  });
+  return yy;
+};
+// a faceted mountain with a snow cap
+Nature.peak = (x, y, w, h, o = {}) => {
+  const col = o.col ?? '#7f86a6', lit = P.mixc(col, '#ffffff', 0.25), shade = P.mixc(col, '#1a1430', 0.3), top = [x + (o.lean ?? 0) * w, y + h];
+  P.poly([[x - w / 2, y], [x + w / 2, y], top], col); P.poly([[x - w / 2, y], [x - w * 0.05, y], top], lit); P.poly([[x + w * 0.15, y], [x + w / 2, y], top], shade);
+  if (o.snow !== false) { const sh = h * 0.28; P.poly([[top[0] - w * 0.14, top[1] - sh], [top[0] - w * 0.04, top[1] - sh * 0.7], [top[0] + w * 0.03, top[1] - sh * 0.95], [top[0] + w * 0.12, top[1] - sh * 0.8], top], '#f4f6fb'); }
+};
+// a faceted pine (stacked triangles, lit and shade halves)
+Nature.pine = (t, x, y, h, o = {}) => {
+  const col = o.col ?? '#3f8f55', lit = P.mixc(col, '#ffffff', 0.2), shade = P.mixc(col, '#0a2a1a', 0.3), sway = Math.sin(t * 1.2 + x * 0.01) * h * 0.01;
+  P.rect(x - h * 0.04, y, h * 0.08, h * 0.2, '#7a5032');
+  for (let k = 0; k < 3; k++) { const b = y + h * (0.15 + k * 0.24), wd = h * (0.42 - k * 0.1), tp = [x + sway * (k + 1), b + h * 0.38]; P.poly([[x - wd, b], [x, b], tp], lit); P.poly([[x, b], [x + wd, b], tp], shade); }
+};
+// a saguaro cactus (teal, like the canyon references)
+Nature.cactus = (x, y, h, o = {}) => {
+  const col = o.col ?? '#3e8a74', shade = P.mixc(col, '#0a2a24', 0.3), w = h * 0.16;
+  P.rect(x - w / 2, y, w, h, col, { r: w / 2 }); P.rect(x + w * 0.05, y, w * 0.45, h - w * 0.3, shade, { r: w / 3 });
+  for (const [k, ay, ah] of [[-1, 0.35, 0.35], [1, 0.5, 0.3]]) { const ax = x + k * w * 1.25; P.rect(Math.min(x, ax) + (k > 0 ? w * 0.3 : 0), y + h * ay, w * 1.0, w * 0.6, col, { r: w * 0.3 }); P.rect(ax - w * 0.32, y + h * ay, w * 0.64, h * ah, col, { r: w * 0.32 }); }
+};
+// a round desert shrub (dark teal, a lighter top)
+Nature.shrub = (x, y, r, o = {}) => { const col = o.col ?? '#3a6e66'; P.blob(x, y + r * 0.55, r, r * 0.62, col, { seed: o.seed ?? 3, n: 11, w: 0.12 }); P.blob(x - r * 0.2, y + r * 0.8, r * 0.55, r * 0.3, P.mixc(col, '#ffffff', 0.18), { seed: (o.seed ?? 3) + 1 }); };
+// a flower: o.kind 'daisy' | 'tulip'; o.col
+Nature.flower = (t, x, y, h, o = {}) => {
+  const sw = Math.sin(t * 1.6 + x) * h * 0.04, hx = x + sw, hy = y + h, col = o.col ?? '#e8487a';
+  P.ribbon([[x, y], [x + sw * 0.5, y + h * 0.5], [hx, hy]], h * 0.04, '#4f9a4a'); P.at(x + sw * 0.3, y + h * 0.4, 0.7, 1, 1, () => P.blob(h * 0.12, 0, h * 0.13, h * 0.05, '#5aa84f', { seed: 2 }));
+  if (o.kind === 'tulip') { P.smooth([[hx - h * 0.1, hy], [hx - h * 0.12, hy + h * 0.16], [hx - h * 0.04, hy + h * 0.1], [hx, hy + h * 0.2], [hx + h * 0.04, hy + h * 0.1], [hx + h * 0.12, hy + h * 0.16], [hx + h * 0.1, hy]], col); return; }
+  for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; P.circle(hx + Math.cos(a) * h * 0.1, hy + Math.sin(a) * h * 0.1, h * 0.065, col, { ry: h * 0.04, rot: a }); }
+  P.circle(hx, hy, h * 0.06, '#f6c23a');
+};
+Nature.mushroom = (x, y, h, o = {}) => { const col = o.col ?? '#e2483a'; P.rect(x - h * 0.12, y, h * 0.24, h * 0.55, '#f2ead8', { r: h * 0.06 }); P.smooth([[x - h * 0.45, y + h * 0.5], [x - h * 0.3, y + h * 0.92], [x, y + h], [x + h * 0.3, y + h * 0.92], [x + h * 0.45, y + h * 0.5]], col); for (const [dx, dy] of [[-0.2, 0.72], [0.12, 0.85], [0.25, 0.62]]) P.circle(x + dx * h, y + dy * h, h * 0.06, '#ffffff'); };
+Nature.grass = (t, x, y, h, o = {}) => { const col = o.col ?? '#5aa84f'; for (let i = 0; i < 5; i++) { const a = -0.5 + i * 0.25 + Math.sin(t * 2 + x + i) * 0.06; P.ribbon([[x + (i - 2) * h * 0.06, y], [x + Math.sin(a) * h * 0.5 + (i - 2) * h * 0.08, y + h * (0.6 + 0.08 * (i % 2))], [x + Math.sin(a) * h + (i - 2) * h * 0.1, y + h * (0.9 + 0.1 * (i % 3))]], [h * 0.07, h * 0.05, 1], i % 2 ? col : P.mixc(col, '#0a3a1a', 0.2)); } };
+Nature.stump = (x, y, w, o = {}) => { P.rect(x - w / 2, y, w, w * 0.6, P.lin(x - w / 2, 0, x + w / 2, 0, '#a8693e', '#7a4a2a')); P.circle(x, y + w * 0.6, w / 2, '#e2b98a', { ry: w * 0.14 }); P.ctx.save(); P.ctx.strokeStyle = '#b8875a'; P.ctx.lineWidth = 1.2; for (const r of [0.15, 0.28, 0.4]) { P.ctx.beginPath(); P.ctx.ellipse(x, y + w * 0.6, w * r, w * r * 0.28, 0, 0, 6.3); P.ctx.stroke(); } P.ctx.restore(); };
+Nature.log = (x, y, w, o = {}) => { P.rect(x - w / 2, y, w, w * 0.22, P.lin(0, y, 0, y + w * 0.22, '#7a4a2a', '#a8693e'), { r: w * 0.05 }); P.circle(x + w / 2, y + w * 0.11, w * 0.06, '#e2b98a', { ry: w * 0.11 }); };
