@@ -9,7 +9,7 @@
 // Animals.cat(t, x, y, s, o)          the hero cat (the user's reference: dark plum, amber eyes, 3/4 head) with a falling
 //                 rig: o.front, o.back = roll 0 (belly up) .. 1 (upright) for each half, o.tuckF, o.tuckB 0..1, o.arch,
 //                 o.bend (folds at the waist), o.legsOut (landing), o.tailUp, o.walk, o.dir, o.mood, o.look, o.headScale,
-//                 o.legScale (a kitten: 1.3, 0.8); Animals.catFrame(o) / catAt(x, y, s, o, fn) give its local frame for attachments
+//                 o.legScale (a kitten: 1.3, 0.8); Animals.catFrame(o) / catAt(x, y, s, o, fn) give its local frame (pt, head, bodyPts, headPts) for attachments and masks
 // Animals.bird(t, x, y, s, kind, o)   'gull' | 'raven' | 'condor' | 'eagle' | 'sparrow' | 'parrot' | 'owl' | 'penguin' |
 //                 'flamingo'; o.fly (flap) or perched
 // Animals.lizard, snake, croc, frog, trilobite, butterfly, bee, ladybug, snail, octopus, starfish, seal (see each)
@@ -110,7 +110,14 @@ Animals.catFrame = function (o = {}) {
   const off = (u) => (arch * 14 * Math.max(0, 1 - u * u) - bend * 13 * Math.min(1, Math.abs(u))) * kAt(u);
   const pt = ([u, v]) => [u * L * 0.5, by + v * H * kAt(u) + off(u)];
   const hs = o.headScale ?? 1, head = [L * 0.64, by + H * 1.12 * clampK(kf) + off(1.28), (o.headRot ?? 0) + Math.PI * (1 - front) + bend * 0.35 * Math.sign(kf || 1)];
-  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch };
+  // the silhouette (a rolled half shows its belly line on top, so it keeps its thickness while it rolls)
+  const TOP = [[-1.02, -0.05], [-0.95, 0.42], [-0.76, 0.68], [-0.45, 0.6], [-0.05, 0.44], [0.35, 0.5], [0.62, 0.6], [0.88, 0.86], [1.1, 1.06], [1.3, 1.0], [1.4, 0.75]];
+  const BOT = [[-1.02, -0.05], [-0.97, -0.3], [-0.82, -0.5], [-0.6, -0.55], [-0.32, -0.38], [0, -0.46], [0.35, -0.6], [0.7, -0.66], [0.95, -0.52], [1.12, -0.22], [1.3, 0.3], [1.4, 0.75]];
+  const prof = (tab, u) => { for (let i = 1; i < tab.length; i++) if (u <= tab[i][0]) { const [u0, v0] = tab[i - 1], [u1, v1] = tab[i]; return K.lerp(v0, v1, (u - u0) / (u1 - u0)); } return tab[tab.length - 1][1]; };
+  const edge = (u, top) => { const w = (blend(u) + 1) / 2, vt = prof(TOP, u), vb = prof(BOT, u); const v = top ? K.lerp(-vb, vt, w) : K.lerp(-vt, vb, w); return [u * L * 0.5, by + v * H + off(u)]; };
+  const bodyPts = () => { const us = []; for (let i = 0; i <= 34; i++) us.push(-1.02 + i * 2.42 / 34); return [...us.map((u) => edge(u, true)), ...us.slice(1, -1).reverse().map((u) => edge(u, false))]; };
+  const hr = 14, headPts = [[-hr * 1.08, 0], [-hr * 1.02, hr * 0.55], [-hr * 0.5, hr * 0.9], [hr * 0.3, hr * 0.95], [hr * 0.95, hr * 0.6], [hr * 1.1, 0.05 * hr], [hr * 1.22, -hr * 0.3], [hr * 0.95, -hr * 0.45], [hr * 0.6, -hr * 0.8], [0, -hr * 0.9], [-hr * 0.6, -hr * 0.78], [-hr * 1.0, -hr * 0.42], [-hr * 1.18, -hr * 0.22]];
+  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch, bodyPts, headPts };
 };
 Animals.catAt = function (x, y, s, o, fn) { P.at(x, y, o.rot ?? 0, s * (o.dir ?? 1), s, () => fn(Animals.catFrame(o))); };
 Animals.cat = function (t, x, y, s, o = {}) {
@@ -125,10 +132,6 @@ Animals.cat = function (t, x, y, s, o = {}) {
     // (from the reference: a round haunch, a slight dip behind the shoulders, a deep rounded chest, the neck rising to
     // the head, the belly tucking up toward the hind legs). A rolled half shows its belly line on top: the silhouette keeps
     // its thickness while it rolls, like a real body seen from the side.
-    const TOP = [[-1.02, -0.05], [-0.95, 0.42], [-0.76, 0.68], [-0.45, 0.6], [-0.05, 0.44], [0.35, 0.5], [0.62, 0.6], [0.88, 0.86], [1.1, 1.06], [1.3, 1.0], [1.4, 0.75]];
-    const BOT = [[-1.02, -0.05], [-0.97, -0.3], [-0.82, -0.5], [-0.6, -0.55], [-0.32, -0.38], [0, -0.46], [0.35, -0.6], [0.7, -0.66], [0.95, -0.52], [1.12, -0.22], [1.3, 0.3], [1.4, 0.75]];
-    const prof = (tab, u) => { for (let i = 1; i < tab.length; i++) if (u <= tab[i][0]) { const [u0, v0] = tab[i - 1], [u1, v1] = tab[i]; return K.lerp(v0, v1, (u - u0) / (u1 - u0)); } return tab[tab.length - 1][1]; };
-    const edge = (u, top) => { const w = (F.blend(u) + 1) / 2, vt = prof(TOP, u), vb = prof(BOT, u); const v = top ? K.lerp(-vb, vt, w) : K.lerp(-vt, vb, w); return [u * L * 0.5, by + v * H + off(u)]; };
     const legs = (lx, hind, r, tuck, c, phase, near) => {
       const k = clampK(half(r)), len = by - H * 0.12, sw = walk ? Math.sin(ph + phase) * 0.42 : 0, a = sw + out * 0.55 * (hind ? -1 : 1);
       const down = hind ? [[0, 0], [6, -len * 0.42], [-3, -len * 0.8], [-1, -len]] : [[0, 0], [1.5, -len * 0.55], [1, -len]];
@@ -146,8 +149,7 @@ Animals.cat = function (t, x, y, s, o = {}) {
     legs(L * 0.3, false, front, tuckF, far, Math.PI); legs(-L * 0.26, true, back, tuckB, far, 0);
     legs(L * 0.36, false, front, tuckF, col, 0); legs(-L * 0.33, true, back, tuckB, col, Math.PI);
     // the body: one smooth silhouette with depth
-    const us = []; for (let i = 0; i <= 34; i++) us.push(-1.02 + i * 2.42 / 34);
-    const body = [...us.map((u) => edge(u, true)), ...us.slice(1, -1).reverse().map((u) => edge(u, false))];
+    const body = F.bodyPts();
     A_.lit(body, A_.dark(col, 0.1), 0.4);
     // head: on a neck above the chest, turned 3/4 toward us, rolling with the front half
     if (o.underHead) o.underHead(F);   // a film's own neck details (a collar, a scarf) go between the body and the head
@@ -156,8 +158,7 @@ Animals.cat = function (t, x, y, s, o = {}) {
       // ears: tall, set wide, pink inside (the far ear a little smaller)
       for (const [ex, es] of [[-0.6, 0.9], [0.5, 1]]) { P.poly([[hr * ex - 6.5 * es, hr * 0.55], [hr * ex - 0.5, hr * 0.55 + 15 * es], [hr * ex + 6 * es, hr * 0.5]], col); P.poly([[hr * ex - 3.8 * es, hr * 0.62], [hr * ex - 0.5, hr * 0.62 + 10 * es], [hr * ex + 3.4 * es, hr * 0.6]], '#f2a0a8'); }
       // head: a little wider than tall, with cheek tufts
-      const head = [[-hr * 1.08, 0], [-hr * 1.02, hr * 0.55], [-hr * 0.5, hr * 0.9], [hr * 0.3, hr * 0.95], [hr * 0.95, hr * 0.6], [hr * 1.1, 0.05 * hr], [hr * 1.22, -hr * 0.3], [hr * 0.95, -hr * 0.45], [hr * 0.6, -hr * 0.8], [0, -hr * 0.9], [-hr * 0.6, -hr * 0.78], [-hr * 1.0, -hr * 0.42], [-hr * 1.18, -hr * 0.22]];
-      A_.lit(head, A_.dark(col, 0.08), 0.4);
+      A_.lit(F.headPts, A_.dark(col, 0.08), 0.4);
       const bl = Cast.blink(t, 13), op = o.mood === 'sleep' ? 0 : 1 - bl, look = o.look ?? [0.2, 0];
       for (const [ex, er] of [[-hr * 0.42, 4.6], [hr * 0.36, 5.1]]) { if (op < 0.15) { P.ribbon([[ex - 4, -1], [ex, -2.5], [ex + 4, -1]], 1.5, '#1a1218'); continue; } const r = er * (o.mood === 'wow' ? 1.15 : 1); P.circle(ex, 0, r, eye, { ry: r * op }); P.circle(ex + look[0] * 1.4, look[1] * 1.4, r * 0.58, '#1a1218', { ry: r * 0.66 * op }); P.circle(ex + look[0] * 1.4 - 1.3, 1.5, 1.3, '#ffffff'); }
       P.poly([[-1.8, -4.6], [1.8, -4.6], [0, -6.6]], '#f2a0a8');

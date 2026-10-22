@@ -33,12 +33,16 @@
   ],
   "board": [
     [
-      1.8,
-      "Hook: asleep on the shelf, a moth on its nose"
+      1.3,
+      "Hook: the cat walks along the top of the bookcase"
     ],
     [
-      3.1,
-      "It slips off, upside down"
+      2.8,
+      "A back paw slips: over it goes"
+    ],
+    [
+      3.12,
+      "Falling, upside down"
     ],
     [
       5.0,
@@ -50,7 +54,7 @@
     ],
     [
       13.5,
-      "Inside the ear: the balance organ"
+      "X-ray scan of the ear: the balance organ"
     ],
     [
       21.0,

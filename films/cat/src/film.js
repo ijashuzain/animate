@@ -11,8 +11,8 @@ const worldT = (t) => (t < T.fall ? t : t < T.kit ? T.fall + msOf(t) / 1000 : t)
 // where the moth is: round the lamp, over to the sleeping cat, startled up and away, back to the lamp
 function mothAt(w) {
   const lamp = [230 + Math.cos(w * 2.2) * 26, 160 + Math.sin(w * 3.1) * 12];
-  const nose = [70 + Math.sin(w * 6) * 4, 150 + Math.cos(w * 5) * 3];
-  const away = [118 + Math.sin(w * 3) * 6, 168 + (w - 2.6) * 18];
+  const nose = [78 + Math.sin(w * 6) * 4, 208 + Math.cos(w * 5) * 3];
+  const away = [122 + Math.sin(w * 3) * 6, 214 + (w - 2.6) * 14];
   if (w < 1.0) return lamp; if (w < 1.9) return K.mix(lamp, nose, K.ease.inOut(K.inv(1.0, 1.9, w)));
   if (w < 2.5) return nose; if (w < 3.4) return K.mix(nose, away, K.ease.out(K.inv(2.5, 3.4, w)));
   if (w < 3.6) return away; return K.mix(away, lamp, K.ease.inOut(K.inv(3.6, 6.0, w)));
@@ -38,11 +38,11 @@ function camera(t, st) {
   const keys = [
     // [t, x, y, h, follow 0..1 (0 = the room, 1 = the cat), aim at the head 0..1]
     [0, 40, 140, 330, 0, 0], [2.6, 50, 122, 250, 0, 0], [T.fall, 60, 118, 250, 0, 0], [T.rw0, 80, 110, 270, 0, 0], [T.rw1, 0, 0, 90, 1, 0],
-    [T.ear + 2.6, 0, 0, 25, 1, 1], [T.eyes - 0.3, 0, 0, 24, 1, 1], [T.eyes + 1.6, 50, 92, 230, 0, 0], [T.sig - 0.4, 50, 92, 230, 0, 0], [T.sig + 1.2, 0, 0, 82, 1, 0],
+    [T.ear + 2.6, 0, 0, 21, 1, 1], [T.eyes - 0.3, 0, 0, 20, 1, 1], [T.eyes + 1.6, 50, 92, 230, 0, 0], [T.sig - 0.4, 50, 92, 230, 0, 0], [T.sig + 1.2, 0, 0, 82, 1, 0],
     [T.bend + 1.5, 0, 0, 70, 1, 0], [T.front, 0, 0, 80, 1, 0], [T.replay, 0, 0, 82, 1, 0], [T.hush, 0, 0, 72, 1, 0], [T.legs + 0.6, 0, 0, 72, 1, 0], [98.5, 0, 0, 140, 1, 0], [103.6, 0, 0, 150, 1, 0],
   ];
-  if (t >= T.kit && t < T.two) return { x: lerp(-60, -400, tw(t, T.kit, T.kit + 0.7, 'expoInOut')), y: 70, h: 170 };
-  if (t >= T.two && t < T.end) return { x: lerp(-400, -40, tw(t, T.two, T.two + 0.7, 'expoInOut')), y: 100, h: lerp(170, 270, tw(t, T.two, T.two + 0.7)) };
+  if (t >= T.kit && t < T.two) return { x: lerp(-60, -372, tw(t, T.kit, T.kit + 0.7, 'expoInOut')), y: 70, h: 175 };
+  if (t >= T.two && t < T.end) return { x: lerp(-372, -40, tw(t, T.two, T.two + 0.7, 'expoInOut')), y: 100, h: lerp(170, 270, tw(t, T.two, T.two + 0.7)) };
   if (t >= T.end) { const w = tw(t, T.end + 2.2, T.D - 1, 'inOut'); return { x: lerp(60, c[0] + 30, w), y: lerp(120, 90, w), h: lerp(250, 200, w) }; }
   let i = 1; while (i < keys.length - 1 && t > keys[i][0]) i++;
   const a = keys[i - 1], b = keys[i], u = K.ease.inOut(K.inv(a[0], b[0], t));
@@ -93,9 +93,9 @@ function heroBeats(t, st) {
     if (earA > 0) {
       const R = F2.head[2] + (st.p.rot || 0), g0 = [-Math.sin(R), -Math.cos(R)];
       const spark = t > T.ear + 8 && t < T.eyes - 0.6 ? (t * 1.4) % 1 : 0;
-      P.at(F2.head[0], F2.head[1], F2.head[2], F2.hs, F2.hs, () => innerEar(t, earA, g0, spark, (top, sac) => {
-        pill('inner ear: balance organ', top[0], top[1] - 300, tw(t, T.ear + 3, T.ear + 3.6) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)));
-        pill('crystals', sac[0] + 330, sac[1] + 40, tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
+      P.at(F2.head[0], F2.head[1], F2.head[2], F2.hs, F2.hs, () => innerEar(t, earA, g0, spark, F2, (top, sac) => {
+        pill('inner ear: balance organ', top[0] - 520, top[1], tw(t, T.ear + 3, T.ear + 3.6) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)));
+        pill('crystals', sac[0] + 380, sac[1], tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
       }));
     }
     rollArrow(F2, 0.62, tw(t, T.front + 1, T.front + 2) * (1 - tw(t, T.back - 0.5, T.back + 0.5)), true);
@@ -143,7 +143,7 @@ function clockPill(t, st) {
 // the kitten: 3 weeks old it only half turns and flops onto the cushion; at 7 weeks it lands on its feet
 function kittenBeat(t) {
   const sx = -440, seat = 52, ky = seat - 30 * 0.36, KL = Math.round(Math.sqrt(ky / G) * 1000);
-  hero(t, -300, 0, S, { mood: 'happy', look: [-0.6, 0.3], tailUp: 0.8, dir: -1 });
+  hero(t, -268, 0, S, { mood: 'happy', look: [-0.6, 0.3], tailUp: 0.8, dir: -1 });
   cushion(sx + 30, 0, 50);
   const tries = [[T.kit + 1.4, '3 weeks old', 0.5], [T.kit + 4.6, '7 weeks old', 1]];
   for (const [t0, label, skill] of tries) {
@@ -151,7 +151,7 @@ function kittenBeat(t) {
     pill(label, 960, 150, a, { size: 42 });
     const kms = (t - t0) * 300;                 // slow motion: 3.3 x slower
     let x = sx, y = ky, o;
-    if (kms < 0) { o = pose(-1600 + (t - t0 + 1.2) * 1000); o.col = C.kitten; o.mood = kms > -150 ? 'wow' : 'happy'; x = lerp(sx, sx + 24, tw(kms, -200, 0, 'in')); }
+    if (kms < 0) { const pm = Math.max(-2900, (t - t0) * 1000), sl = tw(pm, -470, 0, 'in'); o = pose(pm); x = lerp(lerp(sx - 34, sx, tw(pm, -1300, -650, 'linear')), sx + 24, sl); y = lerp(seat, ky, sl); }
     else {
       const f = Math.min(kms, KL) / 1000; x = sx + 24 + f * 20; y = Math.max(0, ky - G * f * f) + (skill < 1 && kms >= KL ? 6 : 0);
       o = pose(Math.min(kms * (LAND / KL), skill < 1 ? 150 : 10000));
@@ -169,7 +169,7 @@ function twoFalls(t) {
   cushion(sx + 40, 0, 56);
   const ms = (t - T.two - 1.6) * 180, ly = stool - 30 * S + 2, LL = Math.round(Math.sqrt(ly / G) * 1000);
   // left: a ginger cat on the stool
-  { let o, x, y; if (ms < 0) { o = pose(-1600 + (t - T.two) * 900); x = lerp(sx - 6, sx + 18, tw(ms, -150, 0, 'in')); y = ly; } else { const f = Math.min(ms, LL) / 1000; x = sx + 18 + f * 30; y = Math.max(0, ly - G * f * f) + (ms >= LL ? 7 : 0); o = pose(Math.min(ms, LL)); if (ms >= LL) o.mood = 'wow'; }
+  { let o, x, y; if (ms < 0) { const pm = Math.max(-2900, (t - T.two - 1.6) * 1000), sl = tw(pm, -470, 0, 'in'); o = pose(pm); x = lerp(lerp(sx - 16, sx + 2, tw(pm, -1300, -650, 'linear')), sx + 18, sl); y = lerp(stool, ly, sl); } else { const f = Math.min(ms, LL) / 1000; x = sx + 18 + f * 30; y = Math.max(0, ly - G * f * f) + (ms >= LL ? 7 : 0); o = pose(Math.min(ms, LL)); if (ms >= LL) o.mood = 'wow'; }
     Animals.cat(t, x, y, S, Object.assign(o, { col: '#d9874a' })); }
   // right: our cat from the shelf
   { const o = pose(ms), p = place(ms); hero(t, p.x, p.y, S, o); }
