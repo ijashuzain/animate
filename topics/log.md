@@ -71,4 +71,4 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-21 | Why Cats Always Land on Their Feet (sports replay) | nature / physics | suggested |
 | 2026-10-21 | How Your 'Hello' Crosses the Ocean in 0.1 Seconds (a word's journey) | tech | suggested |
 | 2026-10-21 | Why February Sometimes Has 29 Days (Earth the late runner) | science / history | suggested |
-| 2026-10-21 | How a Volcano Builds an Island From Nothing (a locked-off sea-floor camera) | nature | suggested |
+| 2026-10-21 | How a Volcano Builds an Island From Nothing (one locked camera, rewind hook) | nature | **made** (films/island, 2:08) |
