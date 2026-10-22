@@ -201,7 +201,7 @@ function innerEar(t, a, g, spark, F, labels) {
 // the nervous system and the spine, in the cat's body frame, glowing through the fur (no tint): rounded vertebrae along
 // the back with the golden cord through them, branching nerves into the four legs, a spark from the ear down to the legs
 function insides(t, F, nerveA, sig, spineA, flex, o) {
-  const path = []; for (let i = 0; i <= 20; i++) path.push(F.pt([1.15 - i * 0.105, 0.2]));
+  const path = []; for (let i = 0; i <= 20; i++) { const u = 1.15 - i * 0.105; path.push(F.pt([u, F.spineV(u)])); }
   const showA = Math.max(nerveA, spineA);
   if (showA <= 0) return;
   // vertebrae: rounded blocks across the spine line, cyan with a halo; the chest part brightens when it bends (flex)
@@ -222,7 +222,7 @@ function insides(t, F, nerveA, sig, spineA, flex, o) {
   const legPts = F.legX.map(([lx, hind]) => F.leg(lx, hind, hind ? (o.tuckB ?? 0) : (o.tuckF ?? 0), (o.legsOut ?? 0) * 0.55 * (hind ? -1 : 1), hind ? F.back : F.front));
   if (nerveA > 0) P.alpha(nerveA, () => {
     for (const pts of legPts) {
-      const u = pts[0][0] / (F.L * 0.5), a0 = F.pt([u, 0.2]), n = pts.length, lastI = n - 1;
+      const u = pts[0][0] / (F.L * 0.5), a0 = F.pt([u, F.spineV(u)]), n = pts.length, lastI = n - 1;
       const tip = [lerp(pts[lastI - 1][0], pts[lastI][0], 0.8), lerp(pts[lastI - 1][1], pts[lastI][1], 0.8)];
       glowTube([a0, ...pts.slice(0, lastI), tip], 0.5, 0.9);
       for (let i = 1; i < lastI; i++) { const [x, y] = pts[i], [x2, y2] = pts[i + 1], dx = x2 - x, dy = y2 - y, L2 = Math.hypot(dx, dy) || 1, nx = -dy / L2, ny = dx / L2; const m = [x + dx * 0.4, y + dy * 0.4];

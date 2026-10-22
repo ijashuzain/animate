@@ -106,8 +106,9 @@ Animals.catFrame = function (o = {}) {
   const blend = (u) => { const w = K.clamp((u + 0.3) / 0.6); return K.lerp(kb, kf, w * w * (3 - 2 * w)); };
   const kAt = (u) => clampK(blend(u));
   const by = 48 * ls, H = 27, L = 64;
-  // arch: the back bows up (away from the belly); bend: the body folds at the waist, both ends toward the belly
-  const off = (u) => (arch * 14 * Math.max(0, 1 - u * u) - bend * 13 * Math.min(1, Math.abs(u))) * kAt(u);
+  // arch: the back bows up (away from the belly); bend: the spine curves, both ends toward the belly
+  // (a smooth curve along the whole spine, never a crease at the waist)
+  const off = (u) => (arch * 14 * Math.max(0, 1 - u * u) - bend * 14 * Math.min(1.3, u * u) + bend * 4) * kAt(u);
   const pt = ([u, v]) => [u * L * 0.5, by + v * H * kAt(u) + off(u)];
   const hs = o.headScale ?? 1, head = [L * 0.64, by + H * 1.12 * clampK(kf) + off(1.28), (o.headRot ?? 0) + Math.PI * (1 - front) + bend * 0.35 * Math.sign(kf || 1)];
   // the silhouette (a rolled half shows its belly line on top, so it keeps its thickness while it rolls)
@@ -125,9 +126,13 @@ Animals.catFrame = function (o = {}) {
     const hip = [lx, by - H * 0.1 * k + off(lx / (L * 0.5))], cs = Math.cos(a), sn = Math.sin(a);
     return down.map(([dx, dy], i) => { const px = K.lerp(dx, tuckd[i][0], tuck), py = K.lerp(dy, tuckd[i][1], tuck); return [hip[0] + px * cs - py * sn, hip[1] + (px * sn + py * cs) * k]; });
   };
+  // the spine's natural S along the body (neck up to the head, a dip behind the shoulders, the lower back arched, down
+  // to the pelvis): v at u, for films that show the skeleton
+  const SP = [[-1.0, 0.12], [-0.75, 0.22], [-0.35, 0.34], [0.1, 0.24], [0.45, 0.16], [0.8, 0.28], [1.05, 0.55], [1.2, 0.8]];
+  const spineV = (u) => prof(SP, Math.max(-1, Math.min(1.2, u)));
   // where the four legs sit (x), as Animals.cat draws them: far front, far hind, near front, near hind
   const legX = [[L * 0.3, false], [-L * 0.26, true], [L * 0.36, false], [-L * 0.33, true]];
-  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch, bodyPts, headPts, leg, legX };
+  return { front, back, kb, kf, half, clampK, blend, kAt, by, H, L, off, pt, head, hs, ls, arch, bodyPts, headPts, leg, legX, spineV };
 };
 Animals.catAt = function (x, y, s, o, fn) { P.at(x, y, o.rot ?? 0, s * (o.dir ?? 1), s, () => fn(Animals.catFrame(o))); };
 Animals.cat = function (t, x, y, s, o = {}) {
