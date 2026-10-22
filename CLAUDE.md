@@ -25,7 +25,8 @@ films/<slug>/          one folder per film: plan.md, script-timed.md, film.json,
                        hf/ (generated HyperFrames project), stills/, renders/ (ignored)
 tools2/                film.mjs (build, still, sheet, board = the storyboard check, thumb, draft/looks/final renders through
                        HyperFrames + a 1080p copy), synth.py (numpy synth: instruments + sound effects)
-studio/references/     the tutorial notes, the HyperFrames digest (framework rules, motion, audio), peekaboo.md
+studio/references/     the tutorial notes, the HyperFrames digest (framework rules, motion, audio), peekaboo.md,
+                       style/ = the user's style library for animals and nature (read style/NOTES.md before drawing any creature)
 studio/LEARNINGS.md    taste + lessons, newest first; studio/voice.md: narration voice; studio/fonts: Google Fonts (OFL)
 studio/vendor/         youtube-agent-skill scorers (hooks, titles), anatomy kit; studio/dashboard: the live page
 topics/log.md          every topic suggested, picked and made (never repeat a made topic)
