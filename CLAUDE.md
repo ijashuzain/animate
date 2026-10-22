@@ -68,6 +68,12 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    arc; facts with sources (web-check every claim; hedge where uncertain; note what is stated from knowledge); the sound
    plan (music arc + one sound per action). Package while writing (studio/voice.md): 5 hook candidates scored
    (`studio/vendor/yt-agent`), title <= 60 chars, 3 searches to win, thumbnail words that don't repeat the title.
+4b. **Ask for reference images (the user's rule)**: list every character, creature, object and place the plan needs; check
+   each against the kit (studio/references/kit-gallery.png). For anything the kit doesn't have, or that I don't know
+   well enough to draw convincingly (a specific animal, a character, a bottle, a plant, a machine, a landmark...), ask
+   the user for reference images BEFORE building it: one message listing the missing items, what each is for, and what a
+   good reference shows (side view? the face? the colours?). Build from the references (match their construction: the
+   silhouette, where the face sits, the details, not just the colours), and save what's reusable into kit/.
 5. **Build**: `film.json` + `src/world.js` (props, characters) + `src/film.js` (`FILM.draw(t)`: camera tracks and beats).
    Look all the time: `node tools2/film.mjs <slug> sheet 0.5 0.15` (a frame every 0.5 s) and
    `node tools2/film.mjs <slug> still 2,9,15 0.5`. Fix what you see before moving on (see "Quality bar").

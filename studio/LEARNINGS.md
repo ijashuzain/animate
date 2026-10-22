@@ -5,6 +5,11 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 ---
 
+## 2026-10-22: the user's new process rule: ask for reference images
+- "Ask me reference images if you need to create things like a creature, character, bottle, plant... whatever you don't
+  have much info on in the library." Now step 4b of the flow (after the plan, before the build). The dino reference is
+  why: drawing from a reference got it right; drawing from memory got a blob on its face.
+
 ## 2026-10-22: film 2 "How a Volcano Builds an Island": **the user: "the last video was excellent"**
 - Now the reference build with the pilot. What made it: one locked frame where a million years pass (the subject does
   all the moving), a rewind hook from the finished result and a callback ending, a small character to follow through
