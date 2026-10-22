@@ -98,7 +98,7 @@ function heroBeats(t, st) {
       const spark = t > T.ear + 8 && t < T.eyes - 0.6 ? (t * 1.4) % 1 : 0;
       P.at(F2.head[0], F2.head[1], F2.head[2], F2.hs, F2.hs, () => innerEar(t, earA, g0, spark, F2, (top, sac) => {
         pill('inner ear: balance organ', top[0] - 520, top[1], tw(t, T.ear + 3, T.ear + 3.6) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)));
-        pill('crystals', sac[0] + 330, sac[1] + 40, tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
+        pill('crystals', sac[0] + 250, sac[1] - 120, tw(t, T.ear + 6.5, T.ear + 7.1) * (1 - tw(t, T.eyes - 1, T.eyes - 0.5)), { size: 34 });
       }));
     }
     rollArrow(F2, 0.62, tw(t, T.front + 1, T.front + 2) * (1 - tw(t, T.back - 0.5, T.back + 0.5)), true);
