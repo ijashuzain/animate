@@ -80,7 +80,7 @@ fx.add(sfx_flip(), 105.3, 0.3); fx.add(sfx_boing(220, 0.5), 106.4, 0.25) # 3 wee
 fx.add(sfx_meow(), 107.0, 0.25)
 fx.add(sfx_flip(), 108.5, 0.3); fx.add(sfx_pop(700), 109.6, 0.25)       # 7 weeks: on its feet
 fx.add(sfx_whoosh(0.5), 111.5, 0.3)
-fx.add(sfx_boing(160, 0.5), 113.6, 0.2); fx.add(sfx_thud(), 114.4, 0.35) # cushion / the shelf cat lands
+fx.add(sfx_boing(160, 0.5), 114.05, 0.2); fx.add(sfx_thud(), 116.0, 0.35) # cushion / the shelf cat lands
 fx.add(sfx_flip(), 117.0, 0.4); fx.add(sfx_whoosh(0.5, up=False), 117.5, 0.4); fx.add(sfx_thud(), 118.0, 0.5)
 for i in range(10): fx.add(sfx_tick(2200), 119.0 + i * 0.36, 0.05)        # paws walking off
 fx.add(sfx_meow(), 121.5, 0.25)
