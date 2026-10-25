@@ -151,7 +151,7 @@ Nature.stormPuffs = (cx, base, o = {}) => {
   // puffs along the outline (the cauliflower edge), smaller toward the anvil's thin ends; a few big ones on the top
   const puffs = [];
   const along = (pts, sgn) => { for (let i = 1; i < pts.length; i++) { const [x, y] = pts[i]; if (K.hash(i, seed + (sgn > 0 ? 1 : 2)) < 0.15 || y < base + H * 0.07) continue; const u = (y - base) / H, thin = u > 0.8 ? K.lerp(1, 0.45, anvil * K.clamp((u - 0.8) / 0.18)) : 1;
-    const r = r0 * thin * (0.75 + 0.5 * K.hash(i, seed + 3 + sgn)); puffs.push([x - sgn * r * 0.45, y, r, 1]); } };
+    const r = r0 * thin * (0.7 + 0.8 * K.hash(i, seed + 3 + sgn)); if (i % 2 && K.hash(i, seed + 9) < 0.6) continue; puffs.push([x - sgn * r * 0.4, y, r, 1]); } };
   along(L, -1); along(R, 1);
   const tw = half(1); for (let i = 0; i <= 8; i++) { const x = cx - tw * 0.85 + (i / 8) * tw * 1.7, mid = 1 - Math.abs(i / 8 - 0.5) * 2; const r = r0 * (anvil > 0.3 ? K.lerp(0.4, 0.75, mid) : K.lerp(0.8, 1.3, mid)) * (0.8 + 0.4 * K.hash(i, seed + 6)); puffs.push([x, top - r * 0.35, r, 1]); }
   // the outline must wind the same way as the puffs' ellipses (counter-clockwise, y up) so the clip is their union, not holes
@@ -160,18 +160,26 @@ Nature.stormPuffs = (cx, base, o = {}) => {
 };
 Nature.stormMask = (puffs) => { const ctx = P.ctx; ctx.beginPath(); if (puffs.poly) { puffs.poly.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); } for (const [x, y, r] of puffs) { ctx.moveTo(x + r, y); ctx.ellipse(x, y, r, r * 0.92, 0, 0, Math.PI * 2); } };
 Nature.stormCloud = (t, cx, base, o = {}) => {
+  // the look of a towering anime cumulus (the user's chosen reference): a bright rim on the upper-left of every lobe,
+  // soft white swooshes inside, bright at the top fading to a deeper base; one shape, no outlines
   const puffs = o.puffs ?? Nature.stormPuffs(cx, base, o), col = Object.assign({ top: '#a9b0d8', mid: '#6f76ad', under: '#3f4378' }, o.col ?? {});
-  let yTop = base; for (const p of puffs) yTop = Math.max(yTop, p[1] + p[2]);
-  const H = yTop - base, dy = H * 0.012;
-  // underside layer: the whole shape a little lower, dark (shows as a soft dark rim under every puff)
-  P.at(0, -dy, 0, 1, 1, () => { P.clip(() => Nature.stormMask(puffs), () => P.rect(cx - 1e6, base - 1e5, 2e6, H + 2e5, col.under)); });
-  // body: one gradient over the whole cloud, lighter on top
-  P.clip(() => Nature.stormMask(puffs), () => {
-    P.rect(cx - 1e6, base - 1e5, 2e6, H + 2e5, P.lin(0, base, 0, yTop, col.mid, col.top));
-    // a darker band toward the base (the rain-heavy underside), crescent shadows under a few edge puffs, soft highlights on top puffs
-    P.rect(cx - 1e6, base - 1e5, 2e6, 1e5 + H * 0.12, P.lin(0, base, 0, base + H * 0.12, P.rgba(col.under, 0.55), P.rgba(col.under, 0)));
-    puffs.forEach(([x, y, r], i) => { if (y > yTop - H * 0.3 && K.hash(i, 78) > 0.4) P.circle(x - r * 0.2, y + r * 0.4, r * 0.5, 'rgba(255,255,255,0.12)', { ry: r * 0.28 }); });
-  });
+  const H = puffs.H, half = puffs.half, top = base + H, seed = o.seed ?? 3, rim = o.rim ?? P.mixc(col.top, '#ffffff', 0.45);
+  let rMax = 0; for (const p of puffs) rMax = Math.max(rMax, p[2]);
+  // the lobes: the silhouette's puffs plus a few big interior ones, drawn top to bottom (lower lobes are nearer)
+  const lobes = puffs.lobes ?? (() => { const out = puffs.map(([x, y, r]) => [x, y, r]);
+    for (let row = 0, y = top - rMax * 1.2; y > base + rMax * 0.6; row++) { const u = (y - base) / H, hw = half(u) * 0.62, n = Math.max(1, Math.round(hw * 2 / (rMax * 1.5)));
+      for (let i = 0; i <= n; i++) out.push([cx - hw + (i / n) * hw * 2 + (K.hash(i, row + seed) - 0.5) * rMax * 0.6, y + (K.hash(i + 5, row + seed) - 0.5) * rMax * 0.4, rMax * (0.75 + 0.4 * K.hash(i, row * 3 + seed))]);
+      y -= rMax * 1.15; }
+    out.sort((p, q) => q[1] - p[1]); puffs.lobes = out; return out; })();
+  const body = P.lin(0, base, 0, top, col.under, col.mid, col.top), rimG = P.lin(0, base, 0, top, P.mixc(rim, col.under, 0.5), rim);
+  P.clip(() => Nature.stormMask(puffs), () => P.rect(cx - 1e6, base - 1e5, 2e6, H + 2e5, body));
+  // each lobe: a bright disc, then the body colour over it moved down-right, so only a crisp crescent rim shows on its
+  // upper-left edge; the body is one gradient for all lobes, so they merge into one cloud
+  for (const [x, y, r] of lobes) { P.circle(x, y, r, rimG, { ry: r * 0.92 }); P.circle(x + r * 0.09, y - r * 0.12, r * 0.99, body, { ry: r * 0.91 }); }
+  // soft swooshes: a few wide pale arcs inside the body
+  lobes.forEach(([x, y, r], i) => { if (y > base + H * 0.3 && K.hash(i, seed + 51) > 0.7) P.crescent(P.blobPts(x, y - r * 0.2, r * 0.8, r * 0.5, 18, 0, 1), r * 0.05, -r * 0.18, 'rgba(255,255,255,0.10)'); });
+  P.clip(() => Nature.stormMask(puffs), () => P.rect(cx - 1e6, base - 1e5, 2e6, 1e5 + H * 0.08, P.lin(0, base, 0, base + H * 0.08, P.rgba(col.under, 0.9), P.rgba(col.under, 0))));
+  const hw0 = half(0.02); for (let i = 0; i <= 8; i++) { const x = cx - hw0 * 0.92 + (i / 8) * hw0 * 1.84 + (K.hash(i, seed + 30) - 0.5) * rMax * 0.4, r = rMax * (0.5 + 0.45 * K.hash(i, seed + 31)); P.circle(x, base + r * 0.3, r, P.lin(0, base - r * 0.3, 0, base + r, P.mixc(col.under, '#000000', 0.1), P.mixc(col.under, col.mid, 0.45)), { ry: r * 0.62 }); }
   return puffs;
 };
 // ---------- lightning ----------

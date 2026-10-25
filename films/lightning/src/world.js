@@ -37,7 +37,7 @@ function cows(t, look) {
 }
 // the screen-space storm ceiling (when the camera is low and the cloud base is out of frame)
 function ceiling(t, a, flash, baseY = 120) {
-  if (a <= 0) return; const by = clamp(baseY, -200, 700);
+  if (a <= 0) return; const by = clamp(baseY, 170, 700);
   P.screen((ctx) => { ctx.globalAlpha = a; ctx.fillStyle = P.mixc('#1c2050', '#9a96e0', flash * 0.6); ctx.fillRect(0, 0, 1920, Math.max(0, by - 60)); for (let row = 0; row < 3; row++) for (let i = -1; i < 14; i++) { const x = i * 160 + ((t * 6 * (row + 1)) % 160) + row * 50, y = by - 120 + row * 60 + hash(i, row) * 30, r = 110 + hash(i, row + 9) * 50; ctx.fillStyle = P.mixc(['#1c2050', '#262a62', '#30357a'][row], '#9a96e0', flash * 0.6); ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.6, 0, 0, 7); ctx.fill(); } ctx.globalAlpha = 1; });
 }
 // ---------- the cloud's inside (the cutaway): drops low, soft hail (graupel) in the middle, ice crystals high ----------

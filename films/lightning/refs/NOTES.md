@@ -16,3 +16,9 @@
   rain streaks; a violet-white jagged bolt with thin branches from the cloud, a bright short streamer rising from the top
   of a lone round tree (dark green crown of clustered puffs, short trunk, a soft glow at the crown where they meet); the
   farmhouse with a lit window and a fence on the right; dark grass silhouettes in the foreground.
+- cloud types (the user, 2026-10-25, three images; "these are different types of clouds, choose the better matching one"):
+  1) towering anime cumulus (CHOSEN for the storm: the cumulonimbus is a towering cumulus): billowing lobes with a crisp
+     bright rim on the upper-left edge of every lobe, soft white swoosh highlights (thick arcs fading at the ends) inside,
+     body gradient bright at the top to a deeper tone at the base, no outlines; 2) small flat icon clouds (flat base,
+     lighter puffs on top) -> for small fair-weather clouds only; 3) layered flat clouds with lighter lobes in front of a
+     darker band -> far clouds / sky layers.

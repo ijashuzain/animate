@@ -74,20 +74,22 @@ function fieldCam(t) {
   const tip = tipOf(LEAD, leaderReveal(t));
   if (t < T.lead - 0.01 || t >= T.home) {
     const keys = [[T.out, [-200, 3600], 8500], [T.in, [-200, 3600], 8500], [T.rise + 9.6, [-200, 5600], 14500], [T.zoomC, [-200, 5600], 14500], [T.zoomC + 1.5, [-200, 6300], 1700], [T.back, [-200, 6300], 1700],
-      [T.sort, [-200, 5600], 14500], [T.low, [-200, 5600], 14500], [T.low + 2.6, [-150, 900], 2600], [T.lead, [-150, 900], 2600], [T.D, [-150, 900], 2600]];
+      [T.sort, [-200, 5600], 14500], [T.low, [-200, 5600], 14500], [T.low + 2.6, [8, 62], 170], [T.lead, [8, 62], 170], [T.D, [8, 62], 170]];
     let i = 1; while (i < keys.length - 1 && t > keys[i][0]) i++;
     const a = keys[i - 1], b = keys[i], u = K.ease.inOut(K.inv(a[0], b[0], t));
     return { x: lerp(a[1][0], b[1][0], u), y: lerp(a[1][1], b[1][1], u), h: Math.exp(lerp(Math.log(a[2]), Math.log(b[2]), u)) };
   }
   // follow the leader down; then the close-up on the tree; the pull-out with the return stroke; the thunder
-  if (t < T.near) { const u = K.inv(T.lead, T.near, t), h = Math.exp(lerp(Math.log(2600), Math.log(420), K.ease.inOut(u))); return { x: lerp(-150, tip[0] * 0.5, u), y: Math.max(tip[1] - h * 0.15, h * 0.42), h }; }
+  if (t < T.near) { const u1 = tw(t, T.lead, T.lead + 2.5), u = K.inv(T.lead + 2.5, T.near, t), h = u > 0 ? Math.exp(lerp(Math.log(1700), Math.log(420), K.ease.inOut(u))) : Math.exp(lerp(Math.log(170), Math.log(1700), K.ease.inOut(u1))); return { x: u > 0 ? lerp(-60, tip[0] * 0.5, u) : lerp(8, -60, u1), y: u > 0 ? Math.max(tip[1] - h * 0.15, h * 0.42) : h * 0.42, h }; }
   if (t < T.ret + 0.3) { const u = K.ease.inOut(K.inv(T.near, T.near + 2.2, t)); return { x: lerp(tip[0] * 0.5, 16, u), y: lerp(Math.max(tip[1] - 63, 176), 27, u), h: Math.exp(lerp(Math.log(420), Math.log(58), u)) }; }
-  const u = K.ease.inOut(K.inv(T.ret + 0.3, T.ret + 3.3, t)), h = Math.exp(lerp(Math.log(58), Math.log(2300), u));
-  return { x: lerp(16, -130, u), y: lerp(27, 980, u), h: t > T.thunder ? h * (1 + 0.15 * tw(t, T.thunder, T.home)) : h };
+  const u = K.ease.inOut(K.inv(T.ret + 0.3, T.ret + 3.3, t)), h = Math.exp(lerp(Math.log(58), Math.log(400), u));
+  return { x: lerp(16, 10, u), y: lerp(27, 160, u), h: t > T.thunder ? h * (1 + 0.15 * tw(t, T.thunder, T.home)) : h };
 }
 function fieldScene(t) {
   const cam = fieldCam(t); P.cam(cam);
   const L = strokeLight(t), fl = L * (t > T.ret && t < T.ret + 0.6 ? 1 : 0.5);
+  // flashes flickering inside the cloud base before the strike (in-cloud lightning)
+  const icf = t > T.low + 1 && t < T.ret ? Math.max(...[0, 1, 2].map((i) => { const ph = (t * 0.9 + hash(i, 61)) % 1; return ph < 0.08 ? 1 - ph / 0.08 : 0; })) : 0;
   skyAndHills(t, P.toScreen(0, 0)[1], fl * 0.6);
   // the cloud: it builds while we rise; the near half opens as a cutaway; charges sort into layers
   const grow = lerp(0.3, 1, tw(t, T.rise, T.rise + 9)), puffs = Nature.stormPuffs(CLOUD.cx, CLOUD.base, { w: CLOUD.w * lerp(0.45, 1, grow), top: CLOUD.top, grow, anvil: 0.6 });
@@ -104,9 +106,11 @@ function fieldScene(t) {
   }
   // the field: grass, fence, barn, the lone tree, cows
   field(t, fl);
-  const barnTip = Props.barn(BARN.x, 0, 1, { lit: 0.85 });
-  Nature.oak(t, TREE.x, 0, TREE.h, { sway: 0.012 });
-  cows(t, t > T.near);
+  // in the wide views the tree, barn and cows are drawn larger than true scale so they stay readable (true scale up close)
+  const big = clamp(cam.h / 420, 1, 3.6);
+  Props.barn(BARN.x * big, 0, big, { lit: 0.85 });
+  Nature.oak(t, TREE.x, 0, TREE.h * big, { sway: 0.012 });
+  P.at(0, 0, 0, big, big, () => cows(t, t > T.near));
   // crackles at the cloud base before the strike
   if (t > T.low + 1 && t < T.lead + 2) for (let i = 0; i < 6; i++) { const ph = (t * 1.3 + hash(i, 1)) % 1; if (ph < 0.18) { const x = CLOUD.cx + (hash(i, 2) - 0.5) * 5000, p = Nature.boltPath(40 + i + Math.floor(t * 1.3), [x, 1500], [x + 120, 1350], 40); Nature.bolt(p, { alpha: 0.6 * (1 - ph / 0.18), px: 1.5, glow: C.leader, core: '#d8ccff', branchA: 0.4 }); } }
   // the strike: the stepped leader (faint violet), the streamers, the return stroke (white, up), re-strikes, afterglow
@@ -124,7 +128,8 @@ function fieldScene(t) {
   if (t > T.thunder) for (let k = 0; k < 3; k++) { const R = (t - T.thunder - k * 0.35) * 160; if (R <= 0) continue; const a = Math.max(0, 1 - R / 1200);
     P.alpha(a * 0.8, () => { for (const sgn of [-1, 1]) P.ribbon(LEAD.main.map(([x, y]) => [x + sgn * R, y]), 4 / P.k, 'rgba(230,225,255,0.55)'); P.ctx.save(); P.ctx.strokeStyle = 'rgba(230,225,255,0.55)'; P.ctx.lineWidth = 4 / P.k; P.ctx.beginPath(); P.ctx.ellipse(0, 0, R * 1.4, R * 0.35, 0, 0, Math.PI); P.ctx.stroke(); P.ctx.restore(); }); }
   // the storm ceiling and rain when we're low
-  ceiling(t, (t > T.low ? tw(t, T.low + 0.5, T.low + 2) : clamp((900 - cam.h) / 500)) * (t < T.home ? 1 : 0), fl, P.toScreen(0, CLOUD.base)[1]);
+  ceiling(t, (t > T.low ? tw(t, T.low + 0.5, T.low + 2) : clamp((900 - cam.h) / 500)) * (t < T.home ? 1 : 0), Math.max(fl, icf * 0.5), P.toScreen(0, CLOUD.base)[1]);
+  if (icf > 0) { const i = Math.floor(t * 0.9) % 5, sp = P.toScreen(-900 + hash(i, 62) * 1600, CLOUD.base); P.screen((ctx) => { const g = ctx.createRadialGradient(sp[0], Math.max(40, sp[1] - 60), 0, sp[0], Math.max(40, sp[1] - 60), 380); g.addColorStop(0, `rgba(210,200,255,${0.75 * icf})`); g.addColorStop(1, 'rgba(210,200,255,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, 1920, 1080); }); }
   Nature.rain(t, clamp((3000 - cam.h) / 2000) * 0.8);
   if (t > T.ret && t < T.ret + 1.2) P.haze('#f0ecff', 0.55 * Math.exp(-(t - T.ret) * 3));
   for (const r of T.re) if (t > r && t < r + 0.5) P.haze('#f0ecff', 0.35 * Math.exp(-(t - r) * 8));
@@ -136,6 +141,9 @@ function cutaway(t, puffs) {
   if (a <= 0) return;
   const cy = puffs.base + puffs.H * 0.45, k = 0.84, inner = puffs.map(([x, y, r]) => [puffs.cx + (x - puffs.cx) * k, cy + (y - cy) * k, r * k]); inner.poly = puffs.poly.map(([x, y]) => [puffs.cx + (x - puffs.cx) * k, cy + (y - cy) * k]);
   const R = Math.max(CLOUD.w, puffs.H) * 1.1 * K.ease.out(open), charged = tw(t, T.hits[0], T.back), sort = tw(t, T.sort, T.sort + 6, 'inOut');
+  // the cut edge: a lighter band just inside the cloud's outline, so the inside reads as sliced open
+  const rimK = 0.88, rim = puffs.map(([x, y, r]) => [puffs.cx + (x - puffs.cx) * rimK, cy + (y - cy) * rimK, r * rimK]); rim.poly = puffs.poly.map(([x, y]) => [puffs.cx + (x - puffs.cx) * rimK, cy + (y - cy) * rimK]);
+  P.alpha(a, () => P.clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => P.clip(() => Nature.stormMask(rim), () => P.rect(puffs.cx - 2e4, 0, 4e4, 2e4, P.lin(0, puffs.base, 0, puffs.base + puffs.H, '#7a80c8', '#b0b4ec')))));
   P.alpha(a, () => P.clip(() => Nature.stormMask(inner), () => P.clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => {
     P.rect(puffs.cx - 2e4, 0, 4e4, 2e4, P.lin(0, puffs.base, 0, puffs.base + puffs.H, P.mixc(C.inner, '#2e5ab8', sort * 0.6), P.mixc(C.inner, '#a85aa8', sort * 0.6)));
     if (sort > 0) { P.glow(puffs.cx, puffs.base + puffs.H * 0.86, CLOUD.w * 0.8, C.plus, 0.35 * sort); P.glow(puffs.cx, puffs.base + puffs.H * 0.14, CLOUD.w * 0.9, C.minus, 0.35 * sort); }
