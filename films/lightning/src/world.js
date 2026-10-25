@@ -66,24 +66,69 @@ function ruler(x, top, a) {
 }
 // the farmhouse for the porch view (metres): walls, roof, a porch, a lit window (the family inside), the door
 function farmhouse(t, x, lit, shake) {
+  // a farmhouse in a three-quarter view (metres): the front gable faces us, the side wall runs back to the right in
+  // shade; clapboard siding, a shingled roof with an overhang shadow, stone foundation, chimney, porch with steps,
+  // railing and a lamp, trimmed windows; dusk light from the left, warm light from the windows
+  const D = [3.4, 0.9];   // the depth direction (back and up, to the right)
   P.at(x + shake, 0, 0, 1, 1, () => {
-    P.rect(-6, 0, 12, 5.6, P.lin(-6, 0, 6, 0, '#e9dcc6', '#cdbca4'));
-    for (let i = 0; i < 9; i++) P.rect(-6, 0.6 + i * 0.6, 12, 0.05, 'rgba(0,0,0,0.08)');
-    P.poly([[-7, 5.4], [7, 5.4], [0, 9.2]], P.lin(0, 9.2, 0, 5.4, '#5a4a6a', '#3a2e48')); P.rect(2.6, 6.6, 0.9, 2.2, '#6a4a3a');
-    P.rect(-1.0, 0, 2.0, 3.1, '#6a3e2c', { r: 0.1 }); P.circle(0.6, 1.5, 0.08, '#e8c060');
-    // the porch roof and posts
-    P.rect(-2.2, 3.4, 4.4, 0.25, '#4a3a3a'); for (const k of [-2, 2]) P.rect(k - 0.08, 0, 0.16, 3.4, '#f2ece2');
+    const front = '#efe2c8', frontD = '#d6c4a4', side = '#a99a8a', sideD = '#8a7c70', trim = '#f6f0e4', roof = '#4e4262', roofD = '#372d4a', roofL = '#6a5c80';
+    // ground shadow and warm spill on the grass
+    P.poly([[-6.6, 0], [6 + D[0] + 0.6, D[1] * 0.4], [6 + D[0] + 2.2, -0.6], [-6.2, -1.0]], 'rgba(10,10,30,0.28)');
+    P.glow(-3.2, -0.2, 3.2, '255,190,110', 0.18);
+    // the side wall (in shade), its siding, a side window glowing
+    const sw = [[6, 0], [6 + D[0], D[1]], [6 + D[0], 5.6 + D[1]], [6, 5.6]];
+    P.poly(sw, P.lin(6, 0, 6 + D[0], 0, side, sideD));
+    for (let i = 1; i < 10; i++) P.ribbon([[6, i * 0.56], [6 + D[0], i * 0.56 + D[1]]], 0.04, 'rgba(0,0,0,0.12)');
+    P.poly([[7.2, 2.0 + 0.32], [8.4, 2.0 + 0.64], [8.4, 3.8 + 0.64], [7.2, 3.8 + 0.32]], '#ffcf7a'); P.ribbon([[7.8, 2.48], [7.8, 4.28]], 0.08, trim);
+    P.glow(7.8, 3.3, 1.6, '255,200,120', 0.3);
+    P.poly([[6, 0], [6 + D[0], D[1]], [6 + D[0], D[1] + 0.5], [6, 0.5]], '#6e6466');                       // foundation, side
+    // the side roof plane (going back), shingle rows, the ridge
+    const ridge = [0, 9.3], eaveR = [7.1, 5.3];
+    P.poly([ridge, [ridge[0] + D[0], ridge[1] + D[1]], [eaveR[0] + D[0], eaveR[1] + D[1]], eaveR], P.lin(0, 9.3, 7, 5.3, roofL, roof));
+    for (let k = 1; k < 7; k++) { const u = k / 7, p0 = [lerp(ridge[0], eaveR[0], u), lerp(ridge[1], eaveR[1], u)]; P.ribbon([p0, [p0[0] + D[0], p0[1] + D[1]]], 0.05, 'rgba(0,0,0,0.18)'); }
+    P.ribbon([ridge, [ridge[0] + D[0], ridge[1] + D[1]]], 0.14, roofL);
+    // the chimney (on the side roof), brick with a cap, a curl of smoke
+    P.rect(3.9, 7.6, 0.9, 2.9, P.lin(3.9, 0, 4.8, 0, '#8a4a3a', '#6a3428')); P.rect(3.8, 10.4, 1.1, 0.25, '#5a2e24');
+    for (let i = 0; i < 4; i++) P.rect(3.9, 8.0 + i * 0.6, 0.9, 0.05, 'rgba(0,0,0,0.2)');
+    for (let i = 0; i < 3; i++) { const u = (t * 0.25 + i / 3) % 1; P.alpha(Math.sin(u * Math.PI) * 0.18, () => P.circle(4.35 + u * 1.2 + Math.sin(t + i) * 0.2, 10.9 + u * 2.0, 0.22 + u * 0.35, '#c8c4d8')); }
+    // the front wall: clapboard siding (light on the left), foundation stones
+    P.rect(-6, 0, 12, 5.6, P.lin(-6, 0, 6, 0, front, frontD));
+    for (let i = 1; i < 10; i++) { P.rect(-6, i * 0.56, 12, 0.045, 'rgba(0,0,0,0.10)'); P.rect(-6, i * 0.56 + 0.045, 12, 0.03, 'rgba(255,255,255,0.18)'); }
+    P.rect(-6.1, 0, 12.2, 0.5, '#7a7072'); for (let i = 0; i < 14; i++) P.rect(-6 + i * 0.88 + (i % 2) * 0.2, 0.05, 0.78, 0.4, i % 3 ? '#8a8082' : '#6e6466', { r: 0.08 });
+    // corner boards
+    P.rect(-6.1, 0.5, 0.25, 5.1, trim); P.rect(5.85, 0.5, 0.25, 5.1, P.mixc(trim, '#000000', 0.12));
+    // the gable: wall triangle with siding, a round attic window, the roof's front edge with a deep overhang shadow
+    P.poly([[-6, 5.6], [6, 5.6], [0, 9.0]], P.lin(-6, 0, 6, 0, front, frontD));
+    P.clip(() => P.trace([[-6, 5.6], [6, 5.6], [0, 9.0]], true, 0), () => { for (let i = 0; i < 6; i++) P.rect(-6, 5.6 + i * 0.56, 12, 0.045, 'rgba(0,0,0,0.10)'); });
+    P.poly([[-6, 5.6], [6, 5.6], [5.5, 5.3], [-5.5, 5.3]], 'rgba(0,0,0,0.0)');
+    P.poly([[-6.4, 5.6], [0, 9.2], [0, 8.75], [-5.7, 5.55]], 'rgba(20,10,30,0.25)');                         // overhang shadow
+    P.circle(0, 7.2, 0.62, trim); P.circle(0, 7.2, 0.48, lit ? '#ffcf7a' : '#3a3450'); P.ribbon([[-0.48, 7.2], [0.48, 7.2]], 0.07, trim);
+    P.ribbon([[-7.1, 5.3], [0, 9.4], [7.1, 5.3]], 0.42, roofD); P.ribbon([[-7.1, 5.42], [0, 9.55], [7.1, 5.42]], 0.12, roofL);
+    // the porch: a deck, two steps, posts, railing, a shallow roof, a lamp by the door
+    P.rect(-2.8, 0.5, 5.6, 0.3, '#8a6a52'); P.rect(-1.0, 0, 2.0, 0.25, '#7a5a44'); P.rect(-1.2, 0.25, 2.4, 0.25, '#8a6a52');
+    P.rect(-1.0, 0.8, 2.0, 3.0, '#6a3e2c', { r: 0.1 }); P.rect(-0.8, 2.3, 1.6, 1.2, 'rgba(255,207,122,0.55)', { r: 0.06 }); P.circle(0.65, 1.9, 0.09, '#e8c060');
+    P.ribbon([[-1.0, 3.8], [1.0, 3.8]], 0.12, trim);
+    for (const k of [-2.6, 2.6]) { P.rect(k - 0.1, 0.8, 0.2, 3.4, trim); P.rect(k - 0.02, 0.8, 0.04, 3.4, 'rgba(0,0,0,0.12)'); }
+    for (const side2 of [-1, 1]) { P.rect(side2 > 0 ? 1.0 : -2.6, 1.8, 1.6, 0.1, trim); for (let i = 0; i < 6; i++) P.rect((side2 > 0 ? 1.1 : -2.5) + i * 0.27, 0.8, 0.06, 1.0, trim); }
+    P.poly([[-3.2, 4.2], [3.2, 4.2], [2.9, 4.65], [-2.9, 4.65]], roofD); P.rect(-3.2, 4.05, 6.4, 0.15, trim);
+    P.poly([[-3.0, 4.05], [3.0, 4.05], [2.6, 3.75], [-2.6, 3.75]], 'rgba(20,10,30,0.25)');
+    P.rect(1.25, 2.9, 0.22, 0.34, '#3a3030'); P.circle(1.36, 3.0, 0.11, '#ffe0a0'); P.glow(1.36, 3.0, 1.4, '255,210,140', 0.55);
+    // bushes along the front (one soft shape each: dark under, body, light top)
+    for (const [bx, br] of [[-5.2, 0.9], [-3.6, 0.7], [3.7, 0.75], [5.3, 0.95]]) { P.circle(bx, br * 0.55, br, '#1f3a2a', { ry: br * 0.7 }); P.circle(bx, br * 0.7, br * 0.92, '#2f5a3a', { ry: br * 0.62 }); P.circle(bx - br * 0.25, br * 0.95, br * 0.45, '#3f7048', { ry: br * 0.28 }); }
   });
 }
 // the family at the window (drawn into the window's clip): an adult and a kid looking out, warm light behind them
 function windowWithFamily(t, x, shake, look) {
-  const wx = x - 4.2 + shake, wy = 1.6, ww = 2.4, wh = 2.2;
+  const wx = x - 4.4 + shake, wy = 1.7, ww = 2.4, wh = 2.2;
   P.rect(wx - 0.15, wy - 0.15, ww + 0.3, wh + 0.3, '#f2ece2');
   P.clip(() => { P.ctx.beginPath(); P.ctx.rect(wx, wy, ww, wh); }, () => {
     P.rect(wx, wy, ww, wh, P.lin(0, wy, 0, wy + wh, '#ffb860', '#ffe0a0'));
     P.at(0, 1.35, 0, 1, 1, () => { Cast.person(t, wx + 0.75, 1.5, { kid: false, shirt: '#4f7fc4', pose: 'stand', look, seed: 1 }); Cast.person(t, wx + 1.75, 1.25, { kid: true, shirt: '#e35d4f', pose: 'stand', look, seed: 4 }); });
   });
   P.rect(wx + ww / 2 - 0.05, wy, 0.1, wh, '#f2ece2'); P.rect(wx, wy + wh / 2 - 0.05, ww, 0.1, '#f2ece2');
+  P.rect(wx - 0.35, wy - 0.3, ww + 0.7, 0.18, '#e8e0d0'); P.rect(wx - 0.35, wy - 0.12, ww + 0.7, 0.06, 'rgba(0,0,0,0.2)');
+  P.rect(wx - 0.25, wy + wh + 0.15, ww + 0.5, 0.2, '#e8e0d0');
+  for (const sx of [wx - 0.75, wx + ww + 0.2]) { P.rect(sx, wy - 0.1, 0.55, wh + 0.2, '#3f6a6a'); for (let i = 0; i < 6; i++) P.rect(sx + 0.06, wy + i * 0.38, 0.43, 0.06, 'rgba(0,0,0,0.2)'); }
   P.glow(wx + ww / 2, wy + wh / 2, 3.2, '255,200,120', 0.35);
   return [wx + ww / 2, wy + wh + 0.4];
 }
