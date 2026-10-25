@@ -5,7 +5,7 @@ A real cross-section of northern Arizona in one frame, like the island film. Hoo
 1.8 km deep; "let's rewind" to an empty sea floor 1.8 billion years ago. Then the real sequence, labelled with real ages:
 the dark basement rock, the layers laid down one by one (seas, a coastline, a desert of giant dunes, a sea again), the whole
 block lifted by plate tectonics, the Colorado River finding its path and cutting down, and the walls widening by frost,
-flash floods and rockfalls. Small living characters in the real scene: trilobites in the early sea, a sand lizard leaving
+flash floods and rockfalls. Small living characters in the real scene: trilobites in the early sea, a small mammal relative leaving
 tracks in the dune desert (fossilised tracks are real in the Coconino), ravens and a condor over the canyon, rafters at the end.
 
 ## Look
@@ -19,7 +19,7 @@ Coconino cliff band, cream Kaibab rim). Warm desert light; a day/night cycle tha
 | 12-24 | The oldest rock at the bottom is about 1.8 billion years old: the roots of ancient mountains, squeezed and baked into dark schist. | the basement rock forms: mountains rise, wear flat; the dark schist with pink granite veins |
 | 24-38 | Then the sea came in, again and again. Sand, mud and shells settled in flat layers, each one a page of time. | waves sweep in; layers stack (Tapeats, Bright Angel, Muav); trilobites crawl on the floor, then become fossils in the layer |
 | 38-50 | Around 340 million years ago a warm sea left the thick limestone that stains red today. | the Redwall layer: corals, crinoids swaying; it settles; iron from above stains it red |
-| 50-62 | Later, the coast turned into a desert of giant dunes, and a little lizard left footprints that are still there, turned to stone. | dunes march across; a lizard walks a slope; its tracks get buried and harden into the pale Coconino band |
+| 50-62 | Later, the coast turned into a desert of giant dunes, and a small four-legged cousin of mammals left footprints that are still there, turned to stone. | dunes march across; a small synapsid, a scorpion and a millipede walk a slope leaving trails; the slope turns to pale stone with cross-bedding and the tracks still in it (the Coconino) |
 | 62-72 | Then one more sea, and the top layer, the Kaibab limestone, about 270 million years old. Our cake of rock is complete. | the last layer; sea retreats; plants and dinosaurs pass on top briefly (layers above, later eroded away) |
 | 72-84 | Then the whole region was pushed up, more than two kilometres, flat, like a lift with the layers on top. | the block rises as one; label "Colorado Plateau"; the land surface gets higher and drier |
 | 84-86.5 | (silence) | the plateau under the stars, flat and quiet |

@@ -62,7 +62,7 @@ function canyonScene(t) {
   pill('about 1.8 km deep, carved by this river', 960, 236, tw(t, 2.5, 3) * (1 - tw(t, T.read - 0.5, T.read)), { size: 34 });
   for (let i = 0; i < 3; i++) { const dir = i % 2 ? -1 : 1, u = (t * 0.035 + K.hash(i, 40)) % 1, x = dir > 0 ? lerp(-150, 2070, u) : lerp(2070, -150, u); P.screen(() => P.at(x, 260 + i * 70 + Math.sin(t + i) * 12, 0, 1, -1, () => Animals.bird(t, 0, 0, [1.3, 0.8, 0.6][i], i ? 'raven' : 'condor', { fly: true, dir }))); }
   // foreground: a cactus clump and grass in the near corner (refs/view-river) while we're down in the canyon
-  if (t < T.fill) P.screen(() => { P.at(150, 1080, 0, 1, -1, () => { for (const [x, h] of [[-60, 260], [40, 340], [140, 220]]) Nature.cactus(x, 0, h, { col: '#4a8a5a' }); for (let i = 0; i < 9; i++) Nature.grass(t, -120 + i * 40, 0, 50 + (i % 3) * 20, { col: '#7a9a4a' }); }); });
+  if (t < T.fill) flora(t);
   pill(clockText(t), 330, 90, tw(t, 0.3, 0.8), { icon: CLOCK, size: 38 });
   P.vignette(0.28);
 }
@@ -71,14 +71,15 @@ const FILM = {
     for (const [a, b, kind] of WIN) {
       if (t > a - 0.4 && t < b + 0.4) {
         const inWin = t >= a && t < b;
-        if (inWin) { if (kind === 'dune') duneWindow(t, a); else if (kind === 'river') riverWindow(t, a); else seaWindow(t, kind); }
+        if (inWin) { if (kind === 'dune') duneScene(t, a); else if (kind === 'river') raftScene(t, a); else seaLife(t, kind); }
         else canyonScene(t);
         const d = t < a ? K.inv(a - 0.4, a, t) : t < a + 0.4 ? 1 - K.inv(a, a + 0.4, t) : t > b ? 1 - K.inv(b, b + 0.4, t) : t > b - 0.4 ? K.inv(b - 0.4, b, t) : 0;
         if (d > 0) P.haze('#120a14', d);
         if (inWin) {
           const lab = { cambrian: 'the lowest layers: a shallow sea, about 515 million years ago', redwall: 'the red band: a warm sea, about 340 million years ago', dune: 'the pale band: a desert of giant dunes, about 275 million years ago', river: 'today' }[kind];
           pill(lab, 960, kind === 'river' ? 120 : 980, tw(t, a + 0.5, a + 1) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 34 });
-          if (kind === 'dune') pill('its footprints are still there, in the stone', 1200, 640, tw(t, a + 4.5, a + 5) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 32, weight: 700 });
+          if (kind === 'dune') pill('an early cousin of mammals', 900, 700, tw(t, a + 1.4, a + 1.9) * (1 - tw(t, a + 4.6, a + 5)), { size: 30, weight: 700 });
+          if (kind === 'dune') pill('its footprints are still there, in the stone', 1200, 640, tw(t, a + 6.4, a + 6.9) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 32, weight: 700 });
         }
         return;
       }

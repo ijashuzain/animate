@@ -10,7 +10,7 @@ V3.jut = (Z, side) => 1 + 0.34 * Math.sin(Z / 1300 + side * 1.7) + 0.16 * Math.s
 V3.profile = (cut, widen) => {
   const bottom = lerp(RIM, RIVER, cut), out = [];
   for (const [x, y] of WALL) { if (y < bottom) continue; out.push([lerp(40 + (y - bottom) * 0.32, x, widen), y]); }
-  out.unshift([lerp(10, 110, widen), bottom]);
+  out.unshift([lerp(10, 170, widen), bottom]);
   return out;
 };
 // the colour of rock at height y (the layers; the basement below 0), as base / light / shade
@@ -29,12 +29,12 @@ V3.proj = (c, X, Y, Z) => {
 };
 // draw the terrain. o: { cut, widen, haze (rgb hex), sun: [lx, ly, lz] light direction, warm 0..1, zFar, slices, plants }
 V3.draw = (t, c, o) => {
-  const prof = V3.profile(o.cut, o.widen), zN = Math.max(60, c.z + 60), zF = o.zFar ?? 42000, N = o.slices ?? 70;
+  const prof = V3.profile(o.cut, o.widen).map(([x, y]) => [x * (o.gorge ?? 1) + (o.gorge ? 600 * clamp((y - RIVER) / 600) * (o.gorge - 1) : 0), y]), zN = Math.max(60, c.z + 60), zF = o.zFar ?? 42000, N = o.slices ?? 70;
   const L = o.sun ?? [0.62, 0.5, -0.6], Ln = Math.hypot(...L), haze = o.haze ?? '#e8b8b0';
   const sideX = 14000;
   // cross-section points for one slice at depth Z (both walls, the river between, the plateau out to sideX)
   const zj = (Z, j, s) => (K.hash(Math.round(Z), j * 7 + s) - 0.5);
-  const slice = (Z) => { const cx = V3.center(Z), bot = lerp(RIM, RIVER, o.cut) + 1, R = prof.map(([x, y], j) => [cx + x * V3.jut(Z, 1) * (1 + zj(Z, j, 1) * 0.08), y + (y > bot && y < RIM - 5 ? zj(Z, j, 2) * 30 : 0)]), Lw = prof.map(([x, y], j) => [cx - x * V3.jut(Z, -1) * (1 + zj(Z, j, 3) * 0.08), y + (y > bot && y < RIM - 5 ? zj(Z, j, 4) * 30 : 0)]);
+  const slice = (Z) => { const cx = V3.center(Z), bot = lerp(RIM, RIVER, o.cut) + 1, R = prof.map(([x, y], j) => [cx + x * V3.jut(Z, 1) * (1 + (j ? zj(Z, j, 1) * 0.08 : 0)), y + (y > bot && y < RIM - 5 ? zj(Z, j, 2) * 30 : 0)]), Lw = prof.map(([x, y], j) => [cx - x * V3.jut(Z, -1) * (1 + (j ? zj(Z, j, 3) * 0.08 : 0)), y + (y > bot && y < RIM - 5 ? zj(Z, j, 4) * 30 : 0)]);
     return [[cx - sideX, RIM], ...Lw.slice().reverse(), ...R, [cx + sideX, RIM]].map(([x, y]) => [x, y, Z]); };
   const zs = []; for (let i = 0; i <= N; i++) zs.push(c.z + 60 * Math.pow((zF - c.z) / 60, i / N));
   let far = slice(zs[N]);
@@ -53,6 +53,7 @@ V3.draw = (t, c, o) => {
         let col;
         if (water) col = P.mixc('#3fc6c8', '#a8f0e0', 0.3 + 0.2 * Math.sin(t * 2 + i));
         else if (flat) col = P.mixc(ym > RIM - 5 ? '#e8956a' : P.mixc(V3.rockAt(ym), '#f2b890', 0.4), '#ffe0c0', 0.1 + 0.1 * K.hash(i, j));
+        else if (o.cut > 0.9 && ym < lerp(RIM, RIVER, o.cut) + 70) col = P.mixc('#e8c08a', '#6a8a4a', K.hash(i, j) > 0.7 ? 0.5 : 0);
         else { const base = V3.rockAt(ym), k = clamp(0.5 + lit * 1.05 + (K.hash(i * 7, j) - 0.5) * 0.16); col = k > 0.5 ? P.mixc(base, '#ffd09a', (k - 0.5) * 0.9) : P.mixc(base, '#3a1e58', (0.5 - k) * 1.4); }
         col = P.mixc(col, haze, fog * 0.5);
         ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = 1;

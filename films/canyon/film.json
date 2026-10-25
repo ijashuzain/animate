@@ -17,6 +17,7 @@
   "src": [
     "src/world.js",
     "src/view.js",
+    "src/life.js",
     "src/film.js"
   ],
   "audio": [
@@ -64,7 +65,7 @@
     ],
     [
       44.5,
-      "A lizard's footprints, still there in the stone"
+      "Its footprints, still there in the stone"
     ],
     [
       49,
