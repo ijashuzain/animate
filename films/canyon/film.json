@@ -1,0 +1,113 @@
+{
+  "title": "How a River Carved the Grand Canyon",
+  "duration": 130,
+  "fps": 30,
+  "fonts": [
+    {
+      "family": "Baloo 2",
+      "file": "studio/fonts/Baloo2[wght].ttf"
+    }
+  ],
+  "kit": [
+    "kit/cast.js",
+    "kit/nature.js",
+    "kit/props.js",
+    "kit/animals.js"
+  ],
+  "src": [
+    "src/world.js",
+    "src/film.js"
+  ],
+  "audio": [
+    {
+      "id": "music",
+      "src": "audio/music.wav",
+      "start": 0,
+      "volume": 1
+    },
+    {
+      "id": "sfx",
+      "src": "audio/sfx.wav",
+      "start": 0,
+      "volume": 1
+    }
+  ],
+  "board": [
+    [
+      2,
+      "Hook: the canyon today at sunset, 1.8 km deep"
+    ],
+    [
+      8.5,
+      "Rewind: the layers vanish, back 1.8 billion years"
+    ],
+    [
+      15,
+      "Ancient mountains on the dark basement rock"
+    ],
+    [
+      21,
+      "Worn flat"
+    ],
+    [
+      26.5,
+      "The sea comes in: the first layers settle"
+    ],
+    [
+      31,
+      "Window: trilobites on the shallow sea floor"
+    ],
+    [
+      37,
+      "Layer on layer: sandstone, shale, limestone"
+    ],
+    [
+      44,
+      "Window: the warm Redwall sea, crinoids and corals"
+    ],
+    [
+      49,
+      "The Redwall stands red"
+    ],
+    [
+      55,
+      "Window: a lizard crosses the dune desert"
+    ],
+    [
+      60.6,
+      "Its footprints harden into the Coconino"
+    ],
+    [
+      67,
+      "The last sea leaves the Kaibab rim"
+    ],
+    [
+      78,
+      "The whole block is pushed up about 2 km"
+    ],
+    [
+      85,
+      "Silence: the plateau under the stars"
+    ],
+    [
+      93,
+      "The river cuts down, grain by grain"
+    ],
+    [
+      104,
+      "Frost, flash floods, rockfalls widen the walls"
+    ],
+    [
+      116,
+      "Hard rock cliffs, soft rock slopes: stairs"
+    ],
+    [
+      120,
+      "About 1.8 km deep"
+    ],
+    [
+      126,
+      "Today: rafters on the river, a condor overhead"
+    ]
+  ]
+}
