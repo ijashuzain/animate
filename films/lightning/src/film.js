@@ -34,14 +34,14 @@ const FAR = { x: 7.2, y: 1.25, sc: 1 / 1500 };
 function porch(t) {
   const end = t > T.home, cam = { x: 2, y: 5.4, h: end ? lerp(15.4, 14.8, tw(t, T.porch, T.D)) : lerp(15.8, 15, tw(t, 0, T.bang)) };
   const shake = (t > T.bang ? Math.exp(-(t - T.bang) * 4) * Math.sin(t * 70) * 0.06 : 0) + (end && t > T.arrive ? Math.exp(-(t - T.arrive) * 4) * Math.sin(t * 70) * 0.05 : 0);
-  if (t > T.out && t < T.in) { const z = K.ease.in(K.inv(T.out, T.in, t)); cam.x = lerp(cam.x, FAR.x + CLOUD.cx * FAR.sc, z); cam.y = lerp(cam.y, FAR.y + 3600 * FAR.sc, z); cam.h = Math.exp(lerp(Math.log(cam.h), Math.log(8500 * FAR.sc), z)); }
+  if (t > T.out && t < T.in) { const z = K.ease.in(K.inv(T.out, T.in, t)); cam.x = lerp(cam.x, FAR.x + CLOUD.cx * FAR.sc, z); cam.y = lerp(cam.y, FAR.y + 1.4 + 3600 * FAR.sc, z); cam.h = Math.exp(lerp(Math.log(cam.h), Math.log(8500 * FAR.sc), z)); }
   cam.x += shake; P.cam(cam);
   const fl = end ? 0 : flashAt(t);
   skyAndHills(t, P.toScreen(0, FAR.y)[1], fl);
   // the far storm and the lone tree on the horizon (about 3 km away)
-  P.at(FAR.x, FAR.y, 0, FAR.sc, FAR.sc, () => Nature.stormCloud(t, CLOUD.cx, CLOUD.base, { w: CLOUD.w, top: CLOUD.top, anvil: 0.6, col: { top: P.mixc('#5c5f9e', '#d8d0ff', fl), mid: P.mixc('#383b78', '#b0a8f0', fl), under: '#1e2048' } }));
+  P.at(FAR.x, FAR.y + 1.4, 0, FAR.sc, FAR.sc, () => Nature.stormCloud(t, CLOUD.cx, CLOUD.base, { w: CLOUD.w, top: CLOUD.top, anvil: 0.6, col: { top: P.mixc('#5c5f9e', '#d8d0ff', fl), mid: P.mixc('#383b78', '#b0a8f0', fl), under: '#1e2048' } }));
   Nature.oak(t, FAR.x, FAR.y - 0.05, 0.75, { col: '#24402e', dark: '#18301f', light: '#2f5238', sway: 0 }); Props.barn(FAR.x + 1.1, FAR.y - 0.04, 0.05, { lit: 0.8 });
-  if (fl > 0.05) { const path = Nature.boltPath(4, [FAR.x - 0.25, FAR.y + CLOUD.base * FAR.sc], [FAR.x, FAR.y + 0.68], 0.12); Nature.bolt(path, { alpha: Math.min(1, fl * 1.8), px: 5, glow: C.bolt }); P.glow(FAR.x, FAR.y + 0.3, 2, '200,190,255', fl); }
+  if (fl > 0.05) { const path = Nature.boltPath(4, [FAR.x - 0.35, FAR.y + 1.4 + CLOUD.base * FAR.sc], [FAR.x, FAR.y + 0.68], 0.16); Nature.bolt(path, { alpha: Math.min(1, fl * 1.8), px: 5, glow: C.bolt }); P.glow(FAR.x, FAR.y + 0.3, 2, '200,190,255', fl); }
   // the ground plane up to the horizon, the near yard
   P.poly([[-40, -6], [40, -6], [40, FAR.y], [-40, FAR.y]], P.lin(0, FAR.y, 0, -2, P.mixc('#2a4a3a', '#6a8ab0', fl * 0.5), '#1e3a28'));
   for (let i = 0; i < 40; i++) Nature.grass(t, -14 + i * 0.8 + hash(i, 3) * 0.4, -0.1 - hash(i, 4) * 0.6, 0.35 + hash(i, 5) * 0.2, { col: '#2f5a3a' });
