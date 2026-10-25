@@ -6,6 +6,14 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 ---
 
 
+
+## 2026-10-25: thumbnails, clouds, the house (the user's notes)
+- Thumbnails follow the user's reference grid exactly (studio/references/thumbs/STYLE.md): hook headline on top, one big hero,
+  saturated and dark, a red arrow. The tool does the grade, focus spotlight, arrows, labels and headline.
+- Clouds: a thunderstorm cloud is a towering cumulus (broad flat base, uneven cauliflower towers); never a T/anvil
+  silhouette; lobes get a bright rim on top (the anime-cumulus reference). Pick the cloud TYPE that matches the weather.
+- Buildings need depth: a three-quarter view (lit front, shaded side), roof planes with rows, trim, porch, lights.
+
 ## 2026-10-22: the cat film (storyboard + draft notes)
 - **YouTube metadata ships with every final** (the user asked for it after the cat delivery): youtube/metadata.md
   with chapters, tags, category, pinned comment (CLAUDE.md step 9).

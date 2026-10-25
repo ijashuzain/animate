@@ -70,7 +70,9 @@ function porch(t) {
   if (fl > 0) P.haze('#e8e4ff', fl * 0.35);
 }
 // ---------- the field (metres): the cloud, the cutaway, the strike ----------
+let THUMBCAM = null;
 function fieldCam(t) {
+  if (THUMBCAM) return THUMBCAM;
   const tip = tipOf(LEAD, leaderReveal(t));
   if (t < T.lead - 0.01 || t >= T.home) {
     const keys = [[T.out, [-200, 3600], 8500], [T.in, [-200, 3600], 8500], [T.rise + 9.6, [-200, 5600], 14500], [T.zoomC, [-200, 5600], 14500], [T.zoomC + 1.5, [-1000, 5200], 1700], [T.back, [-1000, 5200], 1700],
@@ -195,6 +197,8 @@ function labels(t, cam) {
   pill('the air heats to about 30,000 °C and bursts outward', 960, 980, tw(t, T.thunder + 0.4, T.thunder + 0.9) * (1 - tw(t, T.home - 1.2, T.home - 0.6)), { size: 34 });
 }
 const FILM = {
+  // the thumbnail: the return stroke blazing up out of the lone tree, close and big (studio/references/thumbs/STYLE.md)
+  thumb() { THUMBCAM = { x: 3, y: 24, h: 52 }; fieldScene(T.ret + 0.9); P.cam(THUMBCAM); P.glow(TREE_TOP[0], TREE_TOP[1], 18, '220,210,255', 0.9); Nature.bolt(LEAD, { reveal: 1, px: 14, glow: '200,190,255', core: '#ffffff', branchA: 1 }); THUMBCAM = null; },
   draw(t) {
     if (t < T.out) { porch(t); return; }
     if (t < T.in) { const u = K.inv(T.out, T.in, t); porch(t); P.layer(K.ease.inOut(u), () => fieldScene(t)); return; }

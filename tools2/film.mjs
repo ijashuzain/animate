@@ -7,7 +7,8 @@
 //   node tools2/film.mjs <slug> board                   the storyboard check: film.json board [[t, label], ...] -> stills/board.png
 //                                                       (one image of every major scene, numbered, for the user's notes BEFORE the draft)
 //   node tools2/film.mjs <slug> clean                   delete the generated files (hf/, renders/, stills/, audio/*.wav) once delivered
-//   node tools2/film.mjs <slug> thumb                   film.json thumb { t, lines: [[text, size, colour]], font } -> youtube/thumbnail.png 1280x720
+//   node tools2/film.mjs <slug> thumb                   film.json thumb (studio/references/thumbs/STYLE.md: title, accent, arrows, labels,
+//                                                       t/zoom/shift or FILM.thumb) -> youtube/thumbnail.png 1280x720; style 'old' = the earlier side-text look
 // films/<slug>/film.json: { title, duration, fps, fonts: [{ family, file }], src: [files], audio: [{ id, src, start, volume }] }
 // A film's scripts define FILM = { draw(t) } on a 1920x1080 canvas, using kit/motion.js (K) and kit/paint.js (P).
 import fs from 'node:fs';
@@ -148,8 +149,48 @@ else if (mode === 'thumb') {
   const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   await page.goto(pathToFileURL(path.join(HF, 'index.html')).href);
   await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
+  // the thumbnail font (Fredoka, heavy, a little condensed) is loaded from studio/fonts, whatever the film uses
+  if ((T.style ?? 'banner') === 'banner') { await page.addStyleTag({ content: `@font-face { font-family: ThumbHead; src: url(${pathToFileURL(path.join(ROOT, 'studio/fonts/Fredoka[wdth,wght].ttf')).href}); font-weight: 300 700; font-stretch: 75% 125%; }` }); await page.evaluate(() => document.fonts.load('700 100px ThumbHead')); }
   const url = await page.evaluate((T) => {
-    window.THUMB = true; window.drawAt(T.t); const c = document.getElementById('c'), g = c.getContext('2d');
+    window.THUMB = true;
+    const c = document.getElementById('c'), g = c.getContext('2d');
+    if (T.style === 'old') { window.drawAt(T.t); return legacy(T); }
+    // 1) the picture: a dedicated FILM.thumb composition, or a frame of the film, reframed
+    if (typeof FILM.thumb === 'function') { P.begin(g); FILM.thumb(g, T); } else window.drawAt(T.t);
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; const tg = tmp.getContext('2d'); tg.drawImage(c, 0, 0);
+    const z = Math.max(1, T.zoom ?? 1), mx = 960 * (z - 1), my = 540 * (z - 1), sx = Math.max(-mx, Math.min(mx, (T.shift ?? [0, 0])[0])), sy = Math.max(-my, Math.min(my, (T.shift ?? [0, 0])[1]));
+    // 2) the colour push: saturated, contrasty (the reference grid is much more saturated than a film frame)
+    const gr = Object.assign({ sat: 1.35, contrast: 1.15, bright: 1.0 }, T.grade ?? {});
+    g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.filter = `saturate(${gr.sat}) contrast(${gr.contrast}) brightness(${gr.bright})`; g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore();
+    // focus: darken everything outside a spotlight on the hero (the reference grid's dark backgrounds)
+    if (T.focus) { const [fx, fy, fr, fa = 0.7] = T.focus; const f = g.createRadialGradient(fx, fy, fr * 0.55, fx, fy, fr * 1.6); f.addColorStop(0, 'rgba(8,6,28,0)'); f.addColorStop(1, `rgba(8,6,28,${fa})`); g.fillStyle = f; g.fillRect(0, 0, 1920, 1080); }
+    // 3) vignette and a dark band at the top behind the headline
+    let v = g.createRadialGradient(960, 600, 380, 960, 600, 1250); v.addColorStop(0, 'rgba(5,4,20,0)'); v.addColorStop(1, 'rgba(5,4,20,0.7)'); g.fillStyle = v; g.fillRect(0, 0, 1920, 1080);
+    v = g.createLinearGradient(0, 0, 0, 380); v.addColorStop(0, 'rgba(6,5,24,0.75)'); v.addColorStop(1, 'rgba(6,5,24,0)'); g.fillStyle = v; g.fillRect(0, 0, 1920, 380);
+    // 4) the red arrows: thick, curved, rounded, a soft shadow
+    for (const [x0, y0, x1, y1, bend = 0.3] of T.arrows ?? []) {
+      const mxp = (x0 + x1) / 2 - (y1 - y0) * bend, myp = (y0 + y1) / 2 + (x1 - x0) * bend, an = Math.atan2(y1 - myp, x1 - mxp), L = 70, W = 34;
+      const ex = x1 - Math.cos(an) * L * 0.8, ey = y1 - Math.sin(an) * L * 0.8;
+      const draw = (col, dx, dy) => { g.save(); g.translate(dx, dy); g.strokeStyle = col; g.fillStyle = col; g.lineWidth = W; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(mxp, myp, ex, ey); g.stroke();
+        g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - Math.cos(an - 0.55) * L * 1.25, y1 - Math.sin(an - 0.55) * L * 1.25); g.lineTo(x1 - Math.cos(an + 0.55) * L * 1.25, y1 - Math.sin(an + 0.55) * L * 1.25); g.closePath(); g.lineJoin = 'round'; g.lineWidth = 12; g.stroke(); g.fill(); g.restore(); };
+      draw('rgba(0,0,0,0.35)', 0, 10); draw(T.arrowColor ?? '#ff2e2e', 0, 0);
+    }
+    // 5) small labels on the parts
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (const [str, x, y, size = 46, col = '#ffffff'] of T.labels ?? []) { g.font = `700 ${size}px ThumbHead`; g.save(); g.shadowColor = 'rgba(0,0,0,0.7)'; g.shadowBlur = 14; g.shadowOffsetY = 4; g.fillStyle = col; g.fillText(str, x, y); g.restore(); }
+    // 6) the headline: one line, all caps, heavy, as wide as the frame allows, white with one accent word
+    const title = String(T.title ?? '').toUpperCase(); if (title) {
+      let size = T.titleSize ?? 270; const font = (sz) => `700 ${sz}px ThumbHead`;
+      g.font = font(size); try { g.fontStretch = 'condensed'; } catch (e) {}
+      let w = g.measureText(title).width; const maxW = T.titleWidth ?? 1780; if (w > maxW) { size *= maxW / w; g.font = font(size); w = g.measureText(title).width; }
+      const words = title.split(' '), acc = String(T.accent ?? '').toUpperCase(), y = T.titleY ?? 40 + size * 0.5, align = T.titleAlign ?? 'center';
+      let x = align === 'left' ? 60 : 960 - w / 2; g.textAlign = 'left';
+      for (const [i, word] of words.entries()) { const piece = word + (i < words.length - 1 ? ' ' : ''), col = acc && word.replace(/[^A-Z0-9]/g, '') === acc.replace(/[^A-Z0-9]/g, '') ? (T.accentColor ?? '#ffd23f') : (T.titleColor ?? '#ffffff');
+        g.save(); g.shadowColor = 'rgba(0,0,0,0.55)'; g.shadowBlur = 26; g.shadowOffsetY = 10; g.fillStyle = col; g.fillText(piece, x, y); g.restore(); x += g.measureText(piece).width; }
+    }
+    return c.toDataURL('image/png');
+    function legacy(T) {
     g.setTransform(1, 0, 0, 1, 0, 0);
     // optional reframe: zoom about the frame centre and shift (px) so the subject sits clear of the words
     if (T.zoom || T.shift) { const tmp = document.createElement('canvas'); tmp.width = 1920; tmp.height = 1080; tmp.getContext('2d').drawImage(c, 0, 0); const z = Math.max(1, T.zoom ?? 1), mx = 960 * (z - 1), my = 540 * (z - 1), sx = Math.max(-mx, Math.min(mx, (T.shift ?? [0, 0])[0])), sy = Math.max(-my, Math.min(my, (T.shift ?? [0, 0])[1]));   /* clamped: never a black bar */ g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); g.save(); g.translate(960 + sx, 540 + sy); g.scale(z, z); g.drawImage(tmp, -960, -540); g.restore(); }
@@ -159,6 +200,7 @@ else if (mode === 'thumb') {
     const cx = side === 'right' ? 1440 : 480, total = T.lines.reduce((a, l) => a + l[1] * 1.02, 0); let y = 540 - total / 2;
     for (const [str, size, fill] of T.lines) { y += size * 0.86; let sz = size; g.font = `800 ${sz}px ${T.font ?? 'sans-serif'}`; const w = g.measureText(str).width; if (w > 840) { sz = size * 840 / w; g.font = `800 ${sz}px ${T.font ?? 'sans-serif'}`; } g.textAlign = 'center'; g.lineJoin = 'round'; g.save(); g.shadowColor = 'rgba(0,0,0,0.5)'; g.shadowBlur = 30; g.shadowOffsetY = 12; g.lineWidth = sz * 0.22; g.strokeStyle = '#16112e'; g.strokeText(str, cx, y); g.restore(); g.lineWidth = sz * 0.2; g.strokeStyle = '#16112e'; g.strokeText(str, cx, y); g.fillStyle = fill; g.fillText(str, cx, y); y += size * 0.16; }
     void x0; return c.toDataURL('image/png');
+    }
   }, T);
   await browser.close();
   const D = path.join(FD, 'youtube'); fs.mkdirSync(D, { recursive: true });

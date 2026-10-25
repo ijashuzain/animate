@@ -114,25 +114,29 @@
     ]
   ],
   "thumb": {
-    "t": 20.5,
-    "side": "left",
-    "font": "\"Fredoka\", sans-serif",
-    "zoom": 1.12,
-    "shift": [
-      300,
-      30
-    ],
-    "lines": [
+    "style": "banner",
+    "t": 21,
+    "zoom": 1.0,
+    "title": "0.3 SECONDS",
+    "accent": "0.3",
+    "arrows": [
       [
-        "0.3",
-        230,
-        "#ffe066"
-      ],
-      [
-        "SECONDS",
-        130,
-        "#ffffff"
+        1500,
+        330,
+        1080,
+        390,
+        -0.25
       ]
+    ],
+    "grade": {
+      "sat": 1.4,
+      "contrast": 1.18
+    },
+    "focus": [
+      960,
+      560,
+      560,
+      0.75
     ]
   }
 }

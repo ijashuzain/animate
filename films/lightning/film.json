@@ -109,5 +109,32 @@
       128,
       "9 seconds: about 3 km away"
     ]
-  ]
+  ],
+  "thumb": {
+    "style": "banner",
+    "t": 97.6,
+    "zoom": 1.0,
+    "title": "IT GOES UP",
+    "accent": "UP",
+    "arrows": [
+      [
+        1350,
+        860,
+        1060,
+        420,
+        0.25
+      ]
+    ],
+    "labels": [],
+    "grade": {
+      "sat": 1.4,
+      "contrast": 1.2
+    },
+    "focus": [
+      960,
+      600,
+      620,
+      0.5
+    ]
+  }
 }

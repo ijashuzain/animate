@@ -99,7 +99,9 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    the user, with the weak spots you see. **The user steers here**; change, re-draft if big.
 9. **Final**: `node tools2/film.mjs <slug> final` (run_in_background). **Always deliver 1080p** (the user's rule): film.mjs
    makes `renders/<slug>-final-1080p.mp4` under 30 MB (never send a 720p copy). Thumbnail: `node tools2/film.mjs <slug> thumb`
-   (pills are hidden in thumbnails). **Always deliver YouTube metadata with the final** (the user's rule):
+   in the user's chosen style (**studio/references/thumbs/STYLE.md** + reference-grid.webp: a 1-3 word ALL-CAPS hook across
+   the top with one accent word, one big dramatic hero, saturated colour on a dark background, a red arrow on the key
+   detail; pills hidden). Use a dedicated `FILM.thumb()` composition when no frame is dramatic enough. **Always deliver YouTube metadata with the final** (the user's rule):
    `films/<slug>/youtube/metadata.md` in the format of films/cat/youtube/metadata.md: title + 2 alternatives, description
    (2 paragraphs, the main search phrase in the first line), chapters with timestamps that match the cut (first at 0:00),
    sources, searches to win, hashtags, tags, category, language, made-for-kids, pinned comment, thumbnail. Send the four
