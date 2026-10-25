@@ -65,7 +65,7 @@ function crossSection(t, s) {
   };
   // 2.5D: the block is drawn as slices from far to near, each a little smaller toward a vanishing point above the rim, with
   // haze growing with distance: the plateau's top surface recedes, and through the open canyon its walls step away
-  const N = 40, topNow = Math.max(s.topNow ?? 0, (s.mountains * (1 - s.flat)) * 600), V = [0, topNow + lift + 650];
+  const N = 110, topNow = Math.max(s.topNow ?? 0, (s.mountains * (1 - s.flat)) * 600), V = [0, topNow + lift + 650];
   const clipOut = () => { const ctx = P.ctx; ctx.beginPath(); ctx.rect(-9000, BASE + lift - 3000, 18000, 12000); if (open) shape.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); };
   for (let k = N - 1; k >= 0; k--) {
     const f = k / (N - 1), sc = lerp(1, 0.32, Math.pow(f, 0.85)), haze = Math.pow(f, 0.9) * 0.6, near = k === 0, hz = P.hex(s.hazeCol ?? '#ecaaa0');
@@ -80,7 +80,7 @@ function crossSection(t, s) {
       // the walls' inner edges in shade (near slice only)
       if (near && open) { P.ribbon(shape.slice(0, shape.length / 2 - 1), 22, 'rgba(60,20,40,0.30)'); P.ribbon(shape.slice(shape.length / 2 - 1, shape.length - 2), 22, 'rgba(255,220,180,0.25)'); }
       // plants on the plateau at a few depths, the sea over the layers while they form
-      if (s.plants > 0 && k % 8 === 0 && k < 30) P.alpha(s.plants * (1 - haze), () => { const top = RIM + lift; for (let i = 0; i < 18; i++) { const x = (i < 9 ? -1 : 1) * (RIMX + 80 + (i % 9) * 320 + hash(i, 8 + k) * 140); if ((i + k) % 3 === 0) Nature.cactus(x, top, 52 + hash(i, 9) * 30, { col: '#4a8a6a' }); else Nature.shrub(x, top, 24 + hash(i, 10) * 18, { col: '#4f7a5a', seed: i + k }); } });
+      if (s.plants > 0 && k % 22 === 0 && k < 80) P.alpha(s.plants * (1 - haze), () => { const top = RIM + lift; for (let i = 0; i < 18; i++) { const x = (i < 9 ? -1 : 1) * (RIMX + 80 + (i % 9) * 320 + hash(i, 8 + k) * 140); if ((i + k) % 3 === 0) Nature.cactus(x, top, 52 + hash(i, 9) * 30, { col: '#4a8a6a' }); else Nature.shrub(x, top, 24 + hash(i, 10) * 18, { col: '#4f7a5a', seed: i + k }); } });
       if (s.seaA > 0) P.alpha(s.seaA * (near ? 1 : 0.9), () => { P.rect(-9000, (s.seaTop ?? 0) + lift, 18000, (s.sea ?? 0) - (s.seaTop ?? 0), P.mixc('#2a8ab0', '#e8b0b0', haze * 0.6), { a: 0.75 }); if (near) { const pts = []; for (let x = -9000; x <= 9000; x += 120) pts.push([x, (s.sea ?? 0) + lift + Math.sin(x * 0.01 + t * 2) * 8]); P.ribbon(pts, 6, 'rgba(255,255,255,0.6)'); } });
     }));
   }
