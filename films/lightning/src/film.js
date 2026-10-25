@@ -117,7 +117,7 @@ function fieldScene(t) {
   if (t > T.low + 1 && t < T.lead + 2) for (let i = 0; i < 6; i++) { const ph = (t * 1.3 + hash(i, 1)) % 1; if (ph < 0.18) { const x = CLOUD.cx + (hash(i, 2) - 0.5) * 5000, p = Nature.boltPath(40 + i + Math.floor(t * 1.3), [x, 1500], [x + 120, 1350], 40); Nature.bolt(p, { alpha: 0.6 * (1 - ph / 0.18), px: 1.5, glow: C.leader, core: '#d8ccff', branchA: 0.4 }); } }
   // the strike: the stepped leader (faint violet), the streamers, the return stroke (white, up), re-strikes, afterglow
   const lr = leaderReveal(t);
-  if (lr > 0 && t < T.ret) Nature.bolt(LEAD, { reveal: lr, alpha: 0.75, px: 2.2, glow: C.leader, core: '#c8b8ff', branchA: 0.7 });
+  if (lr > 0 && t < T.ret) Nature.bolt(LEAD, { reveal: lr, alpha: 0.85, px: 3.4, glow: C.leader, core: '#c8b8ff', branchA: 0.7 });
   if (t > T.near + 0.5 && t < T.ret + 0.2) STR.forEach((p, i) => Nature.bolt(p, { reveal: clamp((t - T.near - 0.5 - i * 0.7) / (T.hush - T.near - 1.5 - i * 0.7)) * [1, 0.8, 0.6][i], alpha: 0.95, px: [2.6, 2, 1.4][i], glow: '150,190,255', core: '#ffffff', branchA: 0.5 }));
   if (t > T.ret && t < T.ret + 0.25) P.glow(TREE_TOP[0], TREE_TOP[1] + 20, 30, '255,255,255', 1 - (t - T.ret) * 4);
   if (L > 0) {
@@ -201,9 +201,9 @@ const FILM = {
   thumb() { THUMBCAM = { x: 3, y: 24, h: 52 }; fieldScene(T.ret + 0.9); P.cam(THUMBCAM); P.glow(TREE_TOP[0], TREE_TOP[1], 18, '220,210,255', 0.9); Nature.bolt(LEAD, { reveal: 1, px: 14, glow: '200,190,255', core: '#ffffff', branchA: 1 }); THUMBCAM = null; },
   draw(t) {
     if (t < T.out) { porch(t); return; }
-    if (t < T.in) { const u = K.inv(T.out, T.in, t); porch(t); P.layer(K.ease.inOut(u), () => fieldScene(t)); return; }
+    if (t < T.in) { const u = K.inv(T.out, T.in, t); if (u < 0.5) { porch(t); P.haze('#0c0e24', K.ease.in(u * 2)); } else { fieldScene(t); P.haze('#0c0e24', 1 - K.ease.out((u - 0.5) * 2)); } return; }
     if (t < T.home) { fieldScene(t); P.vignette(0.35); return; }
-    if (t < T.porch) { const u = K.inv(T.home, T.porch, t); fieldScene(t); P.layer(K.ease.inOut(u), () => porch(t)); return; }
+    if (t < T.porch) { const u = K.inv(T.home, T.porch, t); if (u < 0.5) { fieldScene(t); P.haze('#0c0e24', K.ease.in(u * 2)); } else { porch(t); P.haze('#0c0e24', 1 - K.ease.out((u - 0.5) * 2)); } return; }
     porch(t); P.vignette(0.3);
     if (t > T.D - 1.2) P.haze('#0c0e24', tw(t, T.D - 1.2, T.D));
   },
