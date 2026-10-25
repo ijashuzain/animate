@@ -37,6 +37,7 @@ function crossScene(t) {
   const day = st > T.hush - 1 && st < T.cut ? 0.1 : st < T.rew || st > T.today - 2 ? 0.8 : 0.9, gold = st < T.rew || st > T.today - 3 ? 1 : 0.25;
   sky(t, day, gold, [1500, 200, 80]);
   P.cam(cam);
+  s.hazeCol = P.mixc('#b8c4dc', '#f0a898', gold);
   crossSection(t, s);
   // the ancient mountains: a pill while they stand, "worn flat"
   if (st > 12 && st < 24) { pill('about 1.8 billion years: mountains', 960, 300, tw(st, 13, 13.6) * (1 - tw(st, 17.5, 18)), { size: 36 }); pill('worn flat', 960, 300, tw(st, 19, 19.6) * (1 - tw(st, 23, 23.6)), { size: 36 }); }
@@ -59,6 +60,8 @@ function crossScene(t) {
     const d = P.toScreen(0, RIVER); pill('about 1.8 km deep', 960, Math.min(980, d[1] + 70) - 60, tw(st, T.cliffs + 4, T.cliffs + 4.6) * (1 - tw(st, T.today - 1, T.today - 0.5)), { size: 32 }); }
   // ravens and a condor over the canyon (they face the way they fly) once it's open
   if (s.cut > 0.3) for (let i = 0; i < 3; i++) { const dir = i % 2 ? -1 : 1, u = (t * 0.03 + hash(i, 40)) % 1, x = dir > 0 ? lerp(-2400, 2400, u) : lerp(2400, -2400, u); Animals.bird(t, x, RIM + 300 + i * 140 + Math.sin(t + i) * 30, 6 - i, i ? 'raven' : 'condor', { fly: true, dir }); }
+  // what we're looking at: a block cut out of northern Arizona, the river at the bottom
+  if (t < T.rew + 0.5) { pill('the Grand Canyon, Arizona: cut open like a slice of cake', 960, 230, tw(t, 0.6, 1.2) * (1 - tw(t, T.rew - 0.2, T.rew + 0.4)), { size: 36 }); const r = P.toScreen(0, RIVER); pill('the Colorado River', r[0] + 230, r[1] - 40, tw(t, 1.6, 2.2) * (1 - tw(t, T.rew - 0.2, T.rew + 0.4)), { size: 30, weight: 700 }); }
   // the clock
   pill(t < T.rew ? 'today' : ago(st), 330, 100, tw(t, 0.3, 0.8), { icon: CLOCK, size: 40 });
   if (t > T.rew && t < T.base) { const a = Math.sin(K.inv(T.rew, T.base, t) * Math.PI); P.screen((ctx) => { ctx.globalAlpha = 0.22 * a; ctx.fillStyle = '#ffffff'; for (let i = 0; i < 9; i++) { const y = (hash(i, 3) * 1080 + t * 900 * (i % 2 ? 1 : -1) + 4 * 1080) % 1080; ctx.fillRect(0, y, 1920, 3); } }); }

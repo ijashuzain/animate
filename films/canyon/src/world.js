@@ -45,12 +45,12 @@ function crossSection(t, s) {
   const lift = s.lift, open = s.cut > 0.001;
   const shape = open ? canyonShape(s) : null;
   // the rock, clipped to everything outside the open canyon
-  const rock = () => {
+  const rock = (detail) => {
     // basement: purple schist with pink granite veins and a faceted texture; the ancient mountains on top of it
     const mtn = s.mountains * (1 - s.flat);
     const top = []; for (let x = -9000; x <= 9000; x += 200) top.push([x, lift + mtn * (300 + 260 * Math.sin(x * 0.0011 + 1) + 160 * noise(x * 0.002, 3))]);
     P.poly([[-9000, BASE + lift - 3000], ...top, [9000, BASE + lift - 3000]], P.lin(0, lift, 0, BASE + lift, '#5a4870', '#3a2e50'));
-    for (let i = 0; i < 70; i++) { const x = -4200 + hash(i, 1) * 8400, y = BASE + lift + hash(i, 2) * (-BASE + mtn * 300); P.poly([[x, y], [x + 140, y + 60], [x + 90, y - 80]], hash(i, 3) > 0.5 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.10)'); }
+    if (detail) for (let i = 0; i < 70; i++) { const x = -4200 + hash(i, 1) * 8400, y = BASE + lift + hash(i, 2) * (-BASE + mtn * 300); P.poly([[x, y], [x + 140, y + 60], [x + 90, y - 80]], hash(i, 3) > 0.5 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.10)'); }
     for (let i = 0; i < 9; i++) { const x0 = -3800 + i * 900 + hash(i, 4) * 300; P.ribbon([[x0, BASE + lift - 200], [x0 + 140, BASE + lift + 160], [x0 + 60, lift - 260], [x0 + 260, lift - 40]], 34, '#d06a9a'); }
     // the layers, each growing up from its base as it is laid down (a wavy top while it is the sea floor)
     LAYERS.forEach(([name, th, col, hard], i) => {
@@ -58,33 +58,32 @@ function crossSection(t, s) {
       const shade = P.mixc(col, '#2a1420', 0.25), light = P.mixc(col, '#fff4e0', 0.18);
       P.rect(-9000, y0 + lift, 18000, y1 - y0 + 0.5, P.lin(0, y1 + lift, 0, y0 + lift, light, col));
       // texture: hard layers get vertical joints and blocks; soft layers fine strata lines
-      if (hard) for (let k = -60; k < 60; k++) { const x = k * 70 + hash(k, i) * 30; P.rect(x, y0 + lift, 6, (y1 - y0), 'rgba(40,10,10,0.18)'); if (hash(k, i + 9) > 0.6) P.rect(x + 6, y0 + lift + (y1 - y0) * 0.45, 64, 4, 'rgba(40,10,10,0.12)'); }
-      else for (let k = 1; k < 4; k++) P.rect(-9000, y0 + lift + (y1 - y0) * k / 4, 18000, 3, 'rgba(40,20,10,0.12)');
-      P.rect(-9000, y1 + lift - 4, 18000, 8, b < 1 ? P.rgba(light, 0.8) : 'rgba(0,0,0,0.10)');
+      if (hard && detail) for (let k = -60; k < 60; k++) { const x = k * 70 + hash(k, i) * 30; P.rect(x, y0 + lift, 6, (y1 - y0), 'rgba(40,10,10,0.18)'); if (hash(k, i + 9) > 0.6) P.rect(x + 6, y0 + lift + (y1 - y0) * 0.45, 64, 4, 'rgba(40,10,10,0.12)'); }
+      else if (detail) for (let k = 1; k < 4; k++) P.rect(-9000, y0 + lift + (y1 - y0) * k / 4, 18000, 3, 'rgba(40,20,10,0.12)');
+      if (detail || b < 1) P.rect(-9000, y1 + lift - 4, 18000, 8, b < 1 ? P.rgba(light, 0.8) : 'rgba(0,0,0,0.10)');
     });
   };
-  if (open) P.ctx.save(), (() => { const ctx = P.ctx; ctx.beginPath(); ctx.rect(-9000, BASE + lift - 3000, 18000, 9000); shape.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.clip('evenodd'); })();
-  rock();
-  if (open) P.ctx.restore();
-  // inside the canyon: the far canyon receding (pink-violet tiers) and its walls in shade, then the river
-  if (open) P.clip(() => { P.ctx.beginPath(); shape.forEach(([x, y], i) => (i ? P.ctx.lineTo(x, y) : P.ctx.moveTo(x, y))); P.ctx.closePath(); }, () => {
-    const bottom = lerp(RIM, RIVER, s.cut) + lift, rimY = RIM + lift;
-    // through the gap: the canyon receding into the distance, tier after tier of hazy pink-violet walls (refs/cross-section)
-    // the near gap's half-width at height y (from the right wall), and far walls as narrower copies of it, stepping back
-    const R = shape.slice(shape.length / 2, shape.length - 2).filter(([x]) => x > 0).sort((p, q) => p[1] - q[1]);
-    const gapHalf = (y) => { for (let i = 1; i < R.length; i++) if (y <= R[i][1]) return lerp(R[i - 1][0], R[i][0], K.inv(R[i - 1][1], R[i][1], y)); return R.length ? R[R.length - 1][0] : 0; };
-    for (let k = 0; k < 4; k++) { const sc = 0.82 - k * 0.17, drop = (rimY - bottom) * (0.06 + k * 0.1), col = P.mixc('#e09aa8', '#8a64a8', k / 3.2);
-      for (const sd of [-1, 1]) { const pts = [[sd * 3000, bottom - 40], [sd * 3000, rimY - drop]]; for (let i = 0; i <= 24; i++) { const y = lerp(rimY - drop, bottom, i / 24); pts.push([sd * gapHalf(y + drop * 0.6) * sc, y]); } P.poly(pts, col);
-        for (let i = 1; i < 5; i++) { const y = lerp(rimY - drop, bottom, i / 6); P.rect(sd > 0 ? gapHalf(y) * sc : -3000, y, 3000 - gapHalf(y) * sc, 6, 'rgba(255,230,230,0.16)'); } } }
-    // the near walls' faces: a darker strip along each wall edge (the inner walls in shade)
-    P.ribbon(shape.slice(0, shape.length / 2 - 1), 24, 'rgba(60,20,40,0.30)'); P.ribbon(shape.slice(shape.length / 2 - 1, shape.length - 2), 24, 'rgba(255,220,180,0.25)');
-    // the river (turquoise) once the cut has begun, with sparkles and moving sand grains
-    if (s.cut > 0.05) { const w = 38 * s.cut + 10; P.rect(-w, bottom - 6, w * 2, 22, P.lin(0, bottom + 16, 0, bottom - 6, '#7fe8e0', '#2fb8c8')); for (let i = 0; i < 6; i++) { const u = (t * 0.4 + i / 6) % 1; P.rect(-w + u * w * 2, bottom + 6, 8, 2.5, 'rgba(255,255,255,0.7)'); } }
-  });
-  // the surface on top: shrubs and cacti on the rim once the land is dry and high
-  if (s.plants > 0) P.alpha(s.plants, () => { const top = (LTOP.at(-1)[1]) + lift; for (let i = 0; i < 26; i++) { const x = (i < 13 ? -1 : 1) * (RIMX + 60 + (i % 13) * 230 + hash(i, 8) * 80); if (i % 3 === 0) Nature.cactus(x, top, 46 + hash(i, 9) * 30, { col: '#4a8a6a' }); else Nature.shrub(x, top, 20 + hash(i, 10) * 18, { col: '#4f7a5a', seed: i }); } });
-  // the sea over the layers while they form
-  if (s.seaA > 0) P.alpha(s.seaA, () => { P.rect(-9000, (s.seaTop ?? 0) + lift, 18000, (s.sea ?? 0) - (s.seaTop ?? 0), P.lin(0, (s.sea ?? 0) + lift, 0, (s.seaTop ?? 0) + lift, 'rgba(60,170,200,0.55)', 'rgba(20,90,140,0.7)')); const pts = []; for (let x = -9000; x <= 9000; x += 120) pts.push([x, (s.sea ?? 0) + lift + Math.sin(x * 0.01 + t * 2) * 8]); P.ribbon(pts, 6, 'rgba(255,255,255,0.6)'); });
+  // 2.5D: the block is drawn as slices from far to near, each a little smaller toward a vanishing point above the rim, with
+  // haze growing with distance: the plateau's top surface recedes, and through the open canyon its walls step away
+  const N = 40, topNow = Math.max(s.topNow ?? 0, (s.mountains * (1 - s.flat)) * 600), V = [0, topNow + lift + 650];
+  const clipOut = () => { const ctx = P.ctx; ctx.beginPath(); ctx.rect(-9000, BASE + lift - 3000, 18000, 12000); if (open) shape.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); };
+  for (let k = N - 1; k >= 0; k--) {
+    const f = k / (N - 1), sc = lerp(1, 0.32, Math.pow(f, 0.85)), haze = Math.pow(f, 0.9) * 0.6, near = k === 0, hz = P.hex(s.hazeCol ?? '#ecaaa0');
+    P.at(V[0], V[1], 0, sc, sc, () => P.at(-V[0], -V[1], 0, 1, 1, () => {
+      P.ctx.save(); clipOut(); P.ctx.clip('evenodd');
+      rock(k < 2);
+      if (haze > 0) P.clip(() => { P.ctx.beginPath(); P.ctx.rect(-9000, BASE + lift - 3000, 18000, topNow + 3000 - BASE + 4); }, () => P.rect(-9000, BASE + lift - 3000, 18000, 12000, `rgba(${hz[0]},${hz[1]},${hz[2]},${haze})`));
+      // the slice's front edge: a thin light line along the top (the rim edge catches the light)
+      P.ctx.restore();
+      // the river along the canyon floor, receding
+      if (open && s.cut > 0.05) { const bottom = lerp(RIM, RIVER, s.cut) + lift, w = 38 * s.cut + 12; P.rect(-w, bottom - 6, w * 2, 70, P.mixc('#3fc8d0', s.hazeCol ?? '#e8b0b0', haze)); if (near) for (let i = 0; i < 6; i++) { const u = (t * 0.4 + i / 6) % 1; P.rect(-w + u * w * 2, bottom + 6, 8, 2.5, 'rgba(255,255,255,0.75)'); } }
+      // the walls' inner edges in shade (near slice only)
+      if (near && open) { P.ribbon(shape.slice(0, shape.length / 2 - 1), 22, 'rgba(60,20,40,0.30)'); P.ribbon(shape.slice(shape.length / 2 - 1, shape.length - 2), 22, 'rgba(255,220,180,0.25)'); }
+      // plants on the plateau at a few depths, the sea over the layers while they form
+      if (s.plants > 0 && k % 8 === 0 && k < 30) P.alpha(s.plants * (1 - haze), () => { const top = RIM + lift; for (let i = 0; i < 18; i++) { const x = (i < 9 ? -1 : 1) * (RIMX + 80 + (i % 9) * 320 + hash(i, 8 + k) * 140); if ((i + k) % 3 === 0) Nature.cactus(x, top, 52 + hash(i, 9) * 30, { col: '#4a8a6a' }); else Nature.shrub(x, top, 24 + hash(i, 10) * 18, { col: '#4f7a5a', seed: i + k }); } });
+      if (s.seaA > 0) P.alpha(s.seaA * (near ? 1 : 0.9), () => { P.rect(-9000, (s.seaTop ?? 0) + lift, 18000, (s.sea ?? 0) - (s.seaTop ?? 0), P.mixc('#2a8ab0', '#e8b0b0', haze * 0.6), { a: 0.75 }); if (near) { const pts = []; for (let x = -9000; x <= 9000; x += 120) pts.push([x, (s.sea ?? 0) + lift + Math.sin(x * 0.01 + t * 2) * 8]); P.ribbon(pts, 6, 'rgba(255,255,255,0.6)'); } });
+    }));
+  }
 }
 // the sky (screen space): dawn/day/sunset/night by `day` 0 night .. 1 day, sunset tint by `gold`
 function sky(t, day, gold, sun) {
