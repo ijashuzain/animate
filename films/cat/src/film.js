@@ -63,6 +63,18 @@ const REWIND = (ctx, r) => { ctx.fillStyle = '#1a2a4a'; for (const dx of [-r * 0
 const wpt = (p, F, uv) => { const q = F.pt(uv); return P.toScreen(p.x + q[0] * S, p.y + q[1] * S); };
 
 const FILM = {
+  // the thumbnail (studio/references/thumbs/STYLE.md): the cat mid-flip, big, upside-down front half turning, the x-ray
+  // spine and nerves glowing, on a dark night-violet ground with a warm glow behind it. thumb.scene 'ear' uses a frame.
+  thumb(g, T) {
+    if (T.scene !== 'flip') { window.drawAt(T.t); return; }
+    P.cam({ x: 2, y: 50, h: 116 });
+    P.sky('#100c30', '#2c1f5e', '#1c1546');
+    P.glow(2, 58, 85, '255,170,110', 0.75); P.glow(2, 58, 45, '255,220,170', 0.55);
+    for (let i = 0; i < 70; i++) P.circle(-110 + hash(i, 1) * 230, -10 + hash(i, 2) * 100, 0.25 + hash(i, 3) * 0.5, `rgba(255,236,200,${0.25 + 0.5 * hash(i, 4)})`);
+    const o = Object.assign(pose(135), { col: '#5e4a74', mood: 'wow', look: [0.2, 0.9] }), x = -4, y = 0;
+    hero(1, x, y, 1.2, o);
+    Animals.catAt(x, y, 1.2, o, (F) => insides(1, F, 0, 0, 1, 1, o));
+  },
   draw(t) {
     const st = catState(t), w = worldT(t), cam = camera(t, st);
     P.cam(cam);
