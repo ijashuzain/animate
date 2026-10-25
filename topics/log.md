@@ -75,3 +75,4 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-22 | How a River Carved the Grand Canyon (locked frame, millions of years) | nature | suggested |
 | 2026-10-22 | What Happens Inside a Chrysalis (a cutaway construction site) | nature | suggested |
 | 2026-10-22 | Why Cats Always Land on Their Feet (one real fall in slow motion, x-ray cutaways) | nature / biology | **made** (films/cat, 2:02) |
+| 2026-10-25 | How a Cloud Builds a Lightning Bolt (porch count, cloud cutaway, strike slowed 1,000x) | weather / physics | **made** (films/lightning, 2:09) |
