@@ -1,0 +1,113 @@
+{
+  "title": "How a Cloud Builds a Lightning Bolt",
+  "duration": 129,
+  "fps": 30,
+  "fonts": [
+    {
+      "family": "Lilita One",
+      "file": "studio/fonts/LilitaOne-Regular.ttf"
+    }
+  ],
+  "kit": [
+    "kit/cast.js",
+    "kit/nature.js",
+    "kit/props.js",
+    "kit/animals.js"
+  ],
+  "src": [
+    "src/world.js",
+    "src/film.js"
+  ],
+  "audio": [
+    {
+      "id": "music",
+      "src": "audio/music.wav",
+      "start": 0,
+      "volume": 1
+    },
+    {
+      "id": "sfx",
+      "src": "audio/sfx.wav",
+      "start": 0,
+      "volume": 1
+    }
+  ],
+  "board": [
+    [
+      0.68,
+      "Hook: a flash over the far field"
+    ],
+    [
+      3.6,
+      "Counting at the window; farmer and dog hurry in"
+    ],
+    [
+      9.8,
+      "Nine seconds: the bang"
+    ],
+    [
+      13,
+      "Earlier: warm wet air rises, the cloud builds"
+    ],
+    [
+      21,
+      "The cloud towers to about 10 km"
+    ],
+    [
+      27.5,
+      "Cutaway: water drops low, 0 \u00b0C line"
+    ],
+    [
+      31.5,
+      "Ice crystals and graupel up high"
+    ],
+    [
+      39.4,
+      "Close-up: a crystal and a graupel pellet collide"
+    ],
+    [
+      45.6,
+      "Each bump moves charge: crystal +, graupel \u2212"
+    ],
+    [
+      57.5,
+      "Charges sort: + on top, \u2212 below; the ground turns +"
+    ],
+    [
+      66,
+      "Slowed down 1,000 times: the cloud base crackles"
+    ],
+    [
+      77,
+      "The stepped leader zigzags down"
+    ],
+    [
+      90,
+      "Streamers rise from the tree and the barn"
+    ],
+    [
+      95,
+      "Silence: a hand's width apart"
+    ],
+    [
+      97.4,
+      "Return stroke races UP the channel"
+    ],
+    [
+      101.6,
+      "About 30,000 amperes; re-strikes flicker"
+    ],
+    [
+      110,
+      "Thunder: the air bursts outward"
+    ],
+    [
+      122,
+      "Back at the house: the sound crosses 3 km"
+    ],
+    [
+      128,
+      "9 seconds: about 3 km away"
+    ]
+  ]
+}

@@ -59,6 +59,10 @@ const PAGE3 = [
   ['Nature.cloud, rain', 300, 0, 60, (t) => { Nature.cloud(0, 60, 0.8, 4); }],
   ['Props.conifer (old)', 100, 0, 45, (t) => Props.conifer(t, 80, {})],
   ['Props.volcano (old)', 1300, 0, -80, (t) => Props.volcano(t, 700, { veg: 0.6, beach: 1 })],
+  ['Nature.stormCloud (cumulonimbus)', 13000, 0, 6000, (t) => Nature.stormCloud(t, 0, 1500, { w: 5500, top: 11000, anvil: 0.6 })],
+  ['Nature.boltPath + bolt', 1700, 0, 800, (t) => Nature.bolt(Nature.boltPath(5, [-200, 1600], [100, 0], 80), { px: 3 })],
+  ['Nature.oak (lone tree)', 18, 0, 8, (t) => Nature.oak(t, 0, 0, 14)],
+  ['Props.barn (lightning rod)', 15, 0, 6.5, (t) => Props.barn(-1, 0, 1, { lit: 0.6 })],
 ];
 // page 4: the hero cat's falling rig in the five poses of the user's silhouette reference (+ walk, sleep, look)
 const C = (label, o) => [label, 150, 0, 40, (t) => Animals.cat(t, -10, 0, 1, o)];

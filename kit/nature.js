@@ -1,6 +1,8 @@
 // kit/nature.js — reusable nature props for the flat-vector look (y up). Units are the caller's (screen-like px at h = 1080).
 // Nature.fish, Nature.school, Nature.whale, Nature.jelly, Nature.bubbles (screen), Nature.cloud (one soft shape),
 // Nature.bird (a gull, flapping), Nature.palm, Nature.tree (round crown), Nature.rain (screen streaks), Nature.waves.
+// Storms: Nature.stormPuffs / stormCloud / stormMask (cumulonimbus), Nature.boltPath / bolt (branching lightning),
+// Nature.oak (a broad lone tree). See the storm section at the end.
 const Nature = {};
 // a small fish facing +x (dir -1 flips); profile face
 Nature.fish = (t, x, y, s, col, seed = 0, dir = 1) => {
@@ -133,3 +135,87 @@ Nature.mushroom = (x, y, h, o = {}) => { const col = o.col ?? '#e2483a'; P.circl
 Nature.grass = (t, x, y, h, o = {}) => { const col = o.col ?? '#5aa84f'; for (let i = 0; i < 5; i++) { const a = -0.5 + i * 0.25 + Math.sin(t * 2 + x + i) * 0.06; P.ribbon([[x + (i - 2) * h * 0.06, y], [x + Math.sin(a) * h * 0.5 + (i - 2) * h * 0.08, y + h * (0.6 + 0.08 * (i % 2))], [x + Math.sin(a) * h + (i - 2) * h * 0.1, y + h * (0.9 + 0.1 * (i % 3))]], [h * 0.07, h * 0.05, 1], i % 2 ? col : P.mixc(col, '#0a3a1a', 0.2)); } };
 Nature.stump = (x, y, w, o = {}) => { P.rect(x - w / 2, y, w, w * 0.6, P.lin(x - w / 2, 0, x + w / 2, 0, '#a8693e', '#7a4a2a')); P.circle(x, y + w * 0.6, w / 2, '#e2b98a', { ry: w * 0.14 }); P.ctx.save(); P.ctx.strokeStyle = '#b8875a'; P.ctx.lineWidth = 1.2; for (const r of [0.15, 0.28, 0.4]) { P.ctx.beginPath(); P.ctx.ellipse(x, y + w * 0.6, w * r, w * r * 0.28, 0, 0, 6.3); P.ctx.stroke(); } P.ctx.restore(); };
 Nature.log = (x, y, w, o = {}) => { P.rect(x - w / 2, y, w, w * 0.22, P.lin(0, y, 0, y + w * 0.22, '#7a4a2a', '#a8693e'), { r: w * 0.05 }); P.circle(x + w / 2, y + w * 0.11, w * 0.06, '#e2b98a', { ry: w * 0.11 }); };
+// ---------- storms (from the lightning film; the user's references: films/lightning/refs) ----------
+// Nature.stormPuffs(cx, base, o) -> the puffs [x, y, r, edge] of a cumulonimbus (flat base, tower, anvil top);
+//   o.w half-width of the base, o.top the top height, o.grow 0..1 (the tower builds), o.anvil 0..1, o.seed
+// Nature.stormCloud(t, cx, base, o)  draws it as ONE soft shape: dark underside layer + body + soft highlights, crescent
+//   shadows tucked under the upper puffs (no outlines). o.col: { top, mid, under } (slate-violet by default), o.puffs to reuse. Wide and mound-like: anvil 0.4-0.6; classic: 1
+// Nature.stormMask(puffs)  traces the cloud's outline as one path (for P.clip: cutaways, glows)
+Nature.stormPuffs = (cx, base, o = {}) => {
+  const w = o.w ?? 3000, grow = o.grow ?? 1, top = base + ((o.top ?? 10000) - base) * Math.max(0.15, grow), anvil = (o.anvil ?? 1) * K.clamp((grow - 0.7) / 0.3), seed = o.seed ?? 3;
+  const H = top - base, r0 = Math.max(w * 0.2, H * 0.06);
+  // the outline's half-width at height u (0 base .. 1 top): a wide base, the tower narrowing, the anvil spreading thin at the top
+  const half = (u) => { const tower = K.lerp(w, w * 0.55, K.ease.inOut2(Math.min(1, u * 1.4))); if (u < 0.74) return tower; const k = K.clamp((u - 0.74) / 0.2); return K.lerp(tower, w * (0.55 + 1.0 * anvil), K.ease.out(k)); };
+  const side = (sgn) => { const out = []; for (let i = 0; i <= 24; i++) { const u = i / 24; out.push([cx + sgn * half(u), base + u * H]); } return out; };
+  const L = side(-1), R = side(1), poly = [[cx - w * 0.97, base], ...L.slice(1), ...R.slice(1).reverse(), [cx + w * 0.97, base]];
+  // puffs along the outline (the cauliflower edge), smaller toward the anvil's thin ends; a few big ones on the top
+  const puffs = [];
+  const along = (pts, sgn) => { for (let i = 1; i < pts.length; i++) { const [x, y] = pts[i]; if (K.hash(i, seed + (sgn > 0 ? 1 : 2)) < 0.15 || y < base + H * 0.07) continue; const u = (y - base) / H, thin = u > 0.8 ? K.lerp(1, 0.45, anvil * K.clamp((u - 0.8) / 0.18)) : 1;
+    const r = r0 * thin * (0.75 + 0.5 * K.hash(i, seed + 3 + sgn)); puffs.push([x - sgn * r * 0.45, y, r, 1]); } };
+  along(L, -1); along(R, 1);
+  const tw = half(1); for (let i = 0; i <= 8; i++) { const x = cx - tw * 0.85 + (i / 8) * tw * 1.7, mid = 1 - Math.abs(i / 8 - 0.5) * 2; const r = r0 * (anvil > 0.3 ? K.lerp(0.4, 0.75, mid) : K.lerp(0.8, 1.3, mid)) * (0.8 + 0.4 * K.hash(i, seed + 6)); puffs.push([x, top - r * 0.35, r, 1]); }
+  // the outline must wind the same way as the puffs' ellipses (counter-clockwise, y up) so the clip is their union, not holes
+  let A = 0; for (let i = 0; i < poly.length; i++) { const [x1, y1] = poly[i], [x2, y2] = poly[(i + 1) % poly.length]; A += x1 * y2 - x2 * y1; }
+  puffs.poly = A < 0 ? poly.reverse() : poly; Object.assign(puffs, { half, base, H, cx }); return puffs;
+};
+Nature.stormMask = (puffs) => { const ctx = P.ctx; ctx.beginPath(); if (puffs.poly) { puffs.poly.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); } for (const [x, y, r] of puffs) { ctx.moveTo(x + r, y); ctx.ellipse(x, y, r, r * 0.92, 0, 0, Math.PI * 2); } };
+Nature.stormCloud = (t, cx, base, o = {}) => {
+  const puffs = o.puffs ?? Nature.stormPuffs(cx, base, o), col = Object.assign({ top: '#a9b0d8', mid: '#6f76ad', under: '#3f4378' }, o.col ?? {});
+  let yTop = base; for (const p of puffs) yTop = Math.max(yTop, p[1] + p[2]);
+  const H = yTop - base, dy = H * 0.012;
+  // underside layer: the whole shape a little lower, dark (shows as a soft dark rim under every puff)
+  P.at(0, -dy, 0, 1, 1, () => { P.clip(() => Nature.stormMask(puffs), () => P.rect(cx - 1e6, base - 1e5, 2e6, H + 2e5, col.under)); });
+  // body: one gradient over the whole cloud, lighter on top
+  P.clip(() => Nature.stormMask(puffs), () => {
+    P.rect(cx - 1e6, base - 1e5, 2e6, H + 2e5, P.lin(0, base, 0, yTop, col.mid, col.top));
+    // a darker band toward the base (the rain-heavy underside), crescent shadows under a few edge puffs, soft highlights on top puffs
+    P.rect(cx - 1e6, base - 1e5, 2e6, 1e5 + H * 0.12, P.lin(0, base, 0, base + H * 0.12, P.rgba(col.under, 0.55), P.rgba(col.under, 0)));
+    puffs.forEach(([x, y, r], i) => { if (y > yTop - H * 0.3 && K.hash(i, 78) > 0.4) P.circle(x - r * 0.2, y + r * 0.4, r * 0.5, 'rgba(255,255,255,0.12)', { ry: r * 0.28 }); });
+  });
+  return puffs;
+};
+// ---------- lightning ----------
+// Nature.boltPath(seed, [x0, y0], [x1, y1], step)  a real-looking channel: one main path that jags down in steps of about
+//   `step`, with side branches that fork and fade (the user's branching-bolt reference). -> { main: [[x,y]...], branches: [{ at, pts }] }
+// Nature.bolt(path, o)  draws it: o.reveal 0..1 (how far down the main path has grown, branches grow with it),
+//   o.core / o.glow colours, o.px core width in screen px, o.alpha, o.branchA (branch brightness), o.fade (branches fade to 0)
+Nature.boltPath = (seed, a, b, step) => {
+  const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), n = Math.max(4, Math.round(L / step)), nx = -dy / L, ny = dx / L, main = [];
+  let off = 0;
+  for (let i = 0; i <= n; i++) { const u = i / n; if (i > 0 && i < n) off = off * 0.55 + (K.hash(i, seed) - 0.5) * step * 1.6; else off = 0;
+    const pull = 1 - Math.pow(u, 6); main.push([a[0] + dx * u + nx * off * pull, a[1] + dy * u + ny * off * pull]); }
+  const branches = [];
+  for (let i = 1; i < n - 2; i++) if (K.hash(i, seed + 7) > 0.62) {
+    const side = K.hash(i, seed + 8) > 0.5 ? 1 : -1, len = 3 + Math.floor(K.hash(i, seed + 9) * 5), pts = [main[i]];
+    let ang = Math.atan2(dy, dx) + side * (0.45 + K.hash(i, seed + 10) * 0.5);
+    for (let k = 0; k < len; k++) { ang += (K.hash(k + i * 13, seed + 11) - 0.5) * 0.8; const s = step * (0.85 - k * 0.06); const p = pts[pts.length - 1]; pts.push([p[0] + Math.cos(ang) * s, p[1] + Math.sin(ang) * s]); }
+    branches.push({ at: i, pts });
+  }
+  return { main, branches, n };
+};
+Nature.bolt = (path, o = {}) => {
+  const m = P.ctx.getTransform(), rev = K.clamp(o.reveal ?? 1), core = o.core ?? '#f6f2ff', glow = o.glow ?? '150,140,255', a = o.alpha ?? 1, px = (o.px ?? 3) / Math.hypot(m.a, m.b), ba = o.branchA ?? 0.8;
+  if (a <= 0 || rev <= 0) return;
+  const upto = (pts, u) => { const f = u * (pts.length - 1), i = Math.floor(f), out = pts.slice(0, i + 1); if (i < pts.length - 1) { const p = pts[i], q = pts[i + 1], k = f - i; out.push([p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k]); } return out; };
+  const draw = (pts, w, al) => { if (pts.length < 2) return; P.alpha(al * a, () => { P.ribbon(pts, w * 6, `rgba(${glow},0.18)`); P.ribbon(pts, w * 2.6, `rgba(${glow},0.45)`); P.ribbon(pts, w, core); }); };
+  const mainPts = upto(path.main, rev), head = rev * path.n;
+  for (const br of path.branches) if (br.at < head) { const u = K.clamp((head - br.at) / (br.pts.length - 1)); draw(upto(br.pts, u), px * 0.5, ba * (o.fade ?? 1)); }
+  draw(mainPts, px, 1);
+  return mainPts[mainPts.length - 1];
+};
+// ---------- the lone tree (the lightning film's strike target; the user's strike reference) ----------
+// Nature.oak(t, x, y, h, o)  a broad round tree: short trunk with two limbs, a crown of clustered puffs drawn as one soft
+//   shape (dark underside + body + light top puffs); o.col, o.dark, o.light, o.seed, o.sway
+Nature.oak = (t, x, y, h, o = {}) => {
+  const col = o.col ?? '#3f7a4a', dark = o.dark ?? '#26503a', light = o.light ?? '#5b9a5e', seed = o.seed ?? 4, sw = Math.sin(t * 1.3 + seed) * (o.sway ?? 0.01) * h;
+  const cw = h * 0.42, cy = y + h * 0.62, puffs = [];
+  for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2, rr = 0.55 + 0.35 * K.hash(i, seed); puffs.push([x + Math.cos(a) * cw * rr * 0.95 + sw * (0.5 + Math.sin(a) * 0.5), cy + Math.sin(a) * h * 0.26 * rr, h * (0.13 + 0.06 * K.hash(i, seed + 1))]); }
+  for (let i = 0; i < 6; i++) puffs.push([x + (K.hash(i, seed + 2) - 0.5) * cw + sw, cy + (K.hash(i, seed + 3) - 0.3) * h * 0.2, h * 0.17]);
+  P.circle(x, y, h * 0.36, 'rgba(10,15,20,0.25)', { ry: h * 0.04 });
+  P.ribbon([[x, y], [x + h * 0.01, y + h * 0.3], [x + sw * 0.5, y + h * 0.5]], [h * 0.11, h * 0.08, h * 0.05], P.lin(x - h * 0.05, 0, x + h * 0.05, 0, '#5a3a2a', '#3a2418'));
+  for (const s of [-1, 1]) P.ribbon([[x + s * h * 0.01, y + h * 0.33], [x + s * h * 0.12, y + h * 0.48], [x + s * h * 0.2 + sw, y + h * 0.56]], [h * 0.04, h * 0.03, h * 0.02], '#4a2e20');
+  for (const [px, py, r] of puffs) P.circle(px, py - r * 0.25, r, dark);
+  for (const [px, py, r] of puffs) P.circle(px, py, r * 0.92, col);
+  puffs.forEach(([px, py, r], i) => { if (py > cy - h * 0.02 && K.hash(i, seed + 5) > 0.35) P.circle(px - r * 0.2, py + r * 0.25, r * 0.5, light, { ry: r * 0.38 }); });
+  return [x + sw * 0.6, cy + h * 0.33];   // the crown's top (where a streamer starts)
+};

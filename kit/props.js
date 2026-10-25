@@ -8,6 +8,7 @@
 // Props.signpost(t, x, y, s, arms, u, font)  arms: [[title, sub, dir ±1, height, dot colour], ...], u: pop-in 0..1 per arm
 // Props.raindrop(t, x, y, s, bun 0..1, seeds 0..1)  sphere -> hamburger-bun raindrop;  Props.saltCrystal(x, y, s, rot)
 // Props.conifer(t, height, o)   a conifer from sapling to ancient giant (o.x, o.seed, o.fade + o.haze for distance);
+// Props.barn(x, y, s, o)       a red barn with a lightning rod (metres), returns the rod tip
 // Props.tower(t, x)             an 84 m glass tower;  Props.wingedSeed(x, y, s, spin, rot)  a winged seed (spins like a helicopter)
 const Props = {};
 Props.volcanoY = function (x, H, cx = 0, seed = 0, FLOOR = -440) {
@@ -122,4 +123,26 @@ Props.signpost = function (t, x, y, s, arms, u = [], font = 'sans-serif') {
       });
     });
   });
+};
+// Props.barn(x, y, s, o)  a red farm barn, side view (about 10 m wide, 9 m to the ridge at s = 1, units = metres): gambrel
+//   roof, board walls, white trim, a big X door and a hayloft door; o.rod (default true) a lightning rod on the ridge with
+//   its down conductor; o.col, o.lit (0..1, a warm light in the hayloft). Returns the rod tip [x, y] (where a streamer starts).
+Props.barn = function (x, y, s = 1, o = {}) {
+  const col = o.col ?? '#b8443c', dark = P.mixc(col, '#1a1020', 0.3), trim = o.trim ?? '#efe6da';
+  let tip = null;
+  P.at(x, y, 0, s, s, () => {
+    P.circle(0, 0, 6.5, 'rgba(10,10,20,0.25)', { ry: 0.5 });
+    P.rect(-5, 0, 10, 5.4, P.lin(-5, 0, 5, 0, col, dark));
+    for (let i = -4; i <= 4; i++) P.rect(i * 1.1 - 0.04, 0, 0.08, 5.4, 'rgba(0,0,0,0.16)');
+    const roof = [[-5.6, 5.2], [-4.2, 7.6], [0, 9.0], [4.2, 7.6], [5.6, 5.2]];
+    P.poly([...roof, [5.6, 5.0], [-5.6, 5.0]], P.lin(0, 9, 0, 5, '#5a4a52', '#3a2e38'));
+    P.ribbon(roof, 0.28, trim); P.rect(-5, 5.0, 10, 0.3, trim);
+    // the big door with its white X, the hayloft door
+    P.rect(-1.8, 0, 3.6, 3.8, dark); P.ribbon([[-1.8, 0], [-1.8, 3.8], [1.8, 3.8], [1.8, 0]], 0.22, trim);
+    P.ribbon([[-1.7, 0.1], [1.7, 3.7]], 0.18, trim); P.ribbon([[-1.7, 3.7], [1.7, 0.1]], 0.18, trim);
+    P.rect(-0.9, 5.8, 1.8, 1.6, o.lit ? P.mixc(dark, '#ffcf7a', o.lit) : dark); P.ribbon([[-0.9, 5.8], [-0.9, 7.4], [0.9, 7.4], [0.9, 5.8], [-0.9, 5.8]], 0.16, trim);
+    if (o.rod ?? true) { P.ribbon([[0, 9.0], [0, 11.6]], 0.12, '#9aa0aa'); P.circle(0, 11.7, 0.22, '#c8ccd4'); P.ribbon([[0.1, 9.0], [4.3, 7.6], [5.7, 5.2], [5.2, 5.0], [5.2, 0]], 0.07, '#8a909a'); }
+  });
+  if (o.rod ?? true) tip = [x, y + 11.8 * s];
+  return tip;
 };
