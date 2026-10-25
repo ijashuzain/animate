@@ -1,6 +1,6 @@
 {
   "title": "How a River Carved the Grand Canyon",
-  "duration": 130,
+  "duration": 110,
   "fps": 30,
   "fonts": [
     {
@@ -16,6 +16,7 @@
   ],
   "src": [
     "src/world.js",
+    "src/view.js",
     "src/film.js"
   ],
   "audio": [
@@ -34,80 +35,80 @@
   ],
   "board": [
     [
-      2,
-      "Hook: the canyon today at sunset, 1.8 km deep"
+      2.5,
+      "Hook: the Grand Canyon today, about 1.8 km deep"
     ],
     [
-      8.5,
-      "Rewind: the layers vanish, back 1.8 billion years"
+      8,
+      "The river that carved it"
     ],
     [
-      15,
-      "Ancient mountains on the dark basement rock"
+      14,
+      "Reading the wall from the river up"
     ],
     [
-      21,
-      "Worn flat"
+      19,
+      "Each band a different age, up to the rim"
     ],
     [
-      26.5,
-      "The sea comes in: the first layers settle"
+      24,
+      "Window: the lowest layers were a shallow sea"
     ],
     [
-      31,
-      "Window: trilobites on the shallow sea floor"
+      33,
+      "Window: the red band was a warm sea"
     ],
     [
-      37,
-      "Layer on layer: sandstone, shale, limestone"
+      41,
+      "Window: the pale band was a desert of dunes"
     ],
     [
-      44,
-      "Window: the warm Redwall sea, crinoids and corals"
+      44.5,
+      "A lizard's footprints, still there in the stone"
     ],
     [
       49,
-      "The Redwall stands red"
+      "Rewind: the canyon fills back in"
     ],
     [
-      55,
-      "Window: a lizard crosses the dune desert"
+      52.5,
+      "A flat plain near sea level"
     ],
     [
-      60.6,
-      "Its footprints harden into the Coconino"
+      58.3,
+      "The whole region is pushed up about 2 km"
     ],
     [
-      67,
-      "The last sea leaves the Kaibab rim"
+      60,
+      "Silence: the high plateau under the stars"
     ],
     [
-      78,
-      "The whole block is pushed up about 2 km"
+      66,
+      "The river starts to cut down"
     ],
     [
-      85,
-      "Silence: the plateau under the stars"
+      75,
+      "A few centimetres per thousand years"
     ],
     [
-      93,
-      "The river cuts down, grain by grain"
+      81,
+      "Frost cracks the rock at night"
     ],
     [
-      104,
-      "Frost, flash floods, rockfalls widen the walls"
+      86,
+      "Flash floods drag boulders down"
     ],
     [
-      116,
-      "Hard rock cliffs, soft rock slopes: stairs"
+      91,
+      "Rockfalls widen the walls into stairs"
     ],
     [
-      120,
-      "About 1.8 km deep"
+      98,
+      "Today: rafters on the river"
     ],
     [
-      126,
-      "Today: rafters on the river, a condor overhead"
+      107,
+      "The canyon at sunset; it isn't finished"
     ]
   ]
 }

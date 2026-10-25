@@ -1,89 +1,90 @@
-// How a River Carved the Grand Canyon: one cross-section through northern Arizona, built layer by layer through
-// 1.8 billion years (windows open into the seas and the dune desert as each layer forms), lifted, then cut by the river.
-const T = { rew: 5, base: 12, seas: 24, red: 38, dune: 50, kai: 62, lift: 72, hush: 84, cut: 86.5, widen: 100, cliffs: 112, today: 122, D: 130 };
-const WIN = [[28, 34.5, 'cambrian'], [40.5, 47.5, 'redwall'], [52.3, 60.3, 'dune'], [122.6, 130.5, 'river']];
-// the build of each layer (0..1) over time
-const BUILD = [[24, 28], [29, 32.5], [33, 37], [38, 47.8], [48, 51.5], [51.5, 52.2], [58.5, 61.5], [62, 64.5], [65, 70]];
-const LIFT0 = -900;
-function state(t) {
-  // the story's own time (the hook shows the canyon today, then a rewind runs everything backwards to the start)
-  const st = t < T.rew ? T.D - 2 : t < T.base ? lerp(T.D - 2, 11, K.ease.inOut(K.inv(T.rew, T.base, t))) : t;
-  const built = BUILD.map(([a, b]) => tw(st, a, b, 'inOut'));
-  const lift = lerp(LIFT0, 0, tw(st, T.lift, T.lift + 10, 'inOut'));
-  const cut = tw(st, T.cut + 1, T.widen + 1, 'inOut'), widen = tw(st, T.widen, T.cliffs + 4, 'inOut');
-  const mountains = tw(st, 12.5, 16), flat = tw(st, 17.5, 23);
-  // the sea: over each marine layer while it forms (not over the dunes), gone after the uplift
-  const marine = (st > 24 && st < 48.5) || (st > 62 && st < 71);
-  const seaA = marine ? tw(st, 24, 25) * (1 - tw(st, 47.5, 48.5)) + (st > 62 ? tw(st, 62, 63) * (1 - tw(st, 70, 71)) : 0) : 0;
-  let topNow = 0; BUILD.forEach((_, i) => { if (built[i] > 0) topNow = LTOP[i][0] + LAYERS[i][1] * built[i]; });
-  return { st, built, lift, cut, widen, mountains, flat, seaA, sea: topNow + 140, seaTop: topNow, plants: tw(st, T.lift + 6, T.lift + 10), topNow };
-}
-function camera(t, s) {
-  const st = s.st, follow = s.topNow + s.lift;
-  if (st < T.lift) return { x: 0, y: Math.max(LIFT0 + 300, follow + LIFT0 * 0 - 300 + 200), h: 2300 };
-  if (st < T.cut) { const u = K.ease.inOut(K.inv(T.lift + 3, T.hush, st)); return { x: 0, y: lerp(LIFT0 + RIM - 100 - 700 + 300, 520, u), h: 2400 }; }
-  return { x: 0, y: 520, h: lerp(2400, 2200, tw(st, T.cut, T.today)) };
-}
+// How a River Carved the Grand Canyon: one real place seen in perspective (src/view.js). Today's canyon; we read its
+// walls from the river up (windows open into the seas and the desert that made each layer); the canyon fills back in
+// to a flat plain at sea level; the land rises; the river cuts down and the walls widen into stairs; today again.
+const T = { read: 9, win1: 21.5, win2: 29.5, win3: 37.5, back: 46.5, fill: 47, sea: 53, rise: 54.5, hush: 59, cut: 61.5, widen: 79, today: 95, river: 95.5, end: 103.5, D: 110 };
+const WIN = [[T.win1, T.win2 - 0.5, 'cambrian'], [T.win2, T.win3 - 0.5, 'redwall'], [T.win3, T.back, 'dune'], [T.river, T.end, 'river']];
 const pill = (str, sx, sy, u, o = {}) => P.pill(str, sx, sy, Object.assign({ u, font: FONT, size: 40, weight: 800 }, o));
 const CLOCK = (ctx, r) => { ctx.strokeStyle = '#1a2a4a'; ctx.lineWidth = r * 0.18; ctx.beginPath(); ctx.arc(0, 0, r * 0.85, 0, 6.3); ctx.stroke(); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -r * 0.55); ctx.moveTo(0, 0); ctx.lineTo(r * 0.4, 0); ctx.stroke(); };
-function ago(st) {
-  if (st >= T.today || st < 0) return 'today';
-  const keys = [[11, 1800], [24, 525], [38, 340], [50, 300], [52, 275], [62, 270], [71, 70], [84, 6], [T.cut, 6], [T.widen, 3], [T.today - 0.5, 0.01]];
-  let my = 1800; for (let i = 1; i < keys.length; i++) if (st <= keys[i][0]) { const [a, va] = keys[i - 1], [b, vb] = keys[i]; my = Math.exp(lerp(Math.log(va), Math.log(vb), K.inv(a, b, st))); break; } else my = keys[i][1];
-  return my >= 1000 ? `${(my / 1000).toFixed(1)} billion years ago` : my >= 1 ? `${Math.round(my)} million years ago` : 'today';
+// the carving state
+const cutAt = (t) => (t < T.fill ? 1 : t < T.cut ? 1 - tw(t, T.fill, T.fill + 5.5, 'inOut') : tw(t, T.cut + 1, T.widen + 1, 'inOut'));
+const widenAt = (t) => (t < T.fill ? 1 : t < T.cut ? 1 - tw(t, T.fill, T.fill + 4, 'inOut') : tw(t, T.widen, T.today - 2, 'inOut'));
+function clockText(t) {
+  if (t < T.fill || t >= T.today) return 'today';
+  if (t < T.sea) return `${Math.max(0.1, 6 * tw(t, T.fill, T.fill + 5.5, 'inOut')).toFixed(1)} million years ago`;
+  if (t < T.cut) return t < T.rise ? 'about 70 million years ago' : `${Math.round(lerp(70, 6, tw(t, T.rise, T.hush, 'inOut')))} million years ago`;
+  return `${Math.max(0.1, 6 * (1 - tw(t, T.cut, T.today - 1, 'linear'))).toFixed(1)} million years ago`;
 }
-function crossScene(t) {
-  const s = state(t), st = s.st, cam = camera(t, s);
-  const day = st > T.hush - 1 && st < T.cut ? 0.1 : st < T.rew || st > T.today - 2 ? 0.8 : 0.9, gold = st < T.rew || st > T.today - 3 ? 1 : 0.25;
-  sky(t, day, gold, [1500, 200, 80]);
-  P.cam(cam);
-  s.hazeCol = P.mixc('#b8c4dc', '#f0a898', gold);
-  crossSection(t, s);
-  // the ancient mountains: a pill while they stand, "worn flat"
-  if (st > 12 && st < 24) { pill('about 1.8 billion years: mountains', 960, 300, tw(st, 13, 13.6) * (1 - tw(st, 17.5, 18)), { size: 36 }); pill('worn flat', 960, 300, tw(st, 19, 19.6) * (1 - tw(st, 23, 23.6)), { size: 36 }); }
-  // each layer's name and age as it forms (on the right, at the layer's height)
-  LAYERS.forEach(([name, th, , , age], i) => { const [a, b] = BUILD[i]; if (st < a || st > b + 3 || (st > T.base && st < T.lift && (st < a))) return; const y = LTOP[i][0] + th * 0.5 + s.lift, sp = P.toScreen(0, y); pill(`${name} · ${age}`, 1450, sp[1], tw(st, a + 0.3, a + 0.9) * (1 - tw(st, b + 2, b + 3)), { size: 30, weight: 700 }); });
-  // the uplift: the old sea level stays, the block rises past it
-  if (st > T.lift - 0.5 && st < T.cut) { const yS = LIFT0 + RIM + 140; P.alpha(tw(st, T.lift, T.lift + 1) * (1 - tw(st, T.hush - 1, T.hush)), () => { P.ctx.save(); P.ctx.strokeStyle = 'rgba(80,190,230,0.9)'; P.ctx.lineWidth = 5 / P.k; P.ctx.setLineDash([30 / P.k, 20 / P.k]); P.ctx.beginPath(); P.ctx.moveTo(-5000, yS); P.ctx.lineTo(5000, yS); P.ctx.stroke(); P.ctx.restore(); }); const sp = P.toScreen(-1300, yS); pill('old sea level', sp[0], sp[1] - 40, tw(st, T.lift + 0.5, T.lift + 1) * (1 - tw(st, T.hush - 1, T.hush)), { size: 30, weight: 700 }); pill('pushed up about 2 km: the Colorado Plateau', 960, 220, tw(st, T.lift + 4, T.lift + 4.6) * (1 - tw(st, T.hush - 1, T.hush)), { size: 36 }); }
-  // the river's work: notch labels, then frost, flash flood, rockfall
-  if (st > T.cut + 1 && st < T.widen) pill('a few centimetres per thousand years', 960, 220, tw(st, T.cut + 2, T.cut + 2.6) * (1 - tw(st, T.widen - 1, T.widen - 0.4)), { size: 34 });
-  const ev = (a, label) => { const u = tw(st, a, a + 0.5) * (1 - tw(st, a + 3.2, a + 3.8)); pill(label, 960, 220, u, { size: 36 }); return K.inv(a, a + 3.5, st); };
-  if (st > T.widen && st < T.cliffs) {
-    const f = ev(T.widen + 0.5, 'frost cracks the rock at night'), ff = ev(T.widen + 4.2, 'flash floods drag boulders'), rf = ev(T.widen + 7.9, 'rockfalls widen the walls');
-    if (f > 0 && f < 1) { const x = RIMX * 0.8 + s.lift * 0, y = RIM * 0.86; P.alpha(Math.sin(f * Math.PI), () => { P.ribbon([[x, y + 60], [x + 10, y], [x - 6, y - 50], [x + 8, y - 110]], [10, 14, 10, 4].map((w) => w * f * 2 + 2), '#2a1420'); P.glow(x, y, 120, '200,230,255', 0.5); }); }
-    if (ff > 0 && ff < 1) { const sp = s.cut; P.alpha(Math.sin(ff * Math.PI), () => P.rect(-120, RIVER - 6, 240, 60, 'rgba(150,100,60,0.85)')); void sp; }
-    if (rf > 0 && rf < 1) { const x0 = -WALL[6][0] - 20, y0 = LTOP[3][1] - 40, d = K.ease.in(clamp(rf * 1.4)) * (y0 - RIVER - 20); P.at(x0 + rf * 80, y0 - d, rf * 2, 1, 1, () => P.lit([[-30, -24], [30, -20], [36, 24], [-26, 26]], '#b8442e', { d: 0.2 })); }
+// the camera through the film (world metres)
+function cam(t) {
+  const K0 = { x: V3.center(800) + 100, y: 700, z: -400, yaw: -0.05, pitch: 0.1, f: 1100 };       // inside, looking down the canyon
+  const KR = { x: V3.center(800) + 150, y: 420, z: 200, yaw: -0.25, pitch: 0.06, f: 1050 };          // low by the river, facing the right wall
+  const KA = { x: V3.center(0) - 200, y: RIM + 900, z: -2600, yaw: 0.04, pitch: -0.3, f: 1250 };     // over the rim, looking along it (aerial)
+  const mix = (a, b, u) => { const o = {}; for (const k in a) o[k] = lerp(a[k], b[k], u); return o; };
+  if (t < T.read) return mix(K0, { ...K0, z: 200 }, tw(t, 0, T.read, 'inOut'));
+  if (t < T.win1) return mix({ ...K0, z: 200 }, KR, tw(t, T.read, T.read + 3, 'inOut'));
+  if (t < T.fill) return KR;
+  if (t < T.today) return mix(mix(KR, KA, tw(t, T.fill, T.fill + 3, 'inOut')), { ...KA, y: RIM + 700, pitch: -0.26, z: -1800 }, tw(t, T.cut, T.today, 'inOut'));
+  return mix({ ...KA, y: RIM + 700, pitch: -0.26, z: -1800 }, { ...K0, z: -200 }, tw(t, T.end, T.end + 2.5, 'inOut'));
+}
+function canyonScene(t) {
+  const c = cam(t), cut = cutAt(t), widen = widenAt(t);
+  const night = t > T.hush - 1 && t < T.cut + 0.5 ? Math.sin(K.inv(T.hush - 1, T.cut + 0.5, t) * Math.PI) : 0;
+  const gold = t < T.read || t > T.end ? 0.75 : 0.2, day = 1 - night * 0.9;
+  V3.sky(t, c, { day, gold, sunX: 1450, sunH: t < T.read || t > T.end ? 90 : 260 });
+  V3.draw(t, c, { cut, widen, haze: P.mixc(P.mixc('#b8b4d8', '#f0b0a0', gold), '#3a4280', night * 0.8), plants: 1, sun: night > 0.5 ? [0.2, 0.9, -0.3] : [0.62, 0.5, -0.6] });
+  if (night > 0) P.haze('#1a2050', night * 0.3);
+  // the ancient sea over the flat plain, then the land rising past it (the sea level drops away below the plain)
+  if (t > T.fill + 4 && t < T.hush) {
+    const seaY = RIM + 40 - 2200 * tw(t, T.rise, T.rise + 4, 'in'), a = tw(t, T.fill + 4, T.sea);
+    P.alpha(a, () => P.screen((ctx) => { const pts = [[-20000, 600], [20000, 600], [20000, 60000], [-20000, 60000]].map(([X, Z]) => V3.proj(c, X, seaY, Z)).filter(Boolean); if (pts.length < 4) return; const g = ctx.createLinearGradient(0, pts[2][1], 0, 1080); g.addColorStop(0, '#9ad8e0'); g.addColorStop(1, '#2a8ab0'); ctx.fillStyle = g; ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 2; for (let i = 0; i < 12; i++) { const Z = 900 * Math.pow(50, i / 12), p0 = V3.proj(c, -20000, seaY, Z), p1 = V3.proj(c, 20000, seaY, Z); if (p0 && p1) { ctx.beginPath(); ctx.moveTo(p0[0], p0[1] + Math.sin(t * 2 + i) * 2); ctx.lineTo(p1[0], p1[1]); ctx.stroke(); } } }));
+    pill('a flat plain near sea level', 960, 200, tw(t, T.fill + 4.5, T.fill + 5) * (1 - tw(t, T.rise - 0.4, T.rise)), { size: 36 });
+    pill('then the whole region was pushed up about 2 km', 960, 200, tw(t, T.rise + 0.4, T.rise + 0.9) * (1 - tw(t, T.hush - 0.6, T.hush)), { size: 36 });
   }
-  // hard vs soft: cliff and slope labels on the finished walls
-  if (st > T.cliffs && st < T.today) { const hardY = P.toScreen(WALL[0][0], LTOP[3][0] + 95), softY = P.toScreen(0, LTOP[4][0] + 130), r = P.toScreen(WALL[6][0] + 60, 0);
-    pill('hard rock: cliffs', r[0] + 180, hardY[1], tw(st, T.cliffs + 0.5, T.cliffs + 1) * (1 - tw(st, T.today - 1, T.today - 0.5)), { size: 32 }); pill('soft rock: slopes', r[0] + 330, softY[1], tw(st, T.cliffs + 2, T.cliffs + 2.5) * (1 - tw(st, T.today - 1, T.today - 0.5)), { size: 32 });
-    const d = P.toScreen(0, RIVER); pill('about 1.8 km deep', 960, Math.min(980, d[1] + 70) - 60, tw(st, T.cliffs + 4, T.cliffs + 4.6) * (1 - tw(st, T.today - 1, T.today - 0.5)), { size: 32 }); }
-  // ravens and a condor over the canyon (they face the way they fly) once it's open
-  if (s.cut > 0.3) for (let i = 0; i < 3; i++) { const dir = i % 2 ? -1 : 1, u = (t * 0.03 + hash(i, 40)) % 1, x = dir > 0 ? lerp(-2400, 2400, u) : lerp(2400, -2400, u); Animals.bird(t, x, RIM + 300 + i * 140 + Math.sin(t + i) * 30, 6 - i, i ? 'raven' : 'condor', { fly: true, dir }); }
-  // what we're looking at: a block cut out of northern Arizona, the river at the bottom
-  if (t < T.rew + 0.5) { pill('the Grand Canyon, Arizona: cut open like a slice of cake', 960, 230, tw(t, 0.6, 1.2) * (1 - tw(t, T.rew - 0.2, T.rew + 0.4)), { size: 36 }); const r = P.toScreen(0, RIVER); pill('the Colorado River', r[0] + 230, r[1] - 40, tw(t, 1.6, 2.2) * (1 - tw(t, T.rew - 0.2, T.rew + 0.4)), { size: 30, weight: 700 }); }
-  // the clock
-  pill(t < T.rew ? 'today' : ago(st), 330, 100, tw(t, 0.3, 0.8), { icon: CLOCK, size: 40 });
-  if (t > T.rew && t < T.base) { const a = Math.sin(K.inv(T.rew, T.base, t) * Math.PI); P.screen((ctx) => { ctx.globalAlpha = 0.22 * a; ctx.fillStyle = '#ffffff'; for (let i = 0; i < 9; i++) { const y = (hash(i, 3) * 1080 + t * 900 * (i % 2 ? 1 : -1) + 4 * 1080) % 1080; ctx.fillRect(0, y, 1920, 3); } }); }
-  P.vignette(0.3);
+  // reading the wall: each band named with its age, from the river up
+  if (t > T.read + 2.5 && t < T.win1 + 0.4) {
+    const bands = [[-250, 'Vishnu Schist · 1.8 billion years'], [40, 'Tapeats Sandstone · 525 million years'], [400, 'Redwall Limestone · 340 million years'], [890, 'Coconino Sandstone · 275 million years'], [1080, 'Kaibab Limestone · 270 million years']];
+    bands.forEach(([y, label], i) => { const Z = 2600, pr = V3.profile(1, 1), X = V3.center(Z) + ((pr.find((w) => w[1] >= y) ?? pr[pr.length - 1])[0] + 20) * V3.jut(Z, 1), p = V3.proj(c, X, y, Z); if (!p) return; const a = tw(t, T.read + 3 + i * 1.6, T.read + 3.5 + i * 1.6) * (1 - tw(t, T.win1 - 0.6, T.win1)); P.screen((ctx) => { ctx.globalAlpha = a; ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p[0], p[1], 7, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }); P.screen((ctx) => { ctx.globalAlpha = a; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + 90, p[1]); ctx.stroke(); ctx.globalAlpha = 1; }); pill(label, Math.min(p[0] + 90 + 230, 1620), p[1], a, { size: 28, weight: 700 }); });
+    pill('every layer is a different world', 960, 120, tw(t, T.read + 11, T.read + 11.5) * (1 - tw(t, T.win1 - 0.6, T.win1)), { size: 36 });
+  }
+  // the river's work and the widening: frost, flash floods, rockfalls; then cliffs and slopes
+  if (t > T.cut + 1.5 && t < T.widen) pill('the river cuts down: a few centimetres per thousand years', 960, 200, tw(t, T.cut + 2, T.cut + 2.6) * (1 - tw(t, T.widen - 1, T.widen - 0.4)), { size: 34 });
+  const ev = (a, label) => { pill(label, 960, 200, tw(t, a, a + 0.5) * (1 - tw(t, a + 4, a + 4.6)), { size: 36 }); return K.inv(a, a + 4.2, t); };
+  if (t > T.widen && t < T.today) {
+    ev(T.widen + 0.3, 'frost cracks the rock at night'); const ff = ev(T.widen + 5, 'flash floods drag boulders down'); const rf = ev(T.widen + 9.7, 'rockfalls widen the walls');
+    // a rockfall: a slab tumbling down the left wall
+    if (rf > 0 && rf < 1) { const Z = 5200, X0 = V3.center(Z) - 900, y = lerp(RIM - 150, RIVER + 40, K.ease.in(rf)), p = V3.proj(c, X0 + rf * 300, y, Z); if (p) P.screen((ctx) => { ctx.save(); ctx.translate(p[0], p[1]); ctx.rotate(rf * 5); const s = 40000 / p[2]; ctx.fillStyle = '#b8503a'; ctx.beginPath(); ctx.moveTo(-s, -s * 0.6); ctx.lineTo(s * 0.9, -s * 0.8); ctx.lineTo(s, s * 0.6); ctx.lineTo(-s * 0.7, s * 0.8); ctx.fill(); ctx.fillStyle = '#7a2a3a'; ctx.beginPath(); ctx.moveTo(s * 0.9, -s * 0.8); ctx.lineTo(s, s * 0.6); ctx.lineTo(s * 0.3, s * 0.7); ctx.fill(); ctx.restore(); for (let i = 0; i < 6; i++) { ctx.globalAlpha = 0.5 * (1 - rf); ctx.fillStyle = '#e8c8a8'; ctx.beginPath(); ctx.arc(p[0] + (i - 3) * 14, p[1] - 30 - i * 12 * rf, 10 + i * 3, 0, 7); ctx.fill(); } ctx.globalAlpha = 1; }); }
+    // the flash flood: the river turns brown and wide for a moment
+    if (ff > 0 && ff < 1) P.alpha(Math.sin(ff * Math.PI) * 0.8, () => P.screen((ctx) => { ctx.fillStyle = '#a8724a'; for (let i = 0; i < 30; i++) { const Z = 2500 * Math.pow(12, i / 30), p0 = V3.proj(c, V3.center(Z) - 120, RIVER + 3, Z), p1 = V3.proj(c, V3.center(Z) + 120, RIVER + 3, Z); if (p0 && p1) ctx.fillRect(Math.min(p0[0], p1[0]), p0[1] - 2, Math.abs(p1[0] - p0[0]), 5 + 1200 / Z); } }));
+  }
+  if (t > T.today - 2.5 && t < T.today + 0.2) { pill('hard rock stands in cliffs, soft rock crumbles into slopes', 960, 200, tw(t, T.today - 2.4, T.today - 2), { size: 32 }); }
+  // the hook and the end: name the place, the depth; birds over the canyon (they face the way they fly)
+  pill('the Grand Canyon, Arizona', 960, 160, tw(t, 0.8, 1.3) * (1 - tw(t, T.read - 0.5, T.read)), { size: 46 });
+  pill('about 1.8 km deep, carved by this river', 960, 236, tw(t, 2.5, 3) * (1 - tw(t, T.read - 0.5, T.read)), { size: 34 });
+  for (let i = 0; i < 3; i++) { const dir = i % 2 ? -1 : 1, u = (t * 0.035 + K.hash(i, 40)) % 1, x = dir > 0 ? lerp(-150, 2070, u) : lerp(2070, -150, u); P.screen(() => P.at(x, 260 + i * 70 + Math.sin(t + i) * 12, 0, 1, -1, () => Animals.bird(t, 0, 0, [1.3, 0.8, 0.6][i], i ? 'raven' : 'condor', { fly: true, dir }))); }
+  // foreground: a cactus clump and grass in the near corner (refs/view-river) while we're down in the canyon
+  if (t < T.fill) P.screen(() => { P.at(150, 1080, 0, 1, -1, () => { for (const [x, h] of [[-60, 260], [40, 340], [140, 220]]) Nature.cactus(x, 0, h, { col: '#4a8a5a' }); for (let i = 0; i < 9; i++) Nature.grass(t, -120 + i * 40, 0, 50 + (i % 3) * 20, { col: '#7a9a4a' }); }); });
+  pill(clockText(t), 330, 90, tw(t, 0.3, 0.8), { icon: CLOCK, size: 38 });
+  P.vignette(0.28);
 }
 const FILM = {
   draw(t) {
-    // the windows into the past (and the river today): dip to dark in and out (LEARNINGS: no cross-fades of two scenes)
     for (const [a, b, kind] of WIN) {
       if (t > a - 0.4 && t < b + 0.4) {
         const inWin = t >= a && t < b;
         if (inWin) { if (kind === 'dune') duneWindow(t, a); else if (kind === 'river') riverWindow(t, a); else seaWindow(t, kind); }
-        else crossScene(t);
+        else canyonScene(t);
         const d = t < a ? K.inv(a - 0.4, a, t) : t < a + 0.4 ? 1 - K.inv(a, a + 0.4, t) : t > b ? 1 - K.inv(b, b + 0.4, t) : t > b - 0.4 ? K.inv(b - 0.4, b, t) : 0;
         if (d > 0) P.haze('#120a14', d);
-        if (inWin) { const lab = { cambrian: 'a shallow sea, about 515 million years ago', redwall: 'a warm sea, about 340 million years ago', dune: 'a desert of giant dunes, about 275 million years ago', river: 'today' }[kind]; pill(lab, 960, kind === 'river' ? 120 : 980, tw(t, a + 0.5, a + 1) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 34 }); }
-        if (kind === 'dune' && inWin) { const sp = [1200, 640]; pill('its footprints are still there, in the stone', sp[0], sp[1], tw(t, a + 4.5, a + 5) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 32, weight: 700 }); }
-        if (t > T.D - 1) P.haze('#120a14', tw(t, T.D - 1, T.D));
+        if (inWin) {
+          const lab = { cambrian: 'the lowest layers: a shallow sea, about 515 million years ago', redwall: 'the red band: a warm sea, about 340 million years ago', dune: 'the pale band: a desert of giant dunes, about 275 million years ago', river: 'today' }[kind];
+          pill(lab, 960, kind === 'river' ? 120 : 980, tw(t, a + 0.5, a + 1) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 34 });
+          if (kind === 'dune') pill('its footprints are still there, in the stone', 1200, 640, tw(t, a + 4.5, a + 5) * (1 - tw(t, b - 0.8, b - 0.4)), { size: 32, weight: 700 });
+        }
         return;
       }
     }
-    crossScene(t);
+    canyonScene(t);
     if (t < 0.6) P.haze('#120a14', 1 - tw(t, 0, 0.6));
+    if (t > T.D - 1) P.haze('#120a14', tw(t, T.D - 1, T.D));
   },
 };

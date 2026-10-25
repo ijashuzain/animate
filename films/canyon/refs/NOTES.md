@@ -18,3 +18,10 @@
     leaving a trail of paired footprints, a pinkish mesa and hazy ridges far away, a big pale sun.
   - rafters: a yellow raft with a blue bottom, four people from behind in coloured helmets and life vests with paddles,
     turquoise water with white swirls, red cliff walls with a green-grey band, receding pink-violet canyon, teal sky.
+- 2026-10-25, the user ("this is not good, I need this kind of visuals"): the canyon must be a LANDSCAPE seen in
+  perspective, not a cross-section. view-river (looking down the canyon from the floor: lit orange walls with ledges and
+  vertical cracks, a winding turquoise river, cacti in front, birds), view-aerial (looking over the rim: flat lit tops,
+  deep violet shade on the inner walls, a winding mint river, a hazy horizon and sun), buttes (flat faceted butte and
+  mesa silhouettes: a lit face + a dark face), view-mesas (lit pink cliffs, violet shadow faces, blue far mesas,
+  a lit yellow top), view-gorge (looking along the canyon: stepped faceted ledges, light tops, dark undersides, a
+  river with sand bars and green banks, a hazy end wall). Build: a 2.5D faceted terrain renderer (perspective).
