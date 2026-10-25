@@ -65,7 +65,7 @@ function ruler(x, top, a) {
   P.alpha(a, () => { P.ribbon([[x, 0], [x, top]], w, 'rgba(255,255,255,0.7)'); for (let km = 0; km <= top / 1000; km += 2) P.ribbon([[x - 6 / P.k, km * 1000], [x + 6 / P.k, km * 1000]], w, 'rgba(255,255,255,0.7)'); });
 }
 // the farmhouse for the porch view (metres): walls, roof, a porch, a lit window (the family inside), the door
-function farmhouse(t, x, lit, shake) {
+function farmhouse(t, x, lit, shake, door = 0) {
   // a farmhouse in a three-quarter view (metres): the front gable faces us, the side wall runs back to the right in
   // shade; clapboard siding, a shingled roof with an overhang shadow, stone foundation, chimney, porch with steps,
   // railing and a lamp, trimmed windows; dusk light from the left, warm light from the windows
@@ -106,7 +106,8 @@ function farmhouse(t, x, lit, shake) {
     P.ribbon([[-7.1, 5.3], [0, 9.4], [7.1, 5.3]], 0.42, roofD); P.ribbon([[-7.1, 5.42], [0, 9.55], [7.1, 5.42]], 0.12, roofL);
     // the porch: a deck, two steps, posts, railing, a shallow roof, a lamp by the door
     P.rect(-2.8, 0.5, 5.6, 0.3, '#8a6a52'); P.rect(-1.0, 0, 2.0, 0.25, '#7a5a44'); P.rect(-1.2, 0.25, 2.4, 0.25, '#8a6a52');
-    P.rect(-1.0, 0.8, 2.0, 3.0, '#6a3e2c', { r: 0.1 }); P.rect(-0.8, 2.3, 1.6, 1.2, 'rgba(255,207,122,0.55)', { r: 0.06 }); P.circle(0.65, 1.9, 0.09, '#e8c060');
+    if (door > 0) { P.rect(-1.0, 0.8, 2.0, 3.0, '#ffcf7a'); P.rect(-1.0, 0.8, 2.0, 0.5, 'rgba(160,90,40,0.5)'); P.glow(0, 2.2, 2.2, '255,200,120', 0.5 * door); }
+    { const wD = 2.0 * (1 - door * 0.85); P.rect(-1.0, 0.8, wD, 3.0, door > 0 ? '#5a3424' : '#6a3e2c', { r: 0.1 }); if (door < 0.5) { P.rect(-0.8, 2.3, 1.6 * (1 - door * 2), 1.2, 'rgba(255,207,122,0.55)', { r: 0.06 }); P.circle(-1.0 + wD - 0.35, 1.9, 0.09, '#e8c060'); } }
     P.ribbon([[-1.0, 3.8], [1.0, 3.8]], 0.12, trim);
     for (const k of [-2.6, 2.6]) { P.rect(k - 0.1, 0.8, 0.2, 3.4, trim); P.rect(k - 0.02, 0.8, 0.04, 3.4, 'rgba(0,0,0,0.12)'); }
     for (const side2 of [-1, 1]) { P.rect(side2 > 0 ? 1.0 : -2.6, 1.8, 1.6, 0.1, trim); for (let i = 0; i < 6; i++) P.rect((side2 > 0 ? 1.1 : -2.5) + i * 0.27, 0.8, 0.06, 1.0, trim); }

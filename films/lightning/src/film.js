@@ -54,14 +54,19 @@ function porch(t) {
   // the fence and the cows in their paddock (right); the farmer and the dog hurrying in (hook)
   for (let i = 0; i < 6; i++) P.rect(9.5 + i * 1.8, 0, 0.12, 1.1, '#4a3a30'); P.rect(9.5, 0.85, 9, 0.08, '#5a483c'); P.rect(9.5, 0.45, 9, 0.08, '#5a483c');
   for (const [x, dir, sd, tint, s] of [[11, -1, 1, '#f2ede4', 0.0105], [13.6, 1, 2, '#e8d8c4', 0.011], [16, -1, 3, '#f2ede4', 0.01]]) Animals.quad(t, x, 0.35, s, Object.assign({}, Animals.SPEC.cow, { col: tint }), { dir, seed: sd, look: t > T.flash ? [0, 1] : undefined });
-  if (!end && t < 6.4) {
-    const u = tw(t, 1.0, 6.0, 'inOut'), fx = lerp(15, -4.8, u), a = 1 - tw(t, 5.6, 6.2);
-    P.alpha(a, () => { Animals.quad(t, fx - 1.6, 0, 0.012, 'dog', { dir: -1, walk: 2, seed: 2 }); Cast.person(t, fx, 1.55, { kid: false, shirt: '#7a8a4a', pants: '#3a3a4a', pose: u > 0 && u < 1 ? 'walk' : 'stand', dir: -1, seed: 3, hair: '#5a4a3a' }); });
-  }
   // birds leaving ahead of the storm (flying left, facing left)
   for (let i = 0; i < 4; i++) { const u = ((t * 0.08 + i * 0.27) % 1); Nature.bird(t, lerp(18, -14, u), 8.5 + i * 0.6 + Math.sin(t + i) * 0.2, 0.006, i, -1, '#2a2a40'); }
-  farmhouse(t, -5, 1, 0);
+  // the front door opens for the farmer and the dog, then closes behind them
+  const door = end ? 0 : tw(t, 4.3, 4.7) * (1 - tw(t, 6.3, 6.8));
+  farmhouse(t, -5, 1, 0, door);
   const win = windowWithFamily(t, -5, 0, [FAR.x * 100, 300]);
+  // the farmer and his dog hurry home along the path, up the porch steps and in through the front door (in front of
+  // the house, never through a wall); each fades into the lit doorway
+  if (!end && t < 6.4) {
+    const walker = (t0, t1, s0, x1, fn) => { const u = tw(t, t0, t1, 'inOut'), x = lerp(s0, x1, u), up = clamp((x1 + 1.6 - x) / 1.2) * 0.75, inside = tw(t, t1, t1 + 0.6); P.alpha(1 - inside, () => P.at(0, up, 0, 1, 1, () => fn(x, u > 0 && u < 1))); };
+    walker(1.2, 5.0, 14, -5.0, (x, moving) => Animals.quad(t, x, 0, 0.012, 'dog', { dir: -1, walk: moving ? 2 : 0, seed: 2 }));
+    walker(1.0, 5.6, 15.5, -5.0, (x, moving) => Cast.person(t, x, 1.55, { kid: false, shirt: '#7a8a4a', pants: '#3a3a4a', pose: moving ? 'walk' : 'stand', dir: -1, seed: 3, hair: '#5a4a3a' }));
+  }
   // counting: one, two, ... nine (the hook), then "about 3 km" (the end)
   if (!end) for (let n = 1; n <= 9; n++) { const t0 = T.flash + n; const s = P.toScreen(win[0], win[1]); pill(`${n}`, s[0], s[1] - 30, tw(t, t0 - 0.05, t0 + 0.1) * (1 - tw(t, t0 + 0.75, t0 + 0.95)), { size: 64 }); }
   if (!end) { const s = P.toScreen(win[0], win[1]); pill('9 seconds', s[0], s[1] - 30, tw(t, T.bang + 0.1, T.bang + 0.3), { size: 48 }); }
@@ -109,10 +114,15 @@ function fieldScene(t) {
   // the field: grass, fence, barn, the lone tree, cows
   field(t, fl);
   // in the wide views the tree, barn and cows are drawn larger than true scale so they stay readable (true scale up close)
-  const big = clamp(cam.h / 420, 1, 3.6);
+  const big = clamp(cam.h / 150, 1, 3.6);
   Props.barn(BARN.x * big, 0, big, { lit: 0.85 });
   Nature.oak(t, TREE.x, 0, TREE.h * big, { sway: 0.012 });
   P.at(0, 0, 0, big, big, () => cows(t, t > T.near));
+  // in the low shots before the strike the ground's positive charge gathers: on the grass, the treetop, the barn's rod
+  const gq = tw(t, T.low + 2.5, T.low + 4.5) * (1 - tw(t, T.ret, T.ret + 0.5));
+  if (gq > 0 && cam.h < 2000) { for (let i = 0; i < 24; i++) { const x = -90 + i * 8 + hash(i, 71) * 4; particle('none', x, 0.6 + Math.sin(t * 2 + i) * 0.2, 9, gq * (0.6 + 0.4 * Math.sin(t * 3 + i)), 1); }
+    particle('none', TREE_TOP[0], TREE_TOP[1] * big + 1.5, 13, gq, 1); particle('none', BARN.x * big, 12 * big + 0.8, 11, gq, 1);
+    const s0 = P.toScreen(TREE_TOP[0], TREE_TOP[1] * big); P.pill('the ground turns positive (+)', s0[0], s0[1] - 120, { u: gq * (1 - tw(t, T.lead + 2, T.lead + 2.6)), font: FONT, size: 34, weight: 400 }); }
   // crackles at the cloud base before the strike
   if (t > T.low + 1 && t < T.lead + 2) for (let i = 0; i < 6; i++) { const ph = (t * 1.3 + hash(i, 1)) % 1; if (ph < 0.18) { const x = CLOUD.cx + (hash(i, 2) - 0.5) * 5000, p = Nature.boltPath(40 + i + Math.floor(t * 1.3), [x, 1500], [x + 120, 1350], 40); Nature.bolt(p, { alpha: 0.6 * (1 - ph / 0.18), px: 1.5, glow: C.leader, core: '#d8ccff', branchA: 0.4 }); } }
   // the strike: the stepped leader (faint violet), the streamers, the return stroke (white, up), re-strikes, afterglow
@@ -147,7 +157,7 @@ function cutaway(t, puffs) {
   const rimK = 0.88, rim = puffs.map(([x, y, r]) => [puffs.cx + (x - puffs.cx) * rimK, cy + (y - cy) * rimK, r * rimK]); rim.poly = puffs.poly.map(([x, y]) => [puffs.cx + (x - puffs.cx) * rimK, cy + (y - cy) * rimK]);
   P.alpha(a, () => P.clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => P.clip(() => Nature.stormMask(rim), () => P.rect(puffs.cx - 2e4, 0, 4e4, 2e4, P.lin(0, puffs.base, 0, puffs.base + puffs.H, '#7a80c8', '#b0b4ec')))));
   // deep inside the cloud (the collision close-up) there are no edges in view: fill the whole frame with the inside
-  const deep = 1080 / P.k < 3500;
+  const deep = 1080 / P.k < 7000;
   const clip = deep ? (f, g) => g() : P.clip;
   P.alpha(a, () => clip(() => Nature.stormMask(inner), () => clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => {
     P.rect(puffs.cx - 2e4, 0, 4e4, 2e4, P.lin(0, puffs.base, 0, puffs.base + puffs.H, P.mixc(C.inner, '#2e5ab8', sort * 0.6), P.mixc(C.inner, '#a85aa8', sort * 0.6)));
@@ -193,7 +203,7 @@ function labels(t, cam) {
   const tip = tipOf(LEAD, leaderReveal(t)); let s = at(tip[0], tip[1]);
   pill('stepped leader', s[0] + 230, s[1], tw(t, T.lead + 1.5, T.lead + 2) * (1 - tw(t, T.near - 0.5, T.near)), { size: 34 });
   s = at(TREE_TOP[0] - 4, TREE_TOP[1] + 14); pill('streamer', s[0] - 200, s[1], tw(t, T.near + 3, T.near + 3.5) * (1 - tw(t, T.hush - 0.3, T.hush)), { size: 34 });
-  pill('return stroke: about 30,000 amperes', 960, 980, tw(t, T.ret + 2.2, T.ret + 2.8) * (1 - tw(t, T.re[1] - 0.4, T.re[1])), { size: 36 });
+  pill('return stroke: about 30,000 amperes', 960, 200, tw(t, T.ret + 2.2, T.ret + 2.8) * (1 - tw(t, T.re[1] - 0.4, T.re[1])), { size: 36 });
   pill('the air heats to about 30,000 °C and bursts outward', 960, 980, tw(t, T.thunder + 0.4, T.thunder + 0.9) * (1 - tw(t, T.home - 1.2, T.home - 0.6)), { size: 34 });
 }
 const FILM = {
