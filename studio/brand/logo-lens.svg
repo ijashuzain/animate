@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <!-- C: the slow lens: a stopwatch whose face is a scan window; a glowing curve runs through it to a spark -->
+  <defs>
+    <radialGradient id="bg" cx="40%" cy="30%" r="85%"><stop offset="0" stop-color="#5e4a74"/><stop offset="1" stop-color="#2f2440"/></radialGradient>
+    <radialGradient id="face" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#1f6573"/><stop offset="1" stop-color="#0f3640"/></radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+    <clipPath id="f"><circle cx="400" cy="430" r="205"/></clipPath>
+  </defs>
+  <circle cx="400" cy="400" r="400" fill="url(#bg)"/>
+  <rect x="368" y="138" width="64" height="46" rx="14" fill="#f2a93b"/>
+  <rect x="384" y="176" width="32" height="30" fill="#f2a93b"/>
+  <circle cx="400" cy="430" r="240" fill="#f2a93b"/>
+  <circle cx="400" cy="430" r="240" fill="none" stroke="#ffd98a" stroke-width="10" stroke-dasharray="0" opacity="0.35"/>
+  <circle cx="400" cy="430" r="205" fill="url(#face)"/>
+  <g clip-path="url(#f)" fill="none" stroke-linecap="round">
+    <path d="M 210 520 C 300 520 300 330 400 330 C 500 330 500 520 600 520" stroke="#6fe0ec" stroke-width="54" opacity="0.4" filter="url(#glow)"/>
+    <path d="M 210 520 C 300 520 300 330 400 330 C 500 330 500 520 600 520" stroke="#7fe3ee" stroke-width="30"/>
+    <path d="M 210 520 C 300 520 300 330 400 330 C 500 330 500 520 600 520" stroke="#e8ffff" stroke-width="10"/>
+  </g>
+  <circle cx="400" cy="330" r="48" fill="#ffb347" opacity="0.55" filter="url(#glow)"/>
+  <circle cx="400" cy="330" r="22" fill="#fff4d0"/>
+</svg>
