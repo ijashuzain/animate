@@ -73,7 +73,7 @@ function porch(t) {
 function fieldCam(t) {
   const tip = tipOf(LEAD, leaderReveal(t));
   if (t < T.lead - 0.01 || t >= T.home) {
-    const keys = [[T.out, [-200, 3600], 8500], [T.in, [-200, 3600], 8500], [T.rise + 9.6, [-200, 5600], 14500], [T.zoomC, [-200, 5600], 14500], [T.zoomC + 1.5, [-200, 6300], 1700], [T.back, [-200, 6300], 1700],
+    const keys = [[T.out, [-200, 3600], 8500], [T.in, [-200, 3600], 8500], [T.rise + 9.6, [-200, 5600], 14500], [T.zoomC, [-200, 5600], 14500], [T.zoomC + 1.5, [-1000, 5200], 1700], [T.back, [-1000, 5200], 1700],
       [T.sort, [-200, 5600], 14500], [T.low, [-200, 5600], 14500], [T.low + 2.6, [8, 62], 170], [T.lead, [8, 62], 170], [T.D, [8, 62], 170]];
     let i = 1; while (i < keys.length - 1 && t > keys[i][0]) i++;
     const a = keys[i - 1], b = keys[i], u = K.ease.inOut(K.inv(a[0], b[0], t));
@@ -144,7 +144,10 @@ function cutaway(t, puffs) {
   // the cut edge: a lighter band just inside the cloud's outline, so the inside reads as sliced open
   const rimK = 0.88, rim = puffs.map(([x, y, r]) => [puffs.cx + (x - puffs.cx) * rimK, cy + (y - cy) * rimK, r * rimK]); rim.poly = puffs.poly.map(([x, y]) => [puffs.cx + (x - puffs.cx) * rimK, cy + (y - cy) * rimK]);
   P.alpha(a, () => P.clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => P.clip(() => Nature.stormMask(rim), () => P.rect(puffs.cx - 2e4, 0, 4e4, 2e4, P.lin(0, puffs.base, 0, puffs.base + puffs.H, '#7a80c8', '#b0b4ec')))));
-  P.alpha(a, () => P.clip(() => Nature.stormMask(inner), () => P.clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => {
+  // deep inside the cloud (the collision close-up) there are no edges in view: fill the whole frame with the inside
+  const deep = 1080 / P.k < 3500;
+  const clip = deep ? (f, g) => g() : P.clip;
+  P.alpha(a, () => clip(() => Nature.stormMask(inner), () => clip(() => { P.ctx.beginPath(); P.ctx.ellipse(puffs.cx, cy, R, R, 0, 0, 7); }, () => {
     P.rect(puffs.cx - 2e4, 0, 4e4, 2e4, P.lin(0, puffs.base, 0, puffs.base + puffs.H, P.mixc(C.inner, '#2e5ab8', sort * 0.6), P.mixc(C.inner, '#a85aa8', sort * 0.6)));
     if (sort > 0) { P.glow(puffs.cx, puffs.base + puffs.H * 0.86, CLOUD.w * 0.8, C.plus, 0.35 * sort); P.glow(puffs.cx, puffs.base + puffs.H * 0.14, CLOUD.w * 0.9, C.minus, 0.35 * sort); }
     for (let i = 0; i < 9; i++) updraft(puffs.cx + (hash(i, 11) - 0.5) * CLOUD.w * 0.9, puffs.base + hash(i, 12) * 2500, puffs.H * 0.75, tw(t, T.cut + 1, T.cut + 2.5) * clamp((1080 / P.k - 4000) / 4000), t, i + 20);
@@ -161,7 +164,7 @@ function cutaway(t, puffs) {
     }
     // the close-up collisions: a crystal flies up, a graupel pellet falls, they bump: a little charge moves
     if (t > T.zoomC && t < T.back + 1) T.hits.forEach((tc, i) => {
-      const m = [CLOUD.cx + (i - 1) * 520, 6300 + (i % 2 ? 160 : -120)], before = K.inv(tc - 1.6, tc, t), after = K.inv(tc, tc + 2.2, t), hit = t >= tc;
+      const m = [-1000 + (i - 1) * 520, 5200 + (i % 2 ? 160 : -120)], before = K.inv(tc - 1.6, tc, t), after = K.inv(tc, tc + 2.2, t), hit = t >= tc;
       const cp = hit ? [m[0] - 40 - after * 260, m[1] - 50 + after * 380] : [lerp(m[0] - 260, m[0] - 40, before), lerp(m[1] - 360, m[1] - 50, before)];
       const gp = hit ? [m[0] + 50 + after * 200, m[1] + 60 - after * 420] : [lerp(m[0] + 220, m[0] + 50, before), lerp(m[1] + 380, m[1] + 60, before)];
       const vis = tw(t, tc - 1.8, tc - 1.4) * (1 - tw(t, T.back - 0.4, T.back + 0.4));
@@ -178,7 +181,7 @@ function labels(t, cam) {
     s = at(CLOUD.cx + CLOUD.w * 1.3, CLOUD.top * 0.85); pill('positive (+) on top', s[0], s[1], tw(t, T.sort + 4, T.sort + 4.6) * (1 - tw(t, T.low, T.low + 0.6)), { size: 32 });
     s = at(CLOUD.cx + CLOUD.w * 1.3, 2600); pill('negative (−) below', s[0], s[1], tw(t, T.sort + 5, T.sort + 5.6) * (1 - tw(t, T.low, T.low + 0.6)), { size: 32 });
   }
-  if (t > T.zoomC + 1 && t < T.back) { const m = [CLOUD.cx - 520, 6180]; let s = at(m[0] - 330, m[1] - 420); pill('ice crystal', s[0] - 60, s[1], tw(t, T.hits[0] - 1.4, T.hits[0] - 0.9) * (1 - tw(t, T.hits[0] + 1.2, T.hits[0] + 1.6)), { size: 34 }); s = at(m[0] + 300, m[1] + 460); pill('graupel (soft hail)', s[0] + 80, s[1], tw(t, T.hits[0] - 1.2, T.hits[0] - 0.7) * (1 - tw(t, T.hits[0] + 1.2, T.hits[0] + 1.6)), { size: 34 }); }
+  if (t > T.zoomC + 1 && t < T.back) { const m = [-1520, 5080]; let s = at(m[0] - 330, m[1] - 420); pill('ice crystal', s[0] - 60, s[1], tw(t, T.hits[0] - 1.4, T.hits[0] - 0.9) * (1 - tw(t, T.hits[0] + 1.2, T.hits[0] + 1.6)), { size: 34 }); s = at(m[0] + 300, m[1] + 460); pill('graupel (soft hail)', s[0] + 80, s[1], tw(t, T.hits[0] - 1.2, T.hits[0] - 0.7) * (1 - tw(t, T.hits[0] + 1.2, T.hits[0] + 1.6)), { size: 34 }); }
   // the slow-motion clock and the names of the parts of the strike
   const ms = MS(t), clockA = tw(t, T.low + 1.5, T.low + 2.2) * (1 - tw(t, T.home - 0.5, T.home));
   if (clockA > 0) pill(ms < 1000 ? `${ms.toFixed(ms < 100 ? 1 : 0)} ms` : `${(ms / 1000).toFixed(1)} s`, 300, 110, clockA, { icon: STOPWATCH, size: 46 });
