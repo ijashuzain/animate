@@ -63,6 +63,7 @@ const PAGE3 = [
   ['Nature.boltPath + bolt', 1700, 0, 800, (t) => Nature.bolt(Nature.boltPath(5, [-200, 1600], [100, 0], 80), { px: 3 })],
   ['Nature.oak (lone tree)', 18, 0, 8, (t) => Nature.oak(t, 0, 0, 14)],
   ['Props.barn (lightning rod)', 15, 0, 6.5, (t) => Props.barn(-1, 0, 1, { lit: 0.6 })],
+  ['Props.farmhouse (3/4 view, door)', 14, 1.5, 5.5, (t) => Props.farmhouse(t, 0, 1, 0, 0.6)],
 ];
 // page 4: the hero cat's falling rig in the five poses of the user's silhouette reference (+ walk, sleep, look)
 const C = (label, o) => [label, 150, 0, 40, (t) => Animals.cat(t, -10, 0, 1, o)];

@@ -7,6 +7,20 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+
+## 2026-10-25: the lightning film ("Nice", the user)
+- What worked: a human hook (a family counting flash-to-bang at the window) that the ending pays off (the sound crossing
+  3 km back to the house); the cloud building in real scale with a height ruler; a cutaway in the user's generated
+  reference look; the strike slowed 1,000x with a millisecond clock and named parts (leader, streamers, return stroke).
+- People and animals obey the world: they enter buildings through doors (the door opens, they go in, it closes), never
+  through walls; draw them in front of what they walk past.
+- At real scale small heroes vanish (a 14 m tree under a 1.5 km cloud): frame low and close for the ground beats, and
+  draw props larger than true scale in the wide views (a 'big' factor), keeping true scale in the close-ups.
+- Inside a cutaway close-up, there are no edges: fill the frame with the inside instead of clipping to a shape.
+- Transitions between two places: dip to dark and back, never a cross-fade of two busy scenes (ghost images).
+- Ground-level waits get something to watch (charge gathering, flickers inside the cloud), never 8 s of empty sky.
+- Harvested: Props.farmhouse (3/4 view, opening door), Props.barn, Nature.oak, Nature.stormCloud/boltPath/bolt.
+
 ## 2026-10-25: thumbnails, clouds, the house (the user's notes)
 - Thumbnails follow the user's reference grid exactly (studio/references/thumbs/STYLE.md): hook headline on top, one big hero,
   saturated and dark, a red arrow. The tool does the grade, focus spotlight, arrows, labels and headline.
