@@ -3,7 +3,7 @@
 const FONT = '"Baloo 2", sans-serif';
 if (typeof document !== 'undefined' && document.fonts) document.fonts.load(`700 40px ${FONT}`);
 const { tw, clamp, lerp } = K;
-const pill = (str, x, y, u, o = {}) => P.pill(str, x, y, Object.assign({ u, font: FONT, size: 36, weight: 700 }, o));
+const pill = (str, x, y, u, o = {}) => { const q = Object.assign({ u, font: FONT, size: 36, weight: 700 }, o); q.size *= 1.2; P.pill(str, x, y, q); };   // labels 20% larger (readable on phones)
 const shows = (t, a, b, f = 0.4) => tw(t, a, a + f) * (1 - tw(t, b - f, b));
 const SC = [[0, 10, 'hook'], [10, 16, 'stream'], [16, 30, 'marrow'], [30, 40, 'nucleus'], [40, 56, 'surface'], [56, 74, 'groups'], [74, 86, 'ogroup'], [86, 96, 'rh'],
   [96, 110, 'journey'], [110, 126, 'antibodies'], [126, 140, 'gut'], [140, 160, 'attack'], [160, 172, 'bank'], [172, 184, 'lineage'], [184, 200, 'apes'], [200, 220, 'germs'], [220, 232, 'world'], [232, 244, 'end']];
@@ -272,8 +272,11 @@ const SCENE = {
   },
 };
 
+// film time -> planned picture time: each scene stretches or shrinks to its line of the voice-over (src/timing.js)
+const toPlan = (t) => { const V = TIMING.VOICE, Pl = TIMING.PLAN; for (let i = 0; i < V.length - 1; i++) if (t < V[i + 1] || i === V.length - 2) return Pl[i] + (Pl[i + 1] - Pl[i]) * K.clamp((t - V[i]) / (V[i + 1] - V[i])); return Pl[Pl.length - 1]; };
 const FILM = {
-  draw(t) {
+  draw(tf) {
+    const t = Math.min(243.999, toPlan(tf));
     const ctx = P.ctx; let s = SC.find(([a, b]) => t >= a && t < b) ?? SC[SC.length - 1];
     SCENE[s[2]](ctx, t);
     // dip to dark at each cut

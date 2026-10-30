@@ -1,6 +1,6 @@
 {
  "title": "Why Do We Have Different Blood Types?",
- "duration": 244,
+ "duration": 197.07,
  "fps": 30,
  "fonts": [
   {
@@ -12,11 +12,18 @@
   "kit/cast.js"
  ],
  "src": [
+  "src/timing.js",
   "src/cells.js",
   "src/macro.js",
   "src/film.js"
  ],
  "audio": [
+  {
+   "id": "voice",
+   "src": "audio/voice-aligned.wav",
+   "start": 0,
+   "volume": 1
+  },
   {
    "id": "music",
    "src": "audio/music.wav",
@@ -31,6 +38,136 @@
   }
  ],
  "board": [
+  [
+   2.3,
+   "Hook: a drop of blood"
+  ],
+  [
+   5.22,
+   "Into the drop"
+  ],
+  [
+   8.87,
+   "Four kinds of cell: why?"
+  ],
+  [
+   12.98,
+   "Our cell in the bloodstream"
+  ],
+  [
+   20.88,
+   "Born in the bone marrow, 2 million a second"
+  ],
+  [
+   27.5,
+   "The nucleus is thrown out"
+  ],
+  [
+   33.2,
+   "A dimpled disc, 8 um"
+  ],
+  [
+   38.8,
+   "Sugar chains on its surface"
+  ],
+  [
+   45.34,
+   "The ABO gene's enzyme adds one last sugar"
+  ],
+  [
+   58.87,
+   "A, B and AB"
+  ],
+  [
+   68.53,
+   "O: one letter missing, the enzyme breaks"
+  ],
+  [
+   76.54,
+   "RhD: plus or minus, 8 groups"
+  ],
+  [
+   83.64,
+   "Squeezing through a capillary"
+  ],
+  [
+   87.77,
+   "Round the body in a minute"
+  ],
+  [
+   96.45,
+   "Antibodies: anti-B leaves our A cell alone"
+  ],
+  [
+   105.58,
+   "Newborns have none"
+  ],
+  [
+   112.75,
+   "Gut bacteria teach the body"
+  ],
+  [
+   116.45,
+   "Wrong blood: A into an O patient"
+  ],
+  [
+   121.73,
+   "Antibodies clump the cells"
+  ],
+  [
+   124.25,
+   "and the cells burst"
+  ],
+  [
+   131.77,
+   "O negative: for almost anyone"
+  ],
+  [
+   142.16,
+   "Back through the generations"
+  ],
+  [
+   148.16,
+   "The first humans"
+  ],
+  [
+   156.5,
+   "Gibbons share A and B: 20 million years"
+  ],
+  [
+   160.56,
+   "Malaria"
+  ],
+  [
+   166.0,
+   "A and B cells stick, O less"
+  ],
+  [
+   169.88,
+   "Cholera hits O harder"
+  ],
+  [
+   173.76,
+   "No type wins everywhere"
+  ],
+  [
+   180.82,
+   "The variety is the point"
+  ],
+  [
+   185.87,
+   "Our cell is recycled after 120 days"
+  ],
+  [
+   190.0,
+   "Two million new ones"
+  ],
+  [
+   193.53,
+   "Back in the stream"
+  ]
+ ],
+ "plannedBoard": [
   [
    2.2,
    "Hook: a drop of blood"

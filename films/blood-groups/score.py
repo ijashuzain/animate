@@ -9,10 +9,19 @@ import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'tools2'))
 from synth import *
 
-D = 244.0
+import json, subprocess
 here = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(os.path.join(here, 'audio'), exist_ok=True)
-mus, fx = Mix(D), Mix(D)
+# the picture follows the voice-over (align.py -> src/timing.js): every cue below is written in planned time (0-244 s)
+# and placed at the matching moment of the film
+TM = json.loads(open(os.path.join(here, 'src', 'timing.js')).read().split('const TIMING = ')[1].strip().rstrip(';'))
+V, PL, D = TM['VOICE'], TM['PLAN'], TM['D']
+def to_film(tp):
+    for i in range(len(PL) - 1):
+        if tp < PL[i + 1] or i == len(PL) - 2: return V[i] + (V[i + 1] - V[i]) * (tp - PL[i]) / (PL[i + 1] - PL[i])
+class WMix(Mix):
+    def add(self, x, at, gain=1.0, pan=0.0): super().add(x, max(0.0, to_film(at)), gain, pan)
+mus, fx = WMix(D), WMix(D)
 N = note
 
 def heartbeat(t0, t1, gain=1.0, rate=1.05):
@@ -108,5 +117,15 @@ fx.add(sfx_gulp(), 235.6, 0.3)
 for i in range(8): fx.add(sfx_bubble(320 + i * 30), 236.8 + i * 0.4, 0.12)
 fx.add(sfx_whoosh(1.6), 240, 0.2)
 
-mus.reverb(0.3).write(os.path.join(here, 'audio', 'music.wav'), gain=0.5)
-fx.reverb(0.12).write(os.path.join(here, 'audio', 'sfx.wav'), gain=0.9)
+# duck the music under the voice: an envelope of the voice's loudness, smoothed, pulls the music down while it speaks
+vp = os.path.join(here, 'audio', 'voice-aligned.wav')
+if os.path.exists(vp):
+    raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', vp, '-ac', '1', '-ar', str(SR), '-f', 's16le', '-'], capture_output=True, check=True).stdout
+    vx = np.abs(np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768)
+    win = int(0.25 * SR); env = np.convolve(vx, np.ones(win) / win, mode='same'); env = np.clip(env / (np.percentile(env, 90) + 1e-9), 0, 1)
+    env = np.convolve(env, np.ones(int(0.4 * SR)) / int(0.4 * SR), mode='same')
+    env = np.pad(env, (0, max(0, mus.n - len(env))))[:mus.n]
+    duck = 1 - 0.6 * np.clip(env * 1.3, 0, 1)
+    mus.L *= duck; mus.R *= duck
+mus.reverb(0.3).write(os.path.join(here, 'audio', 'music.wav'), gain=0.32)
+fx.reverb(0.12).write(os.path.join(here, 'audio', 'sfx.wav'), gain=0.5)
