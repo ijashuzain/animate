@@ -1,10 +1,163 @@
 {
-  "title": "Why Do We Have Different Blood Types?",
-  "duration": 8,
-  "fps": 30,
-  "fonts": [{ "family": "Baloo 2", "file": "studio/fonts/Baloo2[wght].ttf" }],
-  "kit": ["kit/cast.js"],
-  "src": ["src/cells.js", "src/film.js"],
-  "audio": [],
-  "board": [[2, "Look test: our cell in the bloodstream"], [6, "Look test: the sugar tags on its surface"]]
+ "title": "Why Do We Have Different Blood Types?",
+ "duration": 244,
+ "fps": 30,
+ "fonts": [
+  {
+   "family": "Baloo 2",
+   "file": "studio/fonts/Baloo2[wght].ttf"
+  }
+ ],
+ "kit": [
+  "kit/cast.js"
+ ],
+ "src": [
+  "src/cells.js",
+  "src/macro.js",
+  "src/film.js"
+ ],
+ "audio": [
+  {
+   "id": "music",
+   "src": "audio/music.wav",
+   "start": 0,
+   "volume": 1
+  },
+  {
+   "id": "sfx",
+   "src": "audio/sfx.wav",
+   "start": 0,
+   "volume": 1
+  }
+ ],
+ "board": [
+  [
+   2.2,
+   "Hook: a drop of blood"
+  ],
+  [
+   5,
+   "Into the drop"
+  ],
+  [
+   8.5,
+   "Four kinds of cell: why?"
+  ],
+  [
+   13,
+   "Our cell in the bloodstream"
+  ],
+  [
+   25,
+   "Born in the bone marrow, 2 million a second"
+  ],
+  [
+   33.5,
+   "The nucleus is thrown out"
+  ],
+  [
+   39,
+   "A dimpled disc, 8 um"
+  ],
+  [
+   46,
+   "Sugar chains on its surface"
+  ],
+  [
+   54.6,
+   "The ABO gene's enzyme adds one last sugar"
+  ],
+  [
+   72,
+   "A, B and AB"
+  ],
+  [
+   83,
+   "O: one letter missing, the enzyme breaks"
+  ],
+  [
+   94,
+   "RhD: plus or minus, 8 groups"
+  ],
+  [
+   103,
+   "Squeezing through a capillary"
+  ],
+  [
+   108,
+   "Round the body in a minute"
+  ],
+  [
+   118,
+   "Antibodies: anti-B leaves our A cell alone"
+  ],
+  [
+   128.5,
+   "Newborns have none"
+  ],
+  [
+   137,
+   "Gut bacteria teach the body"
+  ],
+  [
+   142,
+   "Wrong blood: A into an O patient"
+  ],
+  [
+   151,
+   "Antibodies clump the cells"
+  ],
+  [
+   155.5,
+   "and the cells burst"
+  ],
+  [
+   167,
+   "O negative: for almost anyone"
+  ],
+  [
+   180,
+   "Back through the generations"
+  ],
+  [
+   187,
+   "The first humans"
+  ],
+  [
+   197,
+   "Gibbons share A and B: 20 million years"
+  ],
+  [
+   202,
+   "Malaria"
+  ],
+  [
+   209,
+   "A and B cells stick, O less"
+  ],
+  [
+   214,
+   "Cholera hits O harder"
+  ],
+  [
+   219,
+   "No type wins everywhere"
+  ],
+  [
+   229,
+   "The variety is the point"
+  ],
+  [
+   234.5,
+   "Our cell is recycled after 120 days"
+  ],
+  [
+   238,
+   "Two million new ones"
+  ],
+  [
+   241,
+   "Back in the stream"
+  ]
+ ]
 }
