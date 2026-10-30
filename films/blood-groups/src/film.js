@@ -136,10 +136,10 @@ const SCENE = {
     else {
       const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#1a2a6a'); bg.addColorStop(1, '#3a1a5a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
       M.body(ctx, 960, 760, 760, '#4a5ab0');
-      const loop = (s) => { const a = s * 6.283; return [960 + Math.sin(a) * 150 * (1 + 0.6 * Math.sin(a * 2)), 560 + Math.cos(a) * 420]; };
+      const loop = (s) => { const a = s * 6.283; return [1000 + Math.sin(a) * 150 * (1 + 0.6 * Math.sin(a * 2)), 330 + (1 - Math.cos(a)) * 330 - Math.sin(a) * 30]; };
       ctx.strokeStyle = 'rgba(255,90,90,0.55)'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); for (let i = 0; i <= 80; i++) { const [x, y] = loop(i / 80); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
       const [hx, hy] = loop(((t - 106) / 3.6) % 1); CELL.rbc(ctx, hx, hy, 26, t, 0.8, { glow: 1 });
-      M.cell(ctx, 990, 380, 40, '#ff4a6a', { seed: 3, t: t * 4, wob: 0.05 + 0.04 * Math.sin(t * 7) });
+      M.cell(ctx, 1000, 330, 40, '#ff4a6a', { seed: 3, t: t * 4, wob: 0.05 + 0.04 * Math.sin(t * 7) });
       pill('round the whole body in about a minute', 960, 980, shows(t, 106.3, 110));
     }
   },
@@ -177,7 +177,7 @@ const SCENE = {
     const cells = []; for (let i = 0; i < 11; i++) { const sx = -300 + K.hash(i, 1) * 2400 + (1 - tw(t, 144, 148, 'out')) * -600, sy = 150 + K.hash(i, 2) * 780, a = i / 11 * 6.283, tx = 960 + Math.cos(a) * (120 + (i % 3) * 90), ty = 540 + Math.sin(a) * (100 + (i % 3) * 70);
       cells.push([lerp(sx, tx, clump), lerp(sy, ty, clump), i]); }
     cells.forEach(([x, y, i]) => { if (burst > 0 && K.hash(i, 9) < 0.7) { const b = burst; ctx.globalAlpha = 1 - b; const gr = ctx.createRadialGradient(x, y, 0, x, y, 200 * b + 60); gr.addColorStop(0, 'rgba(255,40,40,0.6)'); gr.addColorStop(1, 'rgba(255,40,40,0)'); ctx.fillStyle = gr; ctx.fillRect(x - 300, y - 300, 600, 600); ctx.globalAlpha = 1;
-      for (let k = 0; k < 6; k++) { const a = k + i, d = b * 160; CELL.bead(ctx, x + Math.cos(a) * d, y + Math.sin(a) * d, 30 * (1 - b * 0.6), '#d0201e', 1 - b); } return; }
+      for (let k = 0; k < 8; k++) { const a = k * 0.8 + i, d = b * 120 + 30; CELL.bead(ctx, x + Math.cos(a) * d, y + Math.sin(a) * d, 34 * (1 - b * 0.4), k % 2 ? '#d0201e' : '#ff5a40', 1 - b * 0.5); } return; }
       M.taggedCell(ctx, t, x, y, 110, i + t * 0.05 * (1 - clump), 0.8, 'A', { fog: 0, bg: '#a01a3a' }); });
     // anti-A antibodies: drifting, then bridging neighbouring cells
     for (let i = 0; i < 22; i++) { const c1 = cells[i % 11], c2 = cells[(i + 3) % 11], fx = (K.hash(i, 4) * 2200 - u * 60) % 2200 - 140, fy = 100 + K.hash(i, 5) * 880;
