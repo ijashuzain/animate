@@ -71,7 +71,7 @@ const FILM = {
     for (const [a, b, kind] of WIN) {
       if (t > a - 0.4 && t < b + 0.4) {
         const inWin = t >= a && t < b;
-        if (inWin) { if (kind === 'dune') duneScene(t, a); else if (kind === 'river') raftScene(t, a); else seaLife(t, kind); }
+        if (inWin) { if (kind === 'dune') duneScene(t, a); else if (kind === 'river') raftScene(t, a); else seaLife(t, kind, a); }
         else canyonScene(t);
         const d = t < a ? K.inv(a - 0.4, a, t) : t < a + 0.4 ? 1 - K.inv(a, a + 0.4, t) : t > b ? 1 - K.inv(b, b + 0.4, t) : t > b - 0.4 ? K.inv(b - 0.4, b, t) : 0;
         if (d > 0) P.haze('#120a14', d);

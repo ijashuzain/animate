@@ -60,40 +60,7 @@ LIFE.shark = (t, x, y, s, dir = 1, col = '#5a6a8a') => P.at(x, y, 0, s * dir, s,
 // a sea-floor rock, faceted: a lit top face and a shaded front
 LIFE.rock = (x, y, r, seed = 1, col = '#7a5a8a') => { const pts = P.blobPts(x, y + r * 0.35, r, r * 0.55, 8, 0.25, seed); P.poly(pts, P.mixc(col, '#2a1a3a', 0.25)); P.poly(pts.map(([px, py]) => [px, py + (py > y + r * 0.35 ? r * 0.05 : r * 0.3)]).slice(0, 5), P.mixc(col, '#f0d0e0', 0.15)); };
 
-// ---------- the sea windows (camera 0..: y up, the sea floor around y = 0) ----------
-function seaLife(t, kind) {
-  const red = kind === 'redwall';
-  P.cam({ x: 0, y: 50, h: 520 });
-  P.sky(red ? '#7ae4e8' : '#6ad8e0', red ? '#1a7a9a' : '#1a6a8a', red ? '#36b4c8' : '#2aa0b8');
-  // light rays and the shimmering surface
-  P.screen((ctx) => { ctx.globalCompositeOperation = 'lighter'; for (let i = 0; i < 7; i++) { const x = 160 + i * 260 + Math.sin(t * 0.3 + i) * 40; const g = ctx.createLinearGradient(x, 0, x + 260, 1000); g.addColorStop(0, 'rgba(210,255,250,0.16)'); g.addColorStop(1, 'rgba(210,255,250,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + 80, 0); ctx.lineTo(x + 380, 1080); ctx.lineTo(x + 220, 1080); ctx.fill(); } ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(255,255,255,0.18)'; for (let i = 0; i < 14; i++) { const x = (K.hash(i, 3) * 1920 + t * 20) % 1920; ctx.beginPath(); ctx.ellipse(x, 30 + K.hash(i, 4) * 40, 80, 8, 0, 0, 7); ctx.fill(); } });
-  // far: hazy reef ridges and silhouettes of crinoids / sponges
-  for (let k = 0; k < 3; k++) { const hz = 0.75 - k * 0.22, pts = [[-800, 60]]; for (let x = -800; x <= 800; x += 30) pts.push([x, 95 + (2 - k) * 35 + 40 * K.noise(x * 0.008, k + 2)]); pts.push([800, 60]); P.poly(pts, P.mixc('#2a7a90', '#5ac0d0', hz * 0.6));
-    for (let i = 0; i < (red ? 18 : 9); i++) { const x = red ? -760 + i * 90 + K.hash(i, k + 5) * 60 : -720 + i * 180 + K.hash(i, k + 5) * 90, y = 100 + (2 - k) * 30; if (red) LIFE.crinoid(t, x, y, 34 + k * 14 + K.hash(i, k) * 14, '#e88a6a', i + k * 10, hz); else LIFE.sponge(x, y - 6, 30 + k * 14, P.mixc('#e8b060', '#3a9ab8', hz), i + k); } }
-  // the sea floor: pale sand with ripples, a darker band under the reef
-  P.rect(-900, -220, 1800, 300, P.lin(0, 80, 0, -220, '#f2dcae', '#e6c48c'));
-  for (let i = 0; i < 10; i++) { const y = 60 - i * 26, pts = []; for (let x = -900; x <= 900; x += 60) pts.push([x, y + Math.sin(x * 0.02 + i) * 3]); P.ribbon(pts, 2.2, 'rgba(190,140,80,0.3)'); }
-  // fish / swimmers in the middle water (they face the way they swim)
-  if (red) for (let i = 0; i < 3; i++) { const dir = i % 2 ? -1 : 1, u = (t * 0.035 + K.hash(i, 16)) % 1, x = dir > 0 ? lerp(-900, 900, u) : lerp(900, -900, u); LIFE.shark(t, x, 250 + i * 40, 0.9 - i * 0.2, dir, ['#5a6a8a', '#6a7a9a', '#4a5a7a'][i]); }
-  else { const u = (t * 0.05) % 1; LIFE.anomalocaris(t, lerp(900, -900, u), 270 + Math.sin(t) * 10, 1.3, -1); }
-  // mid and near: the gardens
-  if (red) {
-    for (let i = 0; i < 12; i++) LIFE.crinoid(t, -680 + i * 120 + K.hash(i, 9) * 60, 40 - K.hash(i, 10) * 30, 80 + K.hash(i, 11) * 70, ['#f07850', '#f2a050', '#f6c890', '#e86a7a'][i % 4], i);
-    for (let i = 0; i < 5; i++) LIFE.bryozoan(t, -560 + i * 270 + K.hash(i, 30) * 60, -20 - K.hash(i, 31) * 40, 70 + K.hash(i, 32) * 40, ['#e86a7a', '#f08a6a', '#d870a0'][i % 3]);
-    for (let i = 0; i < 10; i++) LIFE.hornCoral(-640 + i * 140 + K.hash(i, 12) * 50, -40 - K.hash(i, 13) * 80, 50 + K.hash(i, 14) * 50, (K.hash(i, 15) - 0.5) * 0.6);
-  } else {
-    for (let i = 0; i < 8; i++) LIFE.sponge(-640 + i * 180 + K.hash(i, 20) * 60, -10 - K.hash(i, 21) * 70, 70 + K.hash(i, 22) * 60, ['#e8b060', '#e89060', '#d8c070'][i % 3], i);
-    for (let i = 0; i < 9; i++) LIFE.algae(t, -680 + i * 160 + K.hash(i, 23) * 60, -30 - K.hash(i, 24) * 60, 80 + K.hash(i, 25) * 60, ['#8a9a3a', '#6a8a4a', '#a8a040'][i % 3], i);
-  }
-  for (let i = 0; i < 9; i++) LIFE.rock(-680 + i * 160 + K.hash(i, 40) * 70, -60 - K.hash(i, 41) * 110, 24 + K.hash(i, 42) * 30, i);
-  for (let i = 0; i < 12; i++) LIFE.brachiopod(-650 + i * 115 + K.hash(i, 19) * 50, -80 - K.hash(i, 20) * 110, 16 + K.hash(i, 21) * 12, ['#f2c8a0', '#e8a090', '#f0d4b4'][i % 3]);
-  // trilobites crawling on the sand (more in the Cambrian sea), facing the way they go
-  const nT = red ? 2 : 5; for (let i = 0; i < nT; i++) { const dir = i % 2 ? -1 : 1, u = (t * 0.025 + K.hash(i, 22)) % 1, x = dir > 0 ? lerp(-700, 700, u) : lerp(700, -700, u); LIFE.trilobite(t, x, -70 - i * 28, 2.3 - i * 0.2, dir, ['#8a6a4a', '#6a5a6a', '#9a7a52', '#7a6a5a', '#8a5a4a'][i], i); }
-  // near: a big crinoid / algae cropped by the frame edge, out of focus-dark (depth)
-  if (red) { LIFE.crinoid(t, -760, -160, 380, '#d85a50', 41); LIFE.crinoid(t, 720, -170, 330, '#e8885a', 42); } else { LIFE.algae(t, -760, -200, 340, '#5a7a3a', 43); LIFE.sponge(740, -210, 220, '#c88a50', 44); }
-  P.screen((ctx) => { ctx.fillStyle = 'rgba(255,255,255,0.45)'; for (let i = 0; i < 40; i++) { ctx.beginPath(); ctx.arc((K.hash(i, 30) * 1920 + t * 8) % 1920, (K.hash(i, 31) * 1080 - t * 14 + 1080 * 4) % 1080, 1.6, 0, 7); ctx.fill(); } });
-}
+// the sea windows are in src/sea.js (seaLife)
 // ---------- land plants of the canyon today (screen-space foreground, y down; s = size) ----------
 LIFE.pricklyPear = (x, y, s, seed = 0, t = 0) => { const pad = (px, py, a, r) => P.at(px, py, a, 1, 1, () => { P.lit(P.blobPts(0, r * 0.9, r * 0.62, r, 14, 0.04, seed + px), '#5aa060', { d: 0.22, light: [-0.6, 0.6] }); for (let i = 0; i < 9; i++) P.circle((K.hash(i, seed + px) - 0.5) * r * 0.9, r * (0.3 + 1.2 * K.hash(i + 3, seed + px)), r * 0.035, '#f0e8b0'); }); P.at(x, y, 0, s, -s, () => { pad(0, 0, 0, 60); pad(-40, 70, -0.5, 46); pad(42, 76, 0.45, 50); pad(-10, 140, 0.1, 40); pad(70, 150, 0.7, 34); for (const [fx, fy, c] of [[-40, 150, '#f2d24a'], [70, 205, '#f06a8a'], [-8, 218, '#c8344a']]) { P.circle(fx, fy, 9, c); P.circle(fx, fy, 4, P.mixc(c, '#ffffff', 0.4)); } }); };
 LIFE.agave = (x, y, s, t = 0) => P.at(x, y, 0, s, -s, () => { for (let i = 0; i < 11; i++) { const a = Math.PI * (0.08 + 0.84 * i / 10), L = 110 * (0.65 + 0.35 * Math.sin(i * 1.9) ** 2), tip = [Math.cos(a) * L, Math.sin(a) * L * 0.95], side = Math.cos(a) > 0 ? 1 : -1; P.poly([[-9, 0], [9, 0], tip], P.lin(-L, 0, L, 0, '#8ab8a8', '#4a7a70')); P.ribbon([[0, 2], tip], 1.4, 'rgba(255,255,240,0.35)'); P.circle(tip[0], tip[1], 2.2, '#5a3a2a'); void side; } });

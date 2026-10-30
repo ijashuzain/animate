@@ -18,6 +18,7 @@
     "src/world.js",
     "src/view.js",
     "src/life.js",
+    "src/sea.js",
     "src/film.js"
   ],
   "audio": [
