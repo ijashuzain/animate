@@ -11,22 +11,22 @@ Every red cell is covered in chains of sugar. One gene, ABO, makes an enzyme tha
 **Chapters:**
 0:00 A drop of blood: four kinds of cell
 0:10 Follow one red blood cell
-0:16 Born in the bone marrow
-0:30 Throwing out the nucleus
-0:40 Sugar chains on its surface
-0:56 Groups A, B and AB
-1:14 Group O: one missing letter
-1:26 RhD: positive or negative
-1:36 Round the body in a minute
-1:50 Antibodies against the tags you don't have
-2:06 Babies, gut bacteria and antibodies
-2:20 Why the wrong blood is dangerous
-2:40 Matching blood: O negative
-2:52 Back through our ancestors
-3:04 Gibbons share our blood groups: 20 million years
-3:20 Malaria and cholera
-3:40 Why the variety survives
-3:52 The end of a red cell's life
+0:15 Born in the bone marrow
+0:24 Throwing out the nucleus
+0:34 Sugar chains on its surface
+0:46 Groups A, B and AB
+1:00 Group O: one missing letter
+1:11 RhD: positive or negative
+1:18 Round the body in a minute
+1:29 Antibodies against the tags you don't have
+1:43 Babies, gut bacteria and antibodies
+1:55 Why the wrong blood is dangerous
+2:07 Matching blood: O negative
+2:15 Back through our ancestors
+2:25 Gibbons share our blood groups: 20 million years
+2:39 Malaria and cholera
+2:54 Why the variety survives
+3:03 The end of a red cell's life
 
 **Sources:**
 - ABO is a trans-species polymorphism shared by descent with gibbons, at least ~20 million years old: Ségurel et al., PNAS 2012 (pmc.ncbi.nlm.nih.gov/articles/PMC3494955); Science News "Human blood types have deep evolutionary roots"

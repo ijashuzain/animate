@@ -275,6 +275,19 @@ const SCENE = {
 // film time -> planned picture time: each scene stretches or shrinks to its line of the voice-over (src/timing.js)
 const toPlan = (t) => { const V = TIMING.VOICE, Pl = TIMING.PLAN; for (let i = 0; i < V.length - 1; i++) if (t < V[i + 1] || i === V.length - 2) return Pl[i] + (Pl[i + 1] - Pl[i]) * K.clamp((t - V[i]) / (V[i + 1] - V[i])); return Pl[Pl.length - 1]; };
 const FILM = {
+  // the thumbnail (studio/references/thumbs/STYLE.md): the wrong-blood clump, big and lit, antibodies bridging the cells,
+  // one cell bursting on the right; the headline "WRONG BLOOD" comes from film.json
+  thumb(ctx) {
+    const bg = ctx.createRadialGradient(960, 640, 60, 960, 640, 1100); bg.addColorStop(0, '#c0203a'); bg.addColorStop(0.5, '#5a0820'); bg.addColorStop(1, '#14020a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+    const glow = ctx.createRadialGradient(900, 660, 50, 900, 660, 600); glow.addColorStop(0, 'rgba(255,190,120,0.45)'); glow.addColorStop(1, 'rgba(255,190,120,0)'); ctx.fillStyle = glow; ctx.fillRect(0, 0, 1920, 1080);
+    const cells = [[880, 660, 190, 0.2], [640, 560, 150, 1.1], [1110, 520, 160, 2.0], [700, 840, 150, 2.6], [1080, 820, 170, 0.7], [470, 760, 120, 1.7], [880, 420, 130, 0.4]];
+    for (const [x, y, r, a] of cells) M.taggedCell(ctx, 0, x, y, r, a, 0.8, 'A', { fog: 0, bg: '#5a0820' });
+    for (let i = 0; i < cells.length; i++) for (const j of [i + 1, i + 2]) { const c1 = cells[i], c2 = cells[j % cells.length]; M.antibody(ctx, (c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2, 54, Math.atan2(c2[1] - c1[1], c2[0] - c1[0]) + Math.PI / 2, '#ffd23a'); }
+    // a cell bursting on the right
+    const bx = 1500, by = 680, gr = ctx.createRadialGradient(bx, by, 0, bx, by, 300); gr.addColorStop(0, 'rgba(255,60,50,0.7)'); gr.addColorStop(1, 'rgba(255,60,50,0)'); ctx.fillStyle = gr; ctx.fillRect(bx - 300, by - 300, 600, 600);
+    for (let k = 0; k < 12; k++) { const a = k * 0.52, d = 120 + (k % 3) * 40; CELL.bead(ctx, bx + Math.cos(a) * d, by + Math.sin(a) * d, 30 - (k % 3) * 6, k % 2 ? '#d0201e' : '#ff6a48'); }
+    CELL.rbc(ctx, bx, by, 110, 0.4, 0.75, { fog: 0, bg: '#5a0820' });
+  },
   draw(tf) {
     const t = Math.min(243.999, toPlan(tf));
     const ctx = P.ctx; let s = SC.find(([a, b]) => t >= a && t < b) ?? SC[SC.length - 1];
