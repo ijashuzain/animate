@@ -75,15 +75,20 @@ CELL.flow = (ctx, t, cz, n = 160, vp = [1180, 430], hero) => {
   }
   if (hero) cells.push(hero);
   cells.sort((p, q) => q.z - p.z);
-  for (const c of cells) CELL.rbc(ctx, c.x, c.y, c.r, c.ang, c.k, { fog: C_((c.z - 500) / 4700) * 0.8, bg: '#d84a6a', blur: c.z < 240 ? 8 : c.z > 2600 ? 1.5 : 0, glow: c.glow });
+  for (const c of cells) CELL.rbc(ctx, c.x, c.y, c.r, c.ang, c.k, { fog: C_((c.z - 500) / 4700) * 0.8, bg: '#d84a6a', blur: c.z < 240 ? 8 : 0, glow: c.glow });
 };
 
 // ---------- the surface up close (tile 3) ----------
 // a bead with a soft 3D shade (lit top-left)
+CELL._sprites = {};
 CELL.bead = (ctx, x, y, r, col, a = 1) => {
-  const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
-  g.addColorStop(0, mixA(col, '#ffffff', 0.55)); g.addColorStop(0.55, col); g.addColorStop(1, mixA(col, '#1a0830', 0.35));
-  ctx.globalAlpha = a; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+  // each colour is shaded once into a 64 px sprite and reused (thousands of beads per frame)
+  let sp = CELL._sprites[col];
+  if (!sp) { sp = document.createElement('canvas'); sp.width = sp.height = 64; const g2 = sp.getContext('2d'), R = 31;
+    const g = g2.createRadialGradient(32 - R * 0.35, 32 - R * 0.4, R * 0.1, 32, 32, R);
+    g.addColorStop(0, mixA(col, '#ffffff', 0.55)); g.addColorStop(0.55, col); g.addColorStop(1, mixA(col, '#1a0830', 0.35));
+    g2.fillStyle = g; g2.beginPath(); g2.arc(32, 32, R, 0, 7); g2.fill(); CELL._sprites[col] = sp; }
+  if (r < 0.5) return; const ga = ctx.globalAlpha; ctx.globalAlpha = ga * a; ctx.drawImage(sp, x - r * 64 / 62, y - r * 64 / 62, r * 128 / 62, r * 128 / 62); ctx.globalAlpha = ga;
 };
 CELL.SUGAR = { base: ['#ffc23a', '#ffd24a', '#4ac0ff', '#ff8ac0'], A: '#5ad86a', B: '#3a7aff' };
 // the membrane: a thick band packed with tiny beads (the lipid heads): bright orange-gold at the surface, red deeper,
@@ -94,7 +99,7 @@ CELL.membrane = (ctx, t, edge, rows = 18) => {
   ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (const [x, y] of pts) ctx.lineTo(x, y); ctx.lineTo(1960, 1120); ctx.lineTo(-400, 1120); ctx.fill();
   for (let row = rows - 1; row >= 0; row--) { const n = 95, d = row * 21 + 4 + (K.hash(row, 2) - 0.5) * 6, deep = row / (rows - 1);
     for (let i = 0; i < n; i++) { const u = (i + (row % 2) * 0.5) / n, [x, y] = edge(u), r = (15 - deep * 5) * (0.85 + 0.3 * K.hash(i, row + 9));
-      const col = deep < 0.2 ? mixA('#ffb03a', '#ffe070', K.hash(i, row + 20) * 0.6) : mixA(mixA('#ff7a3a', '#e8303a', (deep - 0.2) * 2), '#8a1050', C_((deep - 0.55) * 2.2));
+      const q = (v) => Math.round(v * 6) / 6, col = deep < 0.2 ? mixA('#ffb03a', '#ffe070', q(K.hash(i, row + 20)) * 0.6) : mixA(mixA('#ff7a3a', '#e8303a', q((deep - 0.2) * 2)), '#8a1050', q(C_((deep - 0.55) * 2.2)));
       CELL.bead(ctx, x + (K.hash(i, row + 3) - 0.5) * 16 - d * 0.35 + (K.hash(i, row + 5) - 0.5) * 6, y + d + Math.sin(t * 1.4 + i * 0.6 + row) * 1.3, r, col, 1); } }
 };
 // a sugar chain (the H chain every group shares): gold and cyan beads on a short stalk, a pink side bead (fucose) near
