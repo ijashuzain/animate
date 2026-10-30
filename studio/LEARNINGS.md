@@ -9,6 +9,11 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 ## 2026-10-30: the blood groups film (the user's own topic; 3:17 with the user's ElevenLabs voice)
+- **The user's verdict (2026-10-30): "You are improving step by step ... this video's animations are coming closer to my
+  expectations."** What closed the gap, keep doing it: (1) the user generates a reference grid from my prompts and I match
+  it closely (glossy, saturated, Kurzgesagt-like vector, rich gradients and soft bokeh, dense frames at several depths);
+  (2) a one-frame look test before the whole build; (3) one hero to follow; (4) the real process drawn plainly, with small
+  labels; (5) fix the weak spots I name before the user has to.
 - What worked: the user's own question as the topic; references FIRST (a generated 3x3 grid, one tile per world) and a
   one-frame look test approved before the build ("This looks nice"); a single hero to follow (one red cell, glowing in the
   crowd); the real chemistry drawn plainly (the same H chain in everyone, one sugar added at the tip, O = a broken enzyme).
@@ -21,6 +26,7 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
   real ~3 words/s.
 - Speed: shaded beads drawn once as sprites (drawImage) and no blur on far cells took a 4-minute draft from ~2 h to ~25 min.
 - Labels 20% bigger read on phones.
+- Harvested: kit/micro.js (CELL + Micro), gallery page 5 (studio/references/kit-micro.png).
 
 ## 2026-10-30: the canyon film, discarded by the user ("I dont like the visuals")
 - Four looks were rejected in a row: a 2D cross-section ("pure 2D"), 2.5D slices ("not good"), a faceted 3D terrain ("much

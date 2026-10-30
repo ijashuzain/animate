@@ -22,9 +22,11 @@ kit/                   the shared drawing kit (plain JS, deterministic, canvas 2
                        animals.js (the house-style animal library from the user's style sheets: Animals.quad rig with 16 mammals,
                        the hero cat with a falling rig, 9 birds, lizard, snake, croc, frog, trilobite, insects, octopus, starfish, seal),
                        nature.js also has the faceted set (rock, mesa/canyon wall, peak, pine, cactus, shrub, flowers, mushroom, grass, stump, log).
+                       micro.js (from the blood film): CELL (glossy red cells, vessel flow, membrane beads, sugar chains, enzyme) and Micro
+                       (antibodies, marrow, capillary, gut, body vessels, blood bank, gibbon, jungle, savanna, germs, world): screen space.
                        See the gallery pages studio/references/kit-gallery.png, kit-animals.png, kit-small-creatures.png, kit-nature.png
-                       + kit-cat-poses.png
-                       (films/kit-gallery renders them: still 0.5 / 1.5 / 2.5 / 3.5 / 4.5) before pitching.
+                       + kit-cat-poses.png + kit-micro.png
+                       (films/kit-gallery renders them: still 0.5 / 1.5 / 2.5 / 3.5 / 4.5 / 5.5) before pitching.
                        Grow it: anything a second film could use goes here, not in a film.
 films/<slug>/          one folder per film: plan.md, script-timed.md, film.json, src/*.js, score.py, audio/ (wav ignored),
                        hf/ (generated HyperFrames project), stills/, renders/ (ignored)

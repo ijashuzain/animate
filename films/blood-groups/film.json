@@ -9,12 +9,11 @@
   }
  ],
  "kit": [
-  "kit/cast.js"
+  "kit/cast.js",
+  "kit/micro.js"
  ],
  "src": [
   "src/timing.js",
-  "src/cells.js",
-  "src/macro.js",
   "src/film.js"
  ],
  "audio": [

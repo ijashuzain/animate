@@ -1,6 +1,6 @@
 {
   "title": "Kit Gallery",
-  "duration": 5,
+  "duration": 6,
   "fps": 30,
   "fonts": [
     {
@@ -13,7 +13,8 @@
     "kit/nature.js",
     "kit/creatures.js",
     "kit/props.js",
-    "kit/animals.js"
+    "kit/animals.js",
+    "kit/micro.js"
   ],
   "src": [
     "src/film.js"

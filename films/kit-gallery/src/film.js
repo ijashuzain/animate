@@ -77,7 +77,24 @@ const PAGE4 = [
   C('sleepy', { mood: 'sleep' }),
   C('looking around', { look: [-0.5, 0.3], tailUp: 0.6 }),
 ];
-const PAGES = [PAGE0, PAGE1, PAGE2, PAGE3, PAGE4];
+// page 5: kit/micro.js (from the blood film): whole screen-space scenes shrunk into the tiles
+const S = (label, fn) => [label, 0, 0, 0, fn];
+const PAGE5 = [
+  S('CELL.vessel + flow + rbc (hero glow)', (t, ctx) => { CELL.vessel(ctx, t, t * 420, [1180, 430]); CELL.flow(ctx, t, t * 420, 160, [1180, 430], { z: 330, x: 760, y: 560, r: 165, ang: -0.35, k: 0.65, glow: 0.9 }); CELL.vesselEdge(ctx, [1180, 430]); }),
+  S('CELL.membrane + chain + enzyme', (t, ctx) => { CELL.deep(ctx, t); const e = (u) => [-80 + u * 2100, 360 + u * 500]; CELL.membrane(ctx, t, e); [0.2, 0.45, 0.7].forEach((u, i) => CELL.chain(ctx, t, e(u), [0.24, -0.97], 4, { col: CELL.SUGAR.A, u: 1 }, i, 26)); CELL.enzyme(ctx, t, 1300, 300, 170, -0.6); }),
+  S('Micro.marrow + nursery', (t, ctx) => { Micro.marrow(ctx, t); Micro.nursery(ctx, t, t); }),
+  S('Micro.antibody, igm, taggedCell', (t, ctx) => { CELL.deep(ctx, t); Micro.taggedCell(ctx, t, 600, 540, 220, -0.3, 0.8, 'A', { fog: 0 }); Micro.taggedCell(ctx, t, 1350, 400, 160, 0.4, 0.8, 'AB', { fog: 0 }); Micro.antibody(ctx, 1000, 800, 90, 0.3, '#ffc23a'); Micro.igm(ctx, 1500, 820, 120, t * 0.3, '#4a8aff'); }),
+  S('Micro.capillary (the squeeze)', (t, ctx) => Micro.capillary(ctx, t, 3.5)),
+  S('Micro.gut (villi + bacteria)', (t, ctx) => Micro.gut(ctx, t, t)),
+  S('Micro.body + vessels', (t, ctx) => { ctx.fillStyle = '#1a2a6a'; ctx.fillRect(0, 0, 1920, 1080); Micro.body(ctx, 960, 760, 760, '#4a5ab0'); Micro.vessels(ctx, t, 960, 760, 760); }),
+  S('Micro.bank + bag', (t, ctx) => Micro.bank(ctx, t, 8, 1)),
+  S('Micro.jungle + gibbon', (t, ctx) => { Micro.jungle(ctx, t); Micro.gibbon(t, ctx, 820, 170, 520, Math.sin(t) * 0.3); }),
+  S('Micro.savanna (acacias)', (t, ctx) => Micro.savanna(ctx, t)),
+  S('Micro.mosquito, infected, vibrio', (t, ctx) => { CELL.deep(ctx, t); Micro.mosquito(t, ctx, 1300, 380, 700, -1); Micro.infected(ctx, t, 500, 600, 180, 0.3, 0.85); for (let i = 0; i < 4; i++) Micro.vibrio(ctx, t, 300 + i * 420, 950, 120, i); }),
+  S('Micro.world + scale + lineage', (t, ctx) => { Micro.world(ctx, t, 0); Micro.scale(ctx, 960, 760, 260, Math.sin(t) * 0.5); }),
+];
+PAGE5.screen = true;
+const PAGES = [PAGE0, PAGE1, PAGE2, PAGE3, PAGE4, PAGE5];
 let CELLS = PAGE0;
 const FILM = {
   draw(t) {
@@ -88,10 +105,10 @@ const FILM = {
       const x0 = (i % cols) * w, y0 = Math.floor(i / cols) * h, k = (h - 40) / vh;
       ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.beginPath(); ctx.rect(x0 + 4, y0 + 4, w - 8, h - 8); ctx.clip();
       const g = ctx.createLinearGradient(0, y0, 0, y0 + h); g.addColorStop(0, '#8fc6ee'); g.addColorStop(1, '#d8eefa'); ctx.fillStyle = g; ctx.fillRect(x0, y0, w, h);
-      ctx.setTransform(k, 0, 0, -k, x0 + w / 2 - k * cx, y0 + 20 + (h - 40) / 2 + k * cy);
-      try { fn(t); } catch (e) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#f00'; ctx.fillText(String(e.message).slice(0, 60), x0 + 10, y0 + 60); }
+      if (CELLS.screen) ctx.setTransform(w / 1920, 0, 0, w / 1920, x0, y0); else ctx.setTransform(k, 0, 0, -k, x0 + w / 2 - k * cx, y0 + 20 + (h - 40) / 2 + k * cy);
+      try { fn(t, ctx); } catch (e) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#f00'; ctx.fillText(String(e.message).slice(0, 60), x0 + 10, y0 + 60); }
       ctx.restore();
-      P.text(label, x0 + w / 2, y0 + h - 18, { font: FONT, size: 20, weight: 800, color: '#1a2a4a' });
+      P.text(label, x0 + w / 2, y0 + h - 18, { font: FONT, size: 20, weight: 800, color: CELLS.screen ? '#ffffff' : '#1a2a4a' });
     });
   },
 };

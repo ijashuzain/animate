@@ -1,6 +1,7 @@
 // Why Do We Have Different Blood Types? One red blood cell's life (the user's pitch B), 4:04.
 // Scenes follow script-timed.md line by line; transitions dip to dark (never cross-fade two busy scenes).
 const FONT = '"Baloo 2", sans-serif';
+const M = Micro;   // the body-scale pieces (kit/micro.js)
 if (typeof document !== 'undefined' && document.fonts) document.fonts.load(`700 40px ${FONT}`);
 const { tw, clamp, lerp } = K;
 const pill = (str, x, y, u, o = {}) => { const q = Object.assign({ u, font: FONT, size: 36, weight: 700 }, o); q.size *= 1.2; P.pill(str, x, y, q); };   // labels 20% larger (readable on phones)
