@@ -1,0 +1,10 @@
+{
+  "title": "Why Do We Have Different Blood Types?",
+  "duration": 8,
+  "fps": 30,
+  "fonts": [{ "family": "Baloo 2", "file": "studio/fonts/Baloo2[wght].ttf" }],
+  "kit": ["kit/cast.js"],
+  "src": ["src/cells.js", "src/film.js"],
+  "audio": [],
+  "board": [[2, "Look test: our cell in the bloodstream"], [6, "Look test: the sugar tags on its surface"]]
+}
