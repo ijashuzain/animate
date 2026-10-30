@@ -8,6 +8,20 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-10-30: the blood groups film (the user's own topic; 3:17 with the user's ElevenLabs voice)
+- What worked: the user's own question as the topic; references FIRST (a generated 3x3 grid, one tile per world) and a
+  one-frame look test approved before the build ("This looks nice"); a single hero to follow (one red cell, glowing in the
+  crowd); the real chemistry drawn plainly (the same H chain in everyone, one sugar added at the tip, O = a broken enzyme).
+- Hands: an index finger up beside a closed fist reads as a rude gesture. The user sent a flat icon hand (palm toward us,
+  index up, the other fingers shorter beside it, thumb out, soft crease strokes); match that (refs/NOTES.md, item 10).
+- Voice-over arrives as one file: fit the picture to the voice, not the other way round. align.py finds the lines from the
+  pauses (the transcriber's model can't download here), lays them out with a 0.6 s breath, and writes src/timing.js;
+  FILM.draw maps film time -> planned time per line; score.py places every cue through the same map and ducks the music
+  under the voice (about 13 dB under while speaking). The user's read was 25% faster than my plan: plan ~2.3 words/s,
+  real ~3 words/s.
+- Speed: shaded beads drawn once as sprites (drawImage) and no blur on far cells took a 4-minute draft from ~2 h to ~25 min.
+- Labels 20% bigger read on phones.
+
 ## 2026-10-30: the canyon film, discarded by the user ("I dont like the visuals")
 - Four looks were rejected in a row: a 2D cross-section ("pure 2D"), 2.5D slices ("not good"), a faceted 3D terrain ("much
   better" but still not loved), and sea windows that "didn't feel underwater" until rebuilt in depth from references.

@@ -10,3 +10,6 @@
 7 gibbon: dark fur, pale face ring, swinging under a branch in a green rainforest
 8 malaria: purple parasites inside red cells clumping (rosette), a mosquito, blue comma-shaped cholera bacteria
 9 blood bank: bags labelled A, B, AB, O on shelves, a donor's arm with a line
+10 the hook hand (sent by the user mid-build, 2026-10-30; the image itself wasn't saved to disk): a flat icon hand, palm
+  toward us, the index finger up, the other three fingers shorter side by side, the thumb out to the left, skin #fcc493,
+  darker crease strokes #f6a36e (one up each finger, short ones on the thumb and at the palm's base). -> hookHand in src/film.js

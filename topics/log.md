@@ -88,3 +88,6 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-30 | What Really Happens When You Crack Your Knuckles (x-ray joint) | human body | suggested |
 | 2026-10-30 | How a Car Engine Turns Fuel Into Motion (one cylinder cutaway) | tech explained | suggested |
 | 2026-10-30 | How 400 Tonnes of Plane Stays in the Air (real airflow over a cut wing) | tech explained | suggested |
+
+## 2026-10-30 (the user's own topic)
+| 2026-10-30 | Why Do We Have Different Blood Types? (one red cell's life; voice by the user) | biology / evolution | **made** (films/blood-groups, 3:17) |
