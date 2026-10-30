@@ -1,0 +1,23 @@
+{
+  "record_type": "experiment",
+  "record_id": "experiment:feather-layering-planned",
+  "hypothesis": "Layered feathers improve subjective motion readability compared with basic wing shape.",
+  "baseline_asset_id": "asset:bird-original-baseline-unimplemented",
+  "candidate_asset_id": "asset:bird-original-planned",
+  "changed_variables": [
+    "wing feather geometry"
+  ],
+  "benchmark_ids": [
+    "bird_still",
+    "bird_flight"
+  ],
+  "seed": 1227,
+  "resolution": "1920x1080",
+  "fps": 30,
+  "status": "planned",
+  "results": null,
+  "reviewer": null,
+  "commit_hash": null,
+  "failures": [],
+  "synthetic_example": true
+}

@@ -1,0 +1,36 @@
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*credentials*.json
+*service-account*.json
+*.pem
+
+# Protected or rights-sensitive raw source media: never tracked
+raw_media/
+source_media/
+source_frames/
+private_references/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.flac
+
+# API cache and transient files
+api_cache/
+cache/
+*.sqlite
+*.db
+__pycache__/
+.pytest_cache/
+node_modules/
+.venv/
+
+# Generated outputs and local review
+renders/
+reports/local/
+.tmp/
+.DS_Store

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/animation-knowledge-graph/schemas/rights.schema.json",
+  "title": "Rights",
+  "description": "Rights/access manifest. A public URL is not permission to extract audiovisual media.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_id",
+    "source_id",
+    "source_url",
+    "rights_state",
+    "owner",
+    "grant_reference",
+    "permitted_operations",
+    "storage_allowed",
+    "redistribution_allowed",
+    "retention_until",
+    "reviewed_at",
+    "reviewer",
+    "notes",
+    "synthetic_example"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "const": "rights"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "rights_state": {
+      "type": "string",
+      "enum": [
+        "url_only",
+        "public_viewing_notes",
+        "licensed_local_analysis",
+        "licensed_redistribution",
+        "blocked"
+      ]
+    },
+    "owner": {
+      "type": "string"
+    },
+    "grant_reference": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "permitted_operations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "storage_allowed": {
+      "type": "boolean"
+    },
+    "redistribution_allowed": {
+      "type": "boolean"
+    },
+    "retention_until": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reviewed_at": {
+      "type": "string"
+    },
+    "reviewer": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "synthetic_example": {
+      "type": "boolean"
+    }
+  }
+}

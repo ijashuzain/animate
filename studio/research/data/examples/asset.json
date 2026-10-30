@@ -1,0 +1,33 @@
+{
+  "record_type": "asset",
+  "record_id": "asset:bird-original-planned",
+  "asset_class": "animal.bird",
+  "version": "0.0.1",
+  "originality_statement": "Original procedural character concept; no copied reference paths or artwork.",
+  "source_path": "assets/bird/original_bird.tsx",
+  "preview_path": null,
+  "animated_preview_path": null,
+  "parameter_schema_path": null,
+  "component_ids": [
+    "body",
+    "head",
+    "wing_L",
+    "wing_R",
+    "tail",
+    "eyes"
+  ],
+  "rig_controls": [
+    "wing_L_angle",
+    "wing_R_angle",
+    "blink"
+  ],
+  "pattern_ids": [
+    "pattern:synthetic-feather-layering-v0"
+  ],
+  "experiment_ids": [
+    "experiment:feather-layering-planned"
+  ],
+  "status": "planned",
+  "license": "to-be-selected-for-original-work",
+  "synthetic_example": true
+}

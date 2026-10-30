@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/animation-knowledge-graph/schemas/experiment.schema.json",
+  "title": "Experiment",
+  "description": "Reproducible A/B experiment with result fields empty until actually run.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_id",
+    "hypothesis",
+    "baseline_asset_id",
+    "candidate_asset_id",
+    "changed_variables",
+    "benchmark_ids",
+    "seed",
+    "resolution",
+    "fps",
+    "status",
+    "results",
+    "reviewer",
+    "commit_hash",
+    "failures",
+    "synthetic_example"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "const": "experiment"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "hypothesis": {
+      "type": "string"
+    },
+    "baseline_asset_id": {
+      "type": "string"
+    },
+    "candidate_asset_id": {
+      "type": "string"
+    },
+    "changed_variables": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "benchmark_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "resolution": {
+      "type": "string"
+    },
+    "fps": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "running",
+        "completed",
+        "inconclusive",
+        "blocked"
+      ]
+    },
+    "results": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "reviewer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "commit_hash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "synthetic_example": {
+      "type": "boolean"
+    }
+  }
+}

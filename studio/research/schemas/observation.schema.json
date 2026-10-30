@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/animation-knowledge-graph/schemas/observation.schema.json",
+  "title": "Observation",
+  "description": "Literal observations and separately labeled inferences.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_id",
+    "source_video_id",
+    "source_url",
+    "evidence_id",
+    "access_method",
+    "rights_state",
+    "observed_at",
+    "start_ms",
+    "end_ms",
+    "frame_count",
+    "source_fps",
+    "subject",
+    "ontology_tags",
+    "literal_observation",
+    "possible_inference",
+    "alternative_explanations",
+    "measurements",
+    "confidence",
+    "confidence_rationale",
+    "reviewer",
+    "review_state",
+    "synthetic_example"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "const": "observation"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "source_video_id": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "evidence_id": {
+      "type": "string"
+    },
+    "access_method": {
+      "type": "string",
+      "enum": [
+        "official_production_notes",
+        "human_viewing",
+        "licensed_still",
+        "licensed_video",
+        "original_owned",
+        "other"
+      ]
+    },
+    "rights_state": {
+      "type": "string",
+      "enum": [
+        "url_only",
+        "public_viewing_notes",
+        "licensed_local_analysis",
+        "licensed_redistribution",
+        "blocked"
+      ]
+    },
+    "observed_at": {
+      "type": "string"
+    },
+    "start_ms": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "end_ms": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "frame_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "source_fps": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "subject": {
+      "type": "string"
+    },
+    "ontology_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "literal_observation": {
+      "type": "string"
+    },
+    "possible_inference": {
+      "type": "string"
+    },
+    "alternative_explanations": {
+      "type": "string"
+    },
+    "measurements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "method"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "confidence_rationale": {
+      "type": "string"
+    },
+    "reviewer": {
+      "type": "string"
+    },
+    "review_state": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "reviewed",
+        "rejected",
+        "superseded"
+      ]
+    },
+    "synthetic_example": {
+      "type": "boolean"
+    }
+  }
+}

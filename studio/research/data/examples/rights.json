@@ -1,0 +1,19 @@
+{
+  "record_type": "rights",
+  "record_id": "rights:demo-source",
+  "source_id": "DEMO0000001",
+  "source_url": "https://example.invalid/original-demo",
+  "rights_state": "licensed_local_analysis",
+  "owner": "synthetic demo author",
+  "grant_reference": "synthetic-owned-demo-only",
+  "permitted_operations": [
+    "local_test_analysis"
+  ],
+  "storage_allowed": false,
+  "redistribution_allowed": false,
+  "retention_until": null,
+  "reviewed_at": "2026-10-31T00:00:00Z",
+  "reviewer": "example-not-a-human-reviewer",
+  "notes": "TEST FIXTURE ONLY; never treat as permission for any other content.",
+  "synthetic_example": true
+}

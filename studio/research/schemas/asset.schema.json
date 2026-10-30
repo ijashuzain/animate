@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/animation-knowledge-graph/schemas/asset.schema.json",
+  "title": "Asset",
+  "description": "Original coded asset and revision status.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_id",
+    "asset_class",
+    "version",
+    "originality_statement",
+    "source_path",
+    "preview_path",
+    "animated_preview_path",
+    "parameter_schema_path",
+    "component_ids",
+    "rig_controls",
+    "pattern_ids",
+    "experiment_ids",
+    "status",
+    "license",
+    "synthetic_example"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "const": "asset"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "asset_class": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "originality_statement": {
+      "type": "string"
+    },
+    "source_path": {
+      "type": "string"
+    },
+    "preview_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "animated_preview_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parameter_schema_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "component_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rig_controls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pattern_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "experiment_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "implemented",
+        "tested",
+        "approved",
+        "rejected"
+      ]
+    },
+    "license": {
+      "type": "string"
+    },
+    "synthetic_example": {
+      "type": "boolean"
+    }
+  }
+}

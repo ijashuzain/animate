@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/animation-knowledge-graph/schemas/edge.schema.json",
+  "title": "Edge",
+  "description": "Traceable ontology edge.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_id",
+    "subject_id",
+    "predicate",
+    "object_id",
+    "evidence_ids",
+    "status",
+    "synthetic_example"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "const": "edge"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "predicate": {
+      "type": "string",
+      "enum": [
+        "PART_OF",
+        "CONTAINS",
+        "OBSERVED_IN",
+        "SUPPORTED_BY",
+        "CONTRADICTED_BY",
+        "INFERRED_FROM",
+        "ABSTRACTS",
+        "IMPLEMENTS",
+        "DEPENDS_ON",
+        "HAS_COMPONENT",
+        "USES_SHAPE",
+        "USES_MATERIAL",
+        "USES_RIG",
+        "HAS_MOTION",
+        "OCCURS_IN",
+        "EXPLAINS",
+        "TESTED_BY",
+        "IMPROVES",
+        "REGRESSES",
+        "VERSION_OF"
+      ]
+    },
+    "object_id": {
+      "type": "string"
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "reviewed",
+        "rejected"
+      ]
+    },
+    "synthetic_example": {
+      "type": "boolean"
+    }
+  }
+}

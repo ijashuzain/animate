@@ -1,0 +1,28 @@
+{
+  "record_type": "pattern",
+  "record_id": "pattern:synthetic-feather-layering-v0",
+  "category": "animals.birds.feathers",
+  "statement": "Hypothesis: layered feather groups improve visual depth in a coded bird.",
+  "scope": "Original bird test only.",
+  "exclusions": "Not a validated finding from Kurzgesagt.",
+  "parameters": {
+    "group_count_candidate": 3
+  },
+  "status": "hypothesis",
+  "evidence_observation_ids": [
+    "obs:synthetic-bird-01"
+  ],
+  "independent_source_count": 1,
+  "contradiction_ids": [],
+  "confidence": 0.3,
+  "confidence_rationale": "Not independently tested.",
+  "generator_ids": [
+    "generator:feather-fan-planned"
+  ],
+  "experiment_ids": [
+    "experiment:feather-layering-planned"
+  ],
+  "version": "0.0.1",
+  "last_reviewed_at": "2026-10-31T00:00:00Z",
+  "synthetic_example": true
+}

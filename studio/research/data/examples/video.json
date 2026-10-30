@@ -1,0 +1,20 @@
+{
+  "record_type": "video",
+  "record_id": "video:DEMO0000001",
+  "snapshot_id": "synthetic-demo",
+  "video_id": "DEMO0000001",
+  "source_url": "https://example.invalid/original-demo",
+  "title": "SYNTHETIC EXAMPLE: Original Bird Test",
+  "published_at": null,
+  "discovered_at": "2026-10-31T00:00:00Z",
+  "availability": "unknown",
+  "format": "unknown",
+  "coverage_level": "licensed_stills",
+  "topic_tags": [
+    "birds",
+    "original_test"
+  ],
+  "rights_state": "licensed_local_analysis",
+  "notes": "Dummy record, not a real channel video and not research evidence.",
+  "synthetic_example": true
+}

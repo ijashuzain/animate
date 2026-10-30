@@ -1,0 +1,29 @@
+{
+  "project_id": "educational-animation-studio",
+  "source_channel": "https://www.youtube.com/@kurzgesagt/videos",
+  "channel_handle": "@kurzgesagt",
+  "target_catalog_count_unverified": 397,
+  "snapshot_id": null,
+  "policy": {
+    "allow_youtube_audio_video_download": false,
+    "allow_unlicensed_frame_storage": false,
+    "allow_unauthorized_scraping": false,
+    "require_local_media_rights_manifest": true,
+    "publish_original_assets_only": true
+  },
+  "runtime_defaults": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "random_seed": 1227
+  },
+  "batch_limits": {
+    "max_videos_deep_analysis": 5,
+    "max_api_requests": 100,
+    "max_local_source_storage_mb": 0,
+    "max_paid_api_cost_usd": 0,
+    "max_wall_minutes": 120
+  },
+  "first_benchmark": "bird.original.forest.v1",
+  "data_status": "design_only_no_catalog_ingested"
+}

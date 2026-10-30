@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/animation-knowledge-graph/schemas/video.schema.json",
+  "title": "Video",
+  "description": "Source identity and coverage. Do not store API metadata past applicable retention rules.",
+  "type": "object",
+  "required": [
+    "record_type",
+    "record_id",
+    "snapshot_id",
+    "video_id",
+    "source_url",
+    "discovered_at",
+    "availability",
+    "format",
+    "coverage_level",
+    "topic_tags",
+    "rights_state",
+    "notes",
+    "synthetic_example"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_type": {
+      "const": "video"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "snapshot_id": {
+      "type": "string"
+    },
+    "video_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{11}$"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "published_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "discovered_at": {
+      "type": "string"
+    },
+    "availability": {
+      "type": "string",
+      "enum": [
+        "public",
+        "private",
+        "deleted",
+        "unavailable",
+        "unknown"
+      ]
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "regular",
+        "short",
+        "live",
+        "other",
+        "unknown"
+      ]
+    },
+    "coverage_level": {
+      "type": "string",
+      "enum": [
+        "cataloged",
+        "metadata_only",
+        "human_viewed",
+        "licensed_stills",
+        "motion_reviewed",
+        "deep_analyzed",
+        "reconstruction_tested",
+        "blocked"
+      ]
+    },
+    "topic_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rights_state": {
+      "type": "string",
+      "enum": [
+        "url_only",
+        "public_viewing_notes",
+        "licensed_local_analysis",
+        "licensed_redistribution",
+        "blocked"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    },
+    "synthetic_example": {
+      "type": "boolean"
+    }
+  }
+}

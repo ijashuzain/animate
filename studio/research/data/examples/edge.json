@@ -1,0 +1,12 @@
+{
+  "record_type": "edge",
+  "record_id": "edge:synthetic-1",
+  "subject_id": "obs:synthetic-bird-01",
+  "predicate": "SUPPORTED_BY",
+  "object_id": "evidence:synthetic-original-bird-frame",
+  "evidence_ids": [
+    "evidence:synthetic-original-bird-frame"
+  ],
+  "status": "proposed",
+  "synthetic_example": true
+}
