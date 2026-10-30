@@ -86,8 +86,13 @@ M.capillary = (ctx, t, u) => {
 
 // ---------- people ----------
 // a simple body silhouette (for the circulation loop): head, torso, arms, legs as soft shapes
+// the main vessels drawn on the body: arteries (red) and veins (blue) branching from the heart to the head, arms and legs
+M.vessels = (ctx, t, x, y, s) => { ctx.lineCap = 'round'; const H = [x + s * 0.05, y - s * 0.57];
+  const runs = [[[0, -0.86], [0.02, -0.72]], [[-0.25, -0.35], [-0.29, -0.12], [-0.16, -0.6]], [[0.25, -0.35], [0.29, -0.12], [0.16, -0.6]], [[-0.11, 0.42], [-0.09, -0.15], [-0.02, -0.4]], [[0.11, 0.42], [0.09, -0.15], [0.02, -0.4]]];
+  for (const [col, dx, w] of [['rgba(80,140,255,0.7)', -0.012, 0.012], ['rgba(255,70,70,0.85)', 0.012, 0.014]]) { ctx.strokeStyle = col; ctx.lineWidth = s * w;
+    for (const run of runs) { ctx.beginPath(); ctx.moveTo(H[0] + dx * s, H[1]); for (let i = run.length - 1; i >= 0; i--) { const [px, py] = run[i]; ctx.lineTo(x + (px + dx) * s, y + py * s); } ctx.stroke(); } } };
 M.body = (ctx, x, y, s, col) => {
-  ctx.fillStyle = col; ell(ctx, x, y - s * 0.86, s * 0.11, s * 0.13, col);
+  const gb = ctx.createLinearGradient(x - s * 0.3, 0, x + s * 0.3, 0); gb.addColorStop(0, mx(col, '#ffffff', 0.2)); gb.addColorStop(1, mx(col, '#000020', 0.25)); col = gb; ctx.fillStyle = col; ell(ctx, x, y - s * 0.86, s * 0.11, s * 0.13, col);
   ctx.beginPath(); ctx.roundRect(x - s * 0.17, y - s * 0.7, s * 0.34, s * 0.58, s * 0.1); ctx.fill();
   ctx.lineCap = 'round'; ctx.strokeStyle = col; ctx.lineWidth = s * 0.1;
   for (const sg of [-1, 1]) { ctx.beginPath(); ctx.moveTo(x + sg * s * 0.17, y - s * 0.62); ctx.lineTo(x + sg * s * 0.28, y - s * 0.3); ctx.lineTo(x + sg * s * 0.3, y - s * 0.1); ctx.stroke(); ctx.lineWidth = s * 0.12; ctx.beginPath(); ctx.moveTo(x + sg * s * 0.09, y - s * 0.16); ctx.lineTo(x + sg * s * 0.11, y + s * 0.45); ctx.stroke(); ctx.lineWidth = s * 0.1; }
@@ -139,10 +144,11 @@ M.bank = (ctx, t, u, glowO) => {
 // ---------- the family tree back through time ----------
 // generations of people receding into a sepia distance, linked by lines; d = depth 0 (now) .. 1 (far)
 M.lineage = (t, ctx, u) => {
-  const bg = ctx.createLinearGradient(0, 0, 1920, 0); bg.addColorStop(0, '#f6e2c0'); bg.addColorStop(1, '#3a2a5a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  const bg = ctx.createLinearGradient(0, 0, 1920, 0); bg.addColorStop(0, '#fbe8c8'); bg.addColorStop(0.6, '#d8a878'); bg.addColorStop(1, '#5a3a5a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  ctx.fillStyle = 'rgba(120,70,40,0.18)'; ctx.beginPath(); ctx.moveTo(0, 1080); ctx.lineTo(0, 860); ctx.lineTo(1920, 520); ctx.lineTo(1920, 1080); ctx.fill();
   const gens = 9, shift = u * 3.2;
   for (let gi = gens - 1; gi >= 0; gi--) { const g = gi - shift; if (g < -0.6) continue; const z = 1 + g * 0.55, x = 360 + g * 230, y = 800 - g * 40, h = 330 / z, a = K.clamp(1.4 - g * 0.18);
-    for (let k = 0; k < 2; k++) { const px = x + (k ? 1 : -1) * 70 / z; P.alpha(a, () => M.person(t, px, y, h, { kid: false, shirt: ['#e35d4f', '#4f7fc4', '#5aa86a', '#e0a040', '#a86ac8', '#d86a8a'][(gi * 2 + k) % 6], skin: ['#f2c29b', '#c88a5a', '#8a5a3a', '#e0b080'][(gi + k) % 4], hair: '#2a1a14', seed: gi * 2 + k, mood: 'happy', look: [x + 400, 200] })); }
+    for (let k = 0; k < 2; k++) { const px = x + (k ? 1 : -1) * 70 / z; P.alpha(a, () => M.person(t, px, y, h, { kid: false, shirt: mx(['#e35d4f', '#4f7fc4', '#5aa86a', '#e0a040', '#a86ac8', '#d86a8a'][(gi * 2 + k) % 6], '#8a6a4a', K.clamp(g / 6)), pants: mx('#34427e', '#5a4a3a', K.clamp(g / 6)), skin: ['#f2c29b', '#c88a5a', '#8a5a3a', '#e0b080'][(gi + k) % 4], hair: '#2a1a14', seed: gi * 2 + k, mood: 'happy', look: [x + 400, 200] })); }
     if (gi > 0) { const nx = 360 + (g - 1) * 230; ctx.strokeStyle = `rgba(120,80,60,${0.5 * a})`; ctx.lineWidth = 4 / z; ctx.beginPath(); ctx.moveTo(x, y - h * 1.05); ctx.quadraticCurveTo((x + nx) / 2, y - h * 1.35, nx, y + 40 - (330 / (1 + (g - 1) * 0.55)) * 1.05); ctx.stroke(); } }
 };
 
@@ -168,14 +174,29 @@ M.gibbon = (t, ctx, x, y, s, swing) => {
   ell(ctx, hx, hy + s * 0.032, s * 0.016, s * 0.008, '#1a1010'); ctx.strokeStyle = '#1a1010'; ctx.lineWidth = s * 0.006; ctx.beginPath(); ctx.arc(hx, hy + s * 0.038, s * 0.02, 0.4, 2.7); ctx.stroke();
   ctx.restore();
 };
-M.jungle = (ctx, t) => {
-  const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#c8eaa8'); bg.addColorStop(0.5, '#6ab07a'); bg.addColorStop(1, '#1a5a3a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
-  for (let layer = 0; layer < 4; layer++) { const col = ['#a8d8a0', '#7ac08a', '#4a9a5a', '#2a7a3a'][layer]; for (let i = 0; i < 14; i++) { const x = K.hash(i, layer) * 2000 - 40, y = 300 + layer * 160 + K.hash(i, layer + 4) * 120, r = 120 + layer * 40; ell(ctx, x, y + r * 0.1, r, r * 0.8, mx(col, '#103020', 0.2)); ell(ctx, x, y, r * 0.95, r * 0.75, col); ell(ctx, x - r * 0.25, y - r * 0.3, r * 0.4, r * 0.25, mx(col, '#ffffff', 0.25)); } }
-  ctx.strokeStyle = '#5a3a24'; ctx.lineWidth = 34; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-40, 200); ctx.quadraticCurveTo(700, 140, 1960, 230); ctx.stroke();
-  ctx.strokeStyle = '#7a5a3a'; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(-40, 190); ctx.quadraticCurveTo(700, 130, 1960, 220); ctx.stroke();
-  for (let i = 0; i < 18; i++) { const x = i * 110 + 20, y = 200 + Math.sin(i) * 8; ctx.strokeStyle = '#3a8a4a'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + 10, y + 120, x + Math.sin(t + i) * 10, y + 200 + K.hash(i, 9) * 160); ctx.stroke(); }
+M.savanna = (ctx, t) => {
+  const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#ffcf8a'); bg.addColorStop(0.6, '#f6a868'); bg.addColorStop(1, '#e88a50'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  const sg = ctx.createRadialGradient(1500, 330, 0, 1500, 330, 300); sg.addColorStop(0, 'rgba(255,250,220,0.95)'); sg.addColorStop(0.3, 'rgba(255,240,200,0.6)'); sg.addColorStop(1, 'rgba(255,240,200,0)'); ctx.fillStyle = sg; ctx.fillRect(1100, 0, 820, 700);
+  for (const [yb, col, amp] of [[640, '#e0986a', 50], [700, '#c8784a', 30]]) { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 1080); for (let x = 0; x <= 1920; x += 40) ctx.lineTo(x, yb - amp * (0.5 + 0.5 * Math.sin(x * 0.004 + yb))); ctx.lineTo(1920, 1080); ctx.fill(); }
+  ctx.fillStyle = '#b8683a'; ctx.fillRect(0, 760, 1920, 320); ctx.fillStyle = 'rgba(255,220,160,0.2)'; for (let i = 0; i < 40; i++) ctx.fillRect(K.hash(i, 1) * 1920, 780 + K.hash(i, 2) * 280, 60, 4);
+  // acacias: a thin trunk and a flat-topped crown
+  for (const [ax, ay, sc] of [[220, 700, 1], [1250, 660, 0.7], [1700, 690, 0.9]]) { ctx.strokeStyle = '#5a3424'; ctx.lineWidth = 14 * sc; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(ax, ay + 60 * sc); ctx.lineTo(ax + 10 * sc, ay - 120 * sc); ctx.lineTo(ax - 60 * sc, ay - 190 * sc); ctx.moveTo(ax + 10 * sc, ay - 120 * sc); ctx.lineTo(ax + 80 * sc, ay - 185 * sc); ctx.stroke();
+    ctx.fillStyle = '#4a6a3a'; ctx.beginPath(); ctx.ellipse(ax + 10 * sc, ay - 200 * sc, 200 * sc, 42 * sc, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#6a8a4a'; ctx.beginPath(); ctx.ellipse(ax - 10 * sc, ay - 212 * sc, 160 * sc, 26 * sc, 0, 0, 7); ctx.fill(); }
 };
-
+M.jungle = (ctx, t) => {
+  const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#d8f0b8'); bg.addColorStop(0.45, '#7ab88a'); bg.addColorStop(1, '#14462e'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  // far misty trunks, then leaf clusters in four depths (each cluster: a dark underside, leaves, sunlit tips)
+  for (let i = 0; i < 10; i++) { const x = K.hash(i, 21) * 1920; ctx.fillStyle = 'rgba(70,110,80,0.35)'; ctx.fillRect(x, 200, 26 + K.hash(i, 22) * 30, 900); }
+  for (let layer = 0; layer < 4; layer++) { const base = ['#9ccc94', '#6aa874', '#3f8a54', '#25693c'][layer], n = 9 + layer * 2;
+    for (let i = 0; i < n; i++) { const cx = K.hash(i, layer + 30) * 2100 - 90, cy = 380 + layer * 170 + K.hash(i, layer + 34) * 100, R = 110 + layer * 35;
+      ell(ctx, cx, cy + R * 0.2, R * 1.05, R * 0.7, mx(base, '#06200e', 0.35));
+      for (let k = 0; k < 22; k++) { const a = K.hash(k, i + layer * 50) * 6.283, d = Math.sqrt(K.hash(k, i + layer * 50 + 1)) * R, lx = cx + Math.cos(a) * d, ly = cy + Math.sin(a) * d * 0.62, sway = Math.sin(t * 1.2 + k + i) * 0.08;
+        ell(ctx, lx, ly, R * 0.2, R * 0.085, mx(base, ly < cy ? '#e8ffc8' : '#0a3018', ly < cy ? 0.18 : 0.15), a + sway); } } }
+  ctx.globalCompositeOperation = 'lighter'; for (let i = 0; i < 5; i++) { const x = 300 + i * 360 + Math.sin(t * 0.3 + i) * 30, g = ctx.createLinearGradient(0, 0, 0, 1000); g.addColorStop(0, 'rgba(255,255,200,0.16)'); g.addColorStop(1, 'rgba(255,255,200,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + 70, 0); ctx.lineTo(x + 260, 1080); ctx.lineTo(x + 120, 1080); ctx.fill(); } ctx.globalCompositeOperation = 'source-over';
+  ctx.strokeStyle = '#4a2e1c'; ctx.lineWidth = 36; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-40, 200); ctx.quadraticCurveTo(700, 140, 1960, 230); ctx.stroke();
+  ctx.strokeStyle = '#7a5a3a'; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(-40, 188); ctx.quadraticCurveTo(700, 128, 1960, 218); ctx.stroke();
+  for (let i = 0; i < 14; i++) { const x = i * 140 + 40, y = 196 + Math.sin(i) * 8; ctx.strokeStyle = '#3a7a3e'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + 14, y + 120, x + Math.sin(t + i) * 12, y + 160 + K.hash(i, 9) * 160); ctx.stroke(); ell(ctx, x + Math.sin(t + i) * 12, y + 160 + K.hash(i, 9) * 160, 12, 6, '#5aa05a', 0.8); }
+};
 // ---------- germs (tile 8) ----------
 M.mosquito = (t, ctx, x, y, s, dir = 1) => {
   ctx.save(); ctx.translate(x, y); ctx.scale(dir, 1);

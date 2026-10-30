@@ -48,20 +48,57 @@ function groupCell(ctx, t, x, y, r, grp, rh, pop) {
   if (rh) for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283 + 0.4, px = x + Math.cos(a) * r * s * 0.7, py = y + Math.sin(a) * r * s * 0.62; M.cell(ctx, px, py, r * s * 0.1, '#b06aff', { seed: i }); }
 }
 
+
+// the hook's hand, after the user's reference (refs/hand.png): flat vector, the palm toward us, the index finger up, the
+// other three fingers shorter beside it, the thumb out to the left, soft darker crease strokes; a gentle light from the left.
+// Drawn in the reference's own units (553 px box) at k = 1.6, the index fingertip at D.
+function hookHand(ctx, t, push, D, dropR) {
+  const bg = ctx.createLinearGradient(0, 0, 1920, 1080); bg.addColorStop(0, '#d8eef6'); bg.addColorStop(0.55, '#9cc6dc'); bg.addColorStop(1, '#5a86b0'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  for (let i = 0; i < 9; i++) { const x = K.hash(i, 1) * 1920, y = K.hash(i, 2) * 700, r = 60 + K.hash(i, 3) * 120, g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(255,255,255,0.35)'); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
+  ctx.save(); ctx.translate(D[0], D[1]); ctx.scale(push, push); ctx.translate(-D[0], -D[1]);
+  const k = 1.6, ox = D[0] - 172 * k, oy = D[1] - 10 * k + Math.sin(t * 1.3) * 3;
+  ctx.save(); ctx.translate(ox, oy); ctx.scale(k, k);
+  const SK = '#fcc493', CR = '#f6a36e', LT = '#ffdcb8';
+  ctx.fillStyle = 'rgba(30,60,100,0.18)'; ctx.beginPath(); ctx.ellipse(300, 560, 200, 18, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = SK;
+  // fingers: rounded bars, index tallest
+  for (const [x0, top] of [[135, 10], [210, 122], [286, 160], [361, 205]]) { ctx.beginPath(); ctx.roundRect(x0, top, 76, 360 - top, [38, 38, 0, 0]); ctx.fill(); }
+  // palm with rounded bottom corners, and the thumb sweeping out to the left
+  ctx.beginPath(); ctx.moveTo(135, 250); ctx.lineTo(437, 250); ctx.lineTo(437, 400); ctx.quadraticCurveTo(437, 553, 330, 553); ctx.lineTo(240, 553); ctx.quadraticCurveTo(146, 553, 146, 470); ctx.lineTo(146, 440); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(146, 440); ctx.bezierCurveTo(110, 400, 75, 330, 15, 262); ctx.bezierCurveTo(-5, 240, 30, 222, 60, 228); ctx.bezierCurveTo(100, 236, 122, 262, 140, 300); ctx.lineTo(160, 330); ctx.lineTo(160, 440); ctx.fill();
+  // a soft lit edge down the left of each finger
+  ctx.fillStyle = LT; for (const [x0, top] of [[135, 10], [210, 122], [286, 160], [361, 205]]) { ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.roundRect(x0 + 10, top + 22, 12, 220 - (top > 100 ? 60 : 0), 6); ctx.fill(); } ctx.globalAlpha = 1;
+  // a fingertip blush where the lancet goes
+  const bl = ctx.createRadialGradient(172, 40, 4, 172, 50, 60); bl.addColorStop(0, `rgba(255,120,110,${0.35 * tw(t, 0.8, 1.4)})`); bl.addColorStop(1, 'rgba(255,120,110,0)'); ctx.fillStyle = bl; ctx.fillRect(110, 0, 130, 120);
+  // creases (the reference's strokes)
+  ctx.strokeStyle = CR; ctx.lineWidth = 18; ctx.lineCap = 'round';
+  for (const [x, y0, y1] of [[211, 150, 310], [286, 196, 300], [361, 244, 310]]) { ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke(); }
+  ctx.beginPath(); ctx.moveTo(133, 288); ctx.lineTo(145, 310); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(156, 440); ctx.lineTo(192, 468); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(370, 468); ctx.quadraticCurveTo(405, 462, 418, 440); ctx.stroke();
+  ctx.restore();
+  // the lancet pen comes straight down onto the fingertip, clicks, lifts away
+  const ln = tw(t, 0.2, 0.75, 'out') * (1 - tw(t, 1.0, 1.5, 'in')), ly = K.lerp(-560, D[1] - 70, ln);
+  if (ln > 0.01) { ctx.save(); ctx.translate(D[0] + 4, ly); const gl = ctx.createLinearGradient(-40, 0, 40, 0); gl.addColorStop(0, '#ffffff'); gl.addColorStop(1, '#a8c0d8'); ctx.fillStyle = gl; ctx.beginPath(); ctx.roundRect(-40, -480, 80, 420, 40); ctx.fill(); ctx.fillStyle = '#3a8ae8'; ctx.beginPath(); ctx.roundRect(-34, -70, 68, 130, [0, 0, 34, 34]); ctx.fill(); ctx.fillStyle = '#2a5ab0'; ctx.fillRect(-40, -320, 80, 30); ctx.restore(); }
+  const fl = tw(t, 0.75, 0.82) * (1 - tw(t, 0.82, 1.05)); if (fl > 0) { ctx.fillStyle = `rgba(255,255,255,${fl})`; ctx.beginPath(); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283, r = i % 2 ? 14 : 44; ctx.lineTo(D[0] + Math.cos(a) * r, D[1] - 10 + Math.sin(a) * r); } ctx.fill(); }
+  // the drop: a dark red dome on the fingertip, a glossy highlight, a soft shadow, a little window reflection
+  if (dropR > 1) { const r = dropR, cx = D[0], cy = D[1] + 6 - r * 0.55 + Math.sin(t * 1.3) * 3;
+    ctx.fillStyle = 'rgba(150,30,30,0.25)'; ctx.beginPath(); ctx.ellipse(cx + 6, cy + r * 0.8, r * 0.95, r * 0.22, 0, 0, 7); ctx.fill();
+    const gd = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.05, cx, cy, r * 1.05); gd.addColorStop(0, '#ff7058'); gd.addColorStop(0.5, '#d4141c'); gd.addColorStop(1, '#6a0410');
+    ctx.fillStyle = gd; ctx.beginPath(); ctx.moveTo(cx - r, cy + r * 0.62); ctx.bezierCurveTo(cx - r * 1.08, cy - r * 0.9, cx + r * 1.08, cy - r * 0.9, cx + r, cy + r * 0.62); ctx.quadraticCurveTo(cx, cy + r * 0.92, cx - r, cy + r * 0.62); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.ellipse(cx - r * 0.42, cy - r * 0.2, r * 0.2, r * 0.12, -0.6, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(cx + r * 0.25, cy - r * 0.15, r * 0.18, r * 0.24); ctx.fillRect(cx + r * 0.46, cy - r * 0.15, r * 0.18, r * 0.24); }
+  ctx.restore();
+}
+
 // ---------- scenes ----------
 const SCENE = {
   hook(ctx, t) {
     if (t < 3.6) {
-      // a fingertip; a drop of blood swells on it
-      const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#2a3a8a'); bg.addColorStop(1, '#5a2a7a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
-      const g = ctx.createLinearGradient(700, 0, 1300, 0); g.addColorStop(0, '#f2b896'); g.addColorStop(0.6, '#f6caa8'); g.addColorStop(1, '#d8957a');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(700, 1100); ctx.lineTo(700, 640); ctx.bezierCurveTo(700, 420, 1240, 420, 1240, 640); ctx.lineTo(1240, 1100); ctx.fill();
-      ctx.fillStyle = 'rgba(255,240,230,0.5)'; ctx.beginPath(); ctx.ellipse(970, 560, 150, 60, 0, Math.PI, 0); ctx.fill();
-      ctx.strokeStyle = 'rgba(180,110,90,0.35)'; ctx.lineWidth = 3; for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.ellipse(970, 700, 90 + i * 30, 50 + i * 22, 0, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); }
-      const d = K.ease.backOut(tw(t, 0.5, 2.4)), r = 70 * d, cy = 470 - r * 0.9;
-      if (r > 1) { const gd = ctx.createRadialGradient(950, cy - r * 0.3, r * 0.1, 970, cy, r); gd.addColorStop(0, '#ff6a50'); gd.addColorStop(0.6, '#d8141c'); gd.addColorStop(1, '#7a0614'); ctx.fillStyle = gd; ctx.beginPath(); ctx.ellipse(970, cy, r, r * 1.05, 0, 0, 7); ctx.fill(); M.ell(ctx, 945, cy - r * 0.4, r * 0.25, r * 0.15, 'rgba(255,255,255,0.7)'); }
-      // dive into the drop
-      const z = tw(t, 2.6, 3.6, 'in'); if (z > 0) { ctx.save(); ctx.beginPath(); ctx.arc(970, cy, r + z * 1500, 0, 7); ctx.clip(); stream(ctx, t + 10, { hero: false }); ctx.restore(); }
+      // a real fingertip test: a clinic blur behind, a hand with the index finger up, a lancet pen clicks, a drop swells
+      const push = 1 + 0.45 * tw(t, 0, 2.7, 'inOut'), dropR = 64 * K.ease.backOut(tw(t, 1.0, 2.5)), D = [900, 230];
+      hookHand(ctx, t, push, D, dropR);
+      const z = tw(t, 2.6, 3.6, 'in'); if (z > 0) { ctx.save(); ctx.beginPath(); ctx.arc(D[0], D[1] - dropR * 0.4 * push, dropR * push + z * 1600, 0, 7); ctx.clip(); stream(ctx, t + 10, { hero: false }); ctx.restore(); }
     } else if (t < 6.4) stream(ctx, t + 10, { hero: false });
     else {
       // the question: four kinds of cell, side by side
@@ -117,12 +154,11 @@ const SCENE = {
   ogroup(ctx, t) {
     CELL.deep(ctx, t);
     dna(ctx, t, 150, 60 + (t - 74) * 30, null, 24, tw(t, 77.6, 78.6, 'inOut'));
-    if (t > 77.4) { const bx = 1960 / 2 - 30; ctx.strokeStyle = `rgba(255,255,255,${shows(t, 77.4, 80)})`; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(bx + 30 + 60 * 24 - 60 - (60 + (t - 74) * 30) + 74 * 0 - 925 + 925, 150, 56, 0, 7); }
     // the broken enzyme: forms, then falls apart into loose beads
     const brk = tw(t, 80.8, 82.4, 'in');
-    if (t > 79) { if (brk < 0.05) CELL.enzyme(ctx, t, 820, 420, 90 * tw(t, 79, 80, 'backOut'), -0.4, '#6a8ab8'); else for (let i = 0; i < 9; i++) CELL.bead(ctx, 860 + (K.hash(i, 3) - 0.5) * 200, 420 + brk * (200 + K.hash(i, 4) * 300), 16, '#6a8ab8', 1 - brk * 0.8); }
+    if (t > 79) { if (brk < 0.05) CELL.enzyme(ctx, t, 560, 520, 150 * tw(t, 79, 80, 'backOut'), -0.3, '#6a8ab8'); else for (let i = 0; i < 16; i++) CELL.bead(ctx, 660 + (K.hash(i, 3) - 0.5) * 340 + (K.hash(i, 5) - 0.5) * brk * 200, 500 + (K.hash(i, 6) - 0.5) * 160 + brk * (180 + K.hash(i, 4) * 320), 26, ['#6a8ab8', '#8aa8d8', '#4a6a98'][i % 3], 1 - brk * 0.7); }
     panel(ctx, t, 1240, 600, null, 0, 7);
-    pill('one letter missing', 960, 260, shows(t, 76.8, 80.4)); pill('the enzyme comes out broken', 820, 620, shows(t, 80.6, 84)); pill('O: the bare chain', 1540, 920, shows(t, 82.6, 86));
+    pill('one letter missing', 960, 260, shows(t, 76.8, 80.4)); pill('the enzyme comes out broken', 660, 860, shows(t, 80.6, 84)); pill('O: the bare chain', 1540, 920, shows(t, 82.6, 86));
   },
   rh(ctx, t) {
     CELL.deep(ctx, t);
@@ -135,7 +171,7 @@ const SCENE = {
     else if (t < 106) { M.capillary(ctx, t, (t - 101) / 5 * 9.5); pill('a capillary: narrower than the cell', 960, 160, shows(t, 101.4, 105.8)); }
     else {
       const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#1a2a6a'); bg.addColorStop(1, '#3a1a5a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
-      M.body(ctx, 960, 760, 760, '#4a5ab0');
+      M.body(ctx, 960, 760, 760, '#4a5ab0'); M.vessels(ctx, t, 960, 760, 760);
       const loop = (s) => { const a = s * 6.283; return [1000 + Math.sin(a) * 150 * (1 + 0.6 * Math.sin(a * 2)), 330 + (1 - Math.cos(a)) * 330 - Math.sin(a) * 30]; };
       ctx.strokeStyle = 'rgba(255,90,90,0.55)'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.beginPath(); for (let i = 0; i <= 80; i++) { const [x, y] = loop(i / 80); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
       const [hx, hy] = loop(((t - 106) / 3.6) % 1); CELL.rbc(ctx, hx, hy, 26, t, 0.8, { glow: 1 });
@@ -192,7 +228,7 @@ const SCENE = {
   apes(ctx, t) {
     if (t < 189) {
       const bg = ctx.createLinearGradient(0, 0, 0, 1080); bg.addColorStop(0, '#ffd890'); bg.addColorStop(1, '#e8a060'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
-      ctx.fillStyle = '#c87a40'; ctx.fillRect(0, 760, 1920, 320); for (let i = 0; i < 4; i++) M.person(t, 300 + i * 260 + (t - 184) * 60, 800, 300 - i * 20, { kid: false, pose: 'walk', shirt: '#8a5a3a', pants: '#6a4a2a', skin: '#a86a40', hair: '#2a1a10', seed: i, mood: 'happy' });
+      M.savanna(ctx, t); for (let i = 0; i < 4; i++) M.person(t, 300 + i * 260 + (t - 184) * 60, 820 + (i % 2) * 20, [300, 270, 200, 285][i], { kid: i === 2, pose: 'walk', shirt: ['#8a5a3a', '#7a4a2a', '#8a5a3a', '#6a3a24'][i], pants: '#a87a4a', skin: '#8a5a3a', hair: '#1a100a', shoes: '#5a3a24', seed: i, mood: 'happy' });
       pill('the first humans: about 300,000 years ago', 960, 120, shows(t, 184.4, 189));
       return;
     }
@@ -222,8 +258,8 @@ const SCENE = {
     pill('no type wins everywhere', 960, 960, shows(t, 217.4, 220));
   },
   world(ctx, t) {
-    M.world(ctx, t, t - 220);
-    if (t > 226) { ctx.fillStyle = 'rgba(10,20,50,0.6)'; ctx.fillRect(0, 700, 1920, 380); for (let i = 0; i < 9; i++) { const x = 140 + i * 205; M.person(t, x, 1040, 300, { kid: i % 4 === 3, shirt: ['#e35d4f', '#4f7fc4', '#5aa86a', '#e0a040', '#a86ac8', '#d86a8a'][i % 6], skin: ['#f2c29b', '#c88a5a', '#8a5a3a', '#e0b080'][i % 4], hair: '#2a1a14', seed: i, mood: 'happy' }); const g = ['O', 'A', 'B', 'O', 'AB', 'A', 'O', 'B', 'A'][i]; if (g !== 'O') { const cols = g === 'AB' ? [CELL.SUGAR.A, CELL.SUGAR.B] : [CELL.SUGAR[g]]; cols.forEach((c, k) => CELL.bead(ctx, x - (cols.length - 1) * 12 + k * 24, 690, 14, c)); } else M.ell(ctx, x, 690, 12, 12, 'rgba(255,255,255,0.7)'); } }
+    const cr = tw(t, 225.6, 226.6, 'inOut'); ctx.fillStyle = '#0e2a60'; ctx.fillRect(0, 0, 1920, 1080); ctx.save(); ctx.translate(960, 150); ctx.scale(1 - 0.3 * cr, 1 - 0.3 * cr); ctx.translate(-960, -150 + 20 * cr); M.world(ctx, t, t - 220); ctx.restore();
+    if (t > 226) { ctx.fillStyle = 'rgba(10,20,50,0.5)'; ctx.fillRect(0, 780, 1920, 300); for (let i = 0; i < 9; i++) { const x = 140 + i * 205; M.person(t, x, 1040, 300, { kid: i % 4 === 3, shirt: ['#e35d4f', '#4f7fc4', '#5aa86a', '#e0a040', '#a86ac8', '#d86a8a'][i % 6], skin: ['#f2c29b', '#c88a5a', '#8a5a3a', '#e0b080'][i % 4], hair: '#2a1a14', seed: i, mood: 'happy' }); const g = ['O', 'A', 'B', 'O', 'AB', 'A', 'O', 'B', 'A'][i]; if (g !== 'O') { const cols = g === 'AB' ? [CELL.SUGAR.A, CELL.SUGAR.B] : [CELL.SUGAR[g]]; cols.forEach((c, k) => CELL.bead(ctx, x - (cols.length - 1) * 12 + k * 24, 700, 14, c)); } else M.ell(ctx, x, 700, 12, 12, 'rgba(255,255,255,0.7)'); } }
     pill('the mix of groups differs from place to place', 960, 90, shows(t, 220.6, 226)); pill('the variety itself is the point', 960, 90, shows(t, 226.4, 232));
   },
   end(ctx, t) {
