@@ -72,7 +72,19 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-21 | How Your 'Hello' Crosses the Ocean in 0.1 Seconds (a word's journey) | tech | suggested |
 | 2026-10-21 | Why February Sometimes Has 29 Days (Earth the late runner) | science / history | suggested |
 | 2026-10-21 | How a Volcano Builds an Island From Nothing (one locked camera, rewind hook) | nature | **made** (films/island, 2:08) |
-| 2026-10-22 | How a River Carved the Grand Canyon (locked frame, millions of years) | nature | suggested |
+| 2026-10-22 | How a River Carved the Grand Canyon (locked frame, millions of years) | nature | started 2026-10-25, **discarded** by the user 2026-10-30 (visuals) |
 | 2026-10-22 | What Happens Inside a Chrysalis (a cutaway construction site) | nature | suggested |
 | 2026-10-22 | Why Cats Always Land on Their Feet (one real fall in slow motion, x-ray cutaways) | nature / biology | **made** (films/cat, 2:02) |
 | 2026-10-25 | How a Cloud Builds a Lightning Bolt (porch count, cloud cutaway, strike slowed 1,000x) | weather / physics | **made** (films/lightning, 2:09) |
+
+## 2026-10-30 (after the canyon was discarded): 10 suggested, living heroes + slow motion / x-ray
+| 2026-10-30 | How a Chameleon Really Changes Colour (zoom into the skin's crystals) | animals / science | suggested |
+| 2026-10-30 | Why a Woodpecker Doesn't Get a Headache (one peck slowed 1,000x, x-ray skull) | animals / physics | suggested |
+| 2026-10-30 | How a Spider Builds Its Web in One Hour (one continuous shot, dusk to dawn) | animals / engineering | suggested |
+| 2026-10-30 | How Bats See in the Dark With Sound (a night hunt, sound made visible) | animals / sound | suggested |
+| 2026-10-30 | Why an Owl Flies in Total Silence (feather close-ups, owl vs pigeon) | animals / physics | suggested |
+| 2026-10-30 | How a Gecko Walks Up Glass (scale dive from foot to molecules) | animals / scale | suggested |
+| 2026-10-30 | How a Hummingbird Hangs in the Air (slow motion figure-8 wings) | animals / physics | suggested |
+| 2026-10-30 | What Really Happens When You Crack Your Knuckles (x-ray joint) | human body | suggested |
+| 2026-10-30 | How a Car Engine Turns Fuel Into Motion (one cylinder cutaway) | tech explained | suggested |
+| 2026-10-30 | How 400 Tonnes of Plane Stays in the Air (real airflow over a cut wing) | tech explained | suggested |

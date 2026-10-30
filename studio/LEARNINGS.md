@@ -8,6 +8,16 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-10-30: the canyon film, discarded by the user ("I dont like the visuals")
+- Four looks were rejected in a row: a 2D cross-section ("pure 2D"), 2.5D slices ("not good"), a faceted 3D terrain ("much
+  better" but still not loved), and sea windows that "didn't feel underwater" until rebuilt in depth from references.
+- Lesson: a geology/time film has no living hero and no human hook; it lived on landscapes I couldn't draw well enough.
+  Prefer topics whose hero is a character or a machine the kit already draws well; when a film needs a new world
+  (landscapes, underwater), ask for reference images FIRST and build a one-frame look test before the whole film.
+- Underwater that works (refs, 2026-10-30): a perspective floor running to a vanishing point, blue fog by distance painted
+  in slices far to near, the bright surface seen from below, light rays, caustics on the sand, drifting particles, dense
+  reef banks with near pieces cropped by the frame. Source kept in git: films/canyon/src/sea.js (not harvested yet).
+
 ## 2026-10-25: the lightning film ("Nice", the user)
 - What worked: a human hook (a family counting flash-to-bang at the window) that the ending pays off (the sound crossing
   3 km back to the house); the cloud building in real scale with a height ruler; a cutaway in the user's generated
