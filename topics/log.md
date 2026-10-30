@@ -91,3 +91,9 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 
 ## 2026-10-30 (the user's own topic)
 | 2026-10-30 | Why Do We Have Different Blood Types? (one red cell's life; voice by the user) | biology / evolution | **made** (films/blood-groups, 3:17) |
+
+## 2026-10-30 (after the blood film): 10 suggested (5 new, 5 carried over)
+| 2026-10-30 | How Your Body Heals a Cut (one cut, a two-week clock, micro zooms) | human body | suggested |
+| 2026-10-30 | What Really Happens When a Mosquito Bites You (one bite slowed, skin cutaway) | animals / body | suggested |
+| 2026-10-30 | How Your Eyes Turn Light Into a Picture (follow one ray to the brain) | human body | suggested |
+| 2026-10-30 | What Happens Inside You When You Get a Fever (the brain's thermostat) | human body | suggested |
