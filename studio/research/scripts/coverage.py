@@ -3,6 +3,7 @@
 
     python3 coverage.py status                 # writes data/coverage.csv + prints counts by status and stratum
     python3 coverage.py next 20                # the next batch: proportional across strata, never a video already studied
+    python3 coverage.py plan 25 3              # the whole remaining queue as batches b03, b04, ... (same rule, in order)
 
 Inputs (all text, in the repo): data/inventory/local-*.txt (the read-only folder inventory) and data/status.json
 ({id: {status, batch, rhythm_valid?, note?}}). Statuses follow docs/16: cataloged, metadata_only, human_viewed,
@@ -59,20 +60,35 @@ def write_status():
     print('wrote', os.path.relpath(out))
 
 
-def next_batch(n):
-    inv, st = inventory(), statuses()
+def next_batch(n, st=None, quiet=False):
+    inv = inventory(); st = statuses() if st is None else st
     todo = {x: sorted([v for v in inv if inv[v]['stratum'] == x and st.get(v, {}).get('status', 'cataloged') in ('cataloged', 'metadata_only')], key=order) for x in ('short', 'clip', 'long', 'xlong')}
     total = sum(len(v) for v in todo.values()); pick = {x: 0 for x in todo}
-    if total == 0: print('nothing left'); return
+    if total == 0:
+        if not quiet: print('nothing left')
+        return []
     for x in todo: pick[x] = min(len(todo[x]), int(n * len(todo[x]) / total))
     while sum(pick.values()) < min(n, total):          # hand out the remainder to the strata furthest below their share
         x = max(todo, key=lambda k: (len(todo[k]) - pick[k] > 0, len(todo[k]) / total * n - pick[k])); pick[x] += 1
-    for x in ('long', 'short', 'clip', 'xlong'):
-        for vid in todo[x][:pick[x]]: print(vid, x, inv[vid]['duration_s'], inv[vid]['res'], inv[vid]['ext'], sep='\t')
+    batch = [vid for x in ('long', 'short', 'clip', 'xlong') for vid in todo[x][:pick[x]]]
+    if not quiet:
+        for vid in batch: print(vid, inv[vid]['stratum'], inv[vid]['duration_s'], inv[vid]['res'], inv[vid]['ext'], sep='\t')
+    return batch
+
+
+def plan(n, first):
+    """Every remaining batch, in order, as if each were studied in turn: 'bNN id id id ...' per line."""
+    st = dict(statuses()); k = first
+    while True:
+        b = next_batch(n, st, quiet=True)
+        if not b: break
+        print(f'b{k:02d} ' + ' '.join(b)); k += 1
+        for vid in b: st[vid] = {'status': 'planned'}
 
 
 if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else 'status'
     if cmd == 'status': write_status()
     elif cmd == 'next': next_batch(int(sys.argv[2]) if len(sys.argv) > 2 else 20)
+    elif cmd == 'plan': plan(int(sys.argv[2]) if len(sys.argv) > 2 else 25, int(sys.argv[3]) if len(sys.argv) > 3 else 3)
     else: print(__doc__)

@@ -1,0 +1,85 @@
+{
+ "file": "J8imlz6Lki8.mp4",
+ "metrics_version": 2,
+ "duration_s": 51.367,
+ "measured_s": 51.367,
+ "source": "480x854 @ 30.00 fps",
+ "samples": 205,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 12,
+  "cuts_per_min": 12.849,
+  "median_s": 4.083,
+  "p10_s": 1.555,
+  "p90_s": 6.062,
+  "longest_s": 10.633,
+  "kinds": {
+   "hard": 9,
+   "soft": 2,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 9.511,
+  "in_shot_mean": 6.449,
+  "still_share": 0.129
+ },
+ "holds": {
+  "over_1s_per_min": 0.0,
+  "longest_s": 1.0,
+  "share_in_holds_over_1s": 0.0
+ },
+ "colour": {
+  "saturation": 0.766,
+  "value": 0.703,
+  "dark_share": 0.003,
+  "bright_share": 0.422,
+  "colourfulness": 111.836,
+  "hues_used_of_12": 5
+ },
+ "detail": {
+  "edge_density": 0.027,
+  "edge_density_p90": 0.048
+ },
+ "depth": {
+  "band_luma_spread": 0.068,
+  "centre_vs_edge_sharpness": 1.321
+ },
+ "cut_times_s": [
+  4.367,
+  8.167,
+  9.6,
+  15.75,
+  20.867,
+  23.833,
+  25.25,
+  27.9,
+  38.533,
+  43.1,
+  46.1
+ ],
+ "cut_kinds": [
+  "hard",
+  "hard",
+  "hard",
+  "soft",
+  "hard",
+  "hard",
+  "soft",
+  "hard",
+  "hard",
+  "hard",
+  "hard"
+ ],
+ "rhythm_valid": true,
+ "sha256": "75d94fbe91714212736e26f223c1830f1626e277e4bfa36fd4cc2d0fdf7acd0a"
+}

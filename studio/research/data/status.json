@@ -1,7 +1,152 @@
 {
- "oHHSSJDJ4oo": {"status": "licensed_stills", "batch": "b1-2026-10-31", "rhythm_valid": false, "note": "v1 metrics; cut detection missed soft transitions; re-measure with v2"},
- "dGiQaabX3_o": {"status": "licensed_stills", "batch": "b1-2026-10-31", "rhythm_valid": false, "note": "v1 metrics; cut detection missed soft transitions; re-measure with v2"},
- "lXfEK8G8CUI": {"status": "licensed_stills", "batch": "b1-2026-10-31", "note": "v1 metrics; sponsor segment at the end (sheet tiles 55-60) to exclude in v2"},
- "0pyGPK3fG4U": {"status": "licensed_stills", "batch": "b1-2026-10-31", "note": "v1 metrics"},
- "UKOxj8oP59w": {"status": "licensed_stills", "batch": "b1-2026-10-31", "note": "v1 metrics"}
+ "0pyGPK3fG4U": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent; earlier: b1-2026-10-31"
+ },
+ "2ukNLhC8N4Y": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "4u5I8GYB79Y": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "7_e0CA_nhaE": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "B3QTAgHlwEg": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "Chh2lgGe2YE": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "DRjmRNsPl1M": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "F1Hq8eVOMHs": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "J8imlz6Lki8": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "JQVmkDUkZT4": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "NxvQPzrg2Wg": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "TYPFenJQciw": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "Tqt9hZcWhJM": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": false,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "UKOxj8oP59w": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent; earlier: b1-2026-10-31"
+ },
+ "W-x9d-nhal4": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "W1Qyv6EI2hE": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "XFM4tCakAXY": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics; stills reviewed by agent"
+ },
+ "Z_1Q0XB4X0Y": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "dGiQaabX3_o": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent; earlier: b1-2026-10-31"
+ },
+ "ijFm6DxNVyI": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "lXfEK8G8CUI": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent; earlier: b1-2026-10-31"
+ },
+ "oHHSSJDJ4oo": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent; earlier: b1-2026-10-31"
+ },
+ "oTx-GSF3cts": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "sOsqXKr4l30": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ },
+ "zxq60I5RSW8": {
+  "status": "licensed_stills",
+  "batch": "b2-2026-10-31",
+  "rhythm_valid": true,
+  "note": "v2 metrics + exclusions; stills reviewed by agent"
+ }
 }

@@ -1,0 +1,270 @@
+{
+ "source": "film_metrics v2 on the reference batches; ranges are p25-p75 of the reference videos",
+ "n_reference": 25,
+ "targets": {
+  "long": {
+   "cuts_per_min": {
+    "label": "cuts per minute",
+    "area": "rhythm",
+    "n": 15,
+    "p25": 7.325,
+    "median": 8.448,
+    "p75": 10.058,
+    "min": 4.467,
+    "max": 12.213
+   },
+   "median_shot_s": {
+    "label": "median shot (s)",
+    "area": "rhythm",
+    "n": 15,
+    "p25": 4.591,
+    "median": 5.367,
+    "p75": 6.562,
+    "min": 3.95,
+    "max": 9.167
+   },
+   "in_shot_motion": {
+    "label": "motion inside shots",
+    "area": "motion",
+    "n": 16,
+    "p25": 6.242,
+    "median": 6.846,
+    "p75": 8.566,
+    "min": 2.43,
+    "max": 9.799
+   },
+   "still_share": {
+    "label": "still share",
+    "area": "motion",
+    "n": 16,
+    "p25": 0.166,
+    "median": 0.219,
+    "p75": 0.393,
+    "min": 0.099,
+    "max": 0.765
+   },
+   "holds_per_min": {
+    "label": "holds > 1 s per minute",
+    "area": "motion",
+    "n": 16,
+    "p25": 2.934,
+    "median": 3.797,
+    "p75": 6.195,
+    "min": 1.218,
+    "max": 9.72
+   },
+   "longest_hold_s": {
+    "label": "longest hold (s)",
+    "area": "motion",
+    "n": 16,
+    "p25": 4.938,
+    "median": 7.25,
+    "p75": 7.875,
+    "min": 4.5,
+    "max": 10.25
+   },
+   "saturation": {
+    "label": "saturation",
+    "area": "colour",
+    "n": 16,
+    "p25": 0.667,
+    "median": 0.718,
+    "p75": 0.757,
+    "min": 0.223,
+    "max": 0.895
+   },
+   "value": {
+    "label": "value (brightness)",
+    "area": "colour",
+    "n": 16,
+    "p25": 0.635,
+    "median": 0.674,
+    "p75": 0.732,
+    "min": 0.495,
+    "max": 0.823
+   },
+   "colourfulness": {
+    "label": "colourfulness",
+    "area": "colour",
+    "n": 16,
+    "p25": 87.059,
+    "median": 100.059,
+    "p75": 111.892,
+    "min": 41.09,
+    "max": 137.793
+   },
+   "hues": {
+    "label": "hues used of 12",
+    "area": "colour",
+    "n": 16,
+    "p25": 7.75,
+    "median": 8.0,
+    "p75": 9.0,
+    "min": 4.0,
+    "max": 12.0
+   },
+   "edge_density": {
+    "label": "edge density",
+    "area": "detail",
+    "n": 16,
+    "p25": 0.044,
+    "median": 0.05,
+    "p75": 0.06,
+    "min": 0.021,
+    "max": 0.078
+   },
+   "band_spread": {
+    "label": "top-bottom light spread",
+    "area": "depth",
+    "n": 16,
+    "p25": 0.065,
+    "median": 0.086,
+    "p75": 0.093,
+    "min": 0.019,
+    "max": 0.123
+   },
+   "centre_edge": {
+    "label": "centre/edge sharpness",
+    "area": "depth",
+    "n": 16,
+    "p25": 1.587,
+    "median": 1.715,
+    "p75": 1.87,
+    "min": 0.755,
+    "max": 2.138
+   }
+  },
+  "short": {
+   "cuts_per_min": {
+    "label": "cuts per minute",
+    "area": "rhythm",
+    "n": 9,
+    "p25": 12.02,
+    "median": 12.632,
+    "p75": 13.264,
+    "min": 10.805,
+    "max": 17.076
+   },
+   "median_shot_s": {
+    "label": "median shot (s)",
+    "area": "rhythm",
+    "n": 9,
+    "p25": 3.217,
+    "median": 3.291,
+    "p75": 4.017,
+    "min": 3.0,
+    "max": 4.5
+   },
+   "in_shot_motion": {
+    "label": "motion inside shots",
+    "area": "motion",
+    "n": 9,
+    "p25": 6.747,
+    "median": 7.352,
+    "p75": 9.45,
+    "min": 6.286,
+    "max": 11.14
+   },
+   "still_share": {
+    "label": "still share",
+    "area": "motion",
+    "n": 9,
+    "p25": 0.129,
+    "median": 0.157,
+    "p75": 0.189,
+    "min": 0.122,
+    "max": 0.31
+   },
+   "holds_per_min": {
+    "label": "holds > 1 s per minute",
+    "area": "motion",
+    "n": 9,
+    "p25": 0.0,
+    "median": 1.965,
+    "p75": 2.211,
+    "min": 0.0,
+    "max": 4.404
+   },
+   "longest_hold_s": {
+    "label": "longest hold (s)",
+    "area": "motion",
+    "n": 9,
+    "p25": 1.0,
+    "median": 2.0,
+    "p75": 2.25,
+    "min": 0.75,
+    "max": 3.25
+   },
+   "saturation": {
+    "label": "saturation",
+    "area": "colour",
+    "n": 9,
+    "p25": 0.674,
+    "median": 0.702,
+    "p75": 0.766,
+    "min": 0.57,
+    "max": 0.802
+   },
+   "value": {
+    "label": "value (brightness)",
+    "area": "colour",
+    "n": 9,
+    "p25": 0.531,
+    "median": 0.703,
+    "p75": 0.752,
+    "min": 0.267,
+    "max": 0.921
+   },
+   "colourfulness": {
+    "label": "colourfulness",
+    "area": "colour",
+    "n": 9,
+    "p25": 99.866,
+    "median": 111.836,
+    "p75": 122.422,
+    "min": 63.413,
+    "max": 125.779
+   },
+   "hues": {
+    "label": "hues used of 12",
+    "area": "colour",
+    "n": 9,
+    "p25": 5.0,
+    "median": 7.0,
+    "p75": 7.0,
+    "min": 2.0,
+    "max": 9.0
+   },
+   "edge_density": {
+    "label": "edge density",
+    "area": "detail",
+    "n": 9,
+    "p25": 0.03,
+    "median": 0.032,
+    "p75": 0.036,
+    "min": 0.026,
+    "max": 0.044
+   },
+   "band_spread": {
+    "label": "top-bottom light spread",
+    "area": "depth",
+    "n": 9,
+    "p25": 0.068,
+    "median": 0.09,
+    "p75": 0.097,
+    "min": 0.038,
+    "max": 0.217
+   },
+   "centre_edge": {
+    "label": "centre/edge sharpness",
+    "area": "depth",
+    "n": 9,
+    "p25": 1.364,
+    "median": 1.438,
+    "p75": 2.276,
+    "min": 1.087,
+    "max": 2.878
+   }
+  }
+ }
+}

@@ -1,0 +1,80 @@
+{
+ "file": "Tqt9hZcWhJM.mp4",
+ "metrics_version": 2,
+ "duration_s": 100.0,
+ "measured_s": 80.25,
+ "source": "854x480 @ 25.00 fps",
+ "samples": 321,
+ "excluded_s": [
+  [
+   80.25,
+   100.0
+  ]
+ ],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 7,
+  "cuts_per_min": 4.486,
+  "median_s": 6.25,
+  "p10_s": 4.15,
+  "p90_s": 24.6,
+  "longest_s": 25.5,
+  "kinds": {
+   "hard": 0,
+   "soft": 5,
+   "dip": 1
+  }
+ },
+ "motion": {
+  "mean": 2.946,
+  "in_shot_mean": 2.43,
+  "still_share": 0.765
+ },
+ "holds": {
+  "over_1s_per_min": 9.72,
+  "longest_s": 8.25,
+  "share_in_holds_over_1s": 0.676
+ },
+ "colour": {
+  "saturation": 0.223,
+  "value": 0.733,
+  "dark_share": 0.096,
+  "bright_share": 0.159,
+  "colourfulness": 41.09,
+  "hues_used_of_12": 4
+ },
+ "detail": {
+  "edge_density": 0.021,
+  "edge_density_p90": 0.033
+ },
+ "depth": {
+  "band_luma_spread": 0.019,
+  "centre_vs_edge_sharpness": 0.755
+ },
+ "cut_times_s": [
+  4.5,
+  8.75,
+  34.25,
+  40.5,
+  52.25,
+  56.25
+ ],
+ "cut_kinds": [
+  "dip",
+  "soft",
+  "soft",
+  "soft",
+  "soft",
+  "soft"
+ ],
+ "rhythm_valid": false,
+ "sha256": "705289659da1e1b288c03a93a9885e07123d7f9ab36947e4487e7ee70d791fdd"
+}

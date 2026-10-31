@@ -1,0 +1,85 @@
+{
+ "file": "0pyGPK3fG4U.webm",
+ "metrics_version": 2,
+ "duration_s": 61.083,
+ "measured_s": 61.083,
+ "source": "608x1080 @ 30.00 fps",
+ "samples": 244,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 12,
+  "cuts_per_min": 10.805,
+  "median_s": 3.525,
+  "p10_s": 2.4,
+  "p90_s": 9.263,
+  "longest_s": 13.95,
+  "kinds": {
+   "hard": 7,
+   "soft": 4,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 12.221,
+  "in_shot_mean": 10.26,
+  "still_share": 0.157
+ },
+ "holds": {
+  "over_1s_per_min": 1.965,
+  "longest_s": 3.25,
+  "share_in_holds_over_1s": 0.078
+ },
+ "colour": {
+  "saturation": 0.674,
+  "value": 0.752,
+  "dark_share": 0.016,
+  "bright_share": 0.426,
+  "colourfulness": 122.422,
+  "hues_used_of_12": 9
+ },
+ "detail": {
+  "edge_density": 0.036,
+  "edge_density_p90": 0.063
+ },
+ "depth": {
+  "band_luma_spread": 0.077,
+  "centre_vs_edge_sharpness": 1.369
+ },
+ "cut_times_s": [
+  3.0,
+  5.75,
+  7.75,
+  11.5,
+  17.0,
+  21.6,
+  23.967,
+  27.267,
+  35.0,
+  37.7,
+  47.133
+ ],
+ "cut_kinds": [
+  "hard",
+  "soft",
+  "soft",
+  "hard",
+  "soft",
+  "hard",
+  "hard",
+  "hard",
+  "soft",
+  "hard",
+  "hard"
+ ],
+ "rhythm_valid": true,
+ "sha256": "5c62fe066da138e2544faf43a5e90024fd30b6edf536023506f69ab2d8868a82"
+}

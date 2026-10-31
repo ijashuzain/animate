@@ -1,0 +1,138 @@
+{
+ "file": "B3QTAgHlwEg.webm",
+ "metrics_version": 2,
+ "duration_s": 462.483,
+ "measured_s": 443.251,
+ "source": "854x480 @ 30.00 fps",
+ "samples": 1774,
+ "excluded_s": [
+  [
+   27.734,
+   32.75
+  ],
+  [
+   448.267,
+   462.483
+  ]
+ ],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 34,
+  "cuts_per_min": 4.467,
+  "median_s": 9.167,
+  "p10_s": 4.722,
+  "p90_s": 26.418,
+  "longest_s": 30.033,
+  "kinds": {
+   "hard": 29,
+   "soft": 4,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 10.015,
+  "in_shot_mean": 9.078,
+  "still_share": 0.099
+ },
+ "holds": {
+  "over_1s_per_min": 1.218,
+  "longest_s": 7.5,
+  "share_in_holds_over_1s": 0.073
+ },
+ "colour": {
+  "saturation": 0.64,
+  "value": 0.686,
+  "dark_share": 0.001,
+  "bright_share": 0.377,
+  "colourfulness": 96.724,
+  "hues_used_of_12": 9
+ },
+ "detail": {
+  "edge_density": 0.046,
+  "edge_density_p90": 0.077
+ },
+ "depth": {
+  "band_luma_spread": 0.123,
+  "centre_vs_edge_sharpness": 1.864
+ },
+ "cut_times_s": [
+  32.75,
+  60.033,
+  64.75,
+  88.067,
+  92.833,
+  98.5,
+  128.533,
+  148.067,
+  155.767,
+  172.75,
+  184.4,
+  204.933,
+  223.1,
+  252.633,
+  273.0,
+  282.267,
+  288.967,
+  303.233,
+  320.633,
+  324.233,
+  330.6,
+  355.0,
+  359.967,
+  366.433,
+  371.167,
+  374.333,
+  379.333,
+  385.633,
+  393.767,
+  400.767,
+  419.334,
+  423.967,
+  433.033
+ ],
+ "cut_kinds": [
+  "soft",
+  "hard",
+  "soft",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "soft",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "soft",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard",
+  "hard"
+ ],
+ "rhythm_valid": true,
+ "sha256": "ba293244871070853409335a6e85d70dae315b4f6bf7bfc575111d21a73cd0de"
+}
