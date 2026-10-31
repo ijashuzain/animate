@@ -1,0 +1,71 @@
+{
+ "file": "lightning-probe.mp4",
+ "metrics_version": 2,
+ "duration_s": 129.0,
+ "measured_s": 129.0,
+ "source": "640x360 @ 12.00 fps",
+ "samples": 516,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 6,
+  "cuts_per_min": 2.326,
+  "median_s": 19.709,
+  "p10_s": 3.625,
+  "p90_s": 41.167,
+  "longest_s": 46.083,
+  "kinds": {
+   "hard": 2,
+   "soft": 3,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 3.612,
+  "in_shot_mean": 3.058,
+  "still_share": 0.536
+ },
+ "holds": {
+  "over_1s_per_min": 10.233,
+  "longest_s": 8.0,
+  "share_in_holds_over_1s": 0.426
+ },
+ "colour": {
+  "saturation": 0.554,
+  "value": 0.426,
+  "dark_share": 0.004,
+  "bright_share": 0.016,
+  "colourfulness": 44.34,
+  "hues_used_of_12": 5
+ },
+ "detail": {
+  "edge_density": 0.037,
+  "edge_density_p90": 0.072
+ },
+ "depth": {
+  "band_luma_spread": 0.063,
+  "centre_vs_edge_sharpness": 1.504
+ },
+ "cut_times_s": [
+  36.25,
+  50.5,
+  96.583,
+  99.25,
+  103.833
+ ],
+ "cut_kinds": [
+  "soft",
+  "soft",
+  "hard",
+  "soft",
+  "hard"
+ ]
+}

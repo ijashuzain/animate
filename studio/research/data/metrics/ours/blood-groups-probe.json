@@ -1,0 +1,91 @@
+{
+ "file": "blood-groups-probe.mp4",
+ "metrics_version": 2,
+ "duration_s": 197.0,
+ "measured_s": 197.0,
+ "source": "640x360 @ 12.00 fps",
+ "samples": 788,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 16,
+  "cuts_per_min": 4.569,
+  "median_s": 5.0,
+  "p10_s": 3.125,
+  "p90_s": 24.791,
+  "longest_s": 71.5,
+  "kinds": {
+   "hard": 4,
+   "soft": 8,
+   "dip": 3
+  }
+ },
+ "motion": {
+  "mean": 6.102,
+  "in_shot_mean": 4.929,
+  "still_share": 0.402
+ },
+ "holds": {
+  "over_1s_per_min": 8.528,
+  "longest_s": 3.5,
+  "share_in_holds_over_1s": 0.302
+ },
+ "colour": {
+  "saturation": 0.68,
+  "value": 0.515,
+  "dark_share": 0.017,
+  "bright_share": 0.07,
+  "colourfulness": 69.138,
+  "hues_used_of_12": 6
+ },
+ "detail": {
+  "edge_density": 0.057,
+  "edge_density_p90": 0.096
+ },
+ "depth": {
+  "band_luma_spread": 0.078,
+  "centre_vs_edge_sharpness": 1.543
+ },
+ "cut_times_s": [
+  3.25,
+  6.25,
+  77.75,
+  82.25,
+  86.5,
+  103.583,
+  107.75,
+  117.25,
+  149.75,
+  159.0,
+  174.5,
+  182.75,
+  188.25,
+  192.417,
+  195.75
+ ],
+ "cut_kinds": [
+  "soft",
+  "soft",
+  "dip",
+  "soft",
+  "soft",
+  "hard",
+  "hard",
+  "soft",
+  "soft",
+  "dip",
+  "dip",
+  "soft",
+  "hard",
+  "hard",
+  "soft"
+ ]
+}

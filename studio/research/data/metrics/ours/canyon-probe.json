@@ -1,0 +1,71 @@
+{
+ "file": "canyon-probe.mp4",
+ "metrics_version": 2,
+ "duration_s": 110.0,
+ "measured_s": 110.0,
+ "source": "640x360 @ 12.00 fps",
+ "samples": 440,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 6,
+  "cuts_per_min": 2.727,
+  "median_s": 14.708,
+  "p10_s": 5.5,
+  "p90_s": 34.792,
+  "longest_s": 48.5,
+  "kinds": {
+   "hard": 2,
+   "soft": 3,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 7.533,
+  "in_shot_mean": 6.483,
+  "still_share": 0.314
+ },
+ "holds": {
+  "over_1s_per_min": 4.909,
+  "longest_s": 9.5,
+  "share_in_holds_over_1s": 0.282
+ },
+ "colour": {
+  "saturation": 0.331,
+  "value": 0.7,
+  "dark_share": 0.007,
+  "bright_share": 0.081,
+  "colourfulness": 59.8,
+  "hues_used_of_12": 5
+ },
+ "detail": {
+  "edge_density": 0.033,
+  "edge_density_p90": 0.046
+ },
+ "depth": {
+  "band_luma_spread": 0.05,
+  "centre_vs_edge_sharpness": 0.756
+ },
+ "cut_times_s": [
+  9.25,
+  29.417,
+  37.417,
+  58.5,
+  61.5
+ ],
+ "cut_kinds": [
+  "soft",
+  "hard",
+  "hard",
+  "soft",
+  "soft"
+ ]
+}

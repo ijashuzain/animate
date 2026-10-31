@@ -1,0 +1,65 @@
+{
+ "file": "seed-to-giant-probe.mp4",
+ "metrics_version": 2,
+ "duration_s": 30.0,
+ "measured_s": 30.0,
+ "source": "640x360 @ 12.00 fps",
+ "samples": 120,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 3,
+  "cuts_per_min": 4.0,
+  "median_s": 5.583,
+  "p10_s": 1.85,
+  "p90_s": 19.917,
+  "longest_s": 23.5,
+  "kinds": {
+   "hard": 2,
+   "soft": 0,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 13.526,
+  "in_shot_mean": 10.992,
+  "still_share": 0.159
+ },
+ "holds": {
+  "over_1s_per_min": 4.0,
+  "longest_s": 1.5,
+  "share_in_holds_over_1s": 0.092
+ },
+ "colour": {
+  "saturation": 0.435,
+  "value": 0.572,
+  "dark_share": 0.001,
+  "bright_share": 0.087,
+  "colourfulness": 56.591,
+  "hues_used_of_12": 8
+ },
+ "detail": {
+  "edge_density": 0.029,
+  "edge_density_p90": 0.056
+ },
+ "depth": {
+  "band_luma_spread": 0.127,
+  "centre_vs_edge_sharpness": 1.493
+ },
+ "cut_times_s": [
+  5.583,
+  6.5
+ ],
+ "cut_kinds": [
+  "hard",
+  "hard"
+ ]
+}

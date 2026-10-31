@@ -1,0 +1,67 @@
+{
+ "file": "island-probe.mp4",
+ "metrics_version": 2,
+ "duration_s": 128.0,
+ "measured_s": 128.0,
+ "source": "640x360 @ 12.00 fps",
+ "samples": 512,
+ "excluded_s": [],
+ "params": {
+  "fps": 4,
+  "width": 320,
+  "hard_thr": 0.32,
+  "soft_thr": 0.3,
+  "soft_half_s": 0.5,
+  "merge_s": 0.75,
+  "still": 1.5
+ },
+ "shots": {
+  "count": 4,
+  "cuts_per_min": 1.406,
+  "median_s": 26.25,
+  "p10_s": 6.65,
+  "p90_s": 61.95,
+  "longest_s": 69.0,
+  "kinds": {
+   "hard": 0,
+   "soft": 3,
+   "dip": 0
+  }
+ },
+ "motion": {
+  "mean": 5.206,
+  "in_shot_mean": 5.136,
+  "still_share": 0.386
+ },
+ "holds": {
+  "over_1s_per_min": 4.688,
+  "longest_s": 18.5,
+  "share_in_holds_over_1s": 0.361
+ },
+ "colour": {
+  "saturation": 0.459,
+  "value": 0.401,
+  "dark_share": 0.034,
+  "bright_share": 0.017,
+  "colourfulness": 53.679,
+  "hues_used_of_12": 3
+ },
+ "detail": {
+  "edge_density": 0.043,
+  "edge_density_p90": 0.059
+ },
+ "depth": {
+  "band_luma_spread": 0.279,
+  "centre_vs_edge_sharpness": 0.964
+ },
+ "cut_times_s": [
+  7.0,
+  76.0,
+  82.5
+ ],
+ "cut_kinds": [
+  "soft",
+  "soft",
+  "soft"
+ ]
+}
