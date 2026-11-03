@@ -97,3 +97,11 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-10-30 | What Really Happens When a Mosquito Bites You (one bite slowed, skin cutaway) | animals / body | suggested |
 | 2026-10-30 | How Your Eyes Turn Light Into a Picture (follow one ray to the brain) | human body | suggested |
 | 2026-10-30 | What Happens Inside You When You Get a Fever (the brain's thermostat) | human body | suggested |
+
+## 2026-11-03: 6 suggested for 4-minute films (the user's request; the reference study was stopped by the user)
+| 2026-11-03 | Why Do Humans Have Different Skin Colours? (melanin umbrella + the journey out of Africa) | human body / evolution | suggested |
+| 2026-11-03 | Why Do We Have Fingerprints? (ridges forming in the womb; what they do) | human body | suggested |
+| 2026-11-03 | How Your Body Heals a Cut (two-week clock) | human body | suggested again |
+| 2026-11-03 | What Really Happens When a Mosquito Bites You (one bite slowed) | animals / body | suggested again |
+| 2026-11-03 | How Your Eyes Turn Light Into a Picture | human body | suggested again |
+| 2026-11-03 | What Happens Inside You When You Get a Fever | human body | suggested again |
