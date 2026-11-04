@@ -8,6 +8,13 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-11-04: the skin film, look test notes (the user)
+- Cells: the user prefers the **shaded, glossy** melanocyte (a body with a highlight, tapering curved arms with a rim
+  light, a soft shadow) over a flat 2D version ("previous one is better"). Keep the volume; just make it clean: one
+  smooth shape, arms that curve to a target, rounded tips, no banded segments.
+- People in a realistic reference (painted early humans): code figures need thick smooth limbs (round-joined strokes),
+  a shaped torso, the near leg under the clothing, a soft rim light, never stick limbs with joint caps.
+
 ## 2026-10-30: the blood groups film (the user's own topic; 3:17 with the user's ElevenLabs voice)
 - **The user's verdict (2026-10-30): "You are improving step by step ... this video's animations are coming closer to my
   expectations."** What closed the gap, keep doing it: (1) the user generates a reference grid from my prompts and I match
