@@ -86,17 +86,17 @@ W.skin = (ctx, t, o = {}) => {
   const ribbon = (pts, w0, w1, fill) => { const L = [], R = []; pts.forEach(([px, py], j) => { const a = pts[Math.max(0, j - 1)], b = pts[Math.min(pts.length - 1, j + 1)], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, w = (w0 + (w1 - w0) * Math.pow(j / (pts.length - 1), 0.7)) / 2; L.push([px - dy / d * w, py + dx / d * w]); R.push([px + dy / d * w, py - dx / d * w]); });
     ctx.beginPath(); ctx.moveTo(...L[0]); for (let j = 1; j < L.length; j++) ctx.lineTo(...L[j]); const tp = pts[pts.length - 1]; ctx.arc(tp[0], tp[1], w1 / 2, Math.atan2(L[L.length - 1][1] - tp[1], L[L.length - 1][0] - tp[0]), Math.atan2(R[R.length - 1][1] - tp[1], R[R.length - 1][0] - tp[0]), true); for (let j = R.length - 2; j >= 0; j--) ctx.lineTo(...R[j]); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); };
   const body = (dx, dy, sx, sy, col) => { ctx.fillStyle = col; ctx.beginPath(); for (let i = 0; i <= 48; i++) { const a = i / 48 * 6.283, r = 1 + 0.035 * Math.sin(a * 3 + 1); ctx.lineTo(mx + dx + Math.cos(a) * sx * r, my + dy + Math.sin(a) * sy * r); } ctx.fill(); };
-  // flat 2D (the user's note): one flat dark shape for the body and arms, a flat lighter inner tone, a flat nucleus;
-  // no shadow, no gradient, no highlights
-  const DARK = '#4a1e0a', MID = '#6e3416';
-  for (const d of dendrites) { ribbon(d.branch, 26, 14, DARK); ribbon(d.main, d.w0, 22, DARK); }
-  body(0, 0, 112, 70, DARK);
-  for (const d of dendrites) { ribbon(d.branch.slice(1), 12, 6, MID); ribbon(d.main.slice(2), d.w0 * 0.45, 9, MID); }
-  body(0, 0, 84, 48, MID);
-  wEll(ctx, mx + 6, my + 4, 34, 28, '#2a0a02');
+  ctx.save(); ctx.filter = 'blur(6px)'; for (const d of dendrites) ribbon(d.main.map(([x, y]) => [x + 8, y + 10]), d.w0, 16, 'rgba(60,10,20,0.35)'); ctx.restore();
+  for (const d of dendrites) { ribbon(d.branch, 26, 14, '#3a1608'); ribbon(d.main, d.w0, 22, '#3a1608'); }
+  body(0, 0, 112, 74, '#3a1608');
+  for (const d of dendrites) { const off = (pts) => pts.map(([x, y]) => [x - 4, y - 2]); ribbon(off(d.branch), 14, 7, '#6a3418'); ribbon(off(d.main), d.w0 * 0.55, 11, '#6a3418'); }
+  body(-14, -10, 78, 48, '#6a3418');
+  for (const d of dendrites) { const off = (pts) => pts.map(([x, y]) => [x - 9, y - 4]).slice(1, -2); ribbon(off(d.main), d.w0 * 0.14, 3, 'rgba(255,205,160,0.45)'); }
+  const ng = ctx.createRadialGradient(mx - 10, my - 8, 4, mx + 4, my + 4, 42); ng.addColorStop(0, '#6a3218'); ng.addColorStop(1, '#1a0602'); ctx.fillStyle = ng; ctx.beginPath(); ctx.ellipse(mx + 8, my + 6, 40, 33, 0.15, 0, 7); ctx.fill();
+  wEll(ctx, mx - 4, my - 6, 11, 7, 'rgba(255,215,175,0.55)'); wEll(ctx, mx - 52, my - 34, 22, 9, 'rgba(255,205,160,0.3)', -0.4);
   const armPts = dendrites.flatMap((d) => [d.main, d.branch]);
   // melanin granules: travelling up the arms, then sitting as caps over each nucleus
   for (const [x, y, rx] of cells) { const n = Math.round(26 * dose); for (let k = 0; k < n; k++) { const a = Math.PI * (1.05 + 0.9 * K.hash(k, x)), d = rx * (0.42 + 0.3 * K.hash(k, x + 1)), sx = x + (K.hash(k, x + 2) - 0.5) * rx * 1.6, sy = y + (K.hash(k, x + 3) - 0.5) * 140, tx = x + Math.cos(a) * d * 0.9, ty = y + 10 + Math.sin(a) * d * 0.55;
     const px = K.lerp(sx, tx, cap), py = K.lerp(sy, ty, cap), r = 6 + K.hash(k, x + 4) * 5; wEll(ctx, px, py, r, r, mixc('#3a1a0a', '#7a4020', K.hash(k, x + 5))); wEll(ctx, px - r * 0.3, py - r * 0.3, r * 0.3, r * 0.3, 'rgba(255,200,150,0.5)'); } }
-  for (let k = 0; k < 60; k++) { const pts = armPts[k % armPts.length], u = (t * 0.22 + K.hash(k, 3)) % 1, f = u * (pts.length - 1), j = Math.min(pts.length - 2, Math.floor(f)), q = f - j, px = K.lerp(pts[j][0], pts[j + 1][0], q), py = K.lerp(pts[j][1], pts[j + 1][1], q); wEll(ctx, px, py, 6, 6, '#24080a'); }
+  for (let k = 0; k < 60; k++) { const pts = armPts[k % armPts.length], u = (t * 0.22 + K.hash(k, 3)) % 1, f = u * (pts.length - 1), j = Math.min(pts.length - 2, Math.floor(f)), q = f - j, px = K.lerp(pts[j][0], pts[j + 1][0], q), py = K.lerp(pts[j][1], pts[j + 1][1], q); wEll(ctx, px, py, 6, 6, '#24080a'); wEll(ctx, px - 2, py - 2, 2, 2, 'rgba(255,210,170,0.7)'); }
 };
