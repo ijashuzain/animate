@@ -100,3 +100,132 @@ W.skin = (ctx, t, o = {}) => {
     const px = K.lerp(sx, tx, cap), py = K.lerp(sy, ty, cap), r = 6 + K.hash(k, x + 4) * 5; wEll(ctx, px, py, r, r, mixc('#3a1a0a', '#7a4020', K.hash(k, x + 5))); wEll(ctx, px - r * 0.3, py - r * 0.3, r * 0.3, r * 0.3, 'rgba(255,200,150,0.5)'); } }
   for (let k = 0; k < 60; k++) { const pts = armPts[k % armPts.length], u = (t * 0.22 + K.hash(k, 3)) % 1, f = u * (pts.length - 1), j = Math.min(pts.length - 2, Math.floor(f)), q = f - j, px = K.lerp(pts[j][0], pts[j + 1][0], q), py = K.lerp(pts[j][1], pts[j + 1][1], q); wEll(ctx, px, py, 6, 6, '#24080a'); wEll(ctx, px - 2, py - 2, 2, 2, 'rgba(255,210,170,0.7)'); }
 };
+
+// ---------- the world: rough continents in longitude / latitude (no detail, readable shapes) ----------
+W.LAND = {
+  africa: [[-17, 15], [-10, 30], [10, 37], [32, 31], [43, 12], [51, 11], [40, -15], [35, -25], [20, -35], [12, -18], [9, 4], [-8, 5]],
+  europe: [[-10, 37], [-9, 44], [0, 50], [8, 55], [5, 62], [18, 70], [30, 70], [40, 62], [40, 45], [28, 41], [15, 38], [3, 42]],
+  asia: [[40, 45], [40, 62], [60, 70], [100, 77], [140, 72], [180, 68], [160, 60], [140, 50], [130, 35], [122, 25], [108, 12], [100, 2], [95, 15], [80, 8], [72, 20], [60, 25], [50, 28], [44, 12], [35, 31]],
+  australia: [[114, -22], [122, -17], [130, -12], [137, -12], [145, -15], [153, -25], [150, -37], [140, -38], [130, -32], [116, -35]],
+  namerica: [[-165, 65], [-140, 70], [-100, 72], [-80, 65], [-60, 55], [-65, 45], [-80, 30], [-97, 25], [-105, 20], [-90, 15], [-80, 9], [-100, 18], [-112, 30], [-125, 45], [-130, 55], [-150, 60]],
+  samerica: [[-80, 9], [-60, 10], [-50, 0], [-35, -7], [-40, -22], [-55, -35], [-68, -55], [-72, -40], [-75, -15], [-81, -5]],
+  greenland: [[-55, 60], [-45, 60], [-20, 70], [-25, 82], [-60, 80], [-70, 76]],
+};
+// migration stops (lon, lat) and routes (lists of stops)
+W.STOP = { eafrica: [37, 3], arabia: [45, 18], levant: [36, 32], india: [78, 20], seasia: [103, 12], australia: [134, -24], europe: [12, 48], casia: [70, 45], easia: [115, 35], beringia: [-170, 66], namerica: [-100, 45], samerica: [-62, -15], arctic: [-60, 72] };
+W.ROUTES = [['eafrica', 'arabia', 'india', 'seasia', 'australia'], ['arabia', 'levant', 'europe'], ['levant', 'casia', 'easia', 'beringia', 'namerica', 'samerica'], ['namerica', 'arctic']];
+// orthographic projection: returns [x, y, visible]
+W.proj = (lon, lat, cx, cy, r, lon0, lat0 = 12) => { const d = Math.PI / 180, l = (lon - lon0) * d, p = lat * d, p0 = lat0 * d, x = Math.cos(p) * Math.sin(l), y = Math.cos(p0) * Math.sin(p) - Math.sin(p0) * Math.cos(p) * Math.cos(l), z = Math.sin(p0) * Math.sin(p) + Math.cos(p0) * Math.cos(p) * Math.cos(l); return [cx + x * r, cy - y * r, z > 0]; };
+// densify a polygon so the projected outline curves with the globe
+W.dense = (pts, n = 6) => { const o = []; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; for (let k = 0; k < n; k++) o.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]); } return o; };
+W.globe = (ctx, t, cx, cy, r, lon0, o = {}) => {
+  // space, glow, ocean sphere
+  const gl = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, r * 1.35); gl.addColorStop(0, 'rgba(90,180,255,0.45)'); gl.addColorStop(1, 'rgba(90,180,255,0)'); ctx.fillStyle = gl; ctx.fillRect(cx - r * 1.4, cy - r * 1.4, r * 2.8, r * 2.8);
+  const oc = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.1, cx, cy, r); oc.addColorStop(0, '#3a9aff'); oc.addColorStop(0.7, '#1a5ad0'); oc.addColorStop(1, '#0a2a80'); ctx.fillStyle = oc; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
+  ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip();
+  for (const [name, poly] of Object.entries(W.LAND)) { const pts = W.dense(poly).map(([lo, la]) => W.proj(lo, la, cx, cy, r, lon0)); if (!pts.some((q) => q[2])) continue;
+    const g = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r); const tint = o.tint ? o.tint(name) : null; g.addColorStop(0, tint ?? '#8ad86a'); g.addColorStop(1, tint ? mixc(tint, '#000', 0.2) : '#3a9a4a');
+    ctx.fillStyle = g; ctx.beginPath(); pts.forEach(([x, y, v], i) => { const [px, py] = v ? [x, y] : [cx + (x - cx) * 1.0, cy + (y - cy) * 1.0]; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.closePath(); ctx.fill(); }
+  // night side shade and a rim highlight
+  const sh = ctx.createRadialGradient(cx - r * 0.4, cy - r * 0.4, r * 0.3, cx, cy, r * 1.05); sh.addColorStop(0, 'rgba(255,255,255,0.08)'); sh.addColorStop(0.7, 'rgba(0,0,30,0)'); sh.addColorStop(1, 'rgba(0,0,40,0.45)'); ctx.fillStyle = sh; ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+  ctx.restore();
+  // routes: glowing arcs drawn up to progress p (0..routes.length), with travelling dots
+  const p = o.routes ?? 0; ctx.lineCap = 'round';
+  W.ROUTES.forEach((route, ri) => { const rp = K.clamp(p - ri * 0.6); if (rp <= 0) return; const pts = []; for (let s = 0; s < route.length - 1; s++) { const a = W.STOP[route[s]], b = W.STOP[route[s + 1]]; let db = b[0] - a[0]; if (db > 180) db -= 360; if (db < -180) db += 360; for (let k = 0; k <= 12; k++) pts.push([a[0] + db * k / 12, a[1] + (b[1] - a[1]) * k / 12]); }
+    const n = Math.max(2, Math.floor(pts.length * rp)), pr = pts.slice(0, n).map(([lo, la]) => W.proj(lo, la, cx, cy, r * 1.01, lon0));
+    for (const [col, lw] of [['rgba(255,210,90,0.35)', r * 0.05], ['#ffe08a', r * 0.016]]) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); let pen = false; for (const [x, y, v] of pr) { if (!v) { pen = false; continue; } pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; } ctx.stroke(); }
+    const last = pr[pr.length - 1]; if (last[2]) { wEll(ctx, last[0], last[1], r * 0.025, r * 0.025, '#fff6d0'); } });
+  for (const k of o.dots ?? []) { const [x, y, v] = W.proj(...W.STOP[k], cx, cy, r, lon0); if (v) { wEll(ctx, x, y, r * 0.03, r * 0.03, '#fff6d0'); } }
+};
+// a flat world map (equirectangular) in a box; fill(name, lat) chooses a colour per land piece and latitude band
+W.flatMap = (ctx, x, y, w, h, fill, a = 1) => { if (a <= 0) return; ctx.save(); ctx.globalAlpha = a; const X = (lo) => x + (lo + 180) / 360 * w, Y = (la) => y + (85 - la) / 145 * h;
+  ctx.fillStyle = '#123a7a'; ctx.beginPath(); ctx.roundRect(x - 10, y - 10, w + 20, h + 20, 20); ctx.fill();
+  for (const [name, poly] of Object.entries(W.LAND)) { ctx.save(); ctx.beginPath(); W.dense(poly, 4).forEach(([lo, la], i) => (i ? ctx.lineTo(X(lo), Y(la)) : ctx.moveTo(X(lo), Y(la)))); ctx.closePath(); ctx.clip();
+    for (let la = 85; la > -60; la -= 5) { ctx.fillStyle = fill(name, la - 2.5); ctx.fillRect(x, Y(la), w, Y(la - 5) - Y(la) + 1); } ctx.restore(); }
+  ctx.restore(); };
+W.uvCol = (la) => { const u = Math.cos(la * Math.PI / 180) ** 3; return u > 0.8 ? mixc('#ff3a4a', '#b04aff', (u - 0.8) * 5) : u > 0.5 ? mixc('#ffb03a', '#ff3a4a', (u - 0.5) / 0.3) : mixc('#4ade8a', '#ffb03a', u / 0.5); };
+W.toneCol = (name, la) => { let u = Math.cos(la * Math.PI / 180) ** 2.4; if (name === 'greenland' || (name === 'namerica' && la > 60)) u = Math.max(u, 0.42); if (name === 'samerica' || name === 'namerica') u *= 0.82; return mixc(Folk.SKIN[7], Folk.SKIN[0], u); };
+
+// ---------- the cold north: a snowy steppe at a low winter sun, mammoths far off ----------
+W.mammoth = (ctx, t, x, y, s, dir = 1) => { ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s);
+  const fur = '#6a4a3a'; ctx.fillStyle = mixc(fur, '#000', 0.2); for (const lx of [-28, 22]) ctx.fillRect(lx, 0, 14, 34);
+  ctx.fillStyle = fur; ctx.beginPath(); ctx.ellipse(0, -10, 48, 34, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(40, -30, 24, 26, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(28, -46, 14, 14, 0, 0, 7); ctx.fill();
+  for (const lx of [-20, 30]) ctx.fillRect(lx, 0, 15, 36);
+  ctx.strokeStyle = fur; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(56, -22); ctx.quadraticCurveTo(66 + Math.sin(t) * 3, 4, 58, 22); ctx.stroke();
+  ctx.strokeStyle = '#f0e6d0'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(52, -18); ctx.quadraticCurveTo(76, -4, 70, -26); ctx.stroke();
+  ctx.strokeStyle = mixc(fur, '#000', 0.3); ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i < 14; i++) { const hx = -40 + i * 6; ctx.moveTo(hx, 16); ctx.lineTo(hx - 2, 28); } ctx.stroke();
+  ctx.restore(); };
+W.steppe = (ctx, t, pan = 0, o = {}) => {
+  const sunY = o.sunY ?? 560, sunX = 1500 - pan * 0.04;
+  const sky = ctx.createLinearGradient(0, 0, 0, 700); sky.addColorStop(0, '#5a6ad8'); sky.addColorStop(0.6, '#b8b0f0'); sky.addColorStop(1, '#ffd0c0'); ctx.fillStyle = sky; ctx.fillRect(0, 0, 1920, 1080);
+  const sg = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 380); sg.addColorStop(0, 'rgba(255,248,230,1)'); sg.addColorStop(0.15, 'rgba(255,235,210,0.7)'); sg.addColorStop(1, 'rgba(255,220,200,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, 1920, 1080); wEll(ctx, sunX, sunY, 56, 56, '#fff8ec');
+  for (const [yb, col, amp, par] of [[600, '#c8c4ee', 160, 0.1], [640, '#a8a4e0', 90, 0.18]]) { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 1080); for (let x = 0; x <= 1920; x += 24) { const u = (x + pan * par) * 0.003; ctx.lineTo(x, yb - amp * Math.max(0, Math.sin(u) * Math.sin(u * 2.3 + 1))); } ctx.lineTo(1920, 1080); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,0.55)'; }
+  const sn = ctx.createLinearGradient(0, 640, 0, 1080); sn.addColorStop(0, '#e8eaff'); sn.addColorStop(1, '#b8c0f0'); ctx.fillStyle = sn; ctx.fillRect(0, 640, 1920, 440);
+  for (let i = 0; i < 26; i++) { const x = ((K.hash(i, 5) * 2200 - pan * 0.6) % 2200 + 2200) % 2200 - 140, y = 680 + K.hash(i, 6) * 360; wEll(ctx, x, y, 60 + K.hash(i, 7) * 80, 8, 'rgba(160,170,230,0.35)'); }
+  for (let i = 0; i < 3; i++) W.mammoth(ctx, t, ((1100 + i * 130 - pan * 0.25) % 2300 + 2300) % 2300 - 190, 690 + i * 8, 0.9 - i * 0.12, -1);
+  // falling snow
+  ctx.fillStyle = 'rgba(255,255,255,0.8)'; for (let i = 0; i < 80; i++) { const x = (K.hash(i, 1) * 1920 + t * 20 + Math.sin(t + i) * 20) % 1920, y = (K.hash(i, 2) * 1080 + t * (40 + K.hash(i, 3) * 40)) % 1080; ctx.beginPath(); ctx.arc(x, y, 2 + K.hash(i, 4) * 2, 0, 7); ctx.fill(); }
+};
+// a long shadow for a walker at a low sun (to the left)
+W.longShadow = (ctx, x, y, H, len = 2.2) => { ctx.fillStyle = 'rgba(80,90,170,0.35)'; ctx.beginPath(); ctx.ellipse(x - H * len * 0.5, y + 4, H * len * 0.5, H * 0.05, 0, 0, 7); ctx.fill(); };
+
+// ---------- night camp: an ice-age fire under the stars ----------
+W.campfire = (ctx, t, fx = 1180, fy = 900) => {
+  const sky = ctx.createLinearGradient(0, 0, 0, 1080); sky.addColorStop(0, '#0a0e30'); sky.addColorStop(1, '#2a1a40'); ctx.fillStyle = sky; ctx.fillRect(0, 0, 1920, 1080);
+  for (let i = 0; i < 120; i++) { ctx.fillStyle = `rgba(255,255,240,${0.3 + 0.6 * K.hash(i, 3) * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.beginPath(); ctx.arc(K.hash(i, 1) * 1920, K.hash(i, 2) * 600, 1 + K.hash(i, 4) * 1.6, 0, 7); ctx.fill(); }
+  ctx.fillStyle = '#1a1430'; ctx.beginPath(); ctx.moveTo(0, 1080); for (let x = 0; x <= 1920; x += 30) ctx.lineTo(x, 640 - 120 * Math.max(0, Math.sin(x * 0.004 + 1))); ctx.lineTo(1920, 1080); ctx.fill();
+  ctx.fillStyle = '#2a1e2a'; ctx.fillRect(0, 760, 1920, 320);
+  const glow = ctx.createRadialGradient(fx, fy - 60, 20, fx, fy - 60, 700); glow.addColorStop(0, 'rgba(255,160,60,0.55)'); glow.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = glow; ctx.fillRect(0, 0, 1920, 1080);
+  for (let i = 0; i < 7; i++) { const a = i / 7 * 6.283; wEll(ctx, fx + Math.cos(a) * 80, fy + Math.sin(a) * 18, 30, 16, '#4a3a3a'); }
+  for (let k = 0; k < 3; k++) { const h = 150 - k * 35, w = 70 - k * 18, fl = Math.sin(t * 9 + k) * 8; ctx.fillStyle = ['#ff6a1a', '#ffa83a', '#fff0a0'][k]; ctx.beginPath(); ctx.moveTo(fx - w, fy); ctx.quadraticCurveTo(fx - w * 0.6 + fl, fy - h * 0.6, fx + fl * 1.5, fy - h); ctx.quadraticCurveTo(fx + w * 0.6 - fl, fy - h * 0.6, fx + w, fy); ctx.fill(); }
+  for (let i = 0; i < 16; i++) { const u = (t * 0.6 + K.hash(i, 9)) % 1; wEll(ctx, fx + Math.sin(i + t * 2) * 30 * u, fy - 120 - u * 400, 3, 3, `rgba(255,190,90,${1 - u})`); }
+};
+
+// ---------- the Arctic coast at twilight: aurora, icebergs, sea, a kayak, a seal, a lamp ----------
+W.arctic = (ctx, t) => {
+  const sky = ctx.createLinearGradient(0, 0, 0, 700); sky.addColorStop(0, '#0e1650'); sky.addColorStop(0.7, '#3a3aa0'); sky.addColorStop(1, '#c86aa0'); ctx.fillStyle = sky; ctx.fillRect(0, 0, 1920, 1080);
+  for (let k = 0; k < 3; k++) { ctx.strokeStyle = `rgba(${k === 1 ? '120,255,200' : '80,230,170'},${0.25 - k * 0.05})`; ctx.lineWidth = 60 - k * 14; ctx.beginPath(); for (let x = -40; x <= 1960; x += 30) ctx[x < 0 ? 'moveTo' : 'lineTo'](x, 160 + k * 40 + Math.sin(x * 0.004 + t * 0.4 + k) * 60); ctx.stroke(); }
+  ctx.fillStyle = '#4a4aa8'; ctx.beginPath(); ctx.moveTo(0, 640); for (let x = 0; x <= 1920; x += 40) ctx.lineTo(x, 600 - 110 * Math.max(0, Math.sin(x * 0.005))); ctx.lineTo(1920, 640); ctx.fill();
+  const sea = ctx.createLinearGradient(0, 620, 0, 1080); sea.addColorStop(0, '#2a4ab0'); sea.addColorStop(1, '#0e1a60'); ctx.fillStyle = sea; ctx.fillRect(0, 620, 1920, 460);
+  for (const [bx, bw, bh] of [[1400, 160, 260], [1650, 90, 140], [1180, 60, 80]]) { ctx.fillStyle = '#e8f4ff'; ctx.beginPath(); ctx.moveTo(bx - bw, 640); ctx.lineTo(bx - bw * 0.2, 640 - bh); ctx.lineTo(bx + bw * 0.1, 640 - bh * 0.7); ctx.lineTo(bx + bw, 640); ctx.fill(); ctx.fillStyle = '#9ac0f0'; ctx.beginPath(); ctx.moveTo(bx - bw * 0.2, 640 - bh); ctx.lineTo(bx + bw * 0.1, 640 - bh * 0.7); ctx.lineTo(bx + bw, 640); ctx.lineTo(bx, 640); ctx.fill(); }
+  for (let i = 0; i < 30; i++) { const y = 660 + K.hash(i, 3) * 400; wEll(ctx, (K.hash(i, 2) * 1920 + t * 10) % 1920, y, 40 + K.hash(i, 4) * 60, 3, 'rgba(200,220,255,0.3)'); }
+  // shore rocks with snow
+  ctx.fillStyle = '#3a3a5a'; ctx.beginPath(); ctx.moveTo(0, 1080); ctx.lineTo(0, 820); ctx.quadraticCurveTo(500, 760, 1000, 860); ctx.lineTo(1100, 1080); ctx.fill(); ctx.fillStyle = '#e0e8ff'; ctx.beginPath(); ctx.moveTo(0, 830); ctx.quadraticCurveTo(500, 770, 1000, 868); ctx.quadraticCurveTo(500, 800, 0, 860); ctx.fill();
+  // kayak and a seal head in the water
+  ctx.fillStyle = '#6a3a24'; ctx.beginPath(); ctx.moveTo(1050, 860); ctx.quadraticCurveTo(1300, 900, 1560, 850); ctx.quadraticCurveTo(1300, 880, 1050, 860); ctx.fill();
+  const sx = 1680, sy = 800 + Math.sin(t * 1.5) * 6; wEll(ctx, sx, sy, 34, 26, '#5a5a6a'); wEll(ctx, sx + 22, sy + 4, 14, 10, '#6a6a7a'); wEll(ctx, sx + 6, sy - 6, 4, 4, '#101018'); wEll(ctx, sx, sy + 26, 50, 6, 'rgba(200,220,255,0.4)');
+};
+W.lamp = (ctx, t, x, y) => { const g = ctx.createRadialGradient(x, y - 20, 5, x, y - 20, 360); g.addColorStop(0, 'rgba(255,190,90,0.7)'); g.addColorStop(1, 'rgba(255,160,60,0)'); ctx.fillStyle = g; ctx.fillRect(x - 360, y - 380, 720, 720);
+  wEll(ctx, x, y, 46, 14, '#8a8478'); wEll(ctx, x, y - 4, 40, 9, '#5a3a20'); const fl = Math.sin(t * 8) * 3; ctx.fillStyle = '#ffd060'; ctx.beginPath(); ctx.moveTo(x - 14, y - 6); ctx.quadraticCurveTo(x - 6 + fl, y - 30, x + fl, y - 46); ctx.quadraticCurveTo(x + 8 - fl, y - 30, x + 14, y - 6); ctx.fill(); };
+
+// ---------- a South Asian river valley: palms, rice terraces, water, strong sun ----------
+W.palm = (ctx, t, x, y, h) => { ctx.strokeStyle = '#7a5a3a'; ctx.lineWidth = h * 0.05; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + h * 0.1, y - h * 0.5, x + h * 0.05, y - h); ctx.stroke();
+  for (let i = 0; i < 8; i++) { const a = -Math.PI / 2 + (i - 3.5) * 0.42 + Math.sin(t + i) * 0.04, L = h * 0.45; ctx.strokeStyle = i % 2 ? '#3a8a3a' : '#4aa84a'; ctx.lineWidth = h * 0.05; ctx.beginPath(); ctx.moveTo(x + h * 0.05, y - h); ctx.quadraticCurveTo(x + h * 0.05 + Math.cos(a) * L * 0.6, y - h + Math.sin(a) * L * 0.6 - h * 0.05, x + h * 0.05 + Math.cos(a) * L, y - h + Math.sin(a) * L + L * 0.35); ctx.stroke(); } };
+W.paddy = (ctx, t, pan = 0) => {
+  const sky = ctx.createLinearGradient(0, 0, 0, 600); sky.addColorStop(0, '#3ab0f0'); sky.addColorStop(1, '#c8f0ff'); ctx.fillStyle = sky; ctx.fillRect(0, 0, 1920, 1080);
+  const sg = ctx.createRadialGradient(1500, 150, 0, 1500, 150, 300); sg.addColorStop(0, 'rgba(255,255,230,1)'); sg.addColorStop(0.2, 'rgba(255,250,200,0.6)'); sg.addColorStop(1, 'rgba(255,250,200,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, 1920, 600); wEll(ctx, 1500, 150, 60, 60, '#fffbe0');
+  for (const [yb, col, amp] of [[480, '#7ab0a0', 200], [540, '#4a9a6a', 120]]) { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 1080); for (let x = 0; x <= 1920; x += 30) ctx.lineTo(x, yb - amp * Math.abs(Math.sin((x + pan * 0.1) * 0.0035 + yb))); ctx.lineTo(1920, 1080); ctx.fill(); }
+  for (let r = 0; r < 6; r++) { const y = 600 + r * 80, g = ctx.createLinearGradient(0, y, 0, y + 80); g.addColorStop(0, r % 2 ? '#8ad8e8' : '#6ac87a'); g.addColorStop(1, r % 2 ? '#5ab0c8' : '#4aa85a'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, y + 10); for (let x = 0; x <= 1920; x += 40) ctx.lineTo(x, y + Math.sin(x * 0.004 + r) * 14); ctx.lineTo(1920, y + 90); ctx.lineTo(0, y + 90); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,140,60,0.8)'; ctx.lineWidth = 3; ctx.beginPath(); for (let i = 0; i < 60; i++) { const x = ((K.hash(i, r) * 2000 - pan * (0.4 + r * 0.1)) % 2000 + 2000) % 2000 - 40, yy = y + 50 + K.hash(i, r + 7) * 20; ctx.moveTo(x, yy); ctx.lineTo(x + Math.sin(t + i) * 3, yy - 16 - r * 2); } ctx.stroke(); }
+  for (const [px, h] of [[120, 420], [300, 330], [1750, 400], [1600, 300]]) W.palm(ctx, t, px - pan * 0.3, 640, h);
+};
+
+// ---------- science close-ups ----------
+// UV beams from the upper left onto a surface line y0, some stopped (bounce) where blocked(x) is true
+W.uvBeams = (ctx, t, y0, blocked, n = 7, a = 1) => { for (let i = 0; i < n; i++) { const ph = (t * 0.7 + i / n) % 1, x1 = 200 + i * 240 + (K.hash(i, 2) - 0.5) * 80, x0 = x1 - 300, y1 = blocked && blocked(x1) ? y0 : y0 + 160, u = Math.min(1, ph * 1.6);
+  const hx = K.lerp(x0, x1, u), hy = K.lerp(-40, y1, u); ctx.strokeStyle = `rgba(200,120,255,${0.8 * a})`; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(K.lerp(x0, x1, Math.max(0, u - 0.25)), K.lerp(-40, y1, Math.max(0, u - 0.25))); ctx.lineTo(hx, hy); ctx.stroke();
+  ctx.strokeStyle = `rgba(255,240,255,${0.9 * a})`; ctx.lineWidth = 3; ctx.stroke();
+  if (blocked && blocked(x1) && ph > 0.62) { const v = (ph - 0.62) / 0.38; ctx.strokeStyle = `rgba(200,120,255,${0.7 * (1 - v) * a})`; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + 120 * v, y1 - 160 * v); ctx.stroke(); } } };
+// a folate molecule (a little chain of three rings), optionally breaking apart (b 0..1)
+W.folate = (ctx, x, y, s, b = 0) => { const parts = [[-1, 0, '#ffd23a'], [0, 0, '#ff8a3a'], [1, 0, '#4ad0a0']]; parts.forEach(([dx, dy, c], i) => { const ox = dx * s * (1 + b * 1.2), oy = dy * s + (i - 1) * b * s * 0.6 * (i === 1 ? -1 : 1);
+  ctx.save(); ctx.translate(x + ox, y + oy); ctx.rotate(b * (i - 1) * 1.2); ctx.fillStyle = c; ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = k / 6 * 6.283 + Math.PI / 6; ctx.lineTo(Math.cos(a) * s * 0.42, Math.sin(a) * s * 0.42); } ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(-s * 0.12, -s * 0.12, s * 0.1, 0, 7); ctx.fill(); ctx.restore(); });
+  if (b < 0.2) { ctx.strokeStyle = '#ffe8a0'; ctx.lineWidth = s * 0.12; ctx.beginPath(); ctx.moveTo(x - s * 0.6, y); ctx.lineTo(x + s * 0.6, y); ctx.stroke(); } };
+// vitamin D forming: a ring molecule that opens (u 0..1) with a golden glow
+W.vitaminD = (ctx, t, x, y, s, u) => { const glow = ctx.createRadialGradient(x, y, 0, x, y, s * 2.2); glow.addColorStop(0, `rgba(255,220,90,${0.55 * u})`); glow.addColorStop(1, 'rgba(255,220,90,0)'); ctx.fillStyle = glow; ctx.fillRect(x - s * 2.2, y - s * 2.2, s * 4.4, s * 4.4);
+  const rings = [[-1.1, 0.2], [-0.25, -0.25], [0.6, 0.15], [1.3, -0.35]]; rings.forEach(([dx, dy], i) => { const open = i === 1 ? u : 0; ctx.save(); ctx.translate(x + dx * s + (i > 1 ? open * s * 0.4 : 0), y + dy * s - (i > 1 ? open * s * 0.3 : 0)); ctx.strokeStyle = mixc('#c8b0ff', '#ffd23a', u); ctx.lineWidth = s * 0.12; ctx.lineJoin = 'round'; ctx.beginPath(); for (let k = 0; k < 6; k++) { if (open > 0.5 && k === 2) { ctx.moveTo(Math.cos((k + 1) / 6 * 6.283) * s * 0.45, Math.sin((k + 1) / 6 * 6.283) * s * 0.45); continue; } const a = k / 6 * 6.283; ctx.lineTo(Math.cos(a) * s * 0.45, Math.sin(a) * s * 0.45); } ctx.closePath(); ctx.stroke(); ctx.restore(); }); };
+// a DNA double helix across the screen; marks = [[pos 0..1, colour]] highlighted rungs
+W.dna = (ctx, t, y, amp, marks = [], a = 1) => { ctx.save(); ctx.globalAlpha = a; const n = 70;
+  for (let i = 0; i < n; i++) { const x = -40 + i * 29, ph = i * 0.42 + t * 0.8, y1 = y + Math.sin(ph) * amp, y2 = y - Math.sin(ph) * amp, m = marks.find(([p]) => Math.abs(p * n - i) < 0.6);
+    ctx.strokeStyle = m ? m[1] : 'rgba(180,200,255,0.5)'; ctx.lineWidth = m ? 10 : 5; ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke(); if (m) { const g = ctx.createRadialGradient(x, y, 0, x, y, 60); g.addColorStop(0, m[1]); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.globalAlpha = a * 0.5; ctx.fillStyle = g; ctx.fillRect(x - 60, y - 60, 120, 120); ctx.globalAlpha = a; } }
+  for (const sg of [1, -1]) { ctx.strokeStyle = sg > 0 ? '#5ab0ff' : '#ff6ab0'; ctx.lineWidth = 9; ctx.beginPath(); for (let i = 0; i <= n * 4; i++) { const x = -40 + i * 29 / 4, ph = i / 4 * 0.42 + t * 0.8; ctx[i ? 'lineTo' : 'moveTo'](x, y + sg * Math.sin(ph) * amp); } ctx.stroke(); }
+  ctx.restore(); };

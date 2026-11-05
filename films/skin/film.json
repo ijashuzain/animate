@@ -1,10 +1,153 @@
 {
  "title": "Why Do Humans Have Different Skin Colours?",
- "duration": 8,
+ "duration": 240,
  "fps": 30,
- "fonts": [{ "family": "Baloo 2", "file": "studio/fonts/Baloo2[wght].ttf" }],
- "kit": ["kit/cast.js", "kit/micro.js", "kit/folk.js"],
- "src": ["src/world.js", "src/film.js"],
- "audio": [],
- "board": [[2, "Look test: the family walks the savanna, UV very high"], [6, "Look test: inside the skin, melanin umbrellas"]]
+ "fonts": [
+  {
+   "family": "Baloo 2",
+   "file": "studio/fonts/Baloo2[wght].ttf"
+  }
+ ],
+ "kit": [
+  "kit/cast.js",
+  "kit/nature.js",
+  "kit/micro.js",
+  "kit/folk.js"
+ ],
+ "src": [
+  "src/world.js",
+  "src/film.js"
+ ],
+ "audio": [
+  {
+   "id": "music",
+   "src": "audio/music.wav",
+   "start": 0,
+   "volume": 1
+  },
+  {
+   "id": "sfx",
+   "src": "audio/sfx.wav",
+   "start": 0,
+   "volume": 1
+  }
+ ],
+ "board": [
+  [
+   2.5,
+   "Every person alive today..."
+  ],
+  [
+   7,
+   "...comes from the same ancestors"
+  ],
+  [
+   10,
+   "Written in sunlight: UV gauge"
+  ],
+  [
+   14,
+   "An ancestor with fur, a million+ years ago"
+  ],
+  [
+   21,
+   "The fur fades: staying cool"
+  ],
+  [
+   30,
+   "Skin turns dark under strong UV"
+  ],
+  [
+   36,
+   "Inside the skin: the melanocyte"
+  ],
+  [
+   50,
+   "Melanin caps: umbrellas over the DNA"
+  ],
+  [
+   57,
+   "UV can damage DNA"
+  ],
+  [
+   63,
+   "UV breaks down folate"
+  ],
+  [
+   68,
+   "UV also makes vitamin D"
+  ],
+  [
+   80,
+   "The balance: folate vs vitamin D"
+  ],
+  [
+   89,
+   "Leaving Africa, ~60,000 years ago"
+  ],
+  [
+   106,
+   "Routes across the world"
+  ],
+  [
+   113,
+   "Further north: a lower sun"
+  ],
+  [
+   119,
+   "The steppe: UV low"
+  ],
+  [
+   125,
+   "Dark skin blocks the little UV left"
+  ],
+  [
+   135,
+   "Generation after generation, lighter"
+  ],
+  [
+   147,
+   "Europe and East Asia: separately"
+  ],
+  [
+   153,
+   "Different genes"
+  ],
+  [
+   159,
+   "Ancient Europe: dark skin, light eyes"
+  ],
+  [
+   171,
+   "The Arctic exception"
+  ],
+  [
+   177,
+   "Vitamin D from fish and seal"
+  ],
+  [
+   186,
+   "Africa: a wide range of skin colour"
+  ],
+  [
+   194,
+   "South Asia: strong sun again"
+  ],
+  [
+   212,
+   "The two maps line up"
+  ],
+  [
+   219,
+   "A handful of genes"
+  ],
+  [
+   226,
+   "Underneath, one family"
+  ],
+  [
+   235,
+   "Your skin: a map of your ancestors' sun"
+  ]
+ ]
 }
