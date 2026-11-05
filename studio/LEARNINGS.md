@@ -8,6 +8,21 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-11-05: the skin colour film (pitch A "the great walk"; 2:46 with the user's voice)
+- What worked: the blood film's recipe again (the user's reference grid, a one-frame look test, one journey with a device:
+  the UV gauge in the sky), plus the reference study's pacing: a hard cut about every 5 s planned (3-4 s after the voice).
+- People: kit/folk.js now has Folk.walker (natural proportions, hide or parka, packs, spears, a baby, fur, sweat) and
+  Folk.portrait (front faces of today, many skin tones and styles). Parka hoods: a soft hood shape + a shaggy fur ruff of
+  strands (the user found a clean white ring "boring"); hood down = a fur collar.
+- The user prefers shaded, glossy cells over flat 2D (the melanocyte). Keep volume; keep shapes clean.
+- Weak spots the user asked to fix before the draft: rough globe shapes (now real outlines), static standing shots (slow
+  push-ins + small motions + someone walking), simple fish (a lit underwater scene), small maps (start big, merge), fur as
+  stripes (soft base + curved strands at random angles).
+- Voice alignment: the pause-based match got one boundary wrong (a comma pause inside a line). Check that each line's
+  words-per-second is plausible (about 2.5-3.5); fix outliers with the FIX table in align.py.
+- Music: drums and plucks read louder than pads; set the music gain so its mean sits ~9 dB under the voice.
+- Harvested: Folk.walker, Folk.portrait, Folk.furArc (kit/folk.js).
+
 ## 2026-11-04: the skin film, look test notes (the user)
 - Cells: the user prefers the **shaded, glossy** melanocyte (a body with a highlight, tapering curved arms with a rim
   light, a soft shadow) over a flat 2D version ("previous one is better"). Keep the volume; just make it clean: one

@@ -120,7 +120,7 @@ const FILM = {
   thumb(ctx) {
     skyBg(ctx, '#070a2a', '#1a1250');
     const sx = 1560, sy = 420, sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 760); sg.addColorStop(0, 'rgba(255,250,220,1)'); sg.addColorStop(0.12, 'rgba(255,220,120,0.95)'); sg.addColorStop(0.35, 'rgba(255,150,60,0.45)'); sg.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, 1920, 1080);
-    wEll(ctx, sx, sy, 120, 120, '#fffbe8');
+    const sc = ctx.createRadialGradient(sx - 30, sy - 30, 10, sx, sy, 125); sc.addColorStop(0, '#fffbe0'); sc.addColorStop(0.6, '#ffe070'); sc.addColorStop(1, '#ffb030'); ctx.fillStyle = sc; ctx.beginPath(); ctx.arc(sx, sy, 125, 0, 7); ctx.fill();
     const looks = [TODAY[6], TODAY[0], TODAY[4], TODAY[3], TODAY[7]], tones = [S[0], S[2], S[3], S[5], S[7]];
     looks.forEach((o, i) => Folk.portrait(ctx, 0.3, 230 + i * 300, 760 - (i % 2) * 30, 300, Object.assign({}, o, { skin: tones[i], seed: i, light: 0.35, look: 0.6 })));
   },
