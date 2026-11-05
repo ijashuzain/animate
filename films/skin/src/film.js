@@ -115,6 +115,15 @@ const D = 240;
 // film time -> planned picture time: each line's shots stretch or shrink to the voice-over (src/timing.js, from align.py)
 const toPlan = (t) => { if (typeof TIMING === 'undefined') return t; const V = TIMING.VOICE, Pl = TIMING.PLAN; for (let i = 0; i < V.length - 1; i++) if (t < V[i + 1] || i === V.length - 2) return Pl[i] + (Pl[i + 1] - Pl[i]) * clamp((t - V[i]) / (V[i + 1] - V[i])); return Pl[Pl.length - 1]; };
 const FILM = {
+  // the thumbnail (studio/references/thumbs/STYLE.md): five faces from dark to light, all lit by one big sun; the headline
+  // "WRITTEN IN SUNLIGHT" comes from film.json
+  thumb(ctx) {
+    skyBg(ctx, '#070a2a', '#1a1250');
+    const sx = 1560, sy = 420, sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, 760); sg.addColorStop(0, 'rgba(255,250,220,1)'); sg.addColorStop(0.12, 'rgba(255,220,120,0.95)'); sg.addColorStop(0.35, 'rgba(255,150,60,0.45)'); sg.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, 1920, 1080);
+    wEll(ctx, sx, sy, 120, 120, '#fffbe8');
+    const looks = [TODAY[6], TODAY[0], TODAY[4], TODAY[3], TODAY[7]], tones = [S[0], S[2], S[3], S[5], S[7]];
+    looks.forEach((o, i) => Folk.portrait(ctx, 0.3, 230 + i * 300, 760 - (i % 2) * 30, 300, Object.assign({}, o, { skin: tones[i], seed: i, light: 0.35, look: 0.6 })));
+  },
   draw(tf) {
     const t = Math.min(D - 0.001, toPlan(tf));
     const ctx = P.ctx; const s = SHOTS.find(([a, b]) => t >= a && t < b) ?? SHOTS[SHOTS.length - 1];

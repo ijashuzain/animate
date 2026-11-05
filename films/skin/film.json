@@ -274,5 +274,31 @@
    235,
    "Your skin: a map of your ancestors' sun"
   ]
- ]
+ ],
+ "thumb": {
+  "style": "banner",
+  "title": "WRITTEN IN SUNLIGHT",
+  "accent": "SUNLIGHT",
+  "titleSize": 210,
+  "arrows": [
+   [
+    1080,
+    560,
+    1420,
+    450,
+    -0.35
+   ]
+  ],
+  "labels": [],
+  "grade": {
+   "sat": 1.3,
+   "contrast": 1.15
+  },
+  "focus": [
+   1000,
+   640,
+   820,
+   0.35
+  ]
+ }
 }
