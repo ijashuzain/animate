@@ -94,3 +94,125 @@ E.retina = (ctx, t, o = {}) => {
   for (let i = 0; i < 12; i++) eEll(ctx, 80 + i * 170, base + 40, 70, 16, 'rgba(160,70,200,0.5)');
   if (o.beam != null) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const x = o.beam, g = ctx.createLinearGradient(0, 0, 0, 900); g.addColorStop(0, 'rgba(255,60,60,0.8)'); g.addColorStop(1, 'rgba(255,90,90,0.4)'); ctx.strokeStyle = g; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(x, -10); ctx.lineTo(x, o.beamEnd ?? 820); ctx.stroke(); ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,230,230,0.9)'; ctx.stroke(); ctx.restore(); }
 };
+
+// ---------- the kitchen (tile 2): a sunny window, plants, a table; the child in profile looking at the apple ----------
+E.apple = (ctx, t, x, y, r, o = {}) => { const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r * 1.1); g.addColorStop(0, '#ff8a7a'); g.addColorStop(0.45, '#e8202a'); g.addColorStop(1, '#8a0a14'); ctx.fillStyle = g;
+  ctx.beginPath(); ctx.moveTo(x, y - r * 0.72); ctx.bezierCurveTo(x + r * 0.55, y - r * 1.05, x + r * 1.15, y - r * 0.6, x + r * 1.0, y + r * 0.15); ctx.bezierCurveTo(x + r * 0.9, y + r * 0.85, x + r * 0.35, y + r * 1.0, x, y + r * 0.85); ctx.bezierCurveTo(x - r * 0.35, y + r * 1.0, x - r * 0.9, y + r * 0.85, x - r * 1.0, y + r * 0.15); ctx.bezierCurveTo(x - r * 1.15, y - r * 0.6, x - r * 0.55, y - r * 1.05, x, y - r * 0.72); ctx.fill();
+  if (o.bite) { ctx.fillStyle = '#fff4dc'; ctx.beginPath(); ctx.arc(x + r * 0.95, y - r * 0.1, r * 0.38 * o.bite, 0, 7); ctx.fill(); }
+  eEll(ctx, x - r * 0.42, y - r * 0.32, r * 0.2, r * 0.13, 'rgba(255,255,255,0.75)', -0.6); eEll(ctx, x - r * 0.15, y - r * 0.5, r * 0.06, r * 0.04, 'rgba(255,255,255,0.8)');
+  ctx.strokeStyle = '#5a3a20'; ctx.lineWidth = r * 0.08; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x, y - r * 0.68); ctx.quadraticCurveTo(x + r * 0.05, y - r * 0.95, x + r * 0.12, y - r * 1.1); ctx.stroke();
+  ctx.fillStyle = '#4aa83a'; ctx.beginPath(); ctx.moveTo(x + r * 0.08, y - r * 0.95); ctx.quadraticCurveTo(x + r * 0.45, y - r * 1.35, x + r * 0.8, y - r * 1.05); ctx.quadraticCurveTo(x + r * 0.45, y - r * 0.85, x + r * 0.08, y - r * 0.95); ctx.fill(); ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = r * 0.025; ctx.beginPath(); ctx.moveTo(x + r * 0.1, y - r * 0.95); ctx.lineTo(x + r * 0.7, y - r * 1.06); ctx.stroke(); };
+E.kitchen = (ctx, t, o = {}) => {
+  const bg = ctx.createLinearGradient(0, 0, 1920, 0); bg.addColorStop(0, '#f2d8b0'); bg.addColorStop(1, '#ffe8c0'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  // window with garden light, frame, a shelf with jars and plants
+  const wx = 1150, wy = 60, ww = 700, wh = 600; const sky = ctx.createLinearGradient(0, wy, 0, wy + wh); sky.addColorStop(0, '#fff6c0'); sky.addColorStop(1, '#c8e890'); ctx.fillStyle = sky; ctx.fillRect(wx, wy, ww, wh);
+  for (let i = 0; i < 18; i++) eEll(ctx, wx + K.hash(i, 1) * ww, wy + 80 + K.hash(i, 2) * (wh - 100), 50 + K.hash(i, 3) * 40, 40 + K.hash(i, 4) * 30, ['#9ad85a', '#7ac04a', '#c8e870'][i % 3]);
+  ctx.fillStyle = '#e8c890'; ctx.fillRect(wx - 24, wy - 24, ww + 48, 24); ctx.fillRect(wx - 24, wy + wh, ww + 48, 30); ctx.fillRect(wx - 24, wy, 24, wh); ctx.fillRect(wx + ww, wy, 24, wh); ctx.fillRect(wx + ww / 2 - 10, wy, 20, wh); ctx.fillRect(wx, wy + wh / 2 - 10, ww, 20);
+  ctx.globalCompositeOperation = 'lighter'; for (let i = 0; i < 4; i++) { const g = ctx.createLinearGradient(wx, 0, 300, 1080); g.addColorStop(0, 'rgba(255,240,180,0.22)'); g.addColorStop(1, 'rgba(255,240,180,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(wx + i * 170, wy); ctx.lineTo(wx + i * 170 + 120, wy); ctx.lineTo(wx + i * 170 - 600, 1080); ctx.lineTo(wx + i * 170 - 800, 1080); ctx.fill(); } ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#c89a6a'; ctx.fillRect(80, 220, 520, 18); for (const [jx, jc] of [[140, '#c8e0f0'], [230, '#f0d0a0'], [320, '#e0f0d0']]) { ctx.fillStyle = jc; ctx.beginPath(); ctx.roundRect(jx, 140, 60, 80, 10); ctx.fill(); }
+  for (const [px, py] of [[460, 220], [wx + 80, wy + wh + 0], [wx + ww - 120, wy + wh]]) { ctx.fillStyle = '#d0784a'; ctx.beginPath(); ctx.moveTo(px - 36, py - 60); ctx.lineTo(px + 36, py - 60); ctx.lineTo(px + 26, py); ctx.lineTo(px - 26, py); ctx.fill(); for (let k = 0; k < 6; k++) { const a = -Math.PI / 2 + (k - 2.5) * 0.4 + Math.sin(t + k) * 0.05; ctx.fillStyle = k % 2 ? '#5ab04a' : '#3a903a'; ctx.beginPath(); ctx.ellipse(px + Math.cos(a) * 40, py - 70 + Math.sin(a) * 40, 30, 12, a, 0, 7); ctx.fill(); } }
+  // the table
+  const tg = ctx.createLinearGradient(0, 760, 0, 1080); tg.addColorStop(0, '#e0a86a'); tg.addColorStop(1, '#a8703a'); ctx.fillStyle = tg; ctx.fillRect(0, 760, 1920, 320); ctx.fillStyle = 'rgba(255,240,210,0.35)'; ctx.fillRect(0, 760, 1920, 12);
+  // dust motes in the sunbeams
+  for (let i = 0; i < 40; i++) { const x = (K.hash(i, 7) * 1500 + t * 10) % 1500 + 300, y = (K.hash(i, 8) * 700 + t * 6) % 700 + 100; eEll(ctx, x, y, 2.4, 2.4, 'rgba(255,250,220,0.6)'); }
+};
+// the child at the table, in profile facing right, chin on hands (head radius R at (x, y))
+E.kid = (ctx, t, x, y, R, o = {}) => {
+  // a child in profile facing right (refs/ref-grid tile 2): hoodie, arms folded on the table, chin on cupped hands,
+  // a round head with a big glossy eye, a small nose, a smile, a blush, an ear and a mop of dark curls
+  const skin = '#f6c09a', sk2 = '#e8a07a', hoodie = '#2a4ab8', bl = Cast.blink(t, 3), bob = Math.sin(t * 1.2) * R * 0.02;
+  ctx.save(); ctx.translate(0, bob);
+  const hg = ctx.createLinearGradient(x - R * 2, 0, x + R, 0); hg.addColorStop(0, '#1a3088'); hg.addColorStop(1, hoodie); ctx.fillStyle = hg;
+  ctx.beginPath(); ctx.moveTo(x - R * 2.8, y + R * 4); ctx.bezierCurveTo(x - R * 3.0, y + R * 1.4, x - R * 1.6, y + R * 0.8, x - R * 0.4, y + R * 1.0); ctx.bezierCurveTo(x + R * 0.4, y + R * 1.1, x + R * 1.4, y + R * 1.6, x + R * 1.6, y + R * 2.2); ctx.lineTo(x + R * 1.6, y + R * 4); ctx.fill();
+  ctx.fillStyle = '#1a3088'; ctx.beginPath(); ctx.ellipse(x - R * 1.1, y + R * 0.95, R * 0.9, R * 0.4, -0.15, 0, 7); ctx.fill();
+  // folded arm on the table, the forearm rising to the chin, cupped hands
+  ctx.strokeStyle = hoodie; ctx.lineWidth = R * 0.9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x - R * 0.6, y + R * 2.4); ctx.lineTo(x + R * 0.9, y + R * 2.0); ctx.stroke();
+  ctx.lineWidth = R * 0.75; ctx.beginPath(); ctx.moveTo(x + R * 0.9, y + R * 2.0); ctx.lineTo(x + R * 0.75, y + R * 1.2); ctx.stroke();
+  ctx.fillStyle = sk2; ctx.beginPath(); ctx.ellipse(x + R * 0.78, y + R * 1.0, R * 0.42, R * 0.3, -0.3, 0, 7); ctx.fill(); ctx.fillStyle = skin; ctx.beginPath(); ctx.ellipse(x + R * 0.72, y + R * 0.92, R * 0.38, R * 0.27, -0.3, 0, 7); ctx.fill();
+  ctx.strokeStyle = sk2; ctx.lineWidth = R * 0.04; for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(x + R * (0.55 + k * 0.13), y + R * 0.98, R * 0.08, 0.3, 2.6); ctx.stroke(); }
+  // head
+  const fg = ctx.createRadialGradient(x + R * 0.2, y - R * 0.2, R * 0.2, x, y, R * 1.1); fg.addColorStop(0, '#ffd8b8'); fg.addColorStop(0.7, skin); fg.addColorStop(1, sk2); ctx.fillStyle = fg;
+  ctx.beginPath(); ctx.moveTo(x - R * 0.85, y - R * 0.2); ctx.bezierCurveTo(x - R * 0.9, y - R * 1.05, x + R * 0.7, y - R * 1.1, x + R * 0.85, y - R * 0.3); ctx.quadraticCurveTo(x + R * 1.0, y - R * 0.05, x + R * 0.95, y + R * 0.05); ctx.quadraticCurveTo(x + R * 1.08, y + R * 0.15, x + R * 0.94, y + R * 0.22); ctx.bezierCurveTo(x + R * 0.9, y + R * 0.75, x + R * 0.35, y + R * 0.95, x - R * 0.1, y + R * 0.85); ctx.bezierCurveTo(x - R * 0.6, y + R * 0.75, x - R * 0.85, y + R * 0.4, x - R * 0.85, y - R * 0.2); ctx.fill();
+  eEll(ctx, x + R * 0.48, y + R * 0.4, R * 0.18, R * 0.11, 'rgba(255,120,120,0.35)');
+  // the eye: big, glossy, looking at the apple
+  const ex = x + R * 0.48, ey = y - R * 0.05;
+  if (bl < 0.6) { eEll(ctx, ex, ey, R * 0.15, R * 0.2, '#ffffff'); eEll(ctx, ex + R * 0.05, ey + R * 0.02, R * 0.11, R * 0.16, '#3a2414'); eEll(ctx, ex + R * 0.06, ey + R * 0.03, R * 0.06, R * 0.09, '#120806'); eEll(ctx, ex + R * 0.09, ey - R * 0.06, R * 0.04, R * 0.05, '#ffffff'); eEll(ctx, ex + R * 0.02, ey + R * 0.1, R * 0.018, R * 0.018, '#ffffff'); }
+  else { ctx.strokeStyle = '#3a2414'; ctx.lineWidth = R * 0.04; ctx.beginPath(); ctx.arc(ex, ey, R * 0.13, 0.2, Math.PI - 0.2); ctx.stroke(); }
+  ctx.strokeStyle = '#3a2414'; ctx.lineWidth = R * 0.04; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(ex - R * 0.14, ey - R * 0.2); ctx.quadraticCurveTo(ex, ey - R * 0.26, ex + R * 0.14, ey - R * 0.22); ctx.stroke();
+  ctx.strokeStyle = '#a0402a'; ctx.lineWidth = R * 0.035; ctx.beginPath(); ctx.moveTo(x + R * 0.62, y + R * 0.42); ctx.quadraticCurveTo(x + R * 0.75, y + R * (o.mood === 'happy' ? 0.55 : 0.5), x + R * 0.86, y + R * 0.4); ctx.stroke();
+  // ear
+  eEll(ctx, x - R * 0.2, y + R * 0.1, R * 0.16, R * 0.2, sk2); eEll(ctx, x - R * 0.18, y + R * 0.1, R * 0.08, R * 0.12, '#e08a6a');
+  // a mop of curls: a dark mass, then curls on top with soft highlights
+  ctx.fillStyle = '#2a1a24'; ctx.beginPath(); ctx.moveTo(x + R * 0.55, y - R * 0.55); ctx.bezierCurveTo(x + R * 0.4, y - R * 1.25, x - R * 1.0, y - R * 1.3, x - R * 1.05, y - R * 0.3); ctx.bezierCurveTo(x - R * 1.1, y + R * 0.2, x - R * 0.7, y + R * 0.45, x - R * 0.45, y + R * 0.35); ctx.quadraticCurveTo(x - R * 0.35, y - R * 0.1, x - R * 0.05, y - R * 0.3); ctx.quadraticCurveTo(x + R * 0.3, y - R * 0.45, x + R * 0.55, y - R * 0.55); ctx.fill();
+  for (let i = 0; i < 18; i++) { const a = Math.PI * (1.05 + 0.85 * i / 17), rr = R * (0.95 + 0.12 * K.hash(i, 4)), cx2 = x - R * 0.2 + Math.cos(a) * rr * 0.9, cy2 = y - R * 0.35 + Math.sin(a) * rr * 0.85; eEll(ctx, cx2, cy2, R * 0.2, R * 0.18, '#2a1a24'); eEll(ctx, cx2 - R * 0.05, cy2 - R * 0.06, R * 0.08, R * 0.05, 'rgba(160,120,170,0.45)'); }
+  ctx.restore();
+};
+// white sunlight splitting into coloured beads that fly to the apple; all but red sink in, red bounces (u 0..1)
+E.colours = (ctx, t, sx, sy, ax, ay, ar, u) => { const cols = ['#ff3a3a', '#ff9a2a', '#ffe23a', '#4ade5a', '#3ab0ff', '#5a6aff', '#b05aff'];
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; const w = ctx.createLinearGradient(sx, sy, ax, ay); w.addColorStop(0, 'rgba(255,255,240,0.85)'); w.addColorStop(1, 'rgba(255,255,240,0.15)'); ctx.strokeStyle = w; ctx.lineWidth = 90; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(K.lerp(sx, ax, Math.min(1, u * 2)), K.lerp(sy, ay, Math.min(1, u * 2))); ctx.stroke(); ctx.restore();
+  const bead = (x, y, c, r) => { const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 1, x, y, r * 1.8); g.addColorStop(0, '#ffffff'); g.addColorStop(0.35, c); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g; ctx.fillRect(x - r * 2, y - r * 2, r * 4, r * 4); };
+  cols.forEach((c, i) => { for (let k = 0; k < 3; k++) { const ph = K.clamp(u * 1.6 - k * 0.15 - i * 0.03), x = K.lerp(sx + (i - 3) * 30, ax + (i - 3) * ar * 0.12, ph), y = K.lerp(sy, ay - ar * 0.3 + (i - 3) * ar * 0.1, ph); if (ph <= 0) continue;
+    if (ph >= 1 && i !== 0) { const sink = K.clamp(u * 1.6 - 1 - k * 0.15); if (sink > 0.6) continue; bead(ax + (i - 3) * ar * 0.12, ay - ar * 0.3 + (i - 3) * ar * 0.1 + sink * 30, c, 22 * (1 - sink / 0.6)); continue; }
+    if (ph >= 1 && i === 0) { const b = K.clamp(u * 1.6 - 1 - k * 0.15), bx = ax - ar * 0.8 - b * 700, by = ay - ar * 0.2 - b * 260; ctx.strokeStyle = 'rgba(255,60,60,0.5)'; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(bx + 90, by + 34); ctx.lineTo(bx, by); ctx.stroke(); bead(bx, by, c, 24); continue; }
+    bead(x, y, c, 20); } }); };
+
+// ---------- the iris face-on (tile 3): fibres, a black pupil of radius set by open 0..1 ----------
+E.iris = (ctx, t, cx, cy, R, open) => { const pr = R * (0.22 + 0.4 * open);
+  ctx.fillStyle = '#f2ece6'; ctx.fillRect(0, 0, 1920, 1080); const sg = ctx.createRadialGradient(cx, cy, R, cx, cy, R * 2.6); sg.addColorStop(0, '#f6f0ea'); sg.addColorStop(1, '#d8c8c0'); ctx.fillStyle = sg; ctx.fillRect(0, 0, 1920, 1080);
+  for (let i = 0; i < 10; i++) { ctx.strokeStyle = 'rgba(200,60,70,0.25)'; ctx.lineWidth = 3; ctx.beginPath(); let x = K.hash(i, 1) > 0.5 ? 1920 : 0, y = K.hash(i, 2) * 1080; ctx.moveTo(x, y); ctx.quadraticCurveTo((x + cx) / 2, y + (K.hash(i, 3) - 0.5) * 300, cx + (x > cx ? R * 1.6 : -R * 1.6), cy + (K.hash(i, 4) - 0.5) * R); ctx.stroke(); }
+  const ig = ctx.createRadialGradient(cx, cy, pr, cx, cy, R); ig.addColorStop(0, '#ff9a2a'); ig.addColorStop(0.35, '#e8702a'); ig.addColorStop(0.55, '#3a8aff'); ig.addColorStop(1, '#1a3aa8'); ctx.fillStyle = ig; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
+  ctx.lineCap = 'round'; for (let i = 0; i < 160; i++) { const a = i / 160 * 6.283 + K.hash(i, 5) * 0.03, r0 = pr * 1.02, r1 = R * (0.85 + 0.12 * K.hash(i, 6)); ctx.strokeStyle = i % 3 ? 'rgba(120,200,255,0.5)' : 'rgba(255,190,90,0.55)'; ctx.lineWidth = 2 + K.hash(i, 7) * 2; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.quadraticCurveTo(cx + Math.cos(a + 0.08) * (r0 + r1) / 2, cy + Math.sin(a + 0.08) * (r0 + r1) / 2, cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); ctx.stroke(); }
+  ctx.strokeStyle = '#0a1a5a'; ctx.lineWidth = R * 0.06; ctx.beginPath(); ctx.arc(cx, cy, R * 0.98, 0, 7); ctx.stroke();
+  eEll(ctx, cx, cy, pr, pr, '#05060c'); eEll(ctx, cx + R * 0.45, cy - R * 0.5, R * 0.16, R * 0.09, 'rgba(255,255,255,0.85)', -0.6); eEll(ctx, cx + R * 0.2, cy - R * 0.62, R * 0.05, R * 0.03, 'rgba(255,255,255,0.8)'); };
+
+// ---------- inside one cone (tile 5): stacked membrane discs; the retinal molecule (bent -> straight with s 0..1) ----------
+E.coneInside = (ctx, t, glow = 0) => { const bg = ctx.createLinearGradient(0, 0, 1920, 0); bg.addColorStop(0, '#2a1a6a'); bg.addColorStop(0.5, '#4a2a9a'); bg.addColorStop(1, '#2a1a6a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  for (const [x, a] of [[240, 0.3], [1680, 0.3]]) { ctx.globalAlpha = a; for (let k = 0; k < 14; k++) eEll(ctx, x, 80 + k * 70, 150, 26, '#a07ae8'); ctx.globalAlpha = 1; }
+  ctx.fillStyle = 'rgba(200,150,255,0.25)'; ctx.beginPath(); ctx.moveTo(600, 1080); ctx.quadraticCurveTo(620, 0, 960, -40); ctx.quadraticCurveTo(1300, 0, 1320, 1080); ctx.fill();
+  for (let k = 0; k < 9; k++) { const y = 140 + k * 105, w = 300 - Math.abs(k - 4) * 10, g = ctx.createLinearGradient(0, y - 30, 0, y + 30); g.addColorStop(0, '#ff9ad8'); g.addColorStop(1, '#c04a9a'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(960, y, w, 44, -0.08, 0, 7); ctx.fill(); ctx.fillStyle = '#e870b8'; ctx.beginPath(); ctx.ellipse(960, y + 10, w, 40, -0.08, 0, Math.PI); ctx.fill();
+    for (let m = 0; m < 10; m++) { const a = m / 10 * 6.283 + k, mx = 960 + Math.cos(a) * w * 0.8, my = y + Math.sin(a) * 28; eEll(ctx, mx, my, 8, 6, 'rgba(255,220,255,0.6)'); eEll(ctx, mx + 10, my - 3, 6, 5, 'rgba(255,200,255,0.5)'); } }
+  if (glow > 0) { const g = ctx.createRadialGradient(960, 560, 0, 960, 560, 420); g.addColorStop(0, `rgba(255,220,90,${0.5 * glow})`); g.addColorStop(1, 'rgba(255,220,90,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, 1920, 1080); } };
+E.retinal = (ctx, t, cx, cy, s, straight) => { // a chain of 9 beads with a kink at bead 5 that straightens
+  const pts = []; let x = cx - s * 4.2, y = cy, a = 0; for (let i = 0; i < 9; i++) { pts.push([x, y]); const kink = i === 4 ? (1 - straight) * 1.4 : 0; a += (i % 2 ? 0.5 : -0.5) * 0.6 + kink; x += Math.cos(a) * s; y += Math.sin(a) * s; }
+  const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 7); glow.addColorStop(0, `rgba(255,230,120,${0.45 + 0.4 * straight})`); glow.addColorStop(1, 'rgba(255,230,120,0)'); ctx.fillStyle = glow; ctx.fillRect(cx - s * 7, cy - s * 7, s * 14, s * 14);
+  ctx.strokeStyle = '#ffe890'; ctx.lineWidth = s * 0.22; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); pts.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.stroke();
+  pts.forEach(([px, py], i) => { const g = ctx.createRadialGradient(px - s * 0.12, py - s * 0.12, 1, px, py, s * 0.36); g.addColorStop(0, '#fffbe0'); g.addColorStop(1, i === 4 || i === 5 ? '#ff9a2a' : '#ffc83a'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, s * 0.34, 0, 7); ctx.fill(); }); };
+
+// ---------- neurons and the optic nerve (tile 6) ----------
+E.neuron = (ctx, x, y, r, col = '#8a5ad8', seed = 0) => { ctx.strokeStyle = col; ctx.lineCap = 'round';
+  for (let k = 0; k < 7; k++) { const a = k / 7 * 6.283 + K.hash(k, seed) * 0.5; let px = x, py = y, aa = a, w = r * 0.35; for (let j = 0; j < 4; j++) { const nx = px + Math.cos(aa) * r * 0.7, ny = py + Math.sin(aa) * r * 0.7; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(nx, ny); ctx.stroke(); if (j === 1) { ctx.lineWidth = w * 0.6; ctx.beginPath(); ctx.moveTo(nx, ny); ctx.lineTo(nx + Math.cos(aa + 0.8) * r * 0.5, ny + Math.sin(aa + 0.8) * r * 0.5); ctx.stroke(); } px = nx; py = ny; aa += (K.hash(j, seed + k) - 0.5) * 0.8; w *= 0.65; } }
+  const g = ctx.createRadialGradient(x - r * 0.2, y - r * 0.2, 2, x, y, r * 0.55); g.addColorStop(0, mixc(col, '#ffffff', 0.5)); g.addColorStop(1, col); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 0.55, 0, 7); ctx.fill(); eEll(ctx, x, y, r * 0.2, r * 0.2, mixc(col, '#2a1060', 0.4)); };
+E.spark = (ctx, x, y, r, a = 1) => { const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3); g.addColorStop(0, `rgba(255,250,200,${a})`); g.addColorStop(0.3, `rgba(255,210,80,${0.8 * a})`); g.addColorStop(1, 'rgba(255,180,60,0)'); ctx.fillStyle = g; ctx.fillRect(x - r * 3, y - r * 3, r * 6, r * 6); };
+E.nerveField = (ctx, t, u) => { const bg = ctx.createRadialGradient(960, 540, 100, 960, 540, 1200); bg.addColorStop(0, '#2a2a9a'); bg.addColorStop(1, '#0e0e4a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  for (let i = 0; i < 14; i++) { ctx.globalAlpha = 0.35; E.neuron(ctx, K.hash(i, 1) * 1920, K.hash(i, 2) * 1080, 70 + K.hash(i, 3) * 40, '#6a4ab8', i); ctx.globalAlpha = 1; }
+  // the main path: neuron -> axon -> the fibre bundle to the right
+  E.neuron(ctx, 360, 520, 150, '#a070f0', 50);
+  const path = (x) => 520 + Math.sin(x * 0.006) * 30;
+  ctx.strokeStyle = '#9a6ae8'; ctx.lineWidth = 22; ctx.beginPath(); for (let x = 420; x <= 1500; x += 20) ctx[x === 420 ? 'moveTo' : 'lineTo'](x, path(x)); ctx.stroke();
+  for (let k = 0; k < 8; k++) { const x = 560 + k * 120; ctx.fillStyle = '#ffd860'; ctx.beginPath(); ctx.roundRect(x, path(x) - 16, 70, 32, 16); ctx.fill(); }
+  for (let f = 0; f < 22; f++) { ctx.strokeStyle = f % 3 ? 'rgba(255,200,90,0.8)' : 'rgba(255,240,180,0.9)'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(1480, path(1480)); ctx.bezierCurveTo(1600, path(1480) + (f - 11) * 4, 1700, 540 + (f - 11) * 16, 1960, 540 + (f - 11) * 20); ctx.stroke(); }
+  for (let k = 0; k < 4; k++) { const ph = (u * 0.5 + k * 0.25) % 1, x = 420 + ph * 1500; E.spark(ctx, x, x < 1480 ? path(x) : 540, 18); } };
+
+// ---------- the brain from above (tile 7): two eyes at the left, nerves crossing at the chiasm, paths to the back ----------
+E.brainTop = (ctx, t, u, o = {}) => { const bg = ctx.createRadialGradient(960, 540, 100, 960, 540, 1100); bg.addColorStop(0, '#1a1a6a'); bg.addColorStop(1, '#070a2a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+  const bx = 1060, by = 540, bw = 640, bh = 430;
+  for (const sg of [-1, 1]) { const g = ctx.createRadialGradient(bx, by + sg * bh * 0.45, 30, bx, by + sg * bh * 0.45, bw); g.addColorStop(0, '#a070e0'); g.addColorStop(1, '#5a2a9a'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(bx, by + sg * bh * 0.47, bw, bh * 0.5, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,20,110,0.5)'; ctx.lineWidth = 7; ctx.lineCap = 'round'; for (let i = 0; i < 16; i++) { const x0 = bx - bw * 0.85 + K.hash(i, sg + 3) * bw * 1.7, y0 = by + sg * bh * (0.1 + 0.75 * K.hash(i, sg + 5)); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.bezierCurveTo(x0 + 40, y0 - 30, x0 + 60, y0 + 30, x0 + 110, y0 + (K.hash(i, 9) - 0.5) * 40); ctx.stroke(); } }
+  ctx.strokeStyle = 'rgba(40,10,80,0.7)'; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(bx - bw, by); ctx.lineTo(bx + bw, by); ctx.stroke();
+  // eyes at the front (left)
+  const eyes = [[360, by - 170], [360, by + 170]], chi = [600, by]; for (const [ex, ey] of eyes) { const g = ctx.createRadialGradient(ex - 20, ey - 20, 5, ex, ey, 90); g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#d0d0e8'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ex, ey, 90, 0, 7); ctx.fill(); eEll(ctx, ex - 70, ey, 18, 44, '#3a8aff'); eEll(ctx, ex - 80, ey, 8, 20, '#05060c'); }
+  // nerves: eye -> chiasm -> two tracts to the back; colour by field (left field = blue, right = orange)
+  const back = [[bx + bw * 0.8, by - 180], [bx + bw * 0.8, by + 180]], prog = o.prog ?? 1;
+  const route = (pts, col, w) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(...pts[0]); ctx.bezierCurveTo(pts[1][0], pts[1][1], pts[2][0], pts[2][1], pts[3][0], pts[3][1]); ctx.stroke(); };
+  for (const [i, [ex, ey]] of eyes.entries()) { route([[ex + 90, ey], [ex + 200, ey], [chi[0] - 40, chi[1] + (i ? 20 : -20)], chi], 'rgba(255,220,120,0.9)', 26); }
+  for (const [j, [tx, ty]] of back.entries()) { route([chi, [chi[0] + 200, chi[1] + (j ? 80 : -80)], [tx - 380, ty], [tx, ty]], 'rgba(255,220,120,0.9)', 26); const g = ctx.createRadialGradient(tx, ty, 10, tx, ty, 220); g.addColorStop(0, `rgba(255,190,80,${0.6 * (o.cortex ?? 0)})`); g.addColorStop(1, 'rgba(255,150,60,0)'); ctx.fillStyle = g; ctx.fillRect(tx - 220, ty - 220, 440, 440); }
+  // travelling signals
+  if (o.signals) for (let k = 0; k < 6; k++) { const ph = K.clamp((u * 0.4 + k * 0.17) % 1.2), j = k % 2, cr = j ? '120,190,255' : '255,170,80', [ex, ey] = eyes[j], [tx, ty] = back[1 - j];
+    const pt = ph < 0.4 ? [K.lerp(ex + 90, chi[0], ph / 0.4), K.lerp(ey, chi[1], ph / 0.4)] : [K.lerp(chi[0], tx, (ph - 0.4) / 0.6), K.lerp(chi[1], ty, (ph - 0.4) / 0.6)]; const g = ctx.createRadialGradient(pt[0], pt[1], 0, pt[0], pt[1], 40); g.addColorStop(0, `rgba(${cr},1)`); g.addColorStop(1, `rgba(${cr},0)`); ctx.fillStyle = g; ctx.fillRect(pt[0] - 40, pt[1] - 40, 80, 80); }
+  return { eyes, chi, back }; };
+// the visual cortex rebuilding the apple as a picture made of glowing tiles (tile 8); u 0..1 builds it
+E.cortexApple = (ctx, t, cx, cy, s, u, flip = 0) => { const n = 16; ctx.save(); ctx.translate(cx, cy); ctx.scale(1, 1 - 2 * flip);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const x = (i - n / 2 + 0.5) / n * 2, y = (j - n / 2 + 0.5) / n * 2, inA = (x * x) / 0.8 + ((y - 0.05) ** 2) / 0.72 < 1 && !(Math.abs(x) < 0.12 && y < -0.7), leaf = x > 0.05 && x < 0.55 && y < -0.65 && y > -0.95;
+    const p = K.clamp(u * 2.2 - K.hash(i * n + j, 5) * 1.2); if (p <= 0) continue; const col = leaf ? '#4ad83a' : inA ? mixc('#ff3a3a', '#ff9a7a', y < -0.3 && x < 0 ? 0.4 : 0) : null; if (!col) continue;
+    ctx.globalAlpha = p; ctx.fillStyle = col; ctx.fillRect(x * s - s / n * 0.9, y * s - s / n * 0.9, s / n * 1.8, s / n * 1.8); }
+  ctx.globalAlpha = 1; ctx.restore(); };

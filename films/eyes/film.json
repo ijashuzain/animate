@@ -1,10 +1,156 @@
 {
  "title": "How Your Eyes Turn Light Into a Picture",
- "duration": 8,
+ "duration": 240,
  "fps": 30,
- "fonts": [{ "family": "Baloo 2", "file": "studio/fonts/Baloo2[wght].ttf" }],
- "kit": ["kit/cast.js", "kit/micro.js", "kit/folk.js"],
- "src": ["src/world.js", "src/film.js"],
- "audio": [],
- "board": [[2, "Look test: the eye in cross-section, the ray focused"], [6, "Look test: the retina, rods and cones"]]
+ "fonts": [
+  {
+   "family": "Baloo 2",
+   "file": "studio/fonts/Baloo2[wght].ttf"
+  }
+ ],
+ "kit": [
+  "kit/cast.js",
+  "kit/micro.js",
+  "kit/folk.js"
+ ],
+ "src": [
+  "src/world.js",
+  "src/film.js"
+ ],
+ "audio": [
+  {
+   "id": "music",
+   "src": "audio/music.wav",
+   "start": 0,
+   "volume": 1
+  },
+  {
+   "id": "sfx",
+   "src": "audio/sfx.wav",
+   "start": 0,
+   "volume": 1
+  }
+ ],
+ "board": [
+  [
+   3,
+   "A kid looks at a red apple"
+  ],
+  [
+   15,
+   "Sunlight: a mix of all colours"
+  ],
+  [
+   20,
+   "The apple bounces back red"
+  ],
+  [
+   25,
+   "Ride one red ray across the room"
+  ],
+  [
+   35,
+   "The eye, cut in half"
+  ],
+  [
+   41,
+   "Cornea: about 2/3 of the focusing"
+  ],
+  [
+   47,
+   "Bright light: the pupil shrinks"
+  ],
+  [
+   52,
+   "In the dark: it opens wide"
+  ],
+  [
+   63,
+   "The lens bulges to focus close"
+  ],
+  [
+   73,
+   "The image lands upside down"
+  ],
+  [
+   80,
+   "The retina is built backwards"
+  ],
+  [
+   87,
+   "Light passes the wiring first"
+  ],
+  [
+   94,
+   "120 million rods, 6 million cones"
+  ],
+  [
+   107,
+   "Red, green and blue cones"
+  ],
+  [
+   113,
+   "The red ray finds a red cone"
+  ],
+  [
+   119,
+   "One molecule: retinal"
+  ],
+  [
+   127,
+   "It snaps straight: the first step of seeing"
+  ],
+  [
+   139,
+   "The cone fires a signal"
+  ],
+  [
+   145,
+   "Nerve cells pass it on"
+  ],
+  [
+   151,
+   "The optic nerve"
+  ],
+  [
+   157,
+   "The blind spot"
+  ],
+  [
+   163,
+   "Try it: the dot vanishes"
+  ],
+  [
+   169,
+   "The optic nerves cross"
+  ],
+  [
+   175,
+   "Left view to right brain"
+  ],
+  [
+   182,
+   "To the visual cortex in ~90 ms"
+  ],
+  [
+   195,
+   "No picture to flip: just signals"
+  ],
+  [
+   203,
+   "The brain builds the scene"
+  ],
+  [
+   209,
+   "Edges, colour, shape, movement"
+  ],
+  [
+   223,
+   "Millions of rays, every moment"
+  ],
+  [
+   236,
+   "You see with your brain"
+  ]
+ ]
 }
