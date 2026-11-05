@@ -66,7 +66,7 @@ Folk.stroke = (ctx, pts, w, col, rim, lx) => {
 Folk.walker = (ctx, t, x, y, H, o = {}) => {
   const dir = o.dir ?? 1, kid = o.kid ?? false, skin = o.skin ?? Folk.SKIN[2], walk = o.walk ?? 1, sp = o.speed ?? 5.2, p = t * sp + (o.phase ?? 0);
   const lx = o.light === 'left' ? -1 : 1, rim = o.rim ?? 'rgba(255,214,150,0.45)', far = Folk.mix(skin, '#1a0806', 0.3);
-  const cloth = o.cloth ?? 'hide', ccol = o.clothCol ?? (cloth === 'parka' ? '#7a5640' : '#8a5a34'), trim = o.trim ?? (cloth === 'parka' ? '#efe6d8' : '#e2d0b0');
+  const cloth = o.cloth ?? 'hide', ccol = o.clothCol ?? (cloth === 'parka' ? '#7a5640' : '#8a5a34'), trim = o.trim ?? (cloth === 'parka' ? '#d8bc92' : '#e2d0b0');
   const hu = H / (kid ? 6.0 : 7.3), R = hu * (kid ? 0.56 : 0.5), bob = Math.abs(Math.sin(p)) * hu * 0.07 * walk;
   const hip = [0, -H * 0.49 + bob], shY = -H * (kid ? 0.75 : 0.8) + bob, L1 = H * (kid ? 0.215 : 0.235), L2 = H * (kid ? 0.215 : 0.235), A1 = H * 0.165, A2 = H * 0.155;
   ctx.save(); ctx.translate(x, y); ctx.scale(dir, 1); Folk._segs = [];
@@ -125,10 +125,18 @@ Folk.walker = (ctx, t, x, y, H, o = {}) => {
   if (o.sweat > 0) for (let k = 0; k < 14; k++) { const [pts, w] = segs[k % segs.length], u = K.hash(k, 91), px = K.lerp(pts[0][0], pts[pts.length - 1][0], u) + (K.hash(k, 92) - 0.5) * w * 0.6, py = K.lerp(pts[0][1], pts[pts.length - 1][1], u), tw2 = Math.sin(t * 3 + k) * 0.5 + 0.5; ctx.fillStyle = `rgba(255,250,235,${o.sweat * (0.4 + 0.5 * tw2)})`; ctx.beginPath(); ctx.ellipse(px, py, hu * 0.04, hu * 0.06, 0, 0, 7); ctx.fill(); }
   // head on a short neck; parkas get a fur ruff framing the face
   ctx.save(); ctx.translate(hu * 0.15, shY - hu * 0.62);
-  if (parka) { ctx.fillStyle = coatC(true); ctx.beginPath(); ctx.arc(-R * 0.15, -R * 0.05, R * 1.42, 0, 7); ctx.fill(); }
+  const hood = parka && (o.hood ?? true);
+  if (parka && !hood) Folk.furArc(ctx, -R * 0.1, R * 1.05, R * 1.05, R * 0.45, Math.PI * -0.05, Math.PI * 1.05, R * 0.3, trim, 1);   // collar, hood down
   Folk.head(ctx, t, R, Object.assign({}, o, { skin, light: lx }));
   if (o.fur > 0) { ctx.strokeStyle = `rgba(40,24,14,${0.8 * o.fur})`; ctx.lineWidth = Math.max(1, R * 0.06); ctx.beginPath(); for (let k = 0; k < 40; k++) { const a = Math.PI * (0.55 + 1.3 * k / 40), r0 = 0.88 * R; ctx.moveTo(Math.cos(a) * r0, -0.12 * R + Math.sin(a) * r0); ctx.lineTo(Math.cos(a) * (r0 + 0.18 * R), -0.12 * R + Math.sin(a) * (r0 + 0.18 * R)); } ctx.stroke(); }
-  if (parka) { ctx.strokeStyle = trim; ctx.lineWidth = R * 0.42; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(-R * 0.15, -R * 0.05, R * 1.25, Math.PI * 1.05, Math.PI * 1.75); ctx.stroke(); ctx.beginPath(); ctx.arc(-R * 0.15, -R * 0.05, R * 1.25, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke(); }
+  if (hood) {
+    // the hood: a soft shape round the back and top of the head in the coat's colour, the face left open, a seam
+    const hc = coatC(true), hg = ctx.createLinearGradient(-R * 1.6, 0, R * 1.2, 0); hg.addColorStop(0, Folk.mix(hc, '#000', lx > 0 ? 0.25 : 0)); hg.addColorStop(1, Folk.mix(hc, '#fff0d8', lx > 0 ? 0.12 : 0));
+    ctx.fillStyle = hg; ctx.beginPath(); ctx.ellipse(-R * 0.3, -R * 0.12, R * 1.32, R * 1.36, 0, 0, 7); ctx.ellipse(R * 0.42, R * 0.06, R * 0.84, R * 0.98, 0, 0, 7); ctx.fill('evenodd');
+    ctx.strokeStyle = Folk.mix(hc, '#000', 0.35); ctx.lineWidth = R * 0.05; ctx.beginPath(); ctx.ellipse(-R * 0.3, -R * 0.12, R * 0.95, R * 1.05, 0, Math.PI * 1.1, Math.PI * 1.7); ctx.stroke();
+    // a shaggy ruff of fur framing the face (tufts in layers), not a clean ring
+    Folk.furArc(ctx, R * 0.42, R * 0.06, R * 0.98, R * 1.12, Math.PI * 0.62, Math.PI * 1.62, R * 0.34, trim, -1);
+  }
   ctx.restore();
   ctx.restore();
 };
@@ -180,4 +188,16 @@ Folk.portrait = (ctx, t, x, y, s, o = {}) => {
   if (st === 'hijab') { ctx.fillStyle = Folk.mix(o.wrap ?? '#7a3ab0', '#ffffff', 0.08); ctx.beginPath(); ctx.moveTo(-w * 1.02, h * 0.6); ctx.bezierCurveTo(-w * 1.2, -h * 1.15, w * 1.2, -h * 1.15, w * 1.02, h * 0.6); ctx.quadraticCurveTo(w * 0.95, -h * 0.55, 0, -h * 0.72); ctx.quadraticCurveTo(-w * 0.95, -h * 0.55, -w * 1.02, h * 0.6); ctx.fill(); }
   if (o.glasses) { ctx.strokeStyle = '#1a1a2a'; ctx.lineWidth = Math.max(2, w * 0.06); for (const sg of [-1, 1]) { ctx.beginPath(); ctx.roundRect(sg * w * 0.38 - w * 0.27, -h * 0.13, w * 0.54, h * 0.24, w * 0.08); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(-w * 0.11, -h * 0.03); ctx.lineTo(w * 0.11, -h * 0.03); ctx.stroke(); }
   ctx.restore();
+};
+
+// a band of fur tufts along part of an ellipse (centre cx, cy; radii rx, ry; angles a0..a1, clockwise if dirn < 0):
+// a dark under-layer, then tufts in cream / tan / light brown pointing outward, slightly irregular
+Folk.furArc = (ctx, cx, cy, rx, ry, a0, a1, size, col, dirn = 1) => {
+  // fur as soft strands: a dark brown base band, then layers of tapered hairs in tan, cream and brown, pointing outward
+  const n = Math.max(16, Math.round(Math.abs(a1 - a0) * rx / size * 4)), cols = [Folk.mix(col, '#3a2416', 0.65), Folk.mix(col, '#6a4a32', 0.45), Folk.mix(col, '#a8865e', 0.25), col];
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = cols[0]; ctx.lineWidth = size * 0.9; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, a0, a1); ctx.stroke();
+  for (let layer = 1; layer < 4; layer++) { ctx.strokeStyle = cols[layer]; ctx.lineWidth = Math.max(1, size * (0.2 - layer * 0.03)); ctx.beginPath();
+    for (let i = 0; i <= n; i++) { const u = (i + K.hash(i, layer) * 0.8) / n, a = a0 + (a1 - a0) * u, j = K.hash(i, layer + 3), r0 = 0.94 + (j - 0.5) * 0.08, x = cx + Math.cos(a) * rx * r0, y = cy + Math.sin(a) * ry * r0, len = size * (0.6 + 0.7 * K.hash(i, layer + 9)) * (1.15 - layer * 0.15), b = a + (j - 0.5) * 0.9;
+      ctx.moveTo(x, y); ctx.quadraticCurveTo(x + Math.cos(b) * len * 0.6, y + Math.sin(b) * len * 0.6, x + Math.cos(b + 0.25) * len, y + Math.sin(b + 0.25) * len); } ctx.stroke(); }
 };
