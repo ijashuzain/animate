@@ -112,8 +112,11 @@ const SHOTS = [
   [230, 240, (ctx, t, u) => { skyBg(ctx, '#050a2a', '#1a1a4a'); W.globe(ctx, t, 1400, 560, 360, 50 + u * 4, { routes: 4 }); Folk.portrait(ctx, t, 560, 520, 420, Object.assign({ light: 1, seed: 3 }, TODAY[4])); pill('your skin is a map of your ancestors’ sun', 960, 980, shows(t, 231, 239.6)); }],
 ];
 const D = 240;
+// film time -> planned picture time: each line's shots stretch or shrink to the voice-over (src/timing.js, from align.py)
+const toPlan = (t) => { if (typeof TIMING === 'undefined') return t; const V = TIMING.VOICE, Pl = TIMING.PLAN; for (let i = 0; i < V.length - 1; i++) if (t < V[i + 1] || i === V.length - 2) return Pl[i] + (Pl[i + 1] - Pl[i]) * clamp((t - V[i]) / (V[i + 1] - V[i])); return Pl[Pl.length - 1]; };
 const FILM = {
-  draw(t) {
+  draw(tf) {
+    const t = Math.min(D - 0.001, toPlan(tf));
     const ctx = P.ctx; const s = SHOTS.find(([a, b]) => t >= a && t < b) ?? SHOTS[SHOTS.length - 1];
     s[2](ctx, t, t - s[0]);
     // a short dip to dark at the start (0.6 s) and the end (1 s); cuts between shots are hard (the reference rhythm)

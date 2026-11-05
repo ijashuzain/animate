@@ -94,5 +94,14 @@ for i in range(3): fx.add(sfx_pop(900 + i * 150), 217 + i * 1.2, 0.15)          
 for i in range(9): fx.add(sfx_pop(600 + i * 50), 223.4 + i * 0.2, 0.12)
 fx.add(sfx_sparkle(10, 1500), 230.5, 0.15); fx.add(sfx_whoosh(2.0, up=False), 237, 0.15)
 
-mus.reverb(0.3).write(os.path.join(here, 'audio', 'music.wav'), gain=0.45)
-fx.reverb(0.12).write(os.path.join(here, 'audio', 'sfx.wav'), gain=0.6)
+# duck the music under the voice (an envelope of the voice's loudness, smoothed)
+import subprocess
+vp = os.path.join(here, 'audio', 'voice-aligned.wav')
+if os.path.exists(vp):
+    raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', vp, '-ac', '1', '-ar', str(SR), '-f', 's16le', '-'], capture_output=True, check=True).stdout
+    vx = np.abs(np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768)
+    win = int(0.25 * SR); env = np.convolve(vx, np.ones(win) / win, mode='same'); env = np.clip(env / (np.percentile(env, 90) + 1e-9), 0, 1)
+    env = np.convolve(env, np.ones(int(0.4 * SR)) / int(0.4 * SR), mode='same'); env = np.pad(env, (0, max(0, mus.n - len(env))))[:mus.n]
+    duck = 1 - 0.6 * np.clip(env * 1.3, 0, 1); mus.L *= duck; mus.R *= duck
+mus.reverb(0.3).write(os.path.join(here, 'audio', 'music.wav'), gain=0.2)
+fx.reverb(0.12).write(os.path.join(here, 'audio', 'sfx.wav'), gain=0.45)

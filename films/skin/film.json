@@ -1,6 +1,6 @@
 {
  "title": "Why Do Humans Have Different Skin Colours?",
- "duration": 240,
+ "duration": 165.83,
  "fps": 30,
  "fonts": [
   {
@@ -15,10 +15,17 @@
   "kit/folk.js"
  ],
  "src": [
+  "src/timing.js",
   "src/world.js",
   "src/film.js"
  ],
  "audio": [
+  {
+   "id": "voice",
+   "src": "audio/voice-aligned.wav",
+   "start": 0,
+   "volume": 1
+  },
   {
    "id": "music",
    "src": "audio/music.wav",
@@ -33,6 +40,124 @@
   }
  ],
  "board": [
+  [
+   2.29,
+   "Every person alive today..."
+  ],
+  [
+   6.42,
+   "...comes from the same ancestors"
+  ],
+  [
+   9.17,
+   "Written in sunlight: UV gauge"
+  ],
+  [
+   12.57,
+   "An ancestor with fur, a million+ years ago"
+  ],
+  [
+   18.09,
+   "The fur fades: staying cool"
+  ],
+  [
+   25.43,
+   "Skin turns dark under strong UV"
+  ],
+  [
+   30.12,
+   "Inside the skin: the melanocyte"
+  ],
+  [
+   40.43,
+   "Melanin caps: umbrellas over the DNA"
+  ],
+  [
+   45.35,
+   "UV can damage DNA"
+  ],
+  [
+   49.71,
+   "UV breaks down folate"
+  ],
+  [
+   53.44,
+   "UV also makes vitamin D"
+  ],
+  [
+   61.64,
+   "The balance: folate vs vitamin D"
+  ],
+  [
+   66.91,
+   "Leaving Africa, ~60,000 years ago"
+  ],
+  [
+   78.92,
+   "Routes across the world"
+  ],
+  [
+   83.06,
+   "Further north: a lower sun"
+  ],
+  [
+   86.09,
+   "The steppe: UV low"
+  ],
+  [
+   89.95,
+   "Dark skin blocks the little UV left"
+  ],
+  [
+   97.14,
+   "Generation after generation, lighter"
+  ],
+  [
+   104.02,
+   "Europe and East Asia: separately"
+  ],
+  [
+   107.44,
+   "Different genes"
+  ],
+  [
+   111.74,
+   "Ancient Europe: dark skin, light eyes"
+  ],
+  [
+   121.68,
+   "The Arctic exception"
+  ],
+  [
+   126.01,
+   "Vitamin D from fish and seal"
+  ],
+  [
+   131.85,
+   "Africa: a wide range of skin colour"
+  ],
+  [
+   137.02,
+   "South Asia: strong sun again"
+  ],
+  [
+   147.22,
+   "The two maps line up"
+  ],
+  [
+   150.99,
+   "A handful of genes"
+  ],
+  [
+   155.81,
+   "Underneath, one family"
+  ],
+  [
+   162.2,
+   "Your skin: a map of your ancestors' sun"
+  ]
+ ],
+ "plannedBoard": [
   [
    2.5,
    "Every person alive today..."
