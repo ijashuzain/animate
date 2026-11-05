@@ -6,7 +6,7 @@ const FILM = {
   draw(t) {
     const ctx = P.ctx;
     if (t < 4) {
-      navy(ctx); const geo = E.eye(ctx, t, 1000, 540, 400, { pupil: 0.55 + 0.1 * Math.sin(t), lens: 0.3 }); E.ray(ctx, t, geo, 230, '255,200,90', 1);
+      navy(ctx); const geo = E.eye(ctx, t, 1000, 540, 400, { pupil: 0.55 + 0.1 * Math.sin(t), lens: 0.3 }); E.ray(ctx, t, geo, 230, undefined, 1);
       P.pill('cornea', 560, 210, { u: K.tw(t, 0.4, 0.9), size: 34, font: FONT, weight: 700 }); P.pill('lens', 830, 900, { u: K.tw(t, 0.8, 1.3), size: 34, font: FONT, weight: 700 }); P.pill('retina', 1380, 140, { u: K.tw(t, 1.2, 1.7), size: 34, font: FONT, weight: 700 });
     } else {
       E.retina(ctx, t, { lit: 'L', beam: 30 + 14 * 64, beamEnd: 790 });

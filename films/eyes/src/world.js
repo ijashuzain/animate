@@ -31,7 +31,7 @@ E.eye = (ctx, t, cx, cy, R, o = {}) => {
   ctx.save(); ctx.beginPath(); ctx.ellipse(cx, cy, R * 1.08, R * 1.05, 0, Math.PI * 0.62, Math.PI * 1.38); ctx.lineTo(domeX + R * 0.02, cy - R * 0.45); ctx.quadraticCurveTo(domeX - R * 0.12, cy, domeX + R * 0.02, cy + R * 0.45); ctx.closePath();
   const ch = ctx.createLinearGradient(domeX, 0, fx + R * 0.2, 0); ch.addColorStop(0, 'rgba(200,230,255,0.55)'); ch.addColorStop(1, 'rgba(150,190,255,0.35)'); ctx.fillStyle = ch; ctx.fill(); ctx.restore();
   // the dome's bright rim and a long highlight
-  ctx.strokeStyle = 'rgba(210,235,255,0.9)'; ctx.lineWidth = R * 0.035; ctx.beginPath(); ctx.moveTo(cx + Math.cos(Math.PI * 0.62) * R * 1.08, cy + Math.sin(Math.PI * 0.62) * R * 1.05); ctx.quadraticCurveTo(domeX - R * 0.2, cy + R * 0.55, domeX - R * 0.08, cy); ctx.quadraticCurveTo(domeX - R * 0.2, cy - R * 0.55, cx + Math.cos(Math.PI * 1.38) * R * 1.08, cy + Math.sin(Math.PI * 1.38) * R * 1.05); ctx.stroke();
+  ctx.strokeStyle = 'rgba(210,235,255,0.9)'; ctx.lineWidth = R * 0.035; ctx.beginPath(); ctx.moveTo(cx + Math.cos(Math.PI * 0.7) * R * 1.06, cy + Math.sin(Math.PI * 0.7) * R * 1.03); ctx.quadraticCurveTo(domeX - R * 0.2, cy + R * 0.55, domeX - R * 0.08, cy); ctx.quadraticCurveTo(domeX - R * 0.2, cy - R * 0.55, cx + Math.cos(Math.PI * 1.3) * R * 1.06, cy + Math.sin(Math.PI * 1.3) * R * 1.03); ctx.stroke();
   ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = R * 0.018; ctx.beginPath(); ctx.moveTo(domeX - R * 0.02, cy - R * 0.35); ctx.quadraticCurveTo(domeX - R * 0.12, cy - R * 0.1, domeX - R * 0.1, cy + R * 0.05); ctx.stroke();
   // ciliary body: pink folds above and below, in front of the vitreous
   for (const sg of [-1, 1]) { const y0 = cy + sg * R * 0.56; const g = ctx.createRadialGradient(fx + R * 0.16, y0, 4, fx + R * 0.16, y0, R * 0.2); g.addColorStop(0, '#ffb0d0'); g.addColorStop(1, '#e04a88'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(fx + R * 0.16, y0, R * 0.11, R * 0.2, sg * 0.2, 0, 7); ctx.fill();
@@ -48,11 +48,15 @@ E.eye = (ctx, t, cx, cy, R, o = {}) => {
   return { front: [domeX - R * 0.08, cy], lens: [lx, cy], focus: [cx + R * 0.9, cy], disc: [dx, dy] };
 };
 // the ray: a glowing beam from the left edge to the cornea, bent through the lens to a focus point on the retina
-E.ray = (ctx, t, geo, w, col = '255,200,90', a = 1) => { if (a <= 0) return; const [fx, fy] = geo.front, [lx, ly] = geo.lens, [px, py] = geo.focus;
+E.ray = (ctx, t, geo, w, col = '255,170,50', a = 1) => { if (a <= 0) return; const [fx, fy] = geo.front, [lx, ly] = geo.lens, [px, py] = geo.focus;
   ctx.save(); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'screen';
   const beam = (pts, w0, w1, alpha) => { const g = ctx.createLinearGradient(pts[0][0], 0, pts[pts.length - 1][0], 0); g.addColorStop(0, `rgba(${col},${alpha})`); g.addColorStop(1, `rgba(${col},${alpha * 0.9})`); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1] - w0 / 2); for (const [x, y, ww] of pts) ctx.lineTo(x, y - ww / 2); for (let i = pts.length - 1; i >= 0; i--) ctx.lineTo(pts[i][0], pts[i][1] + pts[i][2] / 2); ctx.fill(); };
-  ctx.filter = 'blur(10px)'; beam([[-20, fy, w * 1.1], [fx, fy, w * 1.1], [lx, ly, w], [px, py, 4]], w, 2, 0.28); ctx.filter = 'none';
-  for (const [k, al] of [[0.55, 0.45], [0.2, 0.9]]) beam([[-20, fy, w * k], [fx, fy, w * k], [lx, ly, w * 0.9 * k], [px, py, 3 * k]], w * k, 2, al);
+  // incoming: a glowing shaft (bright core fading to nothing at its edges), then converging bands inside the eye
+  ctx.globalCompositeOperation = 'lighter';
+  const sg = ctx.createLinearGradient(0, fy - w * 0.6, 0, fy + w * 0.6); sg.addColorStop(0, `rgba(${col},0)`); sg.addColorStop(0.3, 'rgba(255,215,120,0.3)'); sg.addColorStop(0.5, 'rgba(255,245,200,0.95)'); sg.addColorStop(0.7, 'rgba(255,215,120,0.3)'); sg.addColorStop(1, `rgba(${col},0)`);
+  ctx.fillStyle = sg; ctx.fillRect(-20, fy - w * 0.6, fx + 20 + w * 0.1, w * 1.2);
+  ctx.globalCompositeOperation = 'screen';
+  for (const [k, al] of [[0.55, 0.4], [0.2, 0.85]]) beam([[fx, fy, w * k], [lx, ly, w * 0.9 * k], [px, py, 3 * k]], w * k, 2, al);
   const gl = ctx.createRadialGradient(px, py, 0, px, py, w * 0.8); gl.addColorStop(0, `rgba(255,250,220,0.9)`); gl.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = gl; ctx.fillRect(px - w, py - w, w * 2, w * 2);
   ctx.restore(); };
 
