@@ -1,0 +1,10 @@
+{
+ "title": "How Your Eyes Turn Light Into a Picture",
+ "duration": 8,
+ "fps": 30,
+ "fonts": [{ "family": "Baloo 2", "file": "studio/fonts/Baloo2[wght].ttf" }],
+ "kit": ["kit/cast.js", "kit/micro.js", "kit/folk.js"],
+ "src": ["src/world.js", "src/film.js"],
+ "audio": [],
+ "board": [[2, "Look test: the eye in cross-section, the ray focused"], [6, "Look test: the retina, rods and cones"]]
+}
