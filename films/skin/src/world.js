@@ -103,13 +103,17 @@ W.skin = (ctx, t, o = {}) => {
 
 // ---------- the world: rough continents in longitude / latitude (no detail, readable shapes) ----------
 W.LAND = {
-  africa: [[-17, 15], [-10, 30], [10, 37], [32, 31], [43, 12], [51, 11], [40, -15], [35, -25], [20, -35], [12, -18], [9, 4], [-8, 5]],
-  europe: [[-10, 37], [-9, 44], [0, 50], [8, 55], [5, 62], [18, 70], [30, 70], [40, 62], [40, 45], [28, 41], [15, 38], [3, 42]],
-  asia: [[40, 45], [40, 62], [60, 70], [100, 77], [140, 72], [180, 68], [160, 60], [140, 50], [130, 35], [122, 25], [108, 12], [100, 2], [95, 15], [80, 8], [72, 20], [60, 25], [50, 28], [44, 12], [35, 31]],
-  australia: [[114, -22], [122, -17], [130, -12], [137, -12], [145, -15], [153, -25], [150, -37], [140, -38], [130, -32], [116, -35]],
-  namerica: [[-165, 65], [-140, 70], [-100, 72], [-80, 65], [-60, 55], [-65, 45], [-80, 30], [-97, 25], [-105, 20], [-90, 15], [-80, 9], [-100, 18], [-112, 30], [-125, 45], [-130, 55], [-150, 60]],
-  samerica: [[-80, 9], [-60, 10], [-50, 0], [-35, -7], [-40, -22], [-55, -35], [-68, -55], [-72, -40], [-75, -15], [-81, -5]],
-  greenland: [[-55, 60], [-45, 60], [-20, 70], [-25, 82], [-60, 80], [-70, 76]],
+  africa: [[-17,21],[-16,28],[-9,32],[-5,35.8],[10,37.3],[11,33],[20,32],[25,31.5],[32,31.3],[34.5,28],[37,21],[43,12.5],[51.3,11.8],[51,10],[44,4],[40,-2],[39,-8],[40.5,-15],[35,-24],[32.5,-28],[27,-33.5],[20,-34.8],[18,-32],[15,-27],[12,-18],[13,-10],[9,-1],[9,4],[5,6],[-2,5],[-8,4.5],[-13,8],[-17,14.5]],
+  madagascar: [[44,-25],[47,-25.3],[50.4,-15.5],[49.5,-12],[44,-17]],
+  europe: [[-9,37],[-9,43],[-2,43.5],[-1,46],[-4.5,48.5],[2,51],[5,53.5],[8,54],[8,57],[10.5,59],[5,59],[5,62],[12,66],[18,70],[25,71],[31,70],[40,67],[40,47],[36,45],[29,41],[26,40],[23,36.5],[20,40],[19,42],[13.5,45.5],[12.5,44],[16,41],[18.5,40],[16,38],[12,38],[10,44],[6,43.2],[3,43.3],[0,40],[-0.3,39],[-2,37],[-5,36]],
+  britain: [[-5,50],[1.5,51],[0,53],[-3,56],[-5,58.5],[-6,56.5],[-3,54],[-4.5,52]],
+  asia: [[40,47],[40,67],[60,69],[70,73],[80,73],[100,77],[115,74],[140,72],[160,70],[180,68],[180,65],[170,60],[163,58],[156,51],[160,61],[143,59],[135,55],[141,46],[132,43],[129,35],[126,37.5],[125,40],[121,39],[122,31],[120,26],[110,21],[106,20],[109,12],[105,9],[103.5,1.5],[100,6],[98,9],[98,16],[94,17],[91,22.5],[86,20],[80,15],[77,8],[73,16],[72,21],[67,24],[61,25],[57,25.5],[56,27],[51,30],[48,30],[50,26],[55.5,25],[56.5,24],[59.8,22.5],[55,17],[52,16],[45,13],[43,13],[42.7,16],[39,21.5],[35,28],[34.5,31],[35.8,36],[36.2,36.8],[30,36.2],[27,37],[26.5,40.5],[29,41],[35,42],[41,41.5]],
+  japan: [[130,31],[136,35],[141,41],[142,44],[140,38],[134,33]],
+  indonesia: [[95,5],[106,-6],[115,-8.5],[123,-9],[120,-5],[118,1],[109,1],[104,-1]],
+  australia: [[114,-22],[114.5,-26.5],[115,-33.5],[117.5,-35],[123.5,-34],[131,-31.5],[137.5,-35],[140,-38],[146,-39],[150,-37.5],[153.5,-28],[153,-25],[149,-20],[146,-18.5],[145.5,-15],[142.5,-10.7],[141.5,-15],[140.5,-17.5],[136.5,-15.5],[136.8,-12],[132.5,-11.2],[130,-13],[129,-15],[126,-14],[122,-17.5],[118,-20.5]],
+  namerica: [[-168,65.5],[-162,70],[-156,71.3],[-141,69.6],[-128,70],[-115,68.5],[-95,69],[-82,69],[-90,64],[-94,59],[-85,55],[-79,52],[-79,57],[-77,62],[-70,61],[-61,56],[-56,52],[-59,48],[-65,45],[-70,43],[-74,40],[-76,36],[-81,31.5],[-80.5,25.2],[-82.5,28],[-84,30],[-90,29.2],[-97,27.5],[-97.5,22],[-95,18.5],[-90.5,19.5],[-87,21.5],[-88,16],[-83,15],[-83,10],[-79.5,9],[-77.5,8],[-80,7.2],[-85.5,10],[-87,13],[-92,14.5],[-96,15.7],[-105.5,20],[-106,23],[-109.5,23.2],[-112,29],[-114.5,31],[-117,32.5],[-120.5,34.5],[-124,40],[-124.5,48],[-130,54],[-136,58],[-146,60.5],[-152,59],[-158,57],[-165,54.5],[-160,58.5],[-165,62]],
+  samerica: [[-77.5,8],[-72,12],[-62,10.5],[-52,5],[-50,0],[-44,-2.5],[-35,-5.5],[-39,-13],[-41,-22],[-48,-26],[-53,-33.5],[-57.5,-38],[-62,-39],[-65,-42],[-67.5,-46],[-69,-51],[-68.5,-55],[-72,-53],[-75,-47],[-73.5,-37],[-71.5,-30],[-70.3,-18],[-76.5,-14],[-81,-5],[-80,0],[-78.5,2],[-77.5,6]],
+  greenland: [[-73,78],[-60,82],[-30,83],[-20,80],[-20,72],[-30,68],[-40,65],[-44,60],[-50,62],[-54,66],[-58,75],[-68,76]],
 };
 // migration stops (lon, lat) and routes (lists of stops)
 W.STOP = { eafrica: [37, 3], arabia: [45, 18], levant: [36, 32], india: [78, 20], seasia: [103, 12], australia: [134, -24], europe: [12, 48], casia: [70, 45], easia: [115, 35], beringia: [-170, 66], namerica: [-100, 45], samerica: [-62, -15], arctic: [-60, 72] };
@@ -123,7 +127,7 @@ W.globe = (ctx, t, cx, cy, r, lon0, o = {}) => {
   const gl = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, r * 1.35); gl.addColorStop(0, 'rgba(90,180,255,0.45)'); gl.addColorStop(1, 'rgba(90,180,255,0)'); ctx.fillStyle = gl; ctx.fillRect(cx - r * 1.4, cy - r * 1.4, r * 2.8, r * 2.8);
   const oc = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.1, cx, cy, r); oc.addColorStop(0, '#3a9aff'); oc.addColorStop(0.7, '#1a5ad0'); oc.addColorStop(1, '#0a2a80'); ctx.fillStyle = oc; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
   ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip();
-  for (const [name, poly] of Object.entries(W.LAND)) { const pts = W.dense(poly).map(([lo, la]) => W.proj(lo, la, cx, cy, r, lon0)); if (!pts.some((q) => q[2])) continue;
+  for (const [name, poly] of Object.entries(W.LAND)) { const pts = W.dense(poly, 3).map(([lo, la]) => W.proj(lo, la, cx, cy, r, lon0)); if (!pts.some((q) => q[2])) continue;
     const g = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r); const tint = o.tint ? o.tint(name) : null; g.addColorStop(0, tint ?? '#8ad86a'); g.addColorStop(1, tint ? mixc(tint, '#000', 0.2) : '#3a9a4a');
     ctx.fillStyle = g; ctx.beginPath(); pts.forEach(([x, y, v], i) => { const [px, py] = v ? [x, y] : [cx + (x - cx) * 1.0, cy + (y - cy) * 1.0]; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.closePath(); ctx.fill(); }
   // night side shade and a rim highlight
@@ -140,11 +144,11 @@ W.globe = (ctx, t, cx, cy, r, lon0, o = {}) => {
 // a flat world map (equirectangular) in a box; fill(name, lat) chooses a colour per land piece and latitude band
 W.flatMap = (ctx, x, y, w, h, fill, a = 1) => { if (a <= 0) return; ctx.save(); ctx.globalAlpha = a; const X = (lo) => x + (lo + 180) / 360 * w, Y = (la) => y + (85 - la) / 145 * h;
   ctx.fillStyle = '#123a7a'; ctx.beginPath(); ctx.roundRect(x - 10, y - 10, w + 20, h + 20, 20); ctx.fill();
-  for (const [name, poly] of Object.entries(W.LAND)) { ctx.save(); ctx.beginPath(); W.dense(poly, 4).forEach(([lo, la], i) => (i ? ctx.lineTo(X(lo), Y(la)) : ctx.moveTo(X(lo), Y(la)))); ctx.closePath(); ctx.clip();
+  for (const [name, poly] of Object.entries(W.LAND)) { ctx.save(); ctx.beginPath(); W.dense(poly, 2).forEach(([lo, la], i) => (i ? ctx.lineTo(X(lo), Y(la)) : ctx.moveTo(X(lo), Y(la)))); ctx.closePath(); ctx.clip();
     for (let la = 85; la > -60; la -= 5) { ctx.fillStyle = fill(name, la - 2.5); ctx.fillRect(x, Y(la), w, Y(la - 5) - Y(la) + 1); } ctx.restore(); }
   ctx.restore(); };
 W.uvCol = (la) => { const u = Math.cos(la * Math.PI / 180) ** 3; return u > 0.8 ? mixc('#ff3a4a', '#b04aff', (u - 0.8) * 5) : u > 0.5 ? mixc('#ffb03a', '#ff3a4a', (u - 0.5) / 0.3) : mixc('#4ade8a', '#ffb03a', u / 0.5); };
-W.toneCol = (name, la) => { let u = Math.cos(la * Math.PI / 180) ** 2.4; if (name === 'greenland' || (name === 'namerica' && la > 60)) u = Math.max(u, 0.42); if (name === 'samerica' || name === 'namerica') u *= 0.82; return mixc(Folk.SKIN[7], Folk.SKIN[0], u); };
+W.toneCol = (name, la) => { let u = Math.cos(la * Math.PI / 180) ** 2.4; if (name === 'greenland' || (name === 'namerica' && la > 60)) u = Math.max(u, 0.42); if (name === 'samerica' || name === 'namerica') u *= 0.82; if (name === 'australia') u = Math.max(u, 0.8); return mixc(Folk.SKIN[7], Folk.SKIN[0], u); };
 
 // ---------- the cold north: a snowy steppe at a low winter sun, mammoths far off ----------
 W.mammoth = (ctx, t, x, y, s, dir = 1) => { ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s);
@@ -228,4 +232,22 @@ W.dna = (ctx, t, y, amp, marks = [], a = 1) => { ctx.save(); ctx.globalAlpha = a
   for (let i = 0; i < n; i++) { const x = -40 + i * 29, ph = i * 0.42 + t * 0.8, y1 = y + Math.sin(ph) * amp, y2 = y - Math.sin(ph) * amp, m = marks.find(([p]) => Math.abs(p * n - i) < 0.6);
     ctx.strokeStyle = m ? m[1] : 'rgba(180,200,255,0.5)'; ctx.lineWidth = m ? 10 : 5; ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke(); if (m) { const g = ctx.createRadialGradient(x, y, 0, x, y, 60); g.addColorStop(0, m[1]); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.globalAlpha = a * 0.5; ctx.fillStyle = g; ctx.fillRect(x - 60, y - 60, 120, 120); ctx.globalAlpha = a; } }
   for (const sg of [1, -1]) { ctx.strokeStyle = sg > 0 ? '#5ab0ff' : '#ff6ab0'; ctx.lineWidth = 9; ctx.beginPath(); for (let i = 0; i <= n * 4; i++) { const x = -40 + i * 29 / 4, ph = i / 4 * 0.42 + t * 0.8; ctx[i ? 'lineTo' : 'moveTo'](x, y + sg * Math.sin(ph) * amp); } ctx.stroke(); }
+  ctx.restore(); };
+
+// an Arctic char-like fish in profile (faces +x), shaded, a spotted flank, a profile eye; dir flips it
+W.fish = (ctx, t, x, y, s, dir = 1, col = '#7aa8c0') => { ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s); const wag = Math.sin(t * 6 + x * 0.01) * 0.25;
+  ctx.fillStyle = mixc(col, '#203040', 0.3); ctx.beginPath(); ctx.moveTo(-60, 0); ctx.lineTo(-92, -24 + wag * 30); ctx.lineTo(-86, 0); ctx.lineTo(-92, 24 + wag * 30); ctx.fill();
+  const g = ctx.createLinearGradient(0, -30, 0, 30); g.addColorStop(0, mixc(col, '#203040', 0.35)); g.addColorStop(0.55, col); g.addColorStop(1, '#f0d8c0'); ctx.fillStyle = g;
+  ctx.beginPath(); ctx.moveTo(70, 2); ctx.quadraticCurveTo(40, -32, -20, -26); ctx.quadraticCurveTo(-55, -18, -66, 0); ctx.quadraticCurveTo(-55, 16, -20, 22); ctx.quadraticCurveTo(40, 28, 70, 2); ctx.fill();
+  ctx.fillStyle = mixc(col, '#203040', 0.4); ctx.beginPath(); ctx.moveTo(-5, -25); ctx.quadraticCurveTo(10, -46, 25, -26); ctx.fill(); ctx.beginPath(); ctx.moveTo(10, 20); ctx.quadraticCurveTo(18, 36, 30, 20); ctx.fill();
+  ctx.fillStyle = 'rgba(255,200,170,0.7)'; for (let i = 0; i < 10; i++) { ctx.beginPath(); ctx.arc(-45 + i * 9, -6 + (i % 2) * 8, 2.6, 0, 7); ctx.fill(); }
+  ctx.strokeStyle = 'rgba(40,60,80,0.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(42, 2, 16, -1.2, 1.2); ctx.stroke();
+  wEll(ctx, 52, -6, 6, 6, '#ffffff'); wEll(ctx, 53, -6, 3.6, 3.6, '#101820'); wEll(ctx, 54, -7.5, 1.2, 1.2, '#ffffff');
+  ctx.restore(); };
+W.seal = (ctx, t, x, y, s, dir = 1) => { ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s); const w = Math.sin(t * 3) * 0.2;
+  const g = ctx.createLinearGradient(0, -40, 0, 40); g.addColorStop(0, '#5a6070'); g.addColorStop(1, '#a8b0c0'); ctx.fillStyle = g;
+  ctx.beginPath(); ctx.moveTo(110, 0); ctx.quadraticCurveTo(100, -38, 30, -40); ctx.quadraticCurveTo(-60, -38, -110, -6 + w * 20); ctx.lineTo(-150, -26 + w * 30); ctx.lineTo(-140, 0); ctx.lineTo(-150, 26 + w * 30); ctx.lineTo(-110, 8 + w * 20); ctx.quadraticCurveTo(-40, 40, 40, 34); ctx.quadraticCurveTo(100, 30, 110, 0); ctx.fill();
+  ctx.fillStyle = '#4a5060'; ctx.beginPath(); ctx.ellipse(10, 30, 30, 10, 0.5 + w, 0, 7); ctx.fill();
+  wEll(ctx, 86, -12, 7, 7, '#0a0c14'); wEll(ctx, 88, -14, 2, 2, '#ffffff'); wEll(ctx, 108, -2, 4, 3, '#1a1c24');
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1.2; ctx.beginPath(); for (const k of [-1, 1]) { ctx.moveTo(104, 2); ctx.lineTo(126, 2 + k * 6); } ctx.stroke();
   ctx.restore(); };
