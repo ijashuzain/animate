@@ -82,7 +82,7 @@ const SHOTS = [
   // 20. you see with your brain
   [232, 240, (ctx, t, u) => { E.kitchen(ctx, t); const kx = 700, R = 175, ky = 760 - 2.1 * R, m = tw(u, 0.5, 2.5, 'inOut');
     const hold = [lerp(1.6, 1.15, m), lerp(1.3, 0.55, m)]; E.kid(ctx, t, kx, ky, R, { mood: 'happy', hold, look: [0.06, 0.06] });
-    const ax = kx + (hold[0] + 0.15) * R, ay = ky + (hold[1] - 0.05) * R; E.apple(ctx, t, ax, ay, 85, { bite: tw(u, 3, 3.4) }); E.handHold(ctx, ax + 6, ay + 16, 85);
+    const ax = kx + (hold[0] + 0.15) * R, ay = ky + (hold[1] - 0.05) * R; E.gripBack(ctx, ax, ay, 85); E.apple(ctx, t, ax, ay, 85, { bite: tw(u, 3, 3.4) }); E.gripFront(ctx, ax, ay, 85);
     pill('you see with your brain', 960, 120, shows(t, 232.6, 239.6)); }],
 ];
 const D = 240;

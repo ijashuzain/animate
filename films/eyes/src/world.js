@@ -140,7 +140,8 @@ E.kid = (ctx, t, x, y, R, o = {}) => {
   fill(torso.map(([px, py]) => [px + 0.06, py + 0.05]), tg);
   limb([[-1.35, 1.05], [-0.95, 0.88], [-0.5, 0.95]], 0.32, 0.28, hoodD); limb([[-1.3, 1.0], [-0.93, 0.84], [-0.52, 0.9]], 0.2, 0.18, '#3a66de');
   // neck: a short tapered column from under the jaw into the collar
-  fill([[-0.42, 0.62], [0.18, 0.66], [0.22, 1.0], [0.1, 1.22], [-0.5, 1.15]], skinD);
+  fill([[-0.3, 0.55], [0.1, 0.6], [0.14, 1.12], [-0.38, 1.16]], '#e9a07a');
+  limb([[-0.42, 1.0], [-0.22, 1.16], [0.02, 1.2], [0.2, 1.08]], 0.14, 0.12, hoodD); limb([[-0.4, 0.98], [-0.21, 1.13], [0.02, 1.16], [0.18, 1.06]], 0.07, 0.06, '#3a66de');
   ctx.restore();
   // head: rim pass then the face (a circle cranium with the profile on the right)
   const head = [[-0.98, -0.1], [-0.88, -0.78], [-0.3, -1.08], [0.42, -0.98], [0.8, -0.58], [0.88, -0.28], [0.86, -0.12], [0.96, 0.08], [1.04, 0.2], [0.94, 0.3], [0.9, 0.44], [0.84, 0.66], [0.62, 0.88], [0.2, 0.92], [-0.32, 0.8], [-0.82, 0.42]];
@@ -170,9 +171,7 @@ E.kid = (ctx, t, x, y, R, o = {}) => {
   const hand = hold ?? [0.5, 1.05];
   limb([[-0.6, 1.35], [-0.2, TY - 0.05]], 0.6, 0.55, hood);
   limb([[-0.2, TY - 0.05], [hand[0] - 0.05, hand[1] + 0.15]], 0.38, 0.32, skin);
-  ctx.strokeStyle = rimC; ctx.lineWidth = R * 0.05; ctx.beginPath(); ctx.moveTo(X(-0.05), Y(TY - 0.15)); ctx.lineTo(X(hand[0] + 0.1), Y(hand[1] + 0.2)); ctx.stroke();
-  if (!hold) { oval(hand[0] - 0.02, hand[1] + 0.06, 0.3, 0.22, skinD, -0.35); oval(hand[0] + 0.02, hand[1], 0.28, 0.2, skin, -0.35); oval(hand[0] + 0.12, hand[1] - 0.06, 0.1, 0.06, skinL, -0.35);
-    ctx.strokeStyle = skinD; ctx.lineWidth = R * 0.03; for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(X(hand[0] - 0.1 + k * 0.1), Y(hand[1] + 0.1), R * 0.055, 0.4, 2.6); ctx.stroke(); } }
+  if (!hold) E.fist(ctx, X(hand[0] - 0.1), Y(hand[1] + 0.22), R * 0.62, -1.1);
 };
 // white sunlight splitting into coloured beads that fly to the apple; all but red sink in, red bounces (u 0..1)
 E.colours = (ctx, t, sx, sy, ax, ay, ar, u) => {
@@ -264,3 +263,26 @@ E.handHold = (ctx, x, y, r) => { const skin = '#f8b88e', skinD = '#e8946a';
   eEll(ctx, x - r * 0.9, y + r * 0.55, r * 0.55, r * 0.42, skinD, -0.4); eEll(ctx, x - r * 0.8, y + r * 0.5, r * 0.5, r * 0.38, skin, -0.4);
   for (let k = 0; k < 4; k++) { const fx = x - r * 0.55 + k * r * 0.12, fy = y + r * (0.55 - k * 0.18); eEll(ctx, fx, fy, r * 0.17, r * 0.12, skinD, -0.9); eEll(ctx, fx - r * 0.01, fy - r * 0.01, r * 0.15, r * 0.1, skin, -0.9); }
   eEll(ctx, x - r * 0.7, y + r * 0.1, r * 0.13, r * 0.24, skin, 0.4); };
+
+// a loose fist, wrist at (x, y), pointing along angle a (radians), length s: palm, four curled fingers in a row with
+// knuckle highlights and creases, the thumb lying across the top; lit from the right
+E.fist = (ctx, x, y, s, a, o = {}) => { const skin = o.skin ?? '#f6b48a', skinD = '#dd8e66', skinL = '#ffd0ae', crease = 'rgba(180,90,60,0.55)';
+  ctx.save(); ctx.translate(x, y); ctx.rotate(a);
+  ctx.fillStyle = skinD; ctx.beginPath(); ctx.roundRect(-0.05 * s, -0.27 * s, 0.7 * s, 0.6 * s, 0.2 * s); ctx.fill();
+  ctx.fillStyle = skin; ctx.beginPath(); ctx.roundRect(-0.05 * s, -0.3 * s, 0.68 * s, 0.56 * s, 0.2 * s); ctx.fill();
+  for (let k = 0; k < 4; k++) { const fy = -0.27 * s + k * 0.14 * s; ctx.fillStyle = k % 2 ? skin : '#f9bc94'; ctx.beginPath(); ctx.roundRect(0.48 * s, fy, 0.34 * s, 0.13 * s, 0.065 * s); ctx.fill();
+    ctx.fillStyle = skinL; ctx.beginPath(); ctx.ellipse(0.74 * s, fy + 0.045 * s, 0.05 * s, 0.025 * s, 0, 0, 7); ctx.fill();
+    if (k) { ctx.strokeStyle = crease; ctx.lineWidth = Math.max(1, 0.015 * s); ctx.beginPath(); ctx.moveTo(0.5 * s, fy); ctx.lineTo(0.8 * s, fy); ctx.stroke(); } }
+  ctx.strokeStyle = crease; ctx.lineWidth = Math.max(1, 0.015 * s); ctx.beginPath(); ctx.moveTo(0.5 * s, -0.25 * s); ctx.quadraticCurveTo(0.46 * s, 0.0, 0.5 * s, 0.27 * s); ctx.stroke();
+  ctx.fillStyle = skinD; ctx.beginPath(); ctx.ellipse(0.42 * s, -0.31 * s, 0.24 * s, 0.085 * s, 0.15, 0, 7); ctx.fill();
+  ctx.fillStyle = skin; ctx.beginPath(); ctx.ellipse(0.42 * s, -0.33 * s, 0.22 * s, 0.075 * s, 0.15, 0, 7); ctx.fill();
+  ctx.fillStyle = '#ffe2cc'; ctx.beginPath(); ctx.ellipse(0.6 * s, -0.31 * s, 0.05 * s, 0.035 * s, 0.15, 0, 7); ctx.fill();
+  ctx.restore(); };
+// a hand gripping a round thing (centre ax, ay, radius r) from the lower left: gripBack before the object (palm), gripFront
+// after it (four fingers curling round the near side, the thumb on the left)
+E.gripBack = (ctx, ax, ay, r) => { eEll(ctx, ax - r * 0.55, ay + r * 0.55, r * 0.5, r * 0.42, '#dd8e66', -0.6); eEll(ctx, ax - r * 0.5, ay + r * 0.5, r * 0.46, r * 0.38, '#f6b48a', -0.6); };
+E.gripFront = (ctx, ax, ay, r) => { const skin = '#f6b48a', skinD = '#dd8e66', skinL = '#ffd0ae';
+  for (let k = 0; k < 4; k++) { const ang = 0.55 + k * 0.32, fx = ax + Math.cos(ang) * r * 0.82, fy = ay + Math.sin(ang) * r * 0.82;
+    ctx.save(); ctx.translate(fx, fy); ctx.rotate(ang + Math.PI / 2); ctx.fillStyle = skinD; ctx.beginPath(); ctx.roundRect(-r * 0.3, -r * 0.1, r * 0.46, r * 0.21, r * 0.1); ctx.fill(); ctx.fillStyle = skin; ctx.beginPath(); ctx.roundRect(-r * 0.3, -r * 0.12, r * 0.44, r * 0.19, r * 0.095); ctx.fill();
+    ctx.fillStyle = skinL; ctx.beginPath(); ctx.ellipse(-r * 0.18, -r * 0.05, r * 0.06, r * 0.03, 0, 0, 7); ctx.fill(); ctx.restore(); }
+  ctx.save(); ctx.translate(ax - r * 0.62, ay + r * 0.5); ctx.rotate(-1.0); ctx.fillStyle = skinD; ctx.beginPath(); ctx.roundRect(-r * 0.05, -r * 0.11, r * 0.5, r * 0.22, r * 0.11); ctx.fill(); ctx.fillStyle = skin; ctx.beginPath(); ctx.roundRect(-r * 0.05, -r * 0.13, r * 0.48, r * 0.2, r * 0.1); ctx.fill(); ctx.fillStyle = '#ffe2cc'; ctx.beginPath(); ctx.ellipse(r * 0.34, -r * 0.05, r * 0.06, r * 0.035, 0, 0, 7); ctx.fill(); ctx.restore(); };
