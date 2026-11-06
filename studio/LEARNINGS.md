@@ -8,6 +8,12 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-11-06: the eye film, the kid (the user: "what is this? search for proper character design")
+- A character drawn piece by piece (a head, a blob body, a stick arm) reads as broken. Build by construction first: head
+  circle -> a short neck under the jaw -> a torso bean leaning the way the pose goes, cut by the table -> a shoulder joint ->
+  upper arm to the elbow ON the support line -> forearm to the contact point (chin, apple) -> hand. Check the silhouette at
+  thumbnail size before any detail. Curly hair = a ring of curl bumps + a filled core, never doodled arcs on a blob.
+
 ## 2026-11-05: the skin colour film (pitch A "the great walk"; 2:46 with the user's voice)
 - What worked: the blood film's recipe again (the user's reference grid, a one-frame look test, one journey with a device:
   the UV gauge in the sky), plus the reference study's pacing: a hard cut about every 5 s planned (3-4 s after the voice).

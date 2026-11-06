@@ -118,54 +118,61 @@ E.kitchen = (ctx, t, o = {}) => {
 };
 // the child at the table, in profile facing right, chin on hands (head radius R at (x, y))
 E.kid = (ctx, t, x, y, R, o = {}) => {
-  // after the user's reference (refs/t2-kid.png): a big round head in profile facing right, a full mop of soft dark curls
-  // with bangs over the forehead and a warm window rim light, a chubby cheek with a blush, a big glossy eye, a small nose,
-  // a gentle smile, the ear set back; a blue hoodie with the hood behind; forearms on the table, hands clasped under the chin
-  const skin = '#f8b88e', skinD = '#e8946a', skinL = '#ffd2b0', rim = '#ffcf80', hoodie = '#2a52c8', hoodD = '#1a3490', hair = '#2a1838', hairL = '#4a2e5e', hairRim = '#e8a058';
-  const bob = Math.sin(t * 1.1) * R * 0.025, bl = Cast.blink(t, 3), P2 = (px, py) => [x + px * R, y + py * R + bob];
-  const blob = (pts, fill) => { ctx.fillStyle = fill; ctx.beginPath(); pts.forEach(([px, py], i) => { const [X, Y] = P2(px, py); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }); ctx.closePath(); ctx.fill(); };
-  const smooth = (pts, fill, dx = 0) => { ctx.fillStyle = fill; ctx.beginPath(); const q = pts.map(([px, py]) => P2(px + dx, py)); ctx.moveTo((q[0][0] + q[q.length - 1][0]) / 2, (q[0][1] + q[q.length - 1][1]) / 2); for (let i = 0; i < q.length; i++) { const a2 = q[i], b2 = q[(i + 1) % q.length]; ctx.quadraticCurveTo(a2[0], a2[1], (a2[0] + b2[0]) / 2, (a2[1] + b2[1]) / 2); } ctx.fill(); };
-  const circ = (px, py, r, fill) => { const [X, Y] = P2(px, py); ctx.fillStyle = fill; ctx.beginPath(); ctx.arc(X, Y, r * R, 0, 7); ctx.fill(); };
-  const ell = (px, py, rx, ry, fill, rot = 0) => { const [X, Y] = P2(px, py); eEll(ctx, X, Y, rx * R, ry * R, fill, rot); };
-  // hoodie: the hood bunched behind the neck, the back and shoulder; a darker far side
-  smooth([[-3.2, 4.2], [-3.3, 2.0], [-2.6, 1.1], [-1.2, 0.95], [-0.2, 1.25], [0.5, 1.9], [0.7, 4.2]], hoodD);
-  smooth([[-3.0, 4.2], [-3.0, 2.1], [-2.3, 1.3], [-1.1, 1.15], [-0.3, 1.45], [0.3, 2.1], [0.5, 4.2]], hoodie);
-  smooth([[-2.2, 1.6], [-2.0, 0.85], [-1.2, 0.75], [-0.55, 1.05], [-0.9, 1.55]], hoodD);
-  smooth([[-2.05, 1.5], [-1.9, 0.95], [-1.25, 0.88], [-0.75, 1.1], [-1.0, 1.45]], '#3a62d8');
-  // neck
-  blob([[-0.45, 0.7], [0.15, 0.75], [0.1, 1.25], [-0.5, 1.2]], skinD);
-  // far forearm (behind), on the table rising to the hands
-  ctx.lineCap = 'round'; const seg = (a2, b2, w, col) => { const [X1, Y1] = P2(...a2), [X2, Y2] = P2(...b2); ctx.strokeStyle = col; ctx.lineWidth = w * R; ctx.beginPath(); ctx.moveTo(X1, Y1); ctx.lineTo(X2, Y2); ctx.stroke(); };
-  seg([-0.9, 2.55], [0.25, 1.45], 0.46, skinD);
-  // the head: rim pass (warm, offset toward the window), then the skin
-  const head = [[-0.95, -0.2], [-0.9, -0.85], [-0.3, -1.15], [0.45, -1.0], [0.82, -0.55], [0.9, -0.2], [0.98, 0.05], [1.06, 0.2], [0.98, 0.3], [0.9, 0.42], [0.86, 0.68], [0.6, 0.95], [0.2, 1.0], [-0.35, 0.85], [-0.8, 0.4]];
-  smooth(head, rim, 0.05);
-  const [hx, hy] = P2(0.2, 0); const fg = ctx.createRadialGradient(hx + R * 0.2, hy - R * 0.2, R * 0.2, hx, hy, R * 1.25); fg.addColorStop(0, skinL); fg.addColorStop(0.6, skin); fg.addColorStop(1, skinD);
-  smooth(head, fg);
-  ell(0.42, 0.45, 0.24, 0.15, 'rgba(255,110,110,0.32)'); for (let i = 0; i < 6; i++) ell(0.32 + (i % 3) * 0.08, 0.38 + Math.floor(i / 3) * 0.07, 0.012, 0.012, 'rgba(200,90,70,0.35)');
-  // ear
-  ell(-0.38, 0.18, 0.2, 0.27, skinD); ell(-0.35, 0.18, 0.13, 0.19, skin); ell(-0.33, 0.2, 0.06, 0.1, '#e88a6a');
-  // eye: white, iris toward the apple, highlights; lid line and lashes; brow
-  const ex = 0.6, ey = 0.02;
-  if (bl < 0.6) { ell(ex, ey, 0.16, 0.2, '#ffffff', -0.1); ell(ex + 0.05, ey + 0.02, 0.11, 0.16, '#5a3418', -0.1); ell(ex + 0.06, ey + 0.03, 0.065, 0.1, '#1a0c08'); ell(ex + 0.09, ey - 0.05, 0.04, 0.05, '#ffffff'); ell(ex + 0.02, ey + 0.1, 0.018, 0.02, '#ffffff'); }
-  const [EX, EY] = P2(ex, ey); ctx.strokeStyle = '#2a1410'; ctx.lineWidth = R * 0.04; ctx.lineCap = 'round';
-  ctx.beginPath(); if (bl < 0.6) ctx.ellipse(EX, EY, R * 0.17, R * 0.21, -0.1, Math.PI * 1.08, Math.PI * 1.92); else ctx.arc(EX, EY - R * 0.02, R * 0.14, 0.2, Math.PI - 0.2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(EX + R * 0.12, EY - R * 0.17); ctx.lineTo(EX + R * 0.2, EY - R * 0.22); ctx.stroke();
-  ctx.lineWidth = R * 0.06; ctx.beginPath(); ctx.moveTo(EX - R * 0.17, EY - R * 0.33); ctx.quadraticCurveTo(EX, EY - R * 0.42, EX + R * 0.18, EY - R * 0.34); ctx.stroke();
+  // Built by construction (simple shapes first, then detail), after the user's reference (refs/t2-kid.png):
+  // head = a circle (radius R) with a face profile on the right; neck = a short tapered column under the jaw; torso = a
+  // bean leaning forward toward the table, cut off by the table edge at TY; shoulder joint behind the jaw; upper arm down
+  // to the elbow ON the table line; forearm up to the hands cupped under the chin; the far arm the same, darker, behind.
+  // Light comes from the window on the right: a warm rim on right-facing edges.
+  const TY = 2.1, skin = '#f6b48a', skinD = '#dd8e66', skinL = '#ffd0ae', rimC = '#ffd08a', hood = '#2a52c8', hoodD = '#1c3a9a', hair = '#2a1838', hairM = '#40285a', hairRim = '#e8a058';
+  const bob = Math.sin(t * 1.1) * R * 0.02, bl = Cast.blink(t, 3), X = (px) => x + px * R, Y = (py) => y + py * R + bob;
+  const path = (pts) => { const q = pts.map(([px, py]) => [X(px), Y(py)]); ctx.beginPath(); ctx.moveTo((q[0][0] + q[q.length - 1][0]) / 2, (q[0][1] + q[q.length - 1][1]) / 2); for (let i = 0; i < q.length; i++) { const a2 = q[i], b2 = q[(i + 1) % q.length]; ctx.quadraticCurveTo(a2[0], a2[1], (a2[0] + b2[0]) / 2, (a2[1] + b2[1]) / 2); } };
+  const fill = (pts, f) => { path(pts); ctx.fillStyle = f; ctx.fill(); };
+  const limb = (pts, w0, w1, col) => { ctx.lineCap = 'round'; ctx.lineJoin = 'round'; for (let i = 0; i < pts.length - 1; i++) { ctx.strokeStyle = col; ctx.lineWidth = K.lerp(w0, w1, i / Math.max(1, pts.length - 2)) * R; ctx.beginPath(); ctx.moveTo(X(pts[i][0]), Y(pts[i][1])); ctx.lineTo(X(pts[i + 1][0]), Y(pts[i + 1][1])); ctx.stroke(); } };
+  const oval = (px, py, rx, ry, f, rot = 0) => eEll(ctx, X(px), Y(py), rx * R, ry * R, f, rot);
+  const hold = o.hold;   // [px, py] in head units: the near hand holds something there instead of cupping the chin
+  // everything behind the table edge is clipped at the table line
+  ctx.save(); ctx.beginPath(); ctx.rect(x - R * 6, y - R * 3, R * 12, (TY + 3) * R + bob); ctx.clip();
+  // far arm (behind): elbow on the table, forearm up to the chin
+  limb([[-0.95, 1.35], [-0.75, TY - 0.05]], 0.55, 0.5, hoodD); limb([[-0.75, TY - 0.05], [0.3, 1.2]], 0.36, 0.3, skinD);
+  // torso: a bean leaning forward (hoodie), with the hood bunched behind the neck
+  const torso = [[-2.3, TY + 0.5], [-2.35, TY - 0.5], [-1.9, 1.35], [-1.1, 1.0], [-0.35, 1.05], [0.2, 1.5], [0.3, TY + 0.5]];
+  fill(torso, hoodD); const tg = ctx.createLinearGradient(X(-2.6), 0, X(0.4), 0); tg.addColorStop(0, '#2244b0'); tg.addColorStop(1, '#3462d8');
+  fill(torso.map(([px, py]) => [px + 0.06, py + 0.05]), tg);
+  limb([[-1.35, 1.05], [-0.95, 0.88], [-0.5, 0.95]], 0.32, 0.28, hoodD); limb([[-1.3, 1.0], [-0.93, 0.84], [-0.52, 0.9]], 0.2, 0.18, '#3a66de');
+  // neck: a short tapered column from under the jaw into the collar
+  fill([[-0.42, 0.62], [0.18, 0.66], [0.22, 1.0], [0.1, 1.22], [-0.5, 1.15]], skinD);
+  ctx.restore();
+  // head: rim pass then the face (a circle cranium with the profile on the right)
+  const head = [[-0.98, -0.1], [-0.88, -0.78], [-0.3, -1.08], [0.42, -0.98], [0.8, -0.58], [0.88, -0.28], [0.86, -0.12], [0.96, 0.08], [1.04, 0.2], [0.94, 0.3], [0.9, 0.44], [0.84, 0.66], [0.62, 0.88], [0.2, 0.92], [-0.32, 0.8], [-0.82, 0.42]];
+  fill(head.map(([px, py]) => [px + 0.05, py]), rimC);
+  const fg = ctx.createRadialGradient(X(0.25), Y(-0.15), R * 0.15, X(0.1), Y(0.05), R * 1.2); fg.addColorStop(0, skinL); fg.addColorStop(0.6, skin); fg.addColorStop(1, skinD); fill(head, fg);
+  oval(0.45, 0.42, 0.22, 0.14, 'rgba(255,110,110,0.32)'); for (let i = 0; i < 5; i++) oval(0.36 + (i % 3) * 0.08, 0.36 + Math.floor(i / 3) * 0.07, 0.012, 0.012, 'rgba(190,90,70,0.4)');
+  // ear (mid-head, behind the cheek)
+  oval(-0.3, 0.12, 0.18, 0.24, skinD); oval(-0.28, 0.12, 0.12, 0.17, skin); oval(-0.26, 0.14, 0.05, 0.09, '#e08a6a');
+  // eye: big, glossy, looking down at the apple
+  const ex = 0.6, ey = 0.0, look = o.look ?? [0.04, 0.04];
+  if (bl < 0.6) { oval(ex, ey, 0.15, 0.19, '#ffffff', -0.1); oval(ex + look[0], ey + look[1], 0.11, 0.15, '#5a3418', -0.1); oval(ex + look[0] + 0.01, ey + look[1] + 0.01, 0.065, 0.095, '#160a06'); oval(ex + look[0] + 0.04, ey + look[1] - 0.06, 0.035, 0.045, '#ffffff'); oval(ex + look[0] - 0.03, ey + look[1] + 0.07, 0.015, 0.018, '#ffffff'); }
+  ctx.strokeStyle = '#2a1410'; ctx.lineWidth = R * 0.045; ctx.lineCap = 'round'; ctx.beginPath(); if (bl < 0.6) ctx.ellipse(X(ex), Y(ey), R * 0.16, R * 0.2, -0.1, Math.PI * 1.1, Math.PI * 1.9); else ctx.arc(X(ex), Y(ey - 0.02), R * 0.13, 0.2, Math.PI - 0.2); ctx.stroke();
+  ctx.lineWidth = R * 0.06; ctx.beginPath(); ctx.moveTo(X(ex - 0.16), Y(ey - 0.3)); ctx.quadraticCurveTo(X(ex), Y(ey - 0.38), X(ex + 0.17), Y(ey - 0.31)); ctx.stroke();
   // nose and smile
-  const [NX, NY] = P2(1.0, 0.25); ctx.strokeStyle = skinD; ctx.lineWidth = R * 0.035; ctx.beginPath(); ctx.arc(NX - R * 0.05, NY, R * 0.06, -0.5, 1.6); ctx.stroke();
-  const [MX, MY] = P2(0.56, 0.58); ctx.strokeStyle = '#a8402a'; ctx.lineWidth = R * 0.04; ctx.beginPath(); ctx.moveTo(MX, MY); ctx.quadraticCurveTo(MX + R * 0.14, MY + R * (o.mood === 'happy' ? 0.16 : 0.1), MX + R * 0.28, MY - R * 0.05); ctx.stroke();
-  // hair: rim lobes (window light), then the dark mass, then soft lighter curls; bangs over the forehead
-  const lobes = [[-0.95, 0.15, 0.4], [-1.05, -0.3, 0.45], [-0.85, -0.75, 0.48], [-0.4, -1.05, 0.5], [0.12, -1.12, 0.48], [0.55, -0.95, 0.42], [0.82, -0.62, 0.3], [-0.78, 0.3, 0.27], [-0.2, -0.65, 0.5]];
-  const bangs = [[0.55, -0.55, 0.22], [0.75, -0.42, 0.17], [0.35, -0.6, 0.24], [0.88, -0.32, 0.11]];
-  for (const [px, py, r] of [...lobes, ...bangs]) circ(px + 0.06, py, r, hairRim);
-  for (const [px, py, r] of [...lobes, ...bangs]) circ(px, py, r, hair);
-  for (let i = 0; i < 14; i++) { const [px, py, r] = lobes[i % lobes.length], a2 = K.hash(i, 3) * 6.28, d = r * 0.45; const [X, Y] = P2(px + Math.cos(a2) * d, py + Math.sin(a2) * d); ctx.strokeStyle = hairL; ctx.lineWidth = R * 0.05; ctx.beginPath(); ctx.arc(X, Y, R * (0.1 + 0.06 * K.hash(i, 4)), Math.PI * 0.9, Math.PI * 1.9); ctx.stroke(); }
-  { const [X, Y] = P2(0.0, -1.3); ctx.strokeStyle = hair; ctx.lineWidth = R * 0.05; ctx.beginPath(); ctx.moveTo(X, Y + R * 0.15); ctx.quadraticCurveTo(X + R * 0.05, Y - R * 0.05, X + R * 0.12, Y - R * 0.08); ctx.stroke(); }
-  // near arm: sleeve from the shoulder to the elbow on the table, forearm up to the clasped hands under the chin
-  seg([-0.8, 1.55], [-0.35, 2.55], 0.62, hoodie); seg([-0.35, 2.55], [0.42, 1.5], 0.42, skin);
-  ell(0.42, 1.28, 0.3, 0.24, skinD, -0.4); ell(0.5, 1.2, 0.28, 0.22, skin, -0.4); ell(0.6, 1.12, 0.12, 0.08, skinL, -0.4);
-  const [FX, FY] = P2(0.5, 1.22); ctx.strokeStyle = skinD; ctx.lineWidth = R * 0.03; for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(FX - R * 0.12 + k * R * 0.1, FY + R * 0.08, R * 0.06, 0.4, 2.6); ctx.stroke(); }
+  ctx.strokeStyle = skinD; ctx.lineWidth = R * 0.035; ctx.beginPath(); ctx.arc(X(0.95), Y(0.24), R * 0.055, -0.6, 1.5); ctx.stroke();
+  ctx.strokeStyle = '#a8402a'; ctx.lineWidth = R * 0.04; ctx.beginPath(); ctx.moveTo(X(0.6), Y(0.56)); ctx.quadraticCurveTo(X(0.74), Y(o.mood === 'happy' ? 0.68 : 0.64), X(0.86), Y(0.5)); ctx.stroke();
+  // hair: a soft mass over the back and top (rim, base), clumps a shade lighter, bangs falling over the forehead
+  // the outline is a ring of curl bumps over the back and top (each bump a circle), filled in the middle
+  const bumps = []; for (let i = 0; i <= 22; i++) { const u = i / 22, a2 = Math.PI * (0.62 + 1.38 * u), rr = 1.02 + 0.06 * Math.sin(i * 2.7); bumps.push([-0.12 + Math.cos(a2) * rr, -0.22 + Math.sin(a2) * rr * 1.02, 0.2 + 0.05 * K.hash(i, 5)]); }
+  const core = [[-1.0, 0.45], [-1.05, -0.4], [-0.6, -1.08], [0.2, -1.18], [0.75, -0.75], [0.7, -0.4], [0.3, -0.48], [-0.15, -0.3], [-0.45, 0.05], [-0.6, 0.45]];
+  for (const [px, py, r] of bumps) oval(px + 0.045, py, r, r, hairRim); fill(core.map(([px, py]) => [px + 0.045, py]), hairRim);
+  for (const [px, py, r] of bumps) oval(px, py, r, r, hair); fill(core, hair);
+  for (let i = 1; i < bumps.length - 1; i += 2) { const [px, py, r] = bumps[i]; const g = ctx.createRadialGradient(X(px - r * 0.3), Y(py - r * 0.3), 1, X(px), Y(py), r * R); g.addColorStop(0, '#5a3a76'); g.addColorStop(1, 'rgba(42,24,56,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(X(px), Y(py), r * R, 0, 7); ctx.fill(); }
+  for (const [px, py, r] of [[-0.55, -0.55, 0.22], [-0.15, -0.8, 0.22], [-0.7, -0.05, 0.2]]) { const g = ctx.createRadialGradient(X(px - 0.06), Y(py - 0.06), 1, X(px), Y(py), r * R); g.addColorStop(0, '#4e3268'); g.addColorStop(1, 'rgba(42,24,56,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(X(px), Y(py), r * R, 0, 7); ctx.fill(); }
+  for (const [px, py, r] of [[0.75, -0.52, 0.12], [0.55, -0.6, 0.15], [0.32, -0.62, 0.16]]) { oval(px + 0.03, py, r, r * 1.2, hairRim); oval(px, py, r, r * 1.2, hair); }
+  // near arm: shoulder -> elbow on the table -> forearm up to the chin (or to the held thing), cupped hand
+  const hand = hold ?? [0.5, 1.05];
+  limb([[-0.6, 1.35], [-0.2, TY - 0.05]], 0.6, 0.55, hood);
+  limb([[-0.2, TY - 0.05], [hand[0] - 0.05, hand[1] + 0.15]], 0.38, 0.32, skin);
+  ctx.strokeStyle = rimC; ctx.lineWidth = R * 0.05; ctx.beginPath(); ctx.moveTo(X(-0.05), Y(TY - 0.15)); ctx.lineTo(X(hand[0] + 0.1), Y(hand[1] + 0.2)); ctx.stroke();
+  if (!hold) { oval(hand[0] - 0.02, hand[1] + 0.06, 0.3, 0.22, skinD, -0.35); oval(hand[0] + 0.02, hand[1], 0.28, 0.2, skin, -0.35); oval(hand[0] + 0.12, hand[1] - 0.06, 0.1, 0.06, skinL, -0.35);
+    ctx.strokeStyle = skinD; ctx.lineWidth = R * 0.03; for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(X(hand[0] - 0.1 + k * 0.1), Y(hand[1] + 0.1), R * 0.055, 0.4, 2.6); ctx.stroke(); } }
 };
 // white sunlight splitting into coloured beads that fly to the apple; all but red sink in, red bounces (u 0..1)
 E.colours = (ctx, t, sx, sy, ax, ay, ar, u) => {
