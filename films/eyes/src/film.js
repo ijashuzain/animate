@@ -80,9 +80,11 @@ const SHOTS = [
   [220, 226, (ctx, t, u) => { kitchenShot(ctx, t); for (let i = 0; i < 24; i++) { const sx = K.hash(i, 1) * 1920, sy = 120 + K.hash(i, 2) * 900, p = (u * 0.5 + K.hash(i, 3)) % 1; redRay(ctx, sx, sy, lerp(sx, 720, p), lerp(sy, 590, p), 8, 0.5 + 0.5 * K.hash(i, 4)); } pill('millions of rays, every moment', 960, 120, shows(t, 220.6, 225.8)); }],
   [226, 232, (ctx, t, u) => { navy(ctx); const geo = E.eye(ctx, t, 1000, 540, 380, { pupil: 0.5 }); for (let i = 0; i < 9; i++) { const col = ['255,90,90', '120,220,120', '120,170,255', '255,220,120'][i % 4]; ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(${col},0.55)`; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(0, 540 + (i - 4) * 110); ctx.lineTo(geo.front[0], 540 + (i - 4) * 12); ctx.lineTo(geo.focus[0], 540 - (i - 4) * 40); ctx.stroke(); ctx.restore(); } pill('every moment your eyes are open', 960, 980, shows(t, 226.6, 231.8)); }],
   // 20. you see with your brain
-  [232, 240, (ctx, t, u) => { E.kitchen(ctx, t); const kx = 700, R = 175, ky = 760 - 2.1 * R, m = tw(u, 0.5, 2.5, 'inOut');
-    const hold = [lerp(1.6, 1.15, m), lerp(1.3, 0.55, m)]; E.kid(ctx, t, kx, ky, R, { mood: 'happy', hold, look: [0.06, 0.06] });
-    const ax = kx + (hold[0] + 0.15) * R, ay = ky + (hold[1] - 0.05) * R; E.gripBack(ctx, ax, ay, 85); E.apple(ctx, t, ax, ay, 85, { bite: tw(u, 3, 3.4) }); E.gripFront(ctx, ax, ay, 85);
+  [232, 240, (ctx, t, u) => { E.kitchen(ctx, t); const kx = 700, R = 175, ky = 760 - 2.1 * R, m = tw(u, 0.5, 2.5, 'inOut'), r = 82;
+    // the apple travels from the table up to the mouth; the hand cups it; the forearm ends at the hand's wrist
+    const ax = kx + lerp(2.0, 1.32, m) * R, ay = ky + lerp(1.35, 0.5, m) * R, wrist = [ax - r * 0.95, ay + r * 1.15];
+    E.kid(ctx, t, kx, ky, R, { mood: 'happy', hold: [(wrist[0] - kx) / R, (wrist[1] - ky) / R], look: [0.06, 0.06] });
+    E.apple(ctx, t, ax, ay, r, { bite: tw(u, 3, 3.4) }); E.gripHand(ctx, ax, ay, r);
     pill('you see with your brain', 960, 120, shows(t, 232.6, 239.6)); }],
 ];
 const D = 240;

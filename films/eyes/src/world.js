@@ -96,9 +96,13 @@ E.retina = (ctx, t, o = {}) => {
 };
 
 // ---------- the kitchen (tile 2): a sunny window, plants, a table; the child in profile looking at the apple ----------
-E.apple = (ctx, t, x, y, r, o = {}) => { const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r * 1.1); g.addColorStop(0, '#ff8a7a'); g.addColorStop(0.45, '#e8202a'); g.addColorStop(1, '#8a0a14'); ctx.fillStyle = g;
+E.apple = (ctx, t, x, y, r, o = {}) => { const bite = o.bite ?? 0, bx = x + r * 1.0, by = y - r * 0.15, br = r * 0.42 * bite;
+  ctx.save(); if (bite > 0) { ctx.beginPath(); ctx.rect(x - r * 3, y - r * 3, r * 6, r * 6); ctx.arc(bx, by, br, 0, 7); ctx.clip('evenodd'); }
+  const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r * 1.1); g.addColorStop(0, '#ff8a7a'); g.addColorStop(0.45, '#e8202a'); g.addColorStop(1, '#8a0a14'); ctx.fillStyle = g;
   ctx.beginPath(); ctx.moveTo(x, y - r * 0.72); ctx.bezierCurveTo(x + r * 0.55, y - r * 1.05, x + r * 1.15, y - r * 0.6, x + r * 1.0, y + r * 0.15); ctx.bezierCurveTo(x + r * 0.9, y + r * 0.85, x + r * 0.35, y + r * 1.0, x, y + r * 0.85); ctx.bezierCurveTo(x - r * 0.35, y + r * 1.0, x - r * 0.9, y + r * 0.85, x - r * 1.0, y + r * 0.15); ctx.bezierCurveTo(x - r * 1.15, y - r * 0.6, x - r * 0.55, y - r * 1.05, x, y - r * 0.72); ctx.fill();
-  if (o.bite) { ctx.fillStyle = '#fff4dc'; ctx.beginPath(); ctx.arc(x + r * 0.95, y - r * 0.1, r * 0.38 * o.bite, 0, 7); ctx.fill(); }
+
+  ctx.restore();
+  if (bite > 0) { ctx.save(); ctx.beginPath(); ctx.ellipse(x, y + r * 0.05, r * 1.0, r * 0.88, 0, 0, 7); ctx.clip(); ctx.strokeStyle = '#fff0d0'; ctx.lineWidth = br * 0.35; ctx.beginPath(); ctx.arc(bx, by, br * 1.08, 0, 7); ctx.stroke(); ctx.restore(); }
   eEll(ctx, x - r * 0.42, y - r * 0.32, r * 0.2, r * 0.13, 'rgba(255,255,255,0.75)', -0.6); eEll(ctx, x - r * 0.15, y - r * 0.5, r * 0.06, r * 0.04, 'rgba(255,255,255,0.8)');
   ctx.strokeStyle = '#5a3a20'; ctx.lineWidth = r * 0.08; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x, y - r * 0.68); ctx.quadraticCurveTo(x + r * 0.05, y - r * 0.95, x + r * 0.12, y - r * 1.1); ctx.stroke();
   ctx.fillStyle = '#4aa83a'; ctx.beginPath(); ctx.moveTo(x + r * 0.08, y - r * 0.95); ctx.quadraticCurveTo(x + r * 0.45, y - r * 1.35, x + r * 0.8, y - r * 1.05); ctx.quadraticCurveTo(x + r * 0.45, y - r * 0.85, x + r * 0.08, y - r * 0.95); ctx.fill(); ctx.strokeStyle = '#2a7a2a'; ctx.lineWidth = r * 0.025; ctx.beginPath(); ctx.moveTo(x + r * 0.1, y - r * 0.95); ctx.lineTo(x + r * 0.7, y - r * 1.06); ctx.stroke(); };
@@ -170,7 +174,7 @@ E.kid = (ctx, t, x, y, R, o = {}) => {
   // near arm: shoulder -> elbow on the table -> forearm up to the chin (or to the held thing), cupped hand
   const hand = hold ?? [0.5, 1.05];
   limb([[-0.6, 1.35], [-0.2, TY - 0.05]], 0.6, 0.55, hood);
-  limb([[-0.2, TY - 0.05], [hand[0] - 0.05, hand[1] + 0.15]], 0.38, 0.32, skin);
+  limb([[-0.2, TY - 0.05], hold ? hand : [hand[0] - 0.05, hand[1] + 0.15]], 0.38, 0.32, skin);
   if (!hold) E.fist(ctx, X(hand[0] - 0.1), Y(hand[1] + 0.22), R * 0.62, -1.1);
 };
 // white sunlight splitting into coloured beads that fly to the apple; all but red sink in, red bounces (u 0..1)
@@ -286,3 +290,25 @@ E.gripFront = (ctx, ax, ay, r) => { const skin = '#f6b48a', skinD = '#dd8e66', s
     ctx.save(); ctx.translate(fx, fy); ctx.rotate(ang + Math.PI / 2); ctx.fillStyle = skinD; ctx.beginPath(); ctx.roundRect(-r * 0.3, -r * 0.1, r * 0.46, r * 0.21, r * 0.1); ctx.fill(); ctx.fillStyle = skin; ctx.beginPath(); ctx.roundRect(-r * 0.3, -r * 0.12, r * 0.44, r * 0.19, r * 0.095); ctx.fill();
     ctx.fillStyle = skinL; ctx.beginPath(); ctx.ellipse(-r * 0.18, -r * 0.05, r * 0.06, r * 0.03, 0, 0, 7); ctx.fill(); ctx.restore(); }
   ctx.save(); ctx.translate(ax - r * 0.62, ay + r * 0.5); ctx.rotate(-1.0); ctx.fillStyle = skinD; ctx.beginPath(); ctx.roundRect(-r * 0.05, -r * 0.11, r * 0.5, r * 0.22, r * 0.11); ctx.fill(); ctx.fillStyle = skin; ctx.beginPath(); ctx.roundRect(-r * 0.05, -r * 0.13, r * 0.48, r * 0.2, r * 0.1); ctx.fill(); ctx.fillStyle = '#ffe2cc'; ctx.beginPath(); ctx.ellipse(r * 0.34, -r * 0.05, r * 0.06, r * 0.035, 0, 0, 7); ctx.fill(); ctx.restore(); };
+
+// one continuous hand cupping a round thing (centre ax, ay, radius r) from below, the wrist at the lower left (returned):
+// the palm under it, four fingers as one band curving up its front (creases between them, nails at the tips), the thumb
+// up its left side. Draw after the object (the fingers are in front of it).
+E.gripHand = (ctx, ax, ay, r) => {
+  // smooth strokes: the palm cups the apple from below, the four fingers curl up its right side as one band (creases between
+  // them), the thumb wraps up its left side; the wrist leaves the palm at the lower left
+  const skin = '#f6b48a', skinD = '#dd8e66', skinL = '#ffd0ae', d = Math.PI / 180, P2 = (ang, rr) => [ax + Math.cos(ang * d) * r * rr, ay + Math.sin(ang * d) * r * rr];
+  const wrist = [ax - r * 0.95, ay + r * 1.15];
+  const arcStroke = (a0, a1, rr, w, col) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.beginPath(); for (let k = 0; k <= 20; k++) { const [px, py] = P2(a0 + (a1 - a0) * k / 20, rr); k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke(); };
+  const draw = (dy, col, colPalm) => { ctx.save(); ctx.translate(0, dy);
+    ctx.strokeStyle = colPalm; ctx.lineWidth = r * 0.42; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(...wrist); ctx.quadraticCurveTo(...P2(120, 1.15), ...P2(90, 1.02)); ctx.stroke();   // wrist into the palm
+    ctx.fillStyle = colPalm; ctx.beginPath(); ctx.ellipse(...P2(95, 0.92), r * 0.7, r * 0.3, 0, 0, 7); ctx.fill();                                              // the palm under the apple
+    arcStroke(88, 12, 1.0, r * 0.3, col);                                                                                                                       // finger band up the right side
+    arcStroke(128, 178, 1.0, r * 0.24, col);                                                                                                                    // thumb up the left side
+    ctx.restore(); };
+  draw(r * 0.05, skinD, skinD); draw(0, skin, skin);
+  ctx.strokeStyle = 'rgba(175,90,60,0.55)'; ctx.lineWidth = Math.max(1.5, r * 0.025); ctx.lineCap = 'round';
+  for (const a2 of [33, 52, 71]) { ctx.beginPath(); ctx.moveTo(...P2(a2, 0.88)); ctx.lineTo(...P2(a2, 1.12)); ctx.stroke(); }                                   // creases between fingers
+  for (const a2 of [17, 132]) { const [nx, ny] = P2(a2 + (a2 < 90 ? 3 : -3), 1.0); eEll(ctx, nx, ny, r * 0.06, r * 0.04, skinL, (a2 + 90) * d); }              // nails: top finger, thumb
+  arcStroke(84, 22, 1.08, r * 0.05, 'rgba(255,228,205,0.65)');                                                                                                  // light along the knuckles
+  return wrist; };
