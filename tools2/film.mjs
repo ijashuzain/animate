@@ -7,6 +7,8 @@
 //   node tools2/film.mjs <slug> probe [fps] [width]       picture-only copy for film_metrics.py (default 12 fps, 640 px) -> renders/<slug>-probe.mp4
 //   node tools2/film.mjs <slug> board                   the storyboard check: film.json board [[t, label], ...] -> stills/board.png
 //                                                       (one image of every major scene, numbered, for the user's notes BEFORE the draft)
+//   node tools2/film.mjs <slug> model                   FILM.model(ctx): the character model sheet (poses, expressions, palette) -> stills/model-sheet.png
+//   node tools2/film.mjs <slug> readcheck [step=0.1]    every pill (P.pill) stays fully on screen >= letters/15 + 1.5 s (lemo's reading hold); exits 1 if not
 //   node tools2/film.mjs <slug> clean                   delete the generated files (hf/, renders/, stills/, audio/*.wav) once delivered
 //   node tools2/film.mjs <slug> thumb                   film.json thumb (studio/references/thumbs/STYLE.md: title, accent, arrows, labels,
 //                                                       t/zoom/shift or FILM.thumb) -> youtube/thumbnail.png 1280x720; style 'old' = the earlier side-text look
@@ -126,11 +128,48 @@ else if (['draft', 'looks', 'final'].includes(mode)) {
   console.log(log); if (r.status !== 0) process.exit(r.status ?? 1);
   // the user's rule: always deliver 1080p. Make a 1080p copy under the 30 MB send limit (flat art compresses well).
   const share = path.join(FD, 'renders', `${slug}-${mode}-1080p.mp4`);
+  // loudness (lemo / raea: about -14 LUFS for YouTube): measured on every render; the final's copy is normalised, two-pass
+  let af = '';
+  try { const m = execSync(`ffmpeg -hide_banner -i "${out}" -af loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json -f null - 2>&1`, { encoding: 'utf8', maxBuffer: 1 << 26 });
+    const j = JSON.parse(m.slice(m.lastIndexOf('{'), m.lastIndexOf('}') + 1)); console.log(`loudness: ${j.input_i} LUFS integrated, true peak ${j.input_tp} dBTP`);
+    if (mode === 'final') { af = `-af loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=${j.input_i}:measured_TP=${j.input_tp}:measured_LRA=${j.input_lra}:measured_thresh=${j.input_thresh}:offset=${j.target_offset}:linear=true -ar 48000`; console.log('final: normalising the 1080p copy to -14 LUFS'); }
+  } catch (e) { console.log('loudness: not measured (no audio?)'); }
   for (const crf of [24, 27, 30, 33]) {
-    execSync(`ffmpeg -y -loglevel error -i "${out}" -c:v libx264 -crf ${crf} -preset slow -tune animation -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart "${share}"`);
+    execSync(`ffmpeg -y -loglevel error -i "${out}" -c:v libx264 -crf ${crf} -preset slow -tune animation -pix_fmt yuv420p ${af} -c:a aac -b:a 160k -movflags +faststart "${share}"`);
     if (fs.statSync(share).size < 29e6) break;
   }
   console.log('1080p copy:', path.relative(ROOT, share), (fs.statSync(share).size / 1e6).toFixed(1), 'MB');
+}
+else if (mode === 'model') {
+  const { chromium } = require('playwright');
+  const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const errs = []; page.on('pageerror', (e) => errs.push(e.message));
+  await page.goto(pathToFileURL(path.join(HF, 'index.html')).href);
+  await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
+  const url = await page.evaluate(() => { if (typeof FILM.model !== 'function') return null; const c = document.getElementById('c'), g = c.getContext('2d'); P.begin(g); FILM.model(g); return c.toDataURL('image/png'); });
+  await browser.close();
+  if (!url) { console.error('the film has no FILM.model(ctx)'); process.exit(2); }
+  const out = path.join(FD, 'stills', 'model-sheet.png'); fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, Buffer.from(url.split(',')[1], 'base64'));
+  console.log('wrote', path.relative(ROOT, out), errs.length ? 'PAGE ERRORS: ' + errs.join(' | ') : 'no page errors');
+}
+else if (mode === 'readcheck') {
+  // lemo-opuscar's reading hold: once a text is fully in, it stays at least (letters / 15 + 1.5) s. Pills count as fully in at u >= 0.95.
+  const step = Number(arg ?? 0.1), { chromium } = require('playwright');
+  const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  await page.goto(pathToFileURL(path.join(HF, 'index.html')).href);
+  await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
+  const frames = await page.evaluate(([dur, step]) => {
+    const orig = P.pill; let seen = []; P.pill = (str, x, y, q = {}) => { if ((q.u ?? 1) >= 0.95) seen.push(String(str).replace(/\d[\d.,]*/g, '#'));   /* a rolling number counts as one text, judged by its landing value */ return orig(str, x, y, q); };
+    const out = []; for (let t = 0; t < dur; t += step) { seen = []; window.drawAt(t); out.push([Math.round(t * 1000) / 1000, [...new Set(seen)]]); } P.pill = orig; return out;
+  }, [dur, step]);
+  await browser.close();
+  const runs = [], open = new Map();
+  for (const [t, texts] of frames) { for (const s2 of texts) if (!open.has(s2)) open.set(s2, t); for (const [s2, t0] of [...open]) if (!texts.includes(s2)) { runs.push([s2, t0, t]); open.delete(s2); } }
+  for (const [s2, t0] of open) runs.push([s2, t0, dur]);
+  let bad = 0;
+  for (const [s2, t0, t1] of runs.sort((a, b) => a[1] - b[1])) { const need = s2.replace(/\s/g, '').length / 15 + 1.5, have = t1 - t0, ok = have + step >= need; if (!ok) bad++;
+    console.log(`${ok ? 'ok ' : 'SHORT'} ${t0.toFixed(1).padStart(6)}s  ${have.toFixed(1)}/${need.toFixed(1)} s  ${s2}`); }
+  console.log(bad ? `${bad} text(s) leave before they can be read` : 'every text holds long enough'); if (bad) process.exitCode = 1;
 }
 else if (mode === 'board') {
   const B = F.board; if (!B) { console.error('film.json has no "board": [[t, label], ...]'); process.exit(2); }

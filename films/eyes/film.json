@@ -33,8 +33,8 @@
  ],
  "board": [
   [
-   3,
-   "A kid looks at a red apple"
+   1.5,
+   "Open close on the apple, pull back to the kid"
   ],
   [
    15,
@@ -45,8 +45,12 @@
    "The apple bounces back red"
   ],
   [
-   25,
-   "Ride one red ray across the room"
+   24.5,
+   "Ride the ray: the camera tracks it (scale readout)"
+  ],
+  [
+   31.8,
+   "Through the light: into the eye"
   ],
   [
    35,
@@ -55,6 +59,10 @@
   [
    41,
    "Cornea: about 2/3 of the focusing"
+  ],
+  [
+   43.9,
+   "The cutaway turns into the iris"
   ],
   [
    47,
@@ -77,8 +85,8 @@
    "The retina is built backwards"
   ],
   [
-   87,
-   "Light passes the wiring first"
+   86,
+   "Crane down with the light, past the wiring"
   ],
   [
    94,
@@ -97,8 +105,8 @@
    "One molecule: retinal"
   ],
   [
-   127,
-   "It snaps straight: the first step of seeing"
+   125.7,
+   "SNAP (after a silence): the first step of seeing"
   ],
   [
    139,
@@ -145,8 +153,12 @@
    "Edges, colour, shape, movement"
   ],
   [
-   223,
-   "Millions of rays, every moment"
+   222,
+   "Millions of rays into the eye"
+  ],
+  [
+   228.5,
+   "The climb: out of the eye, back to the kitchen"
   ],
   [
    236,

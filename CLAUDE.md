@@ -30,8 +30,11 @@ kit/                   the shared drawing kit (plain JS, deterministic, canvas 2
                        Grow it: anything a second film could use goes here, not in a film.
 films/<slug>/          one folder per film: plan.md, script-timed.md, film.json, src/*.js, score.py, audio/ (wav ignored),
                        hf/ (generated HyperFrames project), stills/, renders/ (ignored)
-tools2/                film.mjs (build, still, sheet, board = the storyboard check, thumb, draft/looks/final renders through
-                       HyperFrames + a 1080p copy), synth.py (numpy synth: instruments + sound effects)
+tools2/                film.mjs (build, still, sheet, board = the storyboard check, model = the character model sheet, readcheck,
+                       thumb, draft/looks/final renders through HyperFrames + a 1080p copy; final normalised to -14 LUFS),
+                       synth.py (numpy synth: instruments + sound effects),
+                       lemo/ (from lemo-opuscar, MIT: sampler.py = 97 real sampled instruments, CC0 VSCO 2 CE/VCSL/...; pluck.py =
+                       modelled plucked strings; sfx.py; INSTRUMENTS.md. Samples not in git: `sh tools2/lemo/fetch.sh vcsl vsco2ce`)
 studio/references/     the tutorial notes, the HyperFrames digest (framework rules, motion, audio), peekaboo.md,
                        style/ = the user's style library for animals and nature (read style/NOTES.md before drawing any creature)
 studio/LEARNINGS.md    taste + lessons, newest first; studio/voice.md: narration voice; studio/fonts: Google Fonts (OFL)
@@ -78,6 +81,12 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    arc; facts with sources (web-check every claim; hedge where uncertain; note what is stated from knowledge); the sound
    plan (music arc + one sound per action). Package while writing (studio/voice.md): 5 hook candidates scored
    (`studio/vendor/yt-agent`), title <= 60 chars, 3 searches to win, thumbnail words that don't repeat the title.
+4a. **Treatment** (`films/<slug>/TREATMENT.md`, lemo-opuscar's directing method, see films/eyes/TREATMENT.md): judge the film by
+   sound, rhythm, camera, directing. Three candidate structures and the pick; logline + arc; a benchmark (what to learn, what
+   not to take); **one signature shot** and **one transition grammar made from the medium** (e.g. 'through the light'), not
+   fades; a shot list with framing, camera move and WHY (at least 4 different moves); a cue map (tempo, instruments per
+   section, hits); a sound design table (bed, foley, music per section); **two real silences** before the peak/turn (the first
+   sound after is a key one); **two sound transitions** (J/L-cuts); varied pace with one breath.
 4b. **Ask for reference images (the user's rule)**: list every character, creature, object and place the plan needs; check
    each against the kit (studio/references/kit-gallery.png). For anything the kit doesn't have, or that I don't know
    well enough to draw convincingly (a specific animal, a character, a bottle, a plant, a machine, a landmark...), ask
@@ -87,11 +96,17 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
    **Library pieces are a starting point, never dropped in as-is** (the user's rule): in every film, adapt each kit piece
    to the film's look, palette, situation and mood (proportions, colours, details, poses, light), through options or a
    film-side wrapper. The library itself stays generic: film-only details (a cutaway, a spine, labels) live in the film.
+4c. **Model sheet before any character animates** (lemo's rule): `FILM.model(ctx)` + `node tools2/film.mjs <slug> model` ->
+   stills/model-sheet.png: key poses, 3-5 expressions, palette (and a turnaround if the film turns the character). Check
+   every key action as a 0.2 s strip (`still 233,233.2,...`). Send the sheet with the storyboard.
 5. **Build**: `film.json` + `src/world.js` (props, characters) + `src/film.js` (`FILM.draw(t)`: camera tracks and beats).
    Look all the time: `node tools2/film.mjs <slug> sheet 0.5 0.15` (a frame every 0.5 s) and
    `node tools2/film.mjs <slug> still 2,9,15 0.5`. Fix what you see before moving on (see "Quality bar").
-6. **Score**: `films/<slug>/score.py` with `tools2/synth.py`: music that follows the film's arc and a sound for every
-   action; `python3 films/<slug>/score.py` writes audio/music.wav and audio/sfx.wav. Music sits well under the voice.
+6. **Score**: `films/<slug>/score.py`: real instruments from `tools2/lemo/sampler.py` (a sound palette chosen for the film,
+   never generic piano and strings; see films/eyes/score.py), our synth for foley; music that follows the cue map, a sound
+   for every action, three layers (ambience bed, foley, music), the silences and J/L-cuts from the treatment. Measure the
+   sections (no instrument running hot: the horn sample is ~12 dB loud) and the low end (20-120 Hz about -3 dB vs the rest).
+   `python3 films/<slug>/score.py` writes audio/music.wav and audio/sfx.wav. Music sits well under the voice.
 7. **Storyboard check (the user's rule; never skip)**: list the major scenes in film.json `board` ([t, label], one per beat
    plus the key gags, 12-20 tiles) and run `node tools2/film.mjs <slug> board`: one image, numbered tiles with time and
    label (`stills/board.png`). Look at it yourself first (every tile must show its gag; move a time if not), then send it
@@ -135,6 +150,10 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
 - **Soft shapes are one shape**: clouds and bushes drawn as a dark underside layer + body + soft highlight, never as
   separately outlined blobs; flashbacks stay bright (warm sepia, a sun), not muddy brown.
 - **Shorelines and joins are shaped**: no rectangles meeting at hard vertical edges.
+- **Directing checks (lemo-opuscar / raea)**: at least 4 camera moves and a signature shot; transitions made from the medium;
+  the subject fills at least a third of the frame height at key moments; never still for more than ~3 s; two silences and two
+  J/L-cuts in the mix; `node tools2/film.mjs <slug> readcheck` passes (every text holds letters/15 + 1.5 s); the final mix
+  is about -14 LUFS (`final` measures and normalises); when the voice arrives, every line transcribes back (speech-to-text).
 
 ## Dashboard
 Live page: **https://claude.ai/artifact/N1dKeyKqmYkGV63YzWXZLw** (Artifact with a shared database; the user watches it).

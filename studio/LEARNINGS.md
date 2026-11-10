@@ -8,6 +8,19 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-11-10: the eye film redesign with lemo-opuscar's directing method (the user: "go with our eye film redesign with this")
+- Adopted from github.com/lemomo-ai/lemo-opuscar (MIT): judge a film by sound, rhythm, camera, directing (in that order);
+  a TREATMENT.md before building (three structures, benchmark, shot list with framing/move/why, cue map, sound table); a
+  model sheet before a character animates (film.mjs `model`); `readcheck` (letters/15 + 1.5 s per text); -14 LUFS on the
+  final; real sampled instruments (tools2/lemo, CC0 libraries via fetch.sh; GitHub release downloads work from here now).
+- What it changed in the eye film: a scale readout rides along (Powers-of-Ten grammar: "2 m across" ... "5 nm across"),
+  every change of scale goes "through the light" (a bloom of the hero's colour), the cutaway turns into the iris, the camera
+  tracks/cranes/trucks/pulls, two silences (before the snap, before the turn), J/L-cuts, and the ending climbs back out of
+  the kid's eye into the kitchen (the ride reversed). The kid got moods (curious, wow, happy, chew).
+- Score: measure per instrument before trusting velocities: the horn sample sits ~12 dB above the rest (gain 0.25).
+  Long string notes ring on: give hand-over chords a short release so they don't sit under the next quiet line.
+- readcheck caught 5 pills leaving too early; a rolling counter counts as one text (judged by its landing value).
+
 ## 2026-11-06: the eye film, the kid (the user: "what is this? search for proper character design")
 - A character drawn piece by piece (a head, a blob body, a stick arm) reads as broken. Build by construction first: head
   circle -> a short neck under the jaw -> a torso bean leaning the way the pose goes, cut by the table -> a shoulder joint ->

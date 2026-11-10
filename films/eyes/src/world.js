@@ -155,13 +155,19 @@ E.kid = (ctx, t, x, y, R, o = {}) => {
   // ear (mid-head, behind the cheek)
   oval(-0.3, 0.12, 0.18, 0.24, skinD); oval(-0.28, 0.12, 0.12, 0.17, skin); oval(-0.26, 0.14, 0.05, 0.09, '#e08a6a');
   // eye: big, glossy, looking down at the apple
+  // moods (the model sheet): neutral | curious | wow | happy | chew: brow lift, eye size, mouth
+  const md = o.mood ?? 'neutral', brow = { curious: 0.07, wow: 0.14, happy: 0.04, chew: 0.02 }[md] ?? 0, es = md === 'wow' ? 1.12 : md === 'happy' ? 0.96 : 1;
   const ex = 0.6, ey = 0.0, look = o.look ?? [0.04, 0.04];
-  if (bl < 0.6) { oval(ex, ey, 0.15, 0.19, '#ffffff', -0.1); oval(ex + look[0], ey + look[1], 0.11, 0.15, '#5a3418', -0.1); oval(ex + look[0] + 0.01, ey + look[1] + 0.01, 0.065, 0.095, '#160a06'); oval(ex + look[0] + 0.04, ey + look[1] - 0.06, 0.035, 0.045, '#ffffff'); oval(ex + look[0] - 0.03, ey + look[1] + 0.07, 0.015, 0.018, '#ffffff'); }
-  ctx.strokeStyle = '#2a1410'; ctx.lineWidth = R * 0.045; ctx.lineCap = 'round'; ctx.beginPath(); if (bl < 0.6) ctx.ellipse(X(ex), Y(ey), R * 0.16, R * 0.2, -0.1, Math.PI * 1.1, Math.PI * 1.9); else ctx.arc(X(ex), Y(ey - 0.02), R * 0.13, 0.2, Math.PI - 0.2); ctx.stroke();
-  ctx.lineWidth = R * 0.06; ctx.beginPath(); ctx.moveTo(X(ex - 0.16), Y(ey - 0.3)); ctx.quadraticCurveTo(X(ex), Y(ey - 0.38), X(ex + 0.17), Y(ey - 0.31)); ctx.stroke();
+  const closed = bl >= 0.6 || md === 'chew';
+  if (!closed) { oval(ex, ey, 0.15 * es, 0.19 * es, '#ffffff', -0.1); oval(ex + look[0], ey + look[1], 0.11 * es, 0.15 * es, '#5a3418', -0.1); oval(ex + look[0] + 0.01, ey + look[1] + 0.01, 0.065 * es, 0.095 * es, '#160a06'); oval(ex + look[0] + 0.04, ey + look[1] - 0.06, 0.035, 0.045, '#ffffff'); oval(ex + look[0] - 0.03, ey + look[1] + 0.07, 0.015, 0.018, '#ffffff'); }
+  ctx.strokeStyle = '#2a1410'; ctx.lineWidth = R * 0.045; ctx.lineCap = 'round'; ctx.beginPath(); if (!closed) ctx.ellipse(X(ex), Y(ey), R * 0.16 * es, R * 0.2 * es, -0.1, Math.PI * 1.1, Math.PI * 1.9); else if (md === 'chew' || md === 'happy') ctx.arc(X(ex), Y(ey + 0.06), R * 0.13, Math.PI + 0.35, -0.35); else ctx.arc(X(ex), Y(ey - 0.02), R * 0.13, 0.2, Math.PI - 0.2); ctx.stroke();
+  ctx.lineWidth = R * 0.06; ctx.beginPath(); ctx.moveTo(X(ex - 0.16), Y(ey - 0.3 - brow * 0.7)); ctx.quadraticCurveTo(X(ex), Y(ey - 0.38 - brow * 1.2), X(ex + 0.17), Y(ey - 0.31 - brow)); ctx.stroke();
   // nose and smile
   ctx.strokeStyle = skinD; ctx.lineWidth = R * 0.035; ctx.beginPath(); ctx.arc(X(0.95), Y(0.24), R * 0.055, -0.6, 1.5); ctx.stroke();
-  ctx.strokeStyle = '#a8402a'; ctx.lineWidth = R * 0.04; ctx.beginPath(); ctx.moveTo(X(0.6), Y(0.56)); ctx.quadraticCurveTo(X(0.74), Y(o.mood === 'happy' ? 0.68 : 0.64), X(0.86), Y(0.5)); ctx.stroke();
+  ctx.strokeStyle = '#a8402a'; ctx.lineWidth = R * 0.04;
+  if (md === 'curious' || md === 'wow') { const k = md === 'wow' ? 1 : 0.6; oval(0.8, 0.58, 0.07 * k, 0.09 * k, '#7a2420', -0.2); oval(0.8, 0.62 + 0.02 * k, 0.045 * k, 0.035 * k, '#e86a6a'); }
+  else if (md === 'chew') { oval(0.62, 0.44, 0.2, 0.16, 'rgba(255,140,120,0.35)'); ctx.beginPath(); ctx.moveTo(X(0.66), Y(0.58)); ctx.quadraticCurveTo(X(0.74), Y(0.54), X(0.8), Y(0.6)); ctx.quadraticCurveTo(X(0.84), Y(0.62), X(0.88), Y(0.54)); ctx.stroke(); }
+  else { ctx.beginPath(); ctx.moveTo(X(0.6), Y(0.56)); ctx.quadraticCurveTo(X(0.74), Y(md === 'happy' ? 0.72 : 0.64), X(0.88), Y(md === 'happy' ? 0.46 : 0.5)); ctx.stroke(); }
   // hair: a soft mass over the back and top (rim, base), clumps a shade lighter, bangs falling over the forehead
   // the outline is a ring of curl bumps over the back and top (each bump a circle), filled in the middle
   const bumps = []; for (let i = 0; i <= 22; i++) { const u = i / 22, a2 = Math.PI * (0.62 + 1.38 * u), rr = 1.02 + 0.06 * Math.sin(i * 2.7); bumps.push([-0.12 + Math.cos(a2) * rr, -0.22 + Math.sin(a2) * rr * 1.02, 0.2 + 0.05 * K.hash(i, 5)]); }

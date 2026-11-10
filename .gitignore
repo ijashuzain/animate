@@ -14,3 +14,5 @@ films/*/hf/
 films/*/renders/
 films/*/stills/
 films/*/audio/*.wav
+# lemo-opuscar sample libraries (download with tools2/lemo/fetch.sh)
+tools2/lemo/instruments/
