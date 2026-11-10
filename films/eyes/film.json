@@ -164,5 +164,25 @@
    236,
    "You see with your brain"
   ]
- ]
+ ],
+ "thumb": {
+  "style": "banner",
+  "title": "UPSIDE DOWN?",
+  "accent": "DOWN?",
+  "titleSize": 175,
+  "arrows": [
+   [
+    1720,
+    330,
+    1540,
+    560,
+    -0.35
+   ]
+  ],
+  "labels": [],
+  "grade": {
+   "sat": 1.3,
+   "contrast": 1.15
+  }
+ }
 }

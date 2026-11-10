@@ -129,6 +129,15 @@ const FILM = {
     if (t < 0.6) P.haze('#05030a', 1 - t / 0.6); if (t > D - 1) P.haze('#05030a', t - (D - 1));
     P.vignette(0.25);
   },
+  // the thumbnail (studio/references/thumbs/STYLE.md): the eye cut in half, huge and lit; the apple outside the right way up,
+  // its picture on the retina upside down (the red arrow points at it)
+  thumb(ctx) {
+    const bg = ctx.createRadialGradient(1100, 650, 100, 1100, 650, 1300); bg.addColorStop(0, '#2a2a8a'); bg.addColorStop(1, '#05061a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1920, 1080);
+    const geo = E.eye(ctx, 2, 1120, 660, 470, { pupil: 0.5, lens: 0.3 }); E.ray(ctx, 2, geo, 230, undefined, 0.8);
+    const g = ctx.createRadialGradient(250, 660, 20, 250, 660, 330); g.addColorStop(0, 'rgba(255,220,150,0.55)'); g.addColorStop(1, 'rgba(255,200,120,0)'); ctx.fillStyle = g; ctx.fillRect(0, 300, 600, 720);
+    E.apple(ctx, 2, 250, 660, 165);
+    ctx.save(); ctx.translate(geo.focus[0] - 70, 660); ctx.scale(-0.62, -0.62); E.apple(ctx, 2, 0, 0, 165); ctx.restore();
+  },
   // the model sheet (lemo's rule: before animating a character): key poses, expressions, palette. node tools2/film.mjs eyes model
   model(ctx) {
     ctx.fillStyle = '#f4ecdc'; ctx.fillRect(0, 0, 1920, 1080);

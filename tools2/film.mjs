@@ -132,7 +132,7 @@ else if (['draft', 'looks', 'final'].includes(mode)) {
   let af = '';
   try { const m = execSync(`ffmpeg -hide_banner -i "${out}" -af loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json -f null - 2>&1`, { encoding: 'utf8', maxBuffer: 1 << 26 });
     const j = JSON.parse(m.slice(m.lastIndexOf('{'), m.lastIndexOf('}') + 1)); console.log(`loudness: ${j.input_i} LUFS integrated, true peak ${j.input_tp} dBTP`);
-    if (mode === 'final') { af = `-af loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=${j.input_i}:measured_TP=${j.input_tp}:measured_LRA=${j.input_lra}:measured_thresh=${j.input_thresh}:offset=${j.target_offset}:linear=true -ar 48000`; console.log('final: normalising the 1080p copy to -14 LUFS'); }
+    if (mode === 'final' && (F.audio ?? []).some((x) => /voice/.test(x.id + x.src))) { af = `-af loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=${j.input_i}:measured_TP=${j.input_tp}:measured_LRA=${j.input_lra}:measured_thresh=${j.input_thresh}:offset=${j.target_offset}:linear=true -ar 48000`; console.log('final: normalising the 1080p copy to -14 LUFS'); } else if (mode === 'final') console.log('final: no voice track yet, loudness left as mixed (normalised once the voice is in)');
   } catch (e) { console.log('loudness: not measured (no audio?)'); }
   for (const crf of [24, 27, 30, 33]) {
     execSync(`ffmpeg -y -loglevel error -i "${out}" -c:v libx264 -crf ${crf} -preset slow -tune animation -pix_fmt yuv420p ${af} -c:a aac -b:a 160k -movflags +faststart "${share}"`);
