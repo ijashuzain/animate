@@ -1,0 +1,12 @@
+{
+ "title": "How a Spider Builds Its Web in One Night",
+ "duration": 220,
+ "fps": 30,
+ "fonts": [
+  {"family": "Caveat", "file": "studio/fonts/Caveat[wght].ttf"},
+  {"family": "Cormorant Garamond", "file": "studio/fonts/CormorantGaramond[wght].ttf"}
+ ],
+ "kit": ["kit/brush.js"],
+ "src": ["src/world.js", "src/film.js"],
+ "audio": []
+}

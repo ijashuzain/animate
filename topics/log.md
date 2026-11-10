@@ -105,3 +105,9 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 | 2026-11-03 | What Really Happens When a Mosquito Bites You (one bite slowed) | animals / body | suggested again |
 | 2026-11-03 | How Your Eyes Turn Light Into a Picture | human body | suggested again |
 | 2026-11-03 | What Happens Inside You When You Get a Fever | human body | suggested again |
+
+## 2026-11-10: watercolour (lemo style), the user picked from 4
+| 2026-11-10 | Why Leaves Change Colour in Autumn (one tree, one journal page) | nature / plants | suggested |
+| 2026-11-10 | What Happens Inside a Chrysalis (a caterpillar's journal) | animals | suggested again |
+| 2026-11-10 | How a Spider Builds Its Web in One Night (one night, one page; watercolour) | animals / engineering | **picked** (films/spider) |
+| 2026-11-10 | How One Acorn Becomes a 300-Year Oak (a vertical scroll) | nature / plants | suggested |
