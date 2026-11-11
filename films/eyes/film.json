@@ -1,6 +1,6 @@
 {
  "title": "How Your Eyes Turn Light Into a Picture",
- "duration": 240,
+ "duration": 171.31,
  "fps": 30,
  "fonts": [
   {
@@ -14,10 +14,17 @@
   "kit/folk.js"
  ],
  "src": [
+  "src/timing.js",
   "src/world.js",
   "src/film.js"
  ],
  "audio": [
+  {
+   "id": "voice",
+   "src": "audio/voice-aligned.wav",
+   "start": 0,
+   "volume": 1
+  },
   {
    "id": "music",
    "src": "audio/music.wav",
@@ -33,135 +40,135 @@
  ],
  "board": [
   [
-   1.5,
+   1.32,
    "Open close on the apple, pull back to the kid"
   ],
   [
-   15,
+   13.27,
    "Sunlight: a mix of all colours"
   ],
   [
-   20,
+   17.83,
    "The apple bounces back red"
   ],
   [
-   24.5,
+   21.53,
    "Ride the ray: the camera tracks it (scale readout)"
   ],
   [
-   31.8,
+   26.99,
    "Through the light: into the eye"
   ],
   [
-   35,
+   29.32,
    "The eye, cut in half"
   ],
   [
-   41,
+   33.68,
    "Cornea: about 2/3 of the focusing"
   ],
   [
-   43.9,
+   35.79,
    "The cutaway turns into the iris"
   ],
   [
-   47,
+   38.64,
    "Bright light: the pupil shrinks"
   ],
   [
-   52,
+   43.27,
    "In the dark: it opens wide"
   ],
   [
-   63,
+   51.29,
    "The lens bulges to focus close"
   ],
   [
-   73,
+   59.48,
    "The image lands upside down"
   ],
   [
-   80,
+   64.51,
    "The retina is built backwards"
   ],
   [
-   86,
+   68.1,
    "Crane down with the light, past the wiring"
   ],
   [
-   94,
+   73.28,
    "120 million rods, 6 million cones"
   ],
   [
-   107,
+   82.33,
    "Red, green and blue cones"
   ],
   [
-   113,
+   86.53,
    "The red ray finds a red cone"
   ],
   [
-   119,
+   90.99,
    "One molecule: retinal"
   ],
   [
-   125.7,
+   96.28,
    "SNAP (after a silence): the first step of seeing"
   ],
   [
-   139,
+   104.48,
    "The cone fires a signal"
   ],
   [
-   145,
+   108.16,
    "Nerve cells pass it on"
   ],
   [
-   151,
+   112.31,
    "The optic nerve"
   ],
   [
-   157,
+   116.75,
    "The blind spot"
   ],
   [
-   163,
+   121.49,
    "Try it: the dot vanishes"
   ],
   [
-   169,
+   126.13,
    "The optic nerves cross"
   ],
   [
-   175,
+   130.69,
    "Left view to right brain"
   ],
   [
-   182,
+   134.77,
    "To the visual cortex in ~90 ms"
   ],
   [
-   195,
+   141.22,
    "No picture to flip: just signals"
   ],
   [
-   203,
+   146.41,
    "The brain builds the scene"
   ],
   [
-   209,
+   149.96,
    "Edges, colour, shape, movement"
   ],
   [
-   222,
+   156.92,
    "Millions of rays into the eye"
   ],
   [
-   228.5,
+   160.53,
    "The climb: out of the eye, back to the kitchen"
   ],
   [
-   236,
+   166.89,
    "You see with your brain"
   ]
  ],

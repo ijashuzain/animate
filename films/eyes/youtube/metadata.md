@@ -9,28 +9,16 @@ How do your eyes see? We follow one ray of red light from an apple into a kid's 
 Then the light becomes a signal. Nerve cells in the retina pass it on through the optic nerve, a cable of about a million fibres (past the blind spot you never notice), across the crossing where left and right swap sides, to the visual cortex at the back of your head, in less than a tenth of a second. And the upside-down picture on your retina? Your brain never flips it. It reads patterns of signals and builds the scene the right way up. You don't really see with your eyes: you see with your brain.
 
 **Chapters:**
-0:00 Just a red apple
-0:12 Sunlight is every colour
-0:22 One ray, across the room in billionths of a second
-0:32 The cornea: most of the focusing
-0:44 The pupil: shrink and widen
-0:54 The lens: fine-tuning the focus
-1:06 Across the jelly: the picture lands upside down
-1:16 The retina is built backwards
-1:30 Rods and cones
-1:44 Red, green and blue cones
-1:56 One molecule snaps straight
-2:10 The cone fires a signal
-2:22 The optic nerve
-2:34 Your blind spot (try it)
-2:46 The crossing
-2:58 To the visual cortex in under 0.1 s
-3:12 No picture to flip: the brain builds the scene
-3:26 Edges, colour, shape and movement
-3:40 Millions of rays, every moment
-3:52 You see with your brain
-
-(Chapters follow the picture as cut now; they move when the voice-over is fitted. Re-check after the final with voice.)
+0:00 Just a red apple, and the colours in sunlight
+0:20 One ray into the eye: the cornea
+0:36 The pupil and the lens
+0:53 Upside down, on a backwards retina
+1:10 Rods and cones: red, green and blue
+1:29 One molecule snaps; the cone fires
+1:46 The optic nerve and your blind spot (try it)
+2:04 The crossing and the visual cortex
+2:19 No picture to flip: the brain builds the scene
+2:36 Millions of rays: you see with your brain
 
 **Sources:**
 - The cornea provides about two thirds of the eye's focusing power; the lens adjusts focus for distance (accommodation): Marist College human vision notes; UMass open textbook
@@ -45,6 +33,6 @@ Then the light becomes a signal. Nerve cells in the retina pass it on through th
 **Hashtags:** #eyes #vision #science #animation #explained
 **Tags:** how do eyes see, how does vision work, how the eye works, eye anatomy animation, retina, rods and cones, cornea, lens, pupil, optic nerve, blind spot, optic chiasm, visual cortex, retinal molecule, upside down image, animated explainer
 **Category:** Education · **Language:** English · **Made for kids:** No (general audience) · **Licence:** Standard YouTube
-**Pinned comment:** Did the blind-spot test at 2:40 work for you? Cover your left eye, stare at the +, and lean in slowly.
+**Pinned comment:** Did the blind-spot test at 1:59 work for you? Cover your left eye, stare at the +, and lean in slowly.
 **Thumbnail:** the eye cut in half, the apple upright outside and upside down on the retina, a red arrow at the inverted picture; words "UPSIDE DOWN?" (youtube/thumbnail.png).
 **Music and sound credits:** Original score made with free CC0 sample libraries (Versilian Studios VSCO 2 CE and VCSL).

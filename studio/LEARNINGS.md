@@ -8,6 +8,15 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-11-11: the eye film, fitting the user's voice (2:38 of speech for a 4:00 picture -> a 2:51 film)
+- Alignment: matching cumulative letter shares drifts (one wrong cut shifts every later line). films/eyes/align.py picks the
+  cuts so each line has a plausible speaking rate (sum of log(rate/mean)^2) plus a bonus for longer pauses; then check the
+  words/second per line (2.3-3.7 here) and pin outliers by hand (a 0.27 s pause sat under the 0.3 s detector).
+- Hugging Face is blocked by this environment's network, so no faster-whisper model: no speech-to-text check yet.
+- A fast voice compresses shots (down to 0.45x): pill windows now widen to their whole shot (`shows` uses the current
+  shot), and long labels get shorter wording; readcheck again after every voice fit. Chapters must each be >= 10 s.
+- Mix: music ~10 dB under the voice (measured while the voice speaks); the score's to_film() moves every cue with the cut.
+
 ## 2026-11-10: the eye film redesign with lemo-opuscar's directing method (the user: "go with our eye film redesign with this")
 - Adopted from github.com/lemomo-ai/lemo-opuscar (MIT): judge a film by sound, rhythm, camera, directing (in that order);
   a TREATMENT.md before building (three structures, benchmark, shot list with framing/move/why, cue map, sound table); a

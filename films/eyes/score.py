@@ -202,5 +202,5 @@ fx = S.room(fx, size=0.25, mix=0.1)
 
 def write(x, name, peak):
     x = x / (np.abs(x).max() + 1e-9) * peak; sf.write(os.path.join(here, 'audio', name), x.astype(np.float32), SR)
-write(mus, 'music.wav', 0.5); write(fx, 'sfx.wav', 0.6)
+write(mus, 'music.wav', 0.28); write(fx, 'sfx.wav', 0.5)   # music ~10 dB under the voice
 print('music', len(EV) + len(POST), 'events; wrote audio/music.wav, audio/sfx.wav at', SR, 'Hz')
