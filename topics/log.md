@@ -95,7 +95,7 @@ Every topic suggested, picked and made. Never suggest a topic marked **made** ag
 ## 2026-10-30 (after the blood film): 10 suggested (5 new, 5 carried over)
 | 2026-10-30 | How Your Body Heals a Cut (one cut, a two-week clock, micro zooms) | human body | suggested |
 | 2026-10-30 | What Really Happens When a Mosquito Bites You (one bite slowed, skin cutaway) | animals / body | suggested |
-| 2026-10-30 | How Your Eyes Turn Light Into a Picture (follow one ray to the brain) | human body | suggested |
+| 2026-10-30 | How Your Eyes Turn Light Into a Picture (follow one ray to the brain) | human body | **made** (films/eyes, 2:51, the user's voice; redesigned with lemo-opuscar) |
 | 2026-10-30 | What Happens Inside You When You Get a Fever (the brain's thermostat) | human body | suggested |
 
 ## 2026-11-03: 6 suggested for 4-minute films (the user's request; the reference study was stopped by the user)
