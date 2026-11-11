@@ -150,6 +150,10 @@ Keep the dashboard updated at every step (see "Dashboard"). Status lines say wha
 - **Soft shapes are one shape**: clouds and bushes drawn as a dark underside layer + body + soft highlight, never as
   separately outlined blobs; flashbacks stay bright (warm sepia, a sun), not muddy brown.
 - **Shorelines and joins are shaped**: no rectangles meeting at hard vertical edges.
+- **Nothing floats** (the user's spider note): a creature only moves along something that holds it (a branch, a thread, the
+  ground); to change place without support it swings, drops on a line or climbs, never glides through the air.
+- **Annotations never look like the subject** (the user's note): label pointers in their own ink colour and style (dashed,
+  red-brown), never the colour of the lines being explained; inset discs are solid paper, nothing shows through the text.
 - **Directing checks (lemo-opuscar / raea)**: at least 4 camera moves and a signature shot; transitions made from the medium;
   the subject fills at least a third of the frame height at key moments; never still for more than ~3 s; two silences and two
   J/L-cuts in the mix; `node tools2/film.mjs <slug> readcheck` passes (every text holds letters/15 + 1.5 s); the final mix

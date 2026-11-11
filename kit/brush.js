@@ -106,7 +106,7 @@ const Brush = {};
     for (let i = 0; i <= n; i++) { const s = i / n; pts.push([lerp(a[0], b[0], s), lerp(a[1], b[1], s) + sag * 4 * s * (1 - s)]); }
     Brush.ink(ctx, pts, p, o); };
   Brush.ink = (ctx, pts, p = 1, o = {}) => { p = clamp(p); if (p <= 0 || pts.length < 2) return; const m = Math.max(2, Math.ceil(pts.length * p));
-    ctx.save(); ctx.strokeStyle = o.color ?? Brush.INK; ctx.globalAlpha = o.alpha ?? 0.85; ctx.lineWidth = o.w ?? 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.save(); ctx.strokeStyle = o.color ?? Brush.INK; ctx.globalAlpha = o.alpha ?? 0.85; ctx.lineWidth = o.w ?? 1.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; if (o.dash) ctx.setLineDash(o.dash);
     ctx.beginPath(); for (let i = 0; i < m; i++) { const j = (o.wobble ?? 0.6) * noise(i * 0.5, o.seed ?? 2); i ? ctx.lineTo(pts[i][0] + j, pts[i][1] + j) : ctx.moveTo(pts[i][0], pts[i][1]); } ctx.stroke(); ctx.restore(); };
 
   // ---- hand-written note: revealed left to right like writing, drawn twice over a paper halo; a leader line that grows ----

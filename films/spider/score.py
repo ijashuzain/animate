@@ -44,6 +44,11 @@ def guitar(t0, t1, vel=0.42, melody=True, b=60 / 72):
         if melody and k % 4 == 2 and t > t0 + 4: raw(t, PL.pluck('nylon_guitar', MEL[(k // 4) % len(MEL)], 1.8, vel + 0.06), 0.8, 0.0)
         k += 1; t += b / 2
 guitar(0.6, 32.0)
+# low cello warmth under the guitar (the roots, an octave down, one per chord)
+def cello_roots(t0, t1, b=60 / 72):
+    k = 0
+    while t0 + k * 4 * b < t1 - 1: ev(t0 + k * 4 * b, 'cellos', down(CH[k % 4][0], 1) if CH[k % 4][0][-1] != '2' else CH[k % 4][0], 4 * b + 0.3, 0.34, 0.0, 1.6); k += 1
+cello_roots(0.6, 32.0)
 for i, n in enumerate(['A5', 'F#5', 'D5', 'E5', 'F#5', 'A5', 'B5', 'A5']): ev(10.5 + i * 2.5, 'flute', n, 2.3, 0.32, 0.25)
 ev(24.0, 'glockenspiel', 'A6', 1.5, 0.45, 0.3)                                             # the bridge snags
 for k in range(6): ev(0.6 + k * 5.0, 'harp', ['D3', 'B2', 'G2', 'A2', 'D3', 'B2'][k], 3.0, 0.3, -0.3)
@@ -54,6 +59,7 @@ for t0, ch in SILK:
     for j, n in enumerate(ch): ev(t0 + j * 0.12, 'vibraphone', n, 5.5, 0.38, (j - 1) * 0.3)
     for k in range(8): ev(t0 + 0.4 + k * 0.75, 'violins_pizz', ch[k % 3].replace('3', '4') if k % 2 else ch[k % 3], 0.4, 0.28, 0.3 * (-1) ** k)
 ev(46.0, 'cellos', 'D2', 6.0, 0.36, 0.0)
+for t0, n in [(32, 'D2'), (38, 'B1'), (50, 'A1')]: ev(t0, 'cellos', n, 5.8, 0.32, 0.0, 1.5)   # warmth under the silk
 
 # ---------- the build (56-146, 88 bpm): kalimba ostinato; a rising harp pluck per spoke; marimba for the spiral ----------
 b = 60 / 88
@@ -87,6 +93,7 @@ for j, n in enumerate(['D3', 'A3', 'D4', 'F#4', 'A4', 'D5']): ev(186.2 + j * 0.0
 # the guitar theme returns alone after the silence (it leads into the eating at 201: a J-cut), and closes
 TURN = 200.4
 guitar(TURN, 218.5, vel=0.4, melody=True)
+cello_roots(TURN, 218.5)
 POST.append((219.0, 'harp', 'D5', 3.0, 0.32, 0.0))
 
 # ---------- render, silences ----------
@@ -149,5 +156,5 @@ fx = S.room(fx, size=0.25, mix=0.1)
 
 def write(x, name, peak):
     x = x / (np.abs(x).max() + 1e-9) * peak; sf.write(os.path.join(here, 'audio', name), x.astype(np.float32), SR)
-write(mus, 'music.wav', 0.5); write(fx, 'sfx.wav', 0.5)
+write(mus, 'music.wav', 0.3); write(fx, 'sfx.wav', 0.3)   # quieter (the user's note): the voice sits well on top
 print('music', len(EV) + len(POST) + len(EV_RAW), 'events; wrote audio/music.wav, audio/sfx.wav at', SR, 'Hz')

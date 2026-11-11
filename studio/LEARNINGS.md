@@ -8,6 +8,14 @@ When a lesson is general, also turn it into code (library, channel kit, tools, t
 
 
 
+## 2026-11-11: the spider film (watercolour, lemo style): the user's draft notes
+- The model sheet from the user's AI-generated reference sheet landed first time ("This is awsome"): ask for a reference
+  sheet with top/side views, poses and close-ups, then build by construction (egg abdomen, IK legs, bands, spines).
+- Draft notes: the spider sometimes moved through the air (now it only walks silk; it swings home on a dragline); the
+  annotation pointers were the web's colour (now red-brown, dashed); the inset discs were see-through (now solid paper,
+  bigger text); the subject was small on the wide page (a follow camera + pushes); music and effects too loud (lowered);
+  stacked sky bands read as stripes (one smooth gradient). The user wants scripts in English and Malayalam.
+
 ## 2026-11-11: the eye film, fitting the user's voice (2:38 of speech for a 4:00 picture -> a 2:51 film)
 - Alignment: matching cumulative letter shares drifts (one wrong cut shifts every later line). films/eyes/align.py picks the
   cuts so each line has a plausible speaking rate (sum of log(rate/mean)^2) plus a bonus for longer pauses; then check the
