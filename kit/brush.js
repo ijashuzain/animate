@@ -29,6 +29,7 @@ const Brush = {};
       const id = g.getImageData(0, 0, W, H), d = id.data; for (let i = 0; i < d.length; i += 4) { const v = (r() - 0.5) * 7; d[i] += v; d[i + 1] += v; d[i + 2] += v; } g.putImageData(id, 0, 0);
       // light vignette
       const v = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(110,75,35,0.10)'); g.fillStyle = v; g.fillRect(0, 0, W, H);
+      g.fillStyle = 'rgba(255,232,190,0.16)'; g.fillRect(0, 0, W, H);   // keep the sheet warm, never grey
       paperCache = { key, c };
     }
     ctx.drawImage(paperCache.c, 0, 0);
@@ -87,6 +88,11 @@ const Brush = {};
       const ex = lerp(x0 - 40, x1 + 40, p); ctx.beginPath(); ctx.moveTo(x0 - 60, y0 - 60); for (let y = y0 - 60; y <= y1 + 60; y += 20) ctx.lineTo(ex + noise(y * 0.02, seed) * 30, y); ctx.lineTo(x0 - 60, y1 + 60); ctx.closePath(); ctx.clip(); }
     for (let pass = 0; pass < 3; pass++) { ctx.fillStyle = rgba(col, a / 3 * (pass === 0 ? 1.2 : 1)); ctx.beginPath();
       poly.forEach(([x, y], i) => { const dx = noise(i * 0.7 + pass * 13, seed) * j, dy = noise(i * 0.7 + pass * 29, seed + 1) * j; i ? ctx.lineTo(x + dx, y + dy) : ctx.moveTo(x + dx, y + dy); }); ctx.closePath(); ctx.fill(); }
+    // watercolour character: a darker pooled edge and pigment granulation inside the shape
+    if (o.edge !== false) { ctx.strokeStyle = rgba(o.edgeColor ?? col, Math.min(0.5, a * 0.32)); ctx.lineWidth = o.edgeW ?? 1.6; ctx.lineJoin = 'round'; ctx.beginPath(); poly.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.stroke(); }
+    if (o.grain !== false) { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const [x, y] of poly) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      const area = (x1 - x0) * (y1 - y0), n = Math.min(400, Math.round(area / (o.grainStep ?? 90))); if (n > 2) { ctx.beginPath(); poly.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.clip(); const r = rng(`g${seed}`);
+        for (let i = 0; i < n; i++) { const gx = lerp(x0, x1, r()), gy = lerp(y0, y1, r()), gr = 0.6 + r() * 1.6; ctx.fillStyle = rgba(col, a * (0.25 + r() * 0.35)); ctx.beginPath(); ctx.arc(gx, gy, gr, 0, 7); ctx.fill(); } } }
     ctx.restore();
   };
   // a soft blob wash (ellipse polygon) — leaves, bodies, moons
