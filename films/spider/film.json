@@ -19,7 +19,20 @@
   "src/world.js",
   "src/film.js"
  ],
- "audio": [],
+ "audio": [
+  {
+   "id": "music",
+   "src": "audio/music.wav",
+   "start": 0,
+   "volume": 1
+  },
+  {
+   "id": "sfx",
+   "src": "audio/sfx.wav",
+   "start": 0,
+   "volume": 1
+  }
+ ],
  "board": [
   [
    3,
