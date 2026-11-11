@@ -8,7 +8,7 @@
 //   node tools2/film.mjs <slug> board                   the storyboard check: film.json board [[t, label], ...] -> stills/board.png
 //                                                       (one image of every major scene, numbered, for the user's notes BEFORE the draft)
 //   node tools2/film.mjs <slug> model                   FILM.model(ctx): the character model sheet (poses, expressions, palette) -> stills/model-sheet.png
-//   node tools2/film.mjs <slug> readcheck [step=0.1]    every pill (P.pill) stays fully on screen >= letters/15 + 1.5 s (lemo's reading hold); exits 1 if not
+//   node tools2/film.mjs <slug> readcheck [step=0.1]    every pill (P.pill) and hand note (Brush.note) stays fully on screen >= letters/15 + 1.5 s (lemo's reading hold); exits 1 if not
 //   node tools2/film.mjs <slug> clean                   delete the generated files (hf/, renders/, stills/, audio/*.wav) once delivered
 //   node tools2/film.mjs <slug> thumb                   film.json thumb (studio/references/thumbs/STYLE.md: title, accent, arrows, labels,
 //                                                       t/zoom/shift or FILM.thumb) -> youtube/thumbnail.png 1280x720; style 'old' = the earlier side-text look
@@ -160,7 +160,8 @@ else if (mode === 'readcheck') {
   await page.waitForFunction(() => window.drawAt && document.fonts.status === 'loaded');
   const frames = await page.evaluate(([dur, step]) => {
     const orig = P.pill; let seen = []; P.pill = (str, x, y, q = {}) => { if ((q.u ?? 1) >= 0.95) seen.push(String(str).replace(/\d[\d.,]*/g, '#'));   /* a rolling number counts as one text, judged by its landing value */ return orig(str, x, y, q); };
-    const out = []; for (let t = 0; t < dur; t += step) { seen = []; window.drawAt(t); out.push([Math.round(t * 1000) / 1000, [...new Set(seen)]]); } P.pill = orig; return out;
+    const B = typeof Brush !== 'undefined' ? Brush : null, onote = B && B.note; if (B) B.note = (g, str, x, y, p = 1, q) => { if (p >= 0.95) seen.push(String(str).replace(/\d[\d.,]*/g, '#')); return onote(g, str, x, y, p, q); };
+    const out = []; for (let t = 0; t < dur; t += step) { seen = []; window.drawAt(t); out.push([Math.round(t * 1000) / 1000, [...new Set(seen)]]); } P.pill = orig; if (B) B.note = onote; return out;
   }, [dur, step]);
   await browser.close();
   const runs = [], open = new Map();

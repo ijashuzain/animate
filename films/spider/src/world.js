@@ -22,11 +22,12 @@ const W = {};
   // ---- the web: hub, frame anchors, radii, the temporary spiral, the sticky spiral ----
   const H = [1000, 520];
   W.hub = H;
-  W.frame = [[700, 215], [1000, 175], [1280, 330], [1420, 560], [1360, 820], [1040, 900], [720, 840], [580, 560]];   // anchor polygon
+  W.frame = [[700, 214], [1000, 285], [1280, 358], [1420, 560], [1360, 820], [1040, 900], [720, 840], [580, 560]];   // anchor polygon
   const rayHit = (a) => { const d = [Math.cos(a), Math.sin(a)]; let best = 1e9;
     for (let i = 0; i < W.frame.length; i++) { const p = W.frame[i], q = W.frame[(i + 1) % W.frame.length], e = [q[0] - p[0], q[1] - p[1]], den = d[0] * e[1] - d[1] * e[0]; if (Math.abs(den) < 1e-6) continue;
       const t = ((p[0] - H[0]) * e[1] - (p[1] - H[1]) * e[0]) / den, u = ((p[0] - H[0]) * d[1] - (p[1] - H[1]) * d[0]) / den; if (t > 0 && u >= 0 && u <= 1) best = Math.min(best, t); }
     return best; };
+  W.bridge = [[690, 200], [1292, 362]];
   W.NR = 30;
   W.radii = []; for (let i = 0; i < W.NR; i++) { const a = -Math.PI / 2 + i / W.NR * Math.PI * 2 + noise(i, 3) * 0.04, r = rayHit(a); W.radii.push({ a, r, end: [H[0] + Math.cos(a) * r, H[1] + Math.sin(a) * r] }); }
   // a spiral as points where it crosses each radius: radius fraction f goes from f0 to f1 over turns
@@ -37,22 +38,23 @@ const W = {};
   // every anchor ends on a twig or the stalk
   W.anchors = [[W.frame[0], [690, 200]], [W.frame[1], [762, 110]], [W.frame[2], [1292, 362]], [W.frame[3], [1545, 548]], [W.frame[4], [1626, 780]], [W.frame[6], [446, 830]], [W.frame[7], [535, 610]]];
 
-  // draw the web painted up to stage values (each 0..1): o = { bridge, y, frame, radii, aux, auxGone, sticky, dew, eat }
+  // a point and heading at fraction p along a polyline
+  W.at = (pts, p) => { const R = Brush.resample(pts, 200).pts, i = Math.min(198, Math.floor(clamp(p) * 199)); const a = R[i], b = R[i + 1]; return { x: a[0], y: a[1], a: Math.atan2(b[1] - a[1], b[0] - a[0]) }; };
+  // draw the web up to stage values (each 0..1): o = { frame, radii, aux, auxGone, sticky, stickyFrom (eaten), dew, deform(pt)->pt }
   W.web = (ctx, t, o = {}) => {
-    const silk = { color: '#3a3a4a', w: 1.3, alpha: 0.75, wobble: 0.2 };
-    if (o.frame) Brush.ink(ctx, W.frameLine, o.frame, { ...silk, w: 1.6 });
-    // anchor lines from frame corners to the twigs
-    if (o.frame) for (const [a, b] of W.anchors) Brush.line(ctx, a, b, o.frame, silk);
-    const nr = (o.radii ?? 0) * W.NR;
-    for (let i = 0; i < W.NR; i++) { const k = clamp(nr - i); if (k > 0) Brush.line(ctx, H, W.radii[i].end, k, silk); }
-    if (o.aux && !(o.auxGone >= 1)) Brush.ink(ctx, W.aux, o.aux, { ...silk, alpha: 0.5 * (1 - (o.auxGone ?? 0)) });
-    if (o.sticky) { const m = Math.max(2, Math.ceil(W.sticky.length * o.sticky)); Brush.ink(ctx, W.sticky.slice(0, m), 1, { ...silk, w: 1.1, alpha: 0.7 });
-      // glue beads (and later dew): dots along the sticky thread
-      ctx.save(); for (let i = 0; i < m - 1; i++) { const a = W.sticky[i], b = W.sticky[i + 1], n = 3; for (let k = 1; k <= n; k++) { const x = lerp(a[0], b[0], k / (n + 1)), y = lerp(a[1], b[1], k / (n + 1)), dew = o.dew ?? 0, r = 1.4 + dew * 2.4 * (0.6 + 0.8 * K.hash(i, k));
-        ctx.fillStyle = dew > 0 ? `rgba(150,180,200,${0.5 + 0.3 * dew})` : 'rgba(90,90,110,0.55)'; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); if (dew > 0.3) { ctx.fillStyle = `rgba(255,255,250,${0.8 * dew})`; ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.35, r * 0.35, 0, 7); ctx.fill(); } } } ctx.restore(); }
+    const silk = { color: '#3a3a4a', w: 1.3, alpha: 0.75, wobble: 0.2 }, D = o.deform ?? ((q) => q);
+    const seg = (a, b, p, st) => { if (p <= 0) return; const pts = []; for (let i = 0; i <= 14; i++) pts.push(D([lerp(a[0], b[0], i / 14), lerp(a[1], b[1], i / 14)])); Brush.ink(ctx, pts, p, st); };
+    const poly = (pts, p, st) => Brush.ink(ctx, pts.map(D), p, st);
+    if (o.frame) { poly(W.frameLine, o.frame, { ...silk, w: 1.6 }); for (const [a, b] of W.anchors) seg(a, b, o.frame, silk); }
+    const nr = (o.radii ?? 0) * W.NR, gone = o.radiiGone ?? 0;
+    for (let i = 0; i < W.NR; i++) { const k = clamp(nr - i); if (k > 0 && i >= gone * W.NR) seg(H, W.radii[i].end, k, silk); }
+    if (o.aux && !(o.auxGone >= 1)) poly(W.aux, o.aux, { ...silk, alpha: 0.5 * (1 - (o.auxGone ?? 0)) });
+    if (o.sticky) { const m = Math.max(2, Math.ceil(W.sticky.length * o.sticky)), m0 = Math.floor(W.sticky.length * (o.stickyFrom ?? 0)); if (m - m0 < 2) return;
+      const S2 = W.sticky.slice(m0, m).map(D); Brush.ink(ctx, S2, 1, { ...silk, w: 1.1, alpha: 0.7 });
+      ctx.save(); for (let i = 0; i < S2.length - 1; i++) { const a = S2[i], b = S2[i + 1], n = 3; for (let k = 1; k <= n; k++) { const x = lerp(a[0], b[0], k / (n + 1)), y = lerp(a[1], b[1], k / (n + 1)), dew = (o.dew ?? 0) * clamp((o.dew ?? 0) * 3 - K.hash(i + m0, 9) * 2), r = 1.3 + dew * 1.7 * (0.6 + 0.8 * K.hash(i, k));
+        ctx.fillStyle = dew > 0 ? `rgba(200,210,215,${0.45 + 0.3 * dew})` : 'rgba(90,90,110,0.55)'; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); if (dew > 0.3) { ctx.strokeStyle = `rgba(110,120,135,${0.35 * dew})`; ctx.lineWidth = 0.8; ctx.stroke(); ctx.fillStyle = `rgba(255,255,252,${0.95 * dew})`; ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.35, r * 0.4, 0, 7); ctx.fill(); } } } ctx.restore(); }
   };
 }
-
 // ---- the spider (European garden spider), built from the user's reference sheet (refs/ref-sheet.webp) ----
 // Construction (L = abdomen length): an egg abdomen, broadest toward the front, ochre with a lobed brown-violet band down
 // the middle, a row of white spots and a short white cross bar; a small round hairy head-chest (0.45 L) with eyes and palps
@@ -159,6 +161,9 @@ const W = {};
     return { spinneret: [sp.x, sp.y] };
   };
 
+  // the spinneret point of a side-view spider standing at (x, y) (matches W.spiderSide's abdomen geometry)
+  W.spinneret = (x, y, L, dir = 1, lift = 0) => { const hipY = -L * 0.5, ang = 0.62 + lift * 0.75, ca = Math.cos(ang), sa = Math.sin(ang), lx = -L * 0.62 - L * 0.53, ly = L * 0.13;
+    return [x + dir * (lx * ca - ly * sa), y + hipY + (lx * sa + ly * ca)]; };
   // ---- the moth (large yellow underwing), from the reference: mottled brown forewings with a dark kidney spot, yellow
   // hindwings with a dark band near the edge, a furry striped body, thin antennae. TOP VIEW. o.a heading, o.open 0..1
   // (wings spread; folded = a roof over the body), o.flap phase (wing beat: the span foreshortens)

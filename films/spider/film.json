@@ -3,10 +3,99 @@
  "duration": 220,
  "fps": 30,
  "fonts": [
-  {"family": "Caveat", "file": "studio/fonts/Caveat[wght].ttf"},
-  {"family": "Cormorant Garamond", "file": "studio/fonts/CormorantGaramond[wght].ttf"}
+  {
+   "family": "Caveat",
+   "file": "studio/fonts/Caveat[wght].ttf"
+  },
+  {
+   "family": "Cormorant Garamond",
+   "file": "studio/fonts/CormorantGaramond[wght].ttf"
+  }
  ],
- "kit": ["kit/brush.js"],
- "src": ["src/world.js", "src/film.js"],
- "audio": []
+ "kit": [
+  "kit/brush.js"
+ ],
+ "src": [
+  "src/world.js",
+  "src/film.js"
+ ],
+ "audio": [],
+ "board": [
+  [
+   3,
+   "An empty page at dusk: two twigs, one spider"
+  ],
+  [
+   15,
+   "The gap: it lifts its abdomen, lets out silk"
+  ],
+  [
+   21,
+   "The thread drifts on the breeze"
+  ],
+  [
+   28,
+   "It snags; the spider walks the bridge"
+  ],
+  [
+   38,
+   "Inside: silk glands and spinnerets"
+  ],
+  [
+   52,
+   "Stronger than steel, weight for weight; 7 silks"
+  ],
+  [
+   66,
+   "The Y and the hub"
+  ],
+  [
+   78,
+   "The frame"
+  ],
+  [
+   92,
+   "The spokes, one by one (about 30)"
+  ],
+  [
+   108,
+   "Dry spokes: where the spider walks"
+  ],
+  [
+   120,
+   "A temporary spiral: scaffolding"
+  ],
+  [
+   138,
+   "The sticky spiral, beaded with glue"
+  ],
+  [
+   154,
+   "Why it never sticks: branching hairs"
+  ],
+  [
+   166,
+   "Waiting at the hub, feeling the threads"
+  ],
+  [
+   173,
+   "A moth hits (after a silence)"
+  ],
+  [
+   178,
+   "The spider runs to it"
+  ],
+  [
+   192,
+   "Dawn: dew on every sticky thread"
+  ],
+  [
+   206,
+   "It eats the web, recycling the silk"
+  ],
+  [
+   218,
+   "One night, one page"
+  ]
+ ]
 }
